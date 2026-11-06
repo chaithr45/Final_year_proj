@@ -79,3 +79,7 @@ Method results and keep/drop decisions are appended below as runs finish.
   represent this boosting ensemble. w5 vs lgbm: F1 p = 0.38 (n.s.), FP/24 h p = 0.015.
 * **catboost**: AUROC 0.863, event-F1 0.286 (sens 0.337, 3.0 FP/24 h, gate both).
 * **rf**: AUROC 0.852, event-F1 0.198 (sens 0.216, 0.5 FP/24 h).
+* **dwn_l200_b8_mi40** (first LUT-native run, CPU size: 200 LUT6, 8 thresholds, top-40 MI features): AUROC 0.821,
+  event-F1 0.167 (sens 0.291, 3.5 FP/24 h, gate both), sens 0.490 at <= 1 FA/h; **1,782 estimated LUTs**
+  (200 network + 1,361 encoder + 209 popcount + 12 post-processing), 0 multipliers. Below TreeLUT w5 (F1 0.266 at 6.4k LUTs)
+  and lgbm; the size sweep (Section 6.1 grid) decides whether larger DWNs close the gap.
