@@ -57,6 +57,6 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D25 | Feature selection by mutual information inside each fold's training patients | Avoids leaking validation patients into the ranking | `scripts/run_inner_cv.py` |
 | D26 | Operating points chosen on pooled out-of-fold predictions of the 96 training patients | Thresholds are fixed before any test-set scoring | `src/eval/operating.py` |
 | D27 | Large DWN sweeps (Section 6.1 grid) run on the user's GPU; CPU runs use top-40 features and <= 200 LUTs | 4-core CPU: ~4 min per million windows per epoch at 200 LUTs with learnable mapping | `reports/LAPTOP_RUNBOOK.md` |
-
 | D28 | A run whose ECG lead is present but yields no detected R-peak (sub-089 run-01, 3,250 s) is kept; its ECG features are 0 and flagged `quality_bad` every window | The extractor crashed on an empty beat list; dropping the run would silently remove training data | `src/features/golden.py` |
+
 Method results and keep/drop decisions are appended below as runs finish.
