@@ -28,6 +28,7 @@ packages = [
     "seizelut.features",
     "seizelut.models",
     "seizelut.eval",
+    "seizelut.models.baselines",
     "seizelut.hw",
 ]
 

@@ -35,3 +35,6 @@ paper/*.synctex.gz
 .DS_Store
 .vscode/
 .idea/
+
+# smoke runs are pipeline checks, not results
+results/runs/*smoke*/

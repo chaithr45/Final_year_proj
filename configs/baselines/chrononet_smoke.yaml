@@ -1,0 +1,19 @@
+# Tiny end-to-end check of the ChronoNet pipeline (a few patients, 2 epochs). Not a result.
+name: chrononet_smoke
+model: chrononet
+seed: 1
+train_subjects: [sub-001, sub-002]
+data:
+  cache_dir: cache/chrononet_smoke
+  factor: 5
+train:
+  epochs: 2
+  batch_size: 128
+  lr: 0.01
+  l2: 0.01
+  cnn_dropout: 0.6
+  selection: last
+  max_windows: 6000
+eval:
+  subjects: [sub-003]          # a TRAINING patient: smoke runs never touch the test set
+  thresholds: official

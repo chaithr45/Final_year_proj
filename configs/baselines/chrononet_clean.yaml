@@ -1,0 +1,21 @@
+# Reproduction of the official ChronoNet baseline (biomedepi/seizeit2 main_net.py).
+name: chrononet_clean
+model: chrononet
+seed: 1                       # main_net.py random_seed
+train_subjects: official_train          # sub-001..sub-096
+data:
+  cache_dir: cache/chrononet
+  factor: 5                   # background = 5 x seizure segments
+train:
+  epochs: 300
+  batch_size: 128
+  lr: 0.01
+  l2: 0.01
+  cnn_dropout: 0.6
+  # Epoch selection. "official_test": best val score on 10-min blocks around the seizures of
+  # the official validation patients = the test patients (what the published code does; leaks
+  # test information, reproduction only). "last": final epoch, no selection (clean).
+  selection: last
+eval:
+  subjects: official_test
+  thresholds: official        # 0..1 step 0.02, operating point 0.5
