@@ -131,3 +131,38 @@ def test_treelut_integer_scores_rank_like_xgboost():
     assert roc_auc_score(y, s) > 0.97
     c = m.cost([10] * 5)
     assert c["multipliers"] == 0 and c["trees"] == 40
+
+
+def test_stateful_dwn_learns_memory_and_export_matches():
+    from seizelut.models.stateful import StatefulDWN, batched_integer_forward, stateful_integer_forward
+    torch.manual_seed(0)
+    rng = np.random.default_rng(3)
+    B, T = 256, 40
+    x = (rng.random((B, T)) > 0.6).astype(np.float32)
+    # label: input on for the last 3 consecutive steps (needs 2 steps of memory)
+    y = np.zeros((B, T), np.int64)
+    for t in range(2, T):
+        y[:, t] = (x[:, t] > 0) & (x[:, t - 1] > 0) & (x[:, t - 2] > 0)
+    bits = torch.tensor(np.repeat(x[..., None], 4, axis=2))     # 4 copies of the input bit
+    net = StatefulDWN(4, n_state=8, n_vote=64, n=4, mapping="random", tau=3.0, seed=0)
+    opt = torch.optim.Adam(net.parameters(), lr=0.02)
+    yt = torch.tensor(y)
+    for _ in range(150):
+        logits, _ = net(bits)
+        loss = torch.nn.functional.cross_entropy(logits.reshape(-1, 2), yt.reshape(-1), weight=torch.tensor([1.0, 4.0]))
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+    net.eval()
+    with torch.no_grad():
+        logits, _ = net(bits)
+    pred = logits.argmax(-1).numpy()
+    from sklearn.metrics import balanced_accuracy_score
+    assert balanced_accuracy_score(y[:, 2:].ravel(), pred[:, 2:].ravel()) > 0.8
+    exp = net.export()
+    ref = ((logits[..., 1] - logits[..., 0]) * net.head.tau).numpy()
+    single, _ = stateful_integer_forward(bits[0].numpy().astype(np.uint8), exp)
+    np.testing.assert_allclose(single, ref[0], atol=1e-3)
+    batched = batched_integer_forward([bits[i].numpy().astype(np.uint8) for i in range(5)], exp)
+    for i in range(5):
+        np.testing.assert_allclose(batched[i], ref[i], atol=1e-3)

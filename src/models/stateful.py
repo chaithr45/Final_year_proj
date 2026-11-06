@@ -27,6 +27,11 @@ class StatefulDWN(nn.Module):
         self.hidden = LUTLayer(size, hidden, n, mapping, generator=g) if hidden else None
         self.out = LUTLayer(hidden or size, n_vote + n_state, n, "random" if hidden else mapping, generator=g)
         self.head = GroupSum(2, tau)
+        for m in self._luts():
+            m.clamp_luts = False          # clamped once per sequence in forward(), not per time step
+
+    def _luts(self):
+        return [m for m in (self.hidden, self.out) if m is not None]
 
     def step(self, x_t, s):
         h = torch.cat([x_t, s], dim=1)
@@ -38,6 +43,10 @@ class StatefulDWN(nn.Module):
     def forward(self, seq, s0=None):
         """seq: (B, T, n_in) bits -> logits (B, T, 2)."""
         B, T, _ = seq.shape
+        if self.training:
+            with torch.no_grad():
+                for m in self._luts():
+                    m.luts.clamp_(-1, 1)
         s = torch.zeros(B, self.n_state, device=seq.device) if s0 is None else s0
         outs = []
         for t in range(T):

@@ -84,6 +84,24 @@ def main() -> int:
         tr = sorted(s for s, f in folds.items() if f != k)
         va = sorted(s for s, f in folds.items() if f == k)
         t0 = time.time()
+        spec_model = build(cfg["model"], log=log)
+        if getattr(spec_model, "needs_store", False):
+            # sequence models (N1): sample their own training sequences from the store
+            log(f"fold {k}: train {len(tr)} patients (sequence model); val {len(va)} patients")
+            spec_model.fit_store(store, tr, cols, seed + k)
+            runs_va = list(store.iter_runs(va))
+            scores = spec_model.score_runs([r.X[:, cols] for r in runs_va])
+            n_win = 0
+            for r, s in zip(runs_va, scores):
+                np.save(oof_dir / f"{r.subject}_{r.run}.npy", s)
+                oof.append({"subject": r.subject, "fold": k, "score": s, "artefact": r.artefact,
+                            "seizures": r.seizures, "duration_s": r.duration_s, "y": r.y})
+                n_win += len(s)
+            c = spec_model.cost(feat_bits)
+            costs.append(c)
+            fold_info.append({"fold": k, "val_windows": n_win, "seconds": round(time.time() - t0, 1), "cost": c})
+            log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
+            continue
         X, y, _, _, keys = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"))
         log(f"fold {k}: train {len(tr)} patients, {len(y)} windows ({int(y.sum())} seizure); val {len(va)} patients")
         fcols = cols

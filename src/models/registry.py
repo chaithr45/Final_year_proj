@@ -399,13 +399,109 @@ class Int8MLPModel(Model):
         return hw.mlp_cost(self.net.sizes)
 
 
+class StatefulDWNModel(Model):
+    """N1 (src/models/stateful.py), trained on sequences of consecutive windows."""
+    name = "stateful_dwn"
+    needs_store = True
+
+    def __init__(self, bits=8, n_state=16, n_vote=200, hidden=None, n=6, mapping="learnable", tau=1 / 0.3,
+                 seq_len=60, pos_per_seizure=6, neg_ratio=5, burn_in=10, epochs=15, lr=1e-2, batch=64,
+                 decay_at=0.7, seed=0, threads=4, log=None):
+        self.p = dict(bits=bits, n_state=n_state, n_vote=n_vote, hidden=hidden, n=n, mapping=mapping, tau=tau,
+                      seq_len=seq_len, pos_per_seizure=pos_per_seizure, neg_ratio=neg_ratio, burn_in=burn_in,
+                      epochs=epochs, lr=lr, batch=batch, decay_at=decay_at, seed=seed)
+        self.threads, self.log = threads, (log or (lambda *a: None))
+
+    def _sequences(self, store, subjects, cols, rng):
+        T = self.p["seq_len"]
+        seqs, labs = [], []
+        pos_n = 0
+        runs = list(store.iter_runs(subjects))
+        for r in runs:
+            pos = np.flatnonzero(r.y == 1)
+            if len(pos) == 0 or len(r.y) < T:
+                continue
+            # one block of consecutive positive windows per seizure
+            breaks = np.flatnonzero(np.diff(pos) > 1)
+            for a, b in zip(np.r_[pos[0], pos[breaks + 1]], np.r_[pos[breaks], pos[-1]]):
+                lo, hi = max(0, a - T + self.p["burn_in"] + 1), min(len(r.y) - T, b - self.p["burn_in"])
+                if hi < lo:
+                    lo = hi = int(np.clip(a - T // 2, 0, len(r.y) - T))
+                for st in rng.integers(lo, hi + 1, self.p["pos_per_seizure"]):
+                    seqs.append(r.X[st:st + T][:, cols]); labs.append(r.y[st:st + T]); pos_n += 1
+        n_neg = self.p["neg_ratio"] * pos_n
+        lens = np.array([max(0, len(r.y) - T) for r in runs], dtype=float)
+        pick = rng.choice(len(runs), size=n_neg, p=lens / lens.sum())
+        for i in pick:
+            r = runs[i]
+            st = int(rng.integers(0, len(r.y) - T))
+            seqs.append(r.X[st:st + T][:, cols]); labs.append(r.y[st:st + T])
+        return np.stack(seqs), np.stack(labs)
+
+    def fit_store(self, store, subjects, cols, seed):
+        import torch
+        from .dwn import DistributiveThermometer
+        from .stateful import StatefulDWN
+        torch.set_num_threads(self.threads)
+        p = self.p
+        rng = np.random.default_rng(seed)
+        Xs, Ys = self._sequences(store, subjects, cols, rng)
+        self.log(f"    {len(Xs)} sequences of {p['seq_len']} s ({int((Ys.sum(1) > 0).sum())} with seizure)")
+        self.therm = DistributiveThermometer(p["bits"]).fit(Xs.reshape(-1, Xs.shape[-1]))
+        B, T, F = Xs.shape
+        bits = self.therm.encode(Xs.reshape(-1, F)).reshape(B, T, -1)
+        self.net = StatefulDWN(bits.shape[-1], p["n_state"], p["n_vote"], p["n"], p["mapping"], p["tau"], p["hidden"], seed)
+        opt = torch.optim.Adam(self.net.parameters(), lr=p["lr"])
+        sched = torch.optim.lr_scheduler.StepLR(opt, max(1, int(p["epochs"] * p["decay_at"])), 0.1)
+        yt = torch.as_tensor(Ys, dtype=torch.long)
+        bi = p["burn_in"]
+        w = torch.tensor([1.0, float((Ys[:, bi:] == 0).sum()) / max(1, int((Ys[:, bi:] == 1).sum()))])
+        g = torch.Generator().manual_seed(seed)
+        for ep in range(p["epochs"]):
+            self.net.train()
+            perm = torch.randperm(B, generator=g)
+            tot, t0 = 0.0, time.time()
+            for i in range(0, B, p["batch"]):
+                idx = perm[i:i + p["batch"]]
+                logits, _ = self.net(bits[idx])
+                loss = torch.nn.functional.cross_entropy(logits[:, bi:].reshape(-1, 2), yt[idx, bi:].reshape(-1), weight=w)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                tot += float(loss.detach()) * len(idx)
+            sched.step()
+            self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / B:.4f} ({time.time() - t0:.0f} s)")
+        self.net.eval()
+        self.exported = self.net.export()
+        return self
+
+    def score_runs(self, X_list):
+        from .stateful import batched_integer_forward
+        bits = [self.therm.encode(X).numpy().astype(np.uint8) for X in X_list]
+        return [s.astype(np.float32) for s in batched_integer_forward(bits, self.exported)]
+
+    def score(self, X):
+        return self.score_runs([X])[0]
+
+    def cost(self, feature_bits):
+        from .dwn import used_input_bits
+        n_in = self.therm.n_bits
+        first = self.exported["layers"][0]["mapping"]
+        used = np.zeros(n_in, dtype=bool)
+        used[np.unique(first[first < n_in])] = True
+        c = hw.dwn_cost({"layers": [{"mapping": l["mapping"]} for l in self.exported["layers"]]}, self.therm,
+                        list(feature_bits), used)
+        c["state_flipflops"] = self.p["n_state"]
+        return c
+
+
 def torch_from(a):
     import torch
     return torch.from_numpy(np.ascontiguousarray(a))
 
 
 REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel,
-                                Int8MLPModel)}
+                                Int8MLPModel, StatefulDWNModel)}
 
 
 def build(spec: dict, log=None) -> Model:
