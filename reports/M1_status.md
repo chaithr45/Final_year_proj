@@ -32,8 +32,10 @@ Template of Section 10.5. Branch `claude/optimistic-heisenberg-ph0bvj`.
 | Female patients | 51 | 62 in participants.tsv |
 | Inner folds | stratified by centre and seizure count | seizure count only; 137–143 seizures per fold |
 
-Signal-level results (flat-lines, saturation, the official RMS artefact rule) are in
-`reports/data_audit.md` §6; the coverage line there says how many of the 11,009 files were read.
+Signal-level audit of all 11,009 EDF files (`reports/data_audit.md` §6): flat spans cover 0.4-0.5 % of
+EEG/ECG/EMG channel time (longest 12.3 h); saturation is negligible except motion (2.1 %); motion channels
+are constant 22.8 % of the time. The official RMS rule flags 69 % (channel 1) and 47 % (channel 2) of EEG
+windows; 74 % have at least one channel flagged.
 
 ## Decisions and why
 

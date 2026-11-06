@@ -472,6 +472,13 @@ def main() -> int:
               "for M3 (see `results/decisions.md`).\n")
             if "eeg_rms_per_run.png" in figs:
                 w("![EEG RMS per run](figures/eeg_rms_per_run.png)\n")
+        mov_ch = [c for r in sig_by_mod["mov"] for c in r["channels"].values()]
+        if mov_ch:
+            mdur = sum(r["duration_s"] * len(r["channels"]) for r in sig_by_mod["mov"])
+            w(f"Motion channels are exactly constant for {pct(sum(c['flat_s'] for c in mov_ch), mdur)} of channel time "
+              f"and {100 * np.average([c['saturation'] for c in mov_ch]):.1f}% of motion samples sit at the digital limits: "
+              "long idle/off stretches of the sensor. A flat motion window is therefore not evidence of a missing "
+              "file, and motion features must tolerate constant input (M3 uses offset removal and |x| sums).\n")
         w("Per-channel numbers: `results/audit/signal_channels.csv`.\n")
     w("## 7. What M2/M3 must do differently because of this audit\n")
     w("1. Design every filter and window for 256 Hz read from the header; test the 250 Hz path too (fixtures cover both).")
@@ -479,7 +486,8 @@ def main() -> int:
     w("3. Drop the visible-seizure secondary result unless the authors can supply visibility labels.")
     w("4. Motion features need a per-axis present mask: chest ACC/GYR are not always there, and the EEG-module motion is an extra source.")
     w("5. Report SzCORE metrics on the reference events after `timescoring`'s 90 s merge, and state the annotation count we used.")
-    w("6. Revisit the 13 uV artefact floor for our own models: feed the flag as an input bit, do not gate on it blindly.\n")
+    w("6. Revisit the 13 uV artefact floor for our own models: feed the flag as an input bit, do not gate on it blindly.")
+    w("7. Motion is often constant (sensor idle); its present bit comes from file availability, not from signal activity.\n")
     Path(args.report).write_text("\n".join(L) + "\n")
     print(f"wrote {args.report}, {tables}/*.csv, figures {figs}")
     return 0
