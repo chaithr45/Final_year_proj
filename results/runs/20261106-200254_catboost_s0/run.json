@@ -1,0 +1,9 @@
+{
+  "name": "catboost",
+  "seed": 0,
+  "git": {
+    "commit": "60c2cc2ee85b36100424bc404a926fe95afc97ee",
+    "dirty": true
+  },
+  "created": "20261106-200254"
+}
