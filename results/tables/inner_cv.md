@@ -5,3 +5,5 @@ Operating points chosen on pooled out-of-fold predictions. Hardware numbers are 
 | Config | AUROC | AUPR | Event-F1 | Sens | Prec | FP/24h | gate/k | Sens @<=1 FA/h (FP/24h) | Est. LUTs | Comparators | Multipliers | Run |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | lgbm | 0.872 | 0.062 | 0.292 | 0.339 | 0.347 | 3.0 | none/10 | 0.589 (19.9) | 30,486 | 3,129 | 0 | 20261106-174027_lgbm_s0 |
+| lr | 0.806 | 0.007 | 0.104 | 0.216 | 0.114 | 8.9 | any/10 | 0.409 (20.0) | - | - | 117 | 20261106-175412_lr_s0 |
+| treelut | 0.601 | 0.005 | 0.087 | 0.300 | 0.091 | 49.2 | both/8 | 0.173 (22.5) | 6,202 | 1,082 | 0 | 20261106-180609_treelut_s0 |
