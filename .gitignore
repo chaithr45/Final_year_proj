@@ -42,3 +42,4 @@ results/runs/*smoke*/
 # queue logs
 results/queue_*.log
 /catboost_info/
+/logs/

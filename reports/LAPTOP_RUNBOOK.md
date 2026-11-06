@@ -28,6 +28,12 @@ Our DWN is pure PyTorch (`src/models/dwn.py`), so it runs on CUDA without compil
 `torch-dwn` and `difflogic` are not in `environment.yml`: both need a CUDA toolkit to build, and our
 DWN and LGN code does not need them.
 
+## Launching long jobs
+
+Use `scripts/laptop/start.sh feat|chrono|sweep`: each job runs in its own tmux session (it survives
+closing the window's tab, not shutting WSL down: keep one Ubuntu window open), logs to `logs/<job>.log`,
+and its window stays open at the end so errors can be read with `tmux attach -t <job>`.
+
 ## 1. Data (about 126 GB download, then 7 GB of features)
 
 ```bash
