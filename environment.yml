@@ -2,6 +2,9 @@
 # Create with:  conda env create -f environment.yml && conda activate seizelut
 # The torch / CUDA pair is provisional: match it to the GPU machine's driver
 # (`nvidia-smi`) before the first training run in M4, and record the change here.
+# torch-dwn and difflogic are NOT installed: both compile CUDA extensions at install time (they fail
+# without a CUDA toolkit, e.g. under WSL). src/models/dwn.py and src/models/lgn.py are pure-PyTorch
+# reimplementations; tests/test_dwn.py checks the DWN against the torch-dwn kernel's equations.
 name: seizelut
 channels:
   - conda-forge
@@ -21,7 +24,6 @@ dependencies:
   - pip:
       - --extra-index-url https://download.pytorch.org/whl/cu124
       - torch==2.6.0+cu124
-      - torch-dwn==1.1.1   # needs CUDA (Section 1, Resources)
       - pyedflib==0.1.42
       - openneuro-py==2026.9.1
       - timescoring==0.0.7
@@ -31,5 +33,4 @@ dependencies:
       - catboost==1.2.8
       - shap==0.49.1
       - brevitas==0.12.1
-      - difflogic==0.1.0
       - -e .

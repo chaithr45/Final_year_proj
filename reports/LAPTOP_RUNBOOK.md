@@ -25,7 +25,8 @@ python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_
 ```
 
 Our DWN is pure PyTorch (`src/models/dwn.py`), so it runs on CUDA without compiling `torch-dwn`.
-If `torch-dwn` fails to install, delete that line from `environment.yml`; nothing depends on it.
+`torch-dwn` and `difflogic` are not in `environment.yml`: both need a CUDA toolkit to build, and our
+DWN and LGN code does not need them.
 
 ## 1. Data (about 126 GB download, then 7 GB of features)
 
