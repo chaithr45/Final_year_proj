@@ -221,7 +221,136 @@ class DWNModel(Model):
         return hw.dwn_cost(self.exported, self.therm, list(feature_bits), used)
 
 
-REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel)}
+class TreeLUTModel(Model):
+    """TreeLUT (Khataei & Bazargan, FPGA 2025; MIT-licensed reference github.com/kiabuzz/TreeLUT):
+    XGBoost on w_feature-bit unsigned inputs, leaves shifted by each tree's minimum and scaled by
+    one global factor to w_tree-bit integers; score = integer sum of leaves (+ class bias)."""
+    name = "treelut"
+
+    def __init__(self, w_feature=8, w_tree=3, n_estimators=100, max_depth=4, learning_rate=0.3, **xgb):
+        import xgboost
+        self.wf, self.wt = w_feature, w_tree
+        self.m = xgboost.XGBClassifier(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate,
+                                       tree_method="hist", n_jobs=4, eval_metric="logloss", **xgb)
+
+    def _q(self, X):
+        x = (X.astype(np.float64) - self.lo) * self.scale
+        return np.clip(np.floor(x), 0, (1 << self.wf) - 1).astype(np.int32)
+
+    def fit(self, X, y):
+        self.lo = X.min(0).astype(np.float64)
+        span = np.maximum(X.max(0).astype(np.float64) - self.lo, 1)
+        self.scale = ((1 << self.wf) - 1) / span          # min-max to w_feature bits (training data only)
+        self.m.fit(self._q(X), y)
+        df = self.m.get_booster().trees_to_dataframe()
+        self.trees = []
+        leaves = df[df["Feature"] == "Leaf"]
+        mins = leaves.groupby("Tree")["Gain"].min()
+        rng = (leaves.groupby("Tree")["Gain"].max() - mins).max()
+        self.leaf_scale = ((1 << self.wt) - 1) / rng
+        for t, g in df.groupby("Tree"):
+            nodes = {}
+            for _, r in g.iterrows():
+                nid = int(r["ID"].split("-")[1])
+                if r["Feature"] == "Leaf":
+                    nodes[nid] = ("leaf", int(round((r["Gain"] - mins[t]) * self.leaf_scale)))
+                else:
+                    nodes[nid] = ("split", int(r["Feature"][1:]), int(np.ceil(r["Split"])),
+                                  int(r["Yes"].split("-")[1]), int(r["No"].split("-")[1]))
+            self.trees.append(nodes)
+        return self
+
+    def score(self, X):
+        Q = self._q(X)
+        total = np.zeros(len(Q), dtype=np.int64)
+        for nodes in self.trees:
+            cur = np.zeros(len(Q), dtype=np.int64)
+            val = np.full(len(Q), -1, dtype=np.int64)
+            for _ in range(32):
+                todo = val < 0
+                if not todo.any():
+                    break
+                for nid in np.unique(cur[todo]):
+                    sel = todo & (cur == nid)
+                    nd = nodes[nid]
+                    if nd[0] == "leaf":
+                        val[sel] = nd[1]
+                    else:
+                        go_yes = Q[sel, nd[1]] < nd[2]
+                        idx = np.flatnonzero(sel)
+                        cur[idx[go_yes]] = nd[3]
+                        cur[idx[~go_yes]] = nd[4]
+            total += val
+        return total.astype(np.float32)
+
+    def cost(self, feature_bits):
+        splits = {(nd[1], nd[2]) for t in self.trees for nd in t.values() if nd[0] == "split"}
+        n_split = sum(1 for t in self.trees for nd in t.values() if nd[0] == "split")
+        n_leaf = sum(1 for t in self.trees for nd in t.values() if nd[0] == "leaf")
+        return hw.tree_cost(n_split, len(splits), n_leaf, len(self.trees), feature_bits=self.wf, leaf_bits=self.wt)
+
+
+class LGNModel(Model):
+    """Differentiable logic-gate network on thermometer bits (src/models/lgn.py)."""
+    name = "lgn"
+
+    def __init__(self, bits=8, layers=(2000, 2000), tau=10.0, epochs=20, lr=0.01, batch=2048, seed=0,
+                 device="cpu", threads=4, log=None):
+        self.p = dict(bits=bits, layers=tuple(layers), tau=tau, epochs=epochs, lr=lr, batch=batch, seed=seed,
+                      device=device)
+        self.threads, self.log = threads, (log or (lambda *a: None))
+
+    def fit(self, X, y):
+        import torch
+        from .dwn import DistributiveThermometer
+        from .lgn import LGN
+        torch.set_num_threads(self.threads)
+        p = self.p
+        self.therm = DistributiveThermometer(p["bits"]).fit(X)
+        bits = self.therm.encode(X)
+        self.net = LGN(bits.shape[1], p["layers"], p["tau"], p["seed"])
+        opt = torch.optim.Adam(self.net.parameters(), lr=p["lr"])
+        yt = torch.as_tensor(y, dtype=torch.long)
+        w = torch.tensor([1.0, float((y == 0).sum()) / max(1, int((y == 1).sum()))])
+        g = torch.Generator().manual_seed(p["seed"])
+        for ep in range(p["epochs"]):
+            self.net.train()
+            perm = torch.randperm(len(yt), generator=g)
+            tot, t0 = 0.0, time.time()
+            for i in range(0, len(perm), p["batch"]):
+                idx = perm[i:i + p["batch"]]
+                loss = torch.nn.functional.cross_entropy(self.net(bits[idx]), yt[idx], weight=w)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                tot += float(loss.detach()) * len(idx)
+            self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / len(perm):.4f} ({time.time() - t0:.0f} s)")
+        self.net.eval()
+        self.exported = self.net.export()
+        return self
+
+    def score(self, X):
+        from .lgn import lgn_integer_forward
+        out = [lgn_integer_forward(self.therm.encode(X[i:i + 200_000]).numpy().astype(np.uint8), self.exported)
+               for i in range(0, len(X), 200_000)]
+        return np.concatenate(out).astype(np.float32)
+
+    def cost(self, feature_bits):
+        used = np.zeros(self.therm.n_bits, dtype=bool)
+        first = self.exported["layers"][0]
+        used[np.unique(np.concatenate([first["a"], first["b"]]))] = True
+        t = self.therm.thresholds
+        mask = used.reshape(t.shape)
+        comps = sum(len(np.unique(t[f][mask[f]])) for f in range(t.shape[0]))
+        enc = sum(len(np.unique(t[f][mask[f]])) * math.ceil(feature_bits[f] / 2) for f in range(t.shape[0]))
+        gates = self.net.n_gates
+        last = self.exported["layers"][-1]["op"].shape[0]
+        return {"gates": int(gates), "network_luts_upper": int(gates), "encoder_comparators": int(comps),
+                "encoder_luts": int(enc), "popcount_luts": int(last), "postproc_luts": hw.POSTPROC_LUTS,
+                "total_luts": int(gates + enc + last + hw.POSTPROC_LUTS), "multipliers": 0}
+
+
+REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel)}
 
 
 def build(spec: dict, log=None) -> Model:

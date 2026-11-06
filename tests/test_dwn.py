@@ -95,3 +95,39 @@ def test_lut_layer_learnable_mapping_shapes():
     out = layer(torch.randint(0, 2, (3, 20)).float())
     assert out.shape == (3, 8) and set(out.unique().tolist()) <= {0.0, 1.0}
     assert layer.input_mapping().shape == (8, 6)
+
+
+def test_lgn_learns_and_integer_export_matches():
+    from seizelut.models.lgn import LGN, lgn_integer_forward
+    rng = np.random.default_rng(1)
+    X = rng.normal(0, 1, (3000, 4))
+    y = ((X[:, 0] > 0) ^ (X[:, 1] > 0.3)).astype(int)
+    bits = DistributiveThermometer(8).fit(X).encode(X)
+    net = LGN(bits.shape[1], (256, 256), tau=8.0, seed=0)
+    opt = torch.optim.Adam(net.parameters(), lr=0.05)
+    for _ in range(150):
+        loss = torch.nn.functional.cross_entropy(net(bits), torch.tensor(y))
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+    net.eval()
+    with torch.no_grad():
+        logits = net(bits)
+    assert (logits.argmax(1).numpy() == y).mean() > 0.8
+    np.testing.assert_allclose(lgn_integer_forward(bits.numpy(), net.export()),
+                               ((logits[:, 1] - logits[:, 0]) * net.head.tau).numpy(), atol=1e-3)
+
+
+def test_treelut_integer_scores_rank_like_xgboost():
+    pytest.importorskip("xgboost")
+    from seizelut.models.registry import TreeLUTModel
+    rng = np.random.default_rng(2)
+    X = rng.integers(-200, 200, (4000, 5)).astype(np.int16)
+    y = ((X[:, 0] + X[:, 1] > 50) | (X[:, 2] > 150)).astype(int)
+    m = TreeLUTModel(w_feature=8, w_tree=4, n_estimators=40, max_depth=3).fit(X, y)
+    s = m.score(X)
+    assert s.dtype == np.float32 and np.all(s == np.round(s))
+    from sklearn.metrics import roc_auc_score
+    assert roc_auc_score(y, s) > 0.97
+    c = m.cost([10] * 5)
+    assert c["multipliers"] == 0 and c["trees"] == 40
