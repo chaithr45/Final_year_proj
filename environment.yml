@@ -5,6 +5,8 @@
 # torch-dwn and difflogic are NOT installed: both compile CUDA extensions at install time (they fail
 # without a CUDA toolkit, e.g. under WSL). src/models/dwn.py and src/models/lgn.py are pure-PyTorch
 # reimplementations; tests/test_dwn.py checks the DWN against the torch-dwn kernel's equations.
+# brevitas is not installed either: it pulls numpy<2, which breaks scikit-learn; src/models/mlp_int8.py
+# implements INT8 quantisation-aware training directly.
 name: seizelut
 channels:
   - conda-forge
@@ -24,6 +26,7 @@ dependencies:
   - pip:
       - --extra-index-url https://download.pytorch.org/whl/cu124
       - torch==2.6.0+cu124
+      - numpy==2.3.4         # pinned again here so no pip package can downgrade it
       - pyedflib==0.1.42
       - openneuro-py==2026.9.1
       - timescoring==0.0.7
@@ -32,5 +35,4 @@ dependencies:
       - lightgbm==4.6.0
       - catboost==1.2.8
       - shap==0.49.1
-      - brevitas==0.12.1
       - -e .
