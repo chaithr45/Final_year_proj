@@ -155,7 +155,10 @@ def ecg_features(ops, q, n_win):
     bad = (rr < S.ECG_RR_MIN) | (rr > S.ECG_RR_MAX)
     n_bad, _ = wsum(bad.astype(np.int64), rr_t)
     last = np.searchsorted(beats, ends, side="right") - 1
-    since = np.where(last >= 0, ends - beats[np.maximum(last, 0)], ends)
+    if len(beats):
+        since = np.where(last >= 0, ends - beats[np.maximum(last, 0)], ends)
+    else:                               # no beat detected in the whole run (flat or absent lead)
+        since = ends.copy()
     quality_bad = (n_rr < S.ECG_MIN_RR) | (n_bad > 0) | (since > S.ECG_MAX_GAP_S * fs)
     log_rr = np.where(n_rr > 0, ops.log(s_rr) - ops.log(n_rr), 0)
     log_masrd = np.where(n_d > 0, ops.log(np.maximum(s_d, 1)) - ops.log(np.maximum(n_d, 1)), 0)

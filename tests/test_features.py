@@ -128,3 +128,13 @@ def test_seizure_raises_eeg_power(fixture_features):
     gi, _ = fixture_features["sub-001_run-01"]          # synthetic seizure at 40-70 s
     j = gi["names"].index("eeg_theta_mean")
     assert gi["X"][45:65, j].mean() > gi["X"][80:100, j].mean() + 8   # > 2x in log2 units
+
+
+def test_ecg_without_beats_is_flagged_bad():
+    """A flat ECG lead produces no R-peaks; features must still be produced and flagged bad."""
+    import numpy as np
+    from seizelut.features.golden import _Ops, ecg_features
+    out, beats = ecg_features(_Ops("int"), np.zeros(256 * 40, dtype=np.int64), 39)
+    assert len(beats) == 0
+    assert out["quality_bad"].all()
+    assert not out["log_rr"].any()
