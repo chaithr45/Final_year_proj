@@ -83,3 +83,5 @@ Method results and keep/drop decisions are appended below as runs finish.
   event-F1 0.167 (sens 0.291, 3.5 FP/24 h, gate both), sens 0.490 at <= 1 FA/h; **1,782 estimated LUTs**
   (200 network + 1,361 encoder + 209 popcount + 12 post-processing), 0 multipliers. Below TreeLUT w5 (F1 0.266 at 6.4k LUTs)
   and lgbm; the size sweep (Section 6.1 grid) decides whether larger DWNs close the gap.
+* **mlp_int8** (INT8 quantisation-aware MLP, the multiplier-based reference): AUROC 0.830, event-F1 0.147 (sens 0.225,
+  7.8 FP/24 h); 9,600 multiplications per window. The 1.8k-LUT DWN (F1 0.167, 0 multipliers) is at least as good.
