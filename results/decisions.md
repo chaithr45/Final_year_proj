@@ -62,3 +62,13 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D30 | Downloads are checked against Content-Length, extraction refuses EDFs whose size disagrees with the header, and `scripts/verify_feature_cache.py` checks every cached run against the M1 audit durations; the first LGBM, LR and partial XGB runs are marked `_invalid` and re-run | The float-twin comparison exposed sub-020 run-01 with ECG cut at 51,855 of 71,835 s. The verifier then found 9 runs (7 training, 2 test) silently truncated by short S3 reads, two of them in EEG (sub-078 run-30 had 12 of 16,363 windows). All 9 were re-extracted; all 2,850 runs now agree with the audit. 51 runs whose only motion sensor is the head (EEG) module have no motion features by design (chest module only) | `src/data/remote.py`, `scripts/extract_features.py`, `scripts/verify_feature_cache.py` |
 
 Method results and keep/drop decisions are appended below as runs finish.
+
+## Results log (inner CV on the 96 training patients only; no test patient has been scored)
+
+* **M3 int vs float twin** (10 training patients, `results/m3/int_float_gap.md`): median feature correlation 0.9965 (min 0.889,
+  extrema-count features), artefact flags agree 99.7 %, LightGBM leave-patients-out AUROC int 0.736 vs float 0.735. Integer
+  front end **kept**: no measurable accuracy cost.
+* **lgbm** (Tier-1 reference): window AUROC 0.870; best-F1 operating point (no gate, k = 10) event-F1 0.292, sensitivity 0.327,
+  precision 0.348, 3.6 FP/24 h; sensitivity 0.594 at <= 1 false alarm per hour.
+* **lr**: AUROC 0.806, event-F1 0.105. Linear models are far behind trees on these features.
+

@@ -1,0 +1,1 @@
+fold 0: train 76 patients, 644910 windows (30710 seizure); val 20 patients
