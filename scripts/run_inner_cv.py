@@ -83,10 +83,13 @@ def main() -> int:
     ap.add_argument("--folds", nargs="*", type=int, default=None)
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--mode", default="int", help="feature cache: int (golden) or float (twin)")
+    ap.add_argument("--device", default=None, help="override the model's torch device (e.g. cuda)")
     ap.add_argument("--folds-file", default=str(REPO / "configs/folds_inner5.json"),
                     help="patient->fold map (default: the fixed inner folds); smaller maps for dry runs")
     args = ap.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
+    if args.device:
+        cfg["model"].setdefault("params", {})["device"] = args.device
     seed = args.seed if args.seed is not None else cfg.get("seed", 0)
     folds = load_folds(args.folds_file)
     fold_ids = args.folds if args.folds is not None else sorted(set(folds.values()))
