@@ -1,8 +1,10 @@
 \begin{table}[t]\centering\caption{Inner 5-fold cross-validation on the 96 training patients (SzCORE event metrics, mean over patients; hardware estimated).}\label{tab:innercv}
 \resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrrr}\toprule
 Model & AUROC & F1 & Sens & FP/24h & Est.\ LUTs & Mult. \\ \midrule
+catboost & 0.863 & 0.286 & 0.337 & 3.0 & 27,738 & 0 \\
 lgbm & 0.870 & 0.292 & 0.327 & 3.6 & 30,588 & 0 \\
 lr & 0.806 & 0.105 & 0.216 & 8.8 & - & 117 \\
+rf & 0.852 & 0.198 & 0.216 & 0.5 & 322,654 & 0 \\
 treelut\_w3 & 0.671 & 0.135 & 0.361 & 14.0 & 6,172 & 0 \\
 treelut\_w4 & 0.794 & 0.197 & 0.453 & 29.5 & 6,272 & 0 \\
 treelut\_w5 & 0.857 & 0.266 & 0.329 & 4.2 & 6,372 & 0 \\

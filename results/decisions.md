@@ -77,3 +77,5 @@ Method results and keep/drop decisions are appended below as runs finish.
 * **TreeLUT leaf width** (D29): w3 AUROC 0.671 / F1 0.135, w4 0.794 / 0.197, w5 0.857 / 0.266 at about 6.4k estimated LUTs
   (1,073 comparators). **Keep w5** as the TreeLUT entry; w3 (the paper's default) is dropped here: 3-bit leaves cannot
   represent this boosting ensemble. w5 vs lgbm: F1 p = 0.38 (n.s.), FP/24 h p = 0.015.
+* **catboost**: AUROC 0.863, event-F1 0.286 (sens 0.337, 3.0 FP/24 h, gate both).
+* **rf**: AUROC 0.852, event-F1 0.198 (sens 0.216, 0.5 FP/24 h).
