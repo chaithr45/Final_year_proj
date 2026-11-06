@@ -62,11 +62,13 @@ def main() -> int:
     for k, why in bad:
         print(f"{k}: {why}")
     print(f"{n} runs checked, {len(bad)} disagree with the audit")
+    if n < len(rows):
+        print(f"INCOMPLETE: {len(rows) - n} of {len(rows)} audited runs have no cached features")
     if args.fix:
         for k, _ in bad:
             (d / f"{k}.npz").unlink(missing_ok=True)
         print(f"deleted {len(bad)} cache files")
-    return 1 if bad else 0
+    return 1 if bad or n < len(rows) else 0
 
 
 if __name__ == "__main__":

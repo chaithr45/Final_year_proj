@@ -7,6 +7,9 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 mkdir -p logs
+if [[ "${1:-}" == feat || "${1:-}" == chrono ]] && [[ ! -d data/raw/ds005873/sub-125 ]]; then
+  echo "dataset metadata missing: run  python scripts/fetch_metadata.py  first (a few minutes, ~100 MB)"; exit 1
+fi
 case "${1:-}" in
   feat)   cmd="python scripts/extract_features.py --workers 6 && python scripts/verify_feature_cache.py" ;;
   chrono) cmd="python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda" ;;

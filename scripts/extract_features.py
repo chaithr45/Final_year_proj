@@ -89,7 +89,11 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
     tmp = REPO / "cache" / "tmp"
     tmp.mkdir(parents=True, exist_ok=True)
-    runs = [r for r in discover_runs(root, subjects) if not (out / f"{r.key}.npz").exists()]
+    found = discover_runs(root, subjects)
+    if not found:
+        raise SystemExit(f"no recordings found under {root}: fetch the metadata first "
+                         "(python scripts/fetch_metadata.py)")
+    runs = [r for r in found if not (out / f"{r.key}.npz").exists()]
     print(f"{len(runs)} runs to extract ({args.mode})", flush=True)
     maxabs_path = out / "maxabs.json"
     maxabs = json.loads(maxabs_path.read_text()) if maxabs_path.exists() else {}
