@@ -28,7 +28,7 @@ from seizelut.data.split import official_test_subjects, official_train_subjects
 from seizelut.eval import seizeit2 as s2
 from seizelut.eval.events import mask_to_events
 from seizelut.eval.operating import gate_mask, kth_of_last
-from seizelut.eval.runlog import log_test_access, new_run_dir, require_test_access
+from seizelut.eval.runlog import mark_complete, log_test_access, new_run_dir, require_test_access
 from seizelut.eval.stats import bootstrap_ci
 from seizelut.eval.szcore import aggregate, score_recording
 from seizelut.features import spec as S
@@ -126,6 +126,7 @@ def main() -> int:
     results["summary_mean_std_over_seeds"] = summary
     (run / "final_metrics.json").write_text(json.dumps(results, indent=1, default=float) + "\n")
     print(json.dumps(summary, indent=1))
+    mark_complete(run)
     return 0
 
 

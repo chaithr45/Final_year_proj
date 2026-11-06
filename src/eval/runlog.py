@@ -57,10 +57,17 @@ def new_run_dir(name: str, config: dict, seed: int, root: Path | None = None) ->
         d = root / f"{stamp}_{name}_s{seed}_{i}"
         i += 1
     d.mkdir(parents=True)
+    # ignored by git until mark_complete(): unfinished runs never show up as uncommitted changes
+    (d / ".gitignore").write_text("# run in progress; removed by mark_complete()\n*\n")
     (d / "config.yaml").write_text(yaml.safe_dump(config, sort_keys=False))
     (d / "run.json").write_text(json.dumps({"name": name, "seed": seed, "git": git_state(),
                                             "created": stamp}, indent=2) + "\n")
     return d
+
+
+def mark_complete(run_dir: Path) -> None:
+    """Make a finished run visible to git (removes the in-progress .gitignore)."""
+    (Path(run_dir) / ".gitignore").unlink(missing_ok=True)
 
 
 def log_test_access(run_dir: Path, reason: str) -> None:

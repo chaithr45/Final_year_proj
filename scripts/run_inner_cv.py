@@ -26,7 +26,7 @@ import yaml
 from seizelut.data.featureset import FeatureStore
 from seizelut.data.split import load_folds
 from seizelut.eval.operating import choose, sweep, subject_metrics
-from seizelut.eval.runlog import new_run_dir
+from seizelut.eval.runlog import mark_complete, new_run_dir
 from seizelut.features import spec as S
 from seizelut.models.registry import build
 
@@ -222,6 +222,7 @@ def main() -> int:
                "operating_points": out_ops, "fold_info": fold_info,
                "cost_median": {kk: float(np.median([c[kk] for c in costs])) for kk in costs[0]} if costs and costs[0] else {}}
     (run / "metrics.json").write_text(json.dumps(metrics, indent=1) + "\n")
+    mark_complete(run)
     with open(run / "sweep.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=[kk for kk in rows[0] if kk != "per_subject"])
         w.writeheader()

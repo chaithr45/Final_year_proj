@@ -21,7 +21,7 @@ import numpy as np
 
 from seizelut.eval import seizeit2 as s2
 from seizelut.eval.events import mask_to_events
-from seizelut.eval.runlog import log_test_access, require_test_access, touches_test
+from seizelut.eval.runlog import mark_complete, log_test_access, require_test_access, touches_test
 from seizelut.eval.szcore import aggregate, score_recording
 
 REPO = Path(__file__).resolve().parents[2]
@@ -85,6 +85,7 @@ def main() -> int:
     metrics = {"n_recordings": len(recs), "subjects": subjects, "seizeit2_as_published": pub,
                "seizeit2_corrected": cor, "szcore": sz, "published": PUBLISHED[args.baseline]}
     (run / "metrics.json").write_text(json.dumps(metrics, indent=1) + "\n")
+    mark_complete(run)
     p05, c05, s05 = pub["at_0.5"], cor["at_0.5"], sz["0.50"]["mean_over_subjects"]
     P = PUBLISHED[args.baseline]
     md = [f"# {run.name}: {len(recs)} recordings, {len(subjects)} subjects\n",
