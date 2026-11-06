@@ -25,7 +25,8 @@ def dwn_cost(exported: dict, thermometer, feature_bits: list[int], used_bits: np
     mask = used_bits.reshape(t.shape)
     comps, comp_bits, enc_luts = 0, 0, 0
     for f in range(t.shape[0]):
-        k = len(np.unique(t[f][mask[f]]))
+        vals = t[f][mask[f]]
+        k = len(np.unique(vals[np.isfinite(vals)]))
         comps += k
         comp_bits += k * feature_bits[f]
         enc_luts += k * math.ceil(feature_bits[f] / 2)

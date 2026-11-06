@@ -27,9 +27,11 @@ class RunFeatures:
 
 
 class FeatureStore:
+    onset_s = 20     # N5 onset weighting: first 20 windows (s) of each seizure
+
     def __init__(self, mode: str = "int", root: Path | None = None):
         self.dir = (root or REPO / "cache" / "features") / mode
-        self.files = {p.stem: p for p in sorted(self.dir.glob("sub-*_run-*.npz"))}
+        self.files = {p.stem: p for p in sorted(self.dir.glob("sub-*_run-*.npz")) if ".tmp" not in p.name}
 
     def runs_of(self, subjects) -> list[str]:
         s = set(subjects)
@@ -85,5 +87,21 @@ class FeatureStore:
         X, y = np.concatenate(Xs), np.concatenate(Ys).astype(np.int8)
         perm = rng.permutation(len(y))
         rk = np.concatenate(Ks)
+        # seizure "bags" (one id per contiguous block of positive windows) and onset flags
+        bag_of, onset_of = {}, {}
+        next_bag = 0
+        for i, k in enumerate(keys):
+            pos = np.flatnonzero(ys[k] == 1)
+            if not len(pos):
+                continue
+            starts = np.r_[0, np.flatnonzero(np.diff(pos) > 1) + 1]
+            ends = np.r_[starts[1:], len(pos)]
+            for a, b in zip(starts, ends):
+                for j, w in enumerate(pos[a:b]):
+                    bag_of[(i, int(w))] = next_bag
+                    onset_of[(i, int(w))] = j < self.onset_s
+                next_bag += 1
+        self.last_bags = np.array([bag_of.get((int(a), int(b)), -1) for a, b in rk[perm]])
+        self.last_onset = np.array([onset_of.get((int(a), int(b)), False) for a, b in rk[perm]])
         return (X[perm], y[perm], np.concatenate(Gs)[perm], np.concatenate(Ps)[perm],
                 [(keys[a], b) for a, b in rk[perm]])

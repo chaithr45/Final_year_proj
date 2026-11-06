@@ -158,31 +158,79 @@ class RandomForest(_Trees):
 
 
 class DWNModel(Model):
-    """Thermometer + DWN (src/models/dwn.py), trained with class-weighted cross-entropy.
-    score() is the INTEGER popcount difference of the exported network (hardware-exact)."""
+    """Thermometer + DWN (src/models/dwn.py). score() is the INTEGER popcount difference of the
+    exported network (hardware-exact).
+
+    Tier-2 switches (Section 6.3), all off by default:
+      encoder: distributive | uniform | gaussian | learned (N2; learned uses comparator_penalty)
+      loss: ce | focal | gce | sce (N5 noise-robust); onset_weight (N5, first 20 s of seizures)
+      mil_topk: fraction of each seizure's windows that must score high (N5 multiple-instance)
+      distill_alpha: weight of the teacher's soft targets (N4; soft targets passed to fit)
+    """
     name = "dwn"
 
     def __init__(self, bits=8, layers=(200,), n=6, mapping="learnable", tau=1 / 0.3, epochs=30, lr=1e-2,
-                 batch=2048, decay_at=0.7, loss="ce", focal_gamma=2.0, seed=0, device="cpu", threads=4,
-                 log=None):
+                 batch=2048, decay_at=0.7, loss="ce", focal_gamma=2.0, gce_q=0.7, sce_ab=(0.1, 1.0),
+                 encoder="distributive", comparator_penalty=1e-4, onset_weight=1.0, mil_topk=None,
+                 distill_alpha=0.0, distill_T=2.0, seed=0, device="cpu", threads=4, log=None):
         self.p = dict(bits=bits, layers=tuple(layers), n=n, mapping=mapping, tau=tau, epochs=epochs, lr=lr,
-                      batch=batch, decay_at=decay_at, loss=loss, focal_gamma=focal_gamma, seed=seed, device=device)
+                      batch=batch, decay_at=decay_at, loss=loss, focal_gamma=focal_gamma, gce_q=gce_q,
+                      sce_ab=tuple(sce_ab), encoder=encoder, comparator_penalty=comparator_penalty,
+                      onset_weight=onset_weight, mil_topk=mil_topk, distill_alpha=distill_alpha,
+                      distill_T=distill_T, seed=seed, device=device)
         self.threads = threads
         self.log = log or (lambda *a: None)
 
-    def fit(self, X, y):
+    def _loss(self, out, yb, w, sw):
         import torch
+        import torch.nn.functional as F
+        p = self.p
+        logp = F.log_softmax(out, 1)
+        lp_y = logp.gather(1, yb[:, None]).squeeze(1)
+        if p["loss"] == "focal":
+            per = -(1 - lp_y.exp()) ** p["focal_gamma"] * lp_y
+        elif p["loss"] == "gce":
+            per = (1 - lp_y.exp() ** p["gce_q"]) / p["gce_q"]
+        elif p["loss"] == "sce":
+            a, b = p["sce_ab"]
+            onehot = F.one_hot(yb, 2).float().clamp_min(1e-4)
+            rce = -(logp.exp() * onehot.log()).sum(1)
+            per = -a * lp_y + b * rce
+        else:
+            per = -lp_y
+        return (per * w[yb] * sw).sum() / (w[yb] * sw).sum()
+
+    def fit(self, X, y, onset=None, bags=None, soft=None):
+        import torch
+        import torch.nn.functional as F
         from .dwn import DWN, DistributiveThermometer
+        from .encoders import LearnedThermometer, make_encoder
         torch.set_num_threads(self.threads)
         p = self.p
-        self.therm = DistributiveThermometer(p["bits"]).fit(X)
-        bits = self.therm.encode(X)
+        torch.manual_seed(p["seed"])
         dev = torch.device(p["device"])
-        self.net = DWN(bits.shape[1], p["layers"], p["n"], p["mapping"], p["tau"], p["seed"]).to(dev)
-        opt = torch.optim.Adam(self.net.parameters(), lr=p["lr"])
+        learned = p["encoder"] == "learned"
+        base = make_encoder("distributive" if learned else p["encoder"], p["bits"]).fit(X)
+        if learned:
+            q75, q25 = np.percentile(X, [75, 25], axis=0)
+            self.lenc = LearnedThermometer(base, (q75 - q25) / 8.0).to(dev)
+            xin = torch.as_tensor(X.astype(np.float32))
+            n_bits = base.n_bits
+        else:
+            self.therm = base
+            xin = self.therm.encode(X)
+            n_bits = xin.shape[1]
+        self.net = DWN(n_bits, p["layers"], p["n"], p["mapping"], p["tau"], p["seed"]).to(dev)
+        params = list(self.net.parameters()) + (list(self.lenc.parameters()) if learned else [])
+        opt = torch.optim.Adam(params, lr=p["lr"])
         sched = torch.optim.lr_scheduler.StepLR(opt, step_size=max(1, int(p["epochs"] * p["decay_at"])), gamma=0.1)
         yt = torch.as_tensor(y, dtype=torch.long)
         w = torch.tensor([1.0, float((y == 0).sum()) / max(1, int((y == 1).sum()))], device=dev)
+        sw_all = torch.ones(len(y))
+        if onset is not None and p["onset_weight"] != 1.0:
+            sw_all[torch.as_tensor(onset, dtype=torch.bool)] = float(p["onset_weight"])
+        soft_t = torch.as_tensor(soft, dtype=torch.float32) if soft is not None else None
+        bag_t = torch.as_tensor(bags, dtype=torch.long) if bags is not None else None
         g = torch.Generator().manual_seed(p["seed"])
         for ep in range(p["epochs"]):
             self.net.train()
@@ -190,14 +238,30 @@ class DWNModel(Model):
             tot, t0 = 0.0, time.time()
             for i in range(0, len(perm), p["batch"]):
                 idx = perm[i:i + p["batch"]]
-                xb, yb = bits[idx].to(dev), yt[idx].to(dev)
+                xb = self.lenc(xin[idx].to(dev)) if learned else xin[idx].to(dev)
+                yb = yt[idx].to(dev)
                 out = self.net(xb)
-                if p["loss"] == "focal":
-                    logp = torch.log_softmax(out, 1)
-                    pt = logp.gather(1, yb[:, None]).squeeze(1).exp()
-                    loss = (-(1 - pt) ** p["focal_gamma"] * logp.gather(1, yb[:, None]).squeeze(1) * w[yb]).mean()
-                else:
-                    loss = torch.nn.functional.cross_entropy(out, yb, weight=w)
+                sw = sw_all[idx].to(dev)
+                if p["mil_topk"] and bag_t is not None:
+                    # N5 MIL: positives of a seizure only need their top-k fraction to score high
+                    bb = bag_t[idx]
+                    keep = torch.ones(len(idx), dtype=torch.bool)
+                    margin = (out[:, 1] - out[:, 0]).detach()
+                    for b in torch.unique(bb[bb >= 0]):
+                        m = torch.nonzero(bb == b).squeeze(1)
+                        k = max(1, int(np.ceil(p["mil_topk"] * len(m))))
+                        drop = m[torch.argsort(margin[m], descending=True)[k:]]
+                        keep[drop] = False
+                    sw = sw * keep.float().to(dev)
+                loss = self._loss(out, yb, w, sw)
+                if p["distill_alpha"] > 0 and soft_t is not None:
+                    T = p["distill_T"]
+                    st = soft_t[idx].to(dev).clamp(1e-4, 1 - 1e-4)
+                    q = torch.stack([1 - st, st], 1)
+                    loss = (1 - p["distill_alpha"]) * loss + p["distill_alpha"] * T * T * F.kl_div(
+                        F.log_softmax(out / T, 1), q, reduction="batchmean")
+                if learned:
+                    loss = loss + p["comparator_penalty"] * self.lenc.penalty()
                 opt.zero_grad()
                 loss.backward()
                 opt.step()
@@ -205,6 +269,9 @@ class DWNModel(Model):
             sched.step()
             self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / len(perm):.4f} ({time.time() - t0:.0f} s)")
         self.net.eval()
+        if learned:
+            self.therm = self.lenc.freeze()
+            self.lenc = None
         self.exported = self.net.export()
         return self
 
@@ -218,7 +285,17 @@ class DWNModel(Model):
     def cost(self, feature_bits):
         from .dwn import used_input_bits
         used = used_input_bits(self.exported, self.therm.n_bits)
-        return hw.dwn_cost(self.exported, self.therm, list(feature_bits), used)
+        finite = np.isfinite(self.therm.thresholds).ravel()
+        c = hw.dwn_cost(self.exported, self._finite_therm(), list(feature_bits), used & finite)
+        return c
+
+    def _finite_therm(self):
+        from .dwn import DistributiveThermometer
+        t = DistributiveThermometer(self.therm.num_bits)
+        th = self.therm.thresholds.astype(np.float64).copy()
+        th[~np.isfinite(th)] = np.nan
+        t.thresholds = th
+        return t
 
 
 class TreeLUTModel(Model):

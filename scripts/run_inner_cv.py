@@ -48,6 +48,35 @@ def select_features(spec, names):
     return [names.index(n) for n in spec]
 
 
+MODALITY_PREFIX = {"ecg": ("ecg_", "present_ecg"), "emg": ("emg_", "present_emg"),
+                   "mov": ("mov_", "present_mov_acc", "present_mov_gyr")}
+
+
+def modality_dropout(X, p, rng):
+    """N6: for each training row, drop ECG, EMG and motion independently with probability p
+    (features and present bits set to 0, exactly as when the modality is missing)."""
+    X = X.copy()
+    for prefixes in MODALITY_PREFIX.values():
+        cols = [i for i, n in enumerate(S.FEATURES) if n.startswith(prefixes)]
+        rows = rng.random(len(X)) < p
+        X[np.ix_(rows, cols)] = 0
+    return X
+
+
+def _save_model(model, run, fold, cols):
+    """Keep each fold's fitted model (checkpoints/, not committed) for post-hoc studies (N3, N7)."""
+    import pickle
+    d = REPO / "checkpoints" / run.name
+    d.mkdir(parents=True, exist_ok=True)
+    log_fn = getattr(model, "log", None)
+    if log_fn is not None:
+        model.log = None
+    with open(d / f"fold_{fold}.pkl", "wb") as fh:
+        pickle.dump({"model": model, "cols": cols, "features": [S.FEATURES[i] for i in cols]}, fh)
+    if log_fn is not None:
+        model.log = log_fn
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--config", required=True)
@@ -99,6 +128,7 @@ def main() -> int:
                 n_win += len(s)
             c = spec_model.cost(feat_bits)
             costs.append(c)
+            _save_model(spec_model, run, k, cols)
             fold_info.append({"fold": k, "val_windows": n_win, "seconds": round(time.time() - t0, 1), "cost": c})
             log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
             continue
@@ -118,7 +148,17 @@ def main() -> int:
         model = build(cfg["model"], log=log)
         if cfg["model"]["type"] == "dwn":
             model.p["seed"] = seed + k
-        model.fit(X[:, fcols], y)
+        if tc.get("modality_dropout"):
+            X = modality_dropout(X, tc["modality_dropout"], np.random.default_rng(seed + 100 + k))
+        fit_kw = {}
+        if cfg["model"]["type"] == "dwn":
+            fit_kw = {"onset": store.last_onset, "bags": store.last_bags}
+            if tc.get("distill"):
+                teacher = build(tc["distill"]["teacher"], log=log)
+                teacher.fit(X[:, fcols], y)
+                fit_kw["soft"] = teacher.score(X[:, fcols])        # in-sample soft targets (probabilities)
+                log(f"  teacher {tc['distill']['teacher']['type']} trained for distillation")
+        model.fit(X[:, fcols], y, **fit_kw)
         if tc.get("hard_negative"):
             # one round: score all training background, add the highest-scoring false positives
             hn = tc["hard_negative"]
@@ -146,6 +186,7 @@ def main() -> int:
             n_win += len(s)
         c = model.cost(fold_bits)
         costs.append(c)
+        _save_model(model, run, k, fcols)
         fold_info.append({"fold": k, "train_windows": int(len(y)), "val_windows": n_win,
                           "features": [S.FEATURES[i] for i in fcols],
                           "seconds": round(time.time() - t0, 1), "cost": c})

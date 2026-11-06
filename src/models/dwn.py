@@ -52,7 +52,7 @@ class DistributiveThermometer:
         bits the network reads (`used`: boolean mask over encoded bits)."""
         t = self.thresholds
         mask = np.ones_like(t, dtype=bool) if used is None else used.reshape(t.shape)
-        return int(sum(len(np.unique(t[f][mask[f]])) for f in range(t.shape[0])))
+        return int(sum(len(np.unique(t[f][mask[f] & np.isfinite(t[f])])) for f in range(t.shape[0])))
 
 
 # ----------------------------------------------------------------- EFD operator
