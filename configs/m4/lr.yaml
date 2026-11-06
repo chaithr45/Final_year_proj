@@ -1,0 +1,6 @@
+name: lr
+seed: 0
+model: {type: lr, params: {C: 1.0}}
+features: all
+train: {bg_ratio: 20}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

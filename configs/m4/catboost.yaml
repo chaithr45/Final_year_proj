@@ -1,0 +1,6 @@
+name: catboost
+seed: 0
+model: {type: catboost, params: {iterations: 300, depth: 6, learning_rate: 0.1}}
+features: all
+train: {bg_ratio: 20}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

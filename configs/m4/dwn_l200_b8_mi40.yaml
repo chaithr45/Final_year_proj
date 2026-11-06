@@ -1,0 +1,11 @@
+# DWN sized for the CPU: top-40 features by mutual information (per fold), 8 thermometer bits,
+# 200 LUT6 neurons with learnable mapping, GroupSum tau 1/0.3. Section 6.1 grid runs on the GPU.
+name: dwn_l200_b8_mi40
+seed: 0
+model:
+  type: dwn
+  params: {bits: 8, layers: [200], n: 6, mapping: learnable, tau: 3.3333, epochs: 15, lr: 0.01,
+           batch: 2048, decay_at: 0.7, loss: ce, threads: 4}
+features: {mi_top: 40}
+train: {bg_ratio: 10}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

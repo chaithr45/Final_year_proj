@@ -38,3 +38,6 @@ paper/*.synctex.gz
 
 # smoke runs are pipeline checks, not results
 results/runs/*smoke*/
+
+# queue logs
+results/queue_*.log
