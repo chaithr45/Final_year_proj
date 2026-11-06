@@ -34,7 +34,7 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D12 | ChronoNet ported to PyTorch (129,122 parameters, as Keras) instead of running the TensorFlow code | One framework for all models; same architecture, init, BN, loss and schedule | `tests/test_baselines.py` |
 | D13 | Two ChronoNet protocols: "official" (best epoch by val score on the validation = test patients, as the released code does) and "clean" (last epoch) | The released code selects the epoch on the test patients; we reproduce it but flag it | `configs/baselines/` |
 | D14 | Test-set guard: any script touching sub-097..125 needs `--final-test` and logs the access | Honesty rule 10.4 | `src/eval/runlog.py` |
-| D15 | SVM baseline pending | The paper text (42 features) is needed; arXiv/Nature not reachable from the coding environment | Question for the user |
+| D15 | SVM baseline pending the 42-feature definition | The dataset paper (now read, `reports/seizeit2_paper_notes.md`) gives the SVM protocol but defers the features to Vandecasteele et al., Epilepsia 2020 (doi 10.1111/epi.16470), which is not reachable from the coding environment; C and kernel scale are not stated | Question for the user: that paper's feature table |
 
 ## M3: integer feature pipeline
 
