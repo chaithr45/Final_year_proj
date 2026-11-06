@@ -85,3 +85,6 @@ Method results and keep/drop decisions are appended below as runs finish.
   and lgbm; the size sweep (Section 6.1 grid) decides whether larger DWNs close the gap.
 * **mlp_int8** (INT8 quantisation-aware MLP, the multiplier-based reference): AUROC 0.830, event-F1 0.147 (sens 0.225,
   7.8 FP/24 h); 9,600 multiplications per window. The 1.8k-LUT DWN (F1 0.167, 0 multipliers) is at least as good.
+* **lgn_mi40** (difflogic-style logic-gate network): the first attempt was lost to a container restart after 3 of 5 folds
+  (about 45 min per fold on CPU; no metrics were written, the incomplete directory was deleted). Re-queued after N1;
+  `scripts/run_queue.sh` now skips configs that already have a complete run, so the queue resumes after restarts.
