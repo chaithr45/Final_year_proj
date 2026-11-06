@@ -72,3 +72,8 @@ Method results and keep/drop decisions are appended below as runs finish.
   precision 0.348, 3.6 FP/24 h; sensitivity 0.594 at <= 1 false alarm per hour.
 * **lr**: AUROC 0.806, event-F1 0.105. Linear models are far behind trees on these features.
 
+* **xgb**: AUROC 0.867, event-F1 0.277 (sens 0.286, 3.4 FP/24 h); vs lgbm per-patient F1 p = 0.54, FP/24 h p = 0.0005.
+  Est. 47.9k LUTs.
+* **TreeLUT leaf width** (D29): w3 AUROC 0.671 / F1 0.135, w4 0.794 / 0.197, w5 0.857 / 0.266 at about 6.4k estimated LUTs
+  (1,073 comparators). **Keep w5** as the TreeLUT entry; w3 (the paper's default) is dropped here: 3-bit leaves cannot
+  represent this boosting ensemble. w5 vs lgbm: F1 p = 0.38 (n.s.), FP/24 h p = 0.015.
