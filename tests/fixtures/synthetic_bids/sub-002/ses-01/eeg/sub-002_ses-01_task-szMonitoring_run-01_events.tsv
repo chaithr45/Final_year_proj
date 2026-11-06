@@ -1,0 +1,3 @@
+onset	duration	eventType	lateralization	localization	vigilance	confidence	channels	dateTime	recordingDuration
+0.50	3.00	sz_foc_a	left	temp	awake	n/a	n/a	2000-01-01 00:00:00	90.00
+50.00	12.00	sz_foc_f2b	left	temp	awake	n/a	n/a	2000-01-01 00:00:00	90.00

@@ -1,0 +1,6 @@
+{
+  "Name": "SeizeIT2 synthetic CI fixture (not patient data)",
+  "BIDSVersion": "1.8.0",
+  "DatasetType": "raw",
+  "License": "CC0"
+}

@@ -1,0 +1,37 @@
+# Raw data, feature caches and checkpoints never go in git (Section 1)
+data/
+cache/
+checkpoints/
+*.edf
+!tests/fixtures/**/*.edf
+*.pt
+*.ckpt
+*.npy
+*.npz
+!tests/fixtures/**/*.npy
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+build/
+dist/
+
+# Simulation outputs
+*.vcd
+*.vvp
+sim_build/
+
+# LaTeX
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.synctex.gz
+
+.DS_Store
+.vscode/
+.idea/

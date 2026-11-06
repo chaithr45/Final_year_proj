@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seizelut"
+version = "0.1.0"
+description = "LUT-native multimodal seizure detection on SeizeIT2 (Phase 1, software)"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.0",
+    "scikit-learn>=1.4",
+    "pyyaml>=6.0",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pyedflib>=0.1.38"]
+
+# The code lives in src/ (layout of Section 10.2) and is imported as `seizelut`.
+[tool.setuptools]
+package-dir = { "seizelut" = "src" }
+packages = [
+    "seizelut",
+    "seizelut.data",
+    "seizelut.features",
+    "seizelut.models",
+    "seizelut.eval",
+    "seizelut.hw",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

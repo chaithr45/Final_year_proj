@@ -1,0 +1,11 @@
+{
+    "EMGReference": "n/a",
+    "SamplingFrequency": 256,
+    "PowerLineFrequency": "n/a",
+    "SoftwareFilters": "n/a",
+    "EMGChannelCount": 1,
+    "EMGMontage": "n/a",
+    "RecordingType": "discontinuous",
+    "RecordingDuration": 120.0,
+    "TaskName": "szMonitoring"
+}

@@ -1,0 +1,12 @@
+{
+    "EEGReference": "n/a",
+    "SamplingFrequency": 250,
+    "PowerLineFrequency": "n/a",
+    "SoftwareFilters": "n/a",
+    "EEGChannelCount": 2,
+    "EEGMontage": "right",
+    "RecordingType": "discontinuous",
+    "RecordingDuration": 90.0,
+    "TaskName": "szMonitoring",
+    "EEGPlacementScheme": "behind-the-ear"
+}
