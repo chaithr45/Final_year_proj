@@ -43,6 +43,10 @@ def process(run, out_dir: str, mode: str, tmp: str) -> dict:
     try:
         with contextlib.ExitStack() as st:
             sig = {m: read_edf(st.enter_context(local_edf(run, m, tmp))) for m in run.modalities}
+            for m, d in sig.items():         # a truncated file must never become a silently shorter run
+                bad = [w for w in d.warnings if "header says" in w or "trailing bytes" in w]
+                if bad:
+                    raise IOError(f"{m}: {'; '.join(bad)}")
             ann = run.read_annotations()
             n_sec = int(sig["eeg"].duration_s)
             res = extract(sig, n_sec, mode)

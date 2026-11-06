@@ -35,6 +35,8 @@ def load_runs():
     runs = []
     for d in sorted((REPO / "results" / "runs").glob("*")):
         m = d / "metrics.json"
+        if d.name.endswith("_invalid"):
+            continue
         if m.exists() and "operating_points" in (j := json.loads(m.read_text())):
             if len(j.get("folds", [])) != 5:
                 continue
@@ -49,6 +51,10 @@ def main() -> int:
     runs = load_runs()
     if not runs:
         print("no complete inner-CV runs yet")
+        out = REPO / "results" / "tables"
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "inner_cv.md").write_text("# Inner 5-fold CV\n\nNo complete valid inner-CV run yet.\n")
+        (out / "inner_cv_tests.md").unlink(missing_ok=True)
         return 0
     latest = {}
     for name, j in runs:

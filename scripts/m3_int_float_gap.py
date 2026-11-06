@@ -48,6 +48,7 @@ def main() -> int:
         del a, b
     Xi, Xf, Y, G = np.concatenate(Xi), np.concatenate(Xf), np.concatenate(Y), np.array(G)
     Ai, Af = np.concatenate(Ai), np.concatenate(Af)
+    print(f"loaded {len(keys)} runs, {len(Y):,} windows", flush=True)
     per_feat = {}
     for j, name in enumerate(S.FEATURES):
         a, b = Xi[:, j].astype(np.float64), Xf[:, j].astype(np.float64)
@@ -72,9 +73,10 @@ def main() -> int:
             pos, neg = tr[Y[tr] == 1], tr[Y[tr] == 0]
             neg = rng.choice(neg, size=min(len(neg), int(args.bg_ratio * max(len(pos), 1))), replace=False)
             idx = np.concatenate([pos, neg])
-            m = lgb.LGBMClassifier(n_estimators=300, learning_rate=0.05, num_leaves=31, verbose=-1, random_state=0)
+            m = lgb.LGBMClassifier(n_estimators=300, learning_rate=0.05, num_leaves=31, verbose=-1, random_state=0, n_jobs=2)
             m.fit(np.asarray(X[idx]), Y[idx])
-            oof[va] = m.predict_proba(X[va])[:, 1]
+            oof[va] = m.predict_proba(np.asarray(X[va]))[:, 1]
+            print(f"  {tag} fold {k} done", flush=True)
         auc[tag] = {"window_auroc": float(roc_auc_score(Y, oof)), "window_aupr": float(average_precision_score(Y, oof))}
     corr = np.array([v["pearson"] for v in per_feat.values()])
     out = {"runs": len(keys), "background_fraction_kept": args.bg_keep, "subjects": sorted(set(G.tolist())), "windows": int(len(Y)),

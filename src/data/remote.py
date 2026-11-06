@@ -20,8 +20,13 @@ def _download(url: str, dest: Path, retries: int = 4) -> None:
     for attempt in range(retries + 1):
         try:
             with urllib.request.urlopen(url, timeout=120) as resp, open(dest, "wb") as fh:
+                expected = resp.headers.get("Content-Length")
+                got = 0
                 while chunk := resp.read(1 << 22):
                     fh.write(chunk)
+                    got += len(chunk)
+            if expected is not None and got != int(expected):
+                raise IOError(f"short download: {got} of {expected} bytes from {url}")
             return
         except Exception:
             if attempt == retries:

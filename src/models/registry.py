@@ -325,6 +325,9 @@ class TreeLUTModel(Model):
         mins = leaves.groupby("Tree")["Gain"].min()
         rng = (leaves.groupby("Tree")["Gain"].max() - mins).max()
         self.leaf_scale = ((1 << self.wt) - 1) / rng
+        # integer sum S maps back to logit units as S / leaf_scale + offset (per model, monotone);
+        # a decision threshold th in those units is the integer threshold ceil((th - offset) * leaf_scale)
+        self.offset = float(mins.sum())
         for t, g in df.groupby("Tree"):
             nodes = {}
             for _, r in g.iterrows():
@@ -338,6 +341,14 @@ class TreeLUTModel(Model):
         return self
 
     def score(self, X):
+        """Scores in logit units, so out-of-fold scores of different folds can be pooled."""
+        return (self.score_int(X) / self.leaf_scale + self.offset).astype(np.float64)
+
+    def int_threshold(self, th: float) -> int:
+        return int(np.ceil((th - self.offset) * self.leaf_scale))
+
+    def score_int(self, X):
+        """Integer sum of quantised leaves: the value the hardware adder tree produces."""
         Q = self._q(X)
         total = np.zeros(len(Q), dtype=np.int64)
         for nodes in self.trees:
@@ -358,7 +369,7 @@ class TreeLUTModel(Model):
                         cur[idx[go_yes]] = nd[3]
                         cur[idx[~go_yes]] = nd[4]
             total += val
-        return total.astype(np.float32)
+        return total
 
     def cost(self, feature_bits):
         splits = {(nd[1], nd[2]) for t in self.trees for nd in t.values() if nd[0] == "split"}

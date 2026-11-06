@@ -125,8 +125,12 @@ def test_treelut_integer_scores_rank_like_xgboost():
     X = rng.integers(-200, 200, (4000, 5)).astype(np.int16)
     y = ((X[:, 0] + X[:, 1] > 50) | (X[:, 2] > 150)).astype(int)
     m = TreeLUTModel(w_feature=8, w_tree=4, n_estimators=40, max_depth=3).fit(X, y)
-    s = m.score(X)
-    assert s.dtype == np.float32 and np.all(s == np.round(s))
+    si, s = m.score_int(X), m.score(X)
+    assert si.dtype == np.int64
+    # the logit-unit score is a monotone map of the integer sum; thresholds translate exactly
+    u = np.unique(s)
+    th = float((u[len(u) // 2] + u[len(u) // 2 + 1]) / 2)
+    assert np.array_equal(s >= th, si >= m.int_threshold(th))
     from sklearn.metrics import roc_auc_score
     assert roc_auc_score(y, s) > 0.97
     c = m.cost([10] * 5)
