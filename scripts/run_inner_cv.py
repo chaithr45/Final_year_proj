@@ -72,7 +72,7 @@ def _save_model(model, run, fold, cols):
     if log_fn is not None:
         model.log = None
     with open(d / f"fold_{fold}.pkl", "wb") as fh:
-        pickle.dump({"model": model, "cols": cols, "features": [S.FEATURES[i] for i in cols]}, fh)
+        pickle.dump({"model": model, "cols": cols, "features": [S.FEATURES[i % len(S.FEATURES)] for i in cols]}, fh)
     if log_fn is not None:
         model.log = log_fn
 
@@ -97,8 +97,11 @@ def main() -> int:
     missing = store.missing(sorted(folds))
     if missing:
         raise SystemExit(f"feature cache incomplete for {len(missing)} training patients, e.g. {missing[:5]}")
-    cols = select_features(cfg.get("features", "all"), S.FEATURES)
-    feat_bits = [S.FEATURE_BITS[S.FEATURES[i]] for i in cols]
+    store.stack = int(cfg.get("stack", 1))
+    names = S.FEATURES if store.stack == 1 else [f"{n}@t-{j}" for j in range(store.stack - 1, -1, -1) for n in S.FEATURES]
+    cols = select_features(cfg.get("features", "all"), names)
+    bits_of = lambda i: S.FEATURE_BITS[S.FEATURES[i % len(S.FEATURES)]]
+    feat_bits = [bits_of(i) for i in cols]
     run = new_run_dir(cfg["name"], {**cfg, "folds_run": fold_ids, "feature_mode": args.mode,
                                     "folds_file": str(Path(args.folds_file).name)}, seed)
     logf = open(run / "log.txt", "a")
@@ -146,8 +149,8 @@ def main() -> int:
             sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
             mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed + k)
             fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
-            log(f"  MI top {fspec['mi_top']}: {[S.FEATURES[i] for i in fcols[:10]]} ...")
-        fold_bits = [S.FEATURE_BITS[S.FEATURES[i]] for i in fcols]
+            log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
+        fold_bits = [bits_of(i) for i in fcols]
         model = build(cfg["model"], log=log)
         if cfg["model"]["type"] == "dwn":
             model.p["seed"] = seed + k
@@ -191,7 +194,7 @@ def main() -> int:
         costs.append(c)
         _save_model(model, run, k, fcols)
         fold_info.append({"fold": k, "train_windows": int(len(y)), "val_windows": n_win,
-                          "features": [S.FEATURES[i] for i in fcols],
+                          "features": [names[i] for i in fcols],
                           "seconds": round(time.time() - t0, 1), "cost": c})
         log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
 

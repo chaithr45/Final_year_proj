@@ -26,8 +26,16 @@ class RunFeatures:
     duration_s: float
 
 
+def stack_windows(X: np.ndarray, k: int, rows: np.ndarray | None = None) -> np.ndarray:
+    """Causal stacking within one run: row t -> [X[t-k+1], ..., X[t]] (earliest rows repeat X[0])."""
+    rows = np.arange(len(X)) if rows is None else rows
+    parts = [X[np.maximum(rows - j, 0)] for j in range(k - 1, -1, -1)]
+    return np.concatenate(parts, axis=1)
+
+
 class FeatureStore:
     onset_s = 20     # N5 onset weighting: first 20 windows (s) of each seizure
+    stack = 1        # >1: each row holds the last `stack` windows (N1 baseline)
 
     def __init__(self, mode: str = "int", root: Path | None = None):
         self.dir = (root or REPO / "cache" / "features") / mode
@@ -44,7 +52,8 @@ class FeatureStore:
     def load_run(self, key: str) -> RunFeatures:
         d = np.load(self.files[key])
         sub, run = key.split("_")[:2]
-        return RunFeatures(sub, run, d["X"], d["y"].astype(np.int8), d["artefact"].astype(bool),
+        X = stack_windows(d["X"], self.stack) if self.stack > 1 else d["X"]
+        return RunFeatures(sub, run, X, d["y"].astype(np.int8), d["artefact"].astype(bool),
                            d["present"].astype(bool), d["seizures"], float(d["duration_s"]))
 
     def iter_runs(self, subjects):
@@ -81,7 +90,8 @@ class FeatureStore:
             if not len(rows):
                 continue
             d = np.load(self.files[k])
-            Xs.append(d["X"][rows]); Ys.append(y[rows]); Ps.append(d["present"][rows])
+            Xs.append(stack_windows(d["X"], self.stack, rows) if self.stack > 1 else d["X"][rows])
+            Ys.append(y[rows]); Ps.append(d["present"][rows])
             Gs.append(np.full(len(rows), sub_ids.setdefault(k.split("_")[0], len(sub_ids))))
             Ks.append(np.stack([np.full(len(rows), i), rows], axis=1))
         X, y = np.concatenate(Xs), np.concatenate(Ys).astype(np.int8)
