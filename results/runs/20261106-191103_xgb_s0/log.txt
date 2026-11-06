@@ -1,1 +1,2 @@
 fold 0: train 76 patients, 644910 windows (30710 seizure); val 20 patients
+  fold 0 done in 55 s; estimated cost {'split_nodes': 16155, 'distinct_comparators': 4636, 'leaves': 16455, 'trees': 300, 'comparator_luts': 27816, 'leaf_luts': 18855, 'total_luts': 46683, 'multipliers': 0}
