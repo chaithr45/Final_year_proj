@@ -1,7 +1,7 @@
 # Raw data, feature caches and checkpoints never go in git (Section 1)
-data/
-cache/
-checkpoints/
+/data/
+/cache/
+/checkpoints/
 *.edf
 !tests/fixtures/**/*.edf
 *.pt
