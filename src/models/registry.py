@@ -350,7 +350,62 @@ class LGNModel(Model):
                 "total_luts": int(gates + enc + last + hw.POSTPROC_LUTS), "multipliers": 0}
 
 
-REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel)}
+class Int8MLPModel(Model):
+    name = "mlp_int8"
+
+    def __init__(self, hidden=(64, 32), epochs=20, lr=1e-3, batch=2048, seed=0, threads=4, log=None):
+        self.p = dict(hidden=tuple(hidden), epochs=epochs, lr=lr, batch=batch, seed=seed)
+        self.threads, self.log = threads, (log or (lambda *a: None))
+
+    def _std(self, X):
+        return torch_from((X.astype(np.float32) - self.mu) / self.sd)
+
+    def fit(self, X, y):
+        import torch
+        from .mlp_int8 import Int8MLP
+        torch.set_num_threads(self.threads)
+        torch.manual_seed(self.p["seed"])
+        self.mu = X.mean(0).astype(np.float32)
+        self.sd = np.maximum(X.std(0), 1e-3).astype(np.float32)
+        xs = self._std(X)
+        self.net = Int8MLP(X.shape[1], self.p["hidden"])
+        opt = torch.optim.Adam(self.net.parameters(), lr=self.p["lr"])
+        yt = torch.as_tensor(y, dtype=torch.long)
+        w = torch.tensor([1.0, float((y == 0).sum()) / max(1, int((y == 1).sum()))])
+        g = torch.Generator().manual_seed(self.p["seed"])
+        for ep in range(self.p["epochs"]):
+            self.net.train()
+            perm = torch.randperm(len(yt), generator=g)
+            tot = 0.0
+            for i in range(0, len(perm), self.p["batch"]):
+                idx = perm[i:i + self.p["batch"]]
+                loss = torch.nn.functional.cross_entropy(self.net(xs[idx]), yt[idx], weight=w)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                tot += float(loss.detach()) * len(idx)
+            self.log(f"    epoch {ep + 1}/{self.p['epochs']} loss {tot / len(perm):.4f}")
+        self.net.eval()
+        return self
+
+    def score(self, X):
+        import torch
+        with torch.no_grad():
+            out = [self.net(self._std(X[i:i + 200_000])) for i in range(0, len(X), 200_000)]
+        o = torch.cat(out)
+        return (o[:, 1] - o[:, 0]).numpy().astype(np.float32)
+
+    def cost(self, feature_bits):
+        return hw.mlp_cost(self.net.sizes)
+
+
+def torch_from(a):
+    import torch
+    return torch.from_numpy(np.ascontiguousarray(a))
+
+
+REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel,
+                                Int8MLPModel)}
 
 
 def build(spec: dict, log=None) -> Model:
