@@ -3,6 +3,7 @@
 # last output (or an error) can be read with `tmux attach -t <name>`. Output is also in logs/<name>.log.
 #   scripts/laptop/start.sh feat     feature extraction (streams from S3)
 #   scripts/laptop/start.sh chrono   ChronoNet (official protocol): data, then training on the GPU
+#   scripts/laptop/start.sh night    metadata fetch (resumable, retried once), then the whole chrono job
 #   scripts/laptop/start.sh sweep    DWN sweep on the inner folds (after `feat` + verify)
 set -euo pipefail
 cd "$(dirname "$0")/../.."
@@ -13,8 +14,9 @@ fi
 case "${1:-}" in
   feat)   cmd="python scripts/extract_features.py --workers 6 && python scripts/verify_feature_cache.py" ;;
   chrono) cmd="python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda" ;;
+  night)  cmd="(python scripts/fetch_metadata.py || python scripts/fetch_metadata.py) && python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda" ;;
   sweep)  cmd="python scripts/make_dwn_sweep.py && scripts/run_queue.sh configs/m4/sweep/*.yaml" ;;
-  *) echo "usage: $0 feat|chrono|sweep"; exit 2 ;;
+  *) echo "usage: $0 feat|chrono|night|sweep"; exit 2 ;;
 esac
 cat > "logs/$1.sh" <<INNER
 source "\$HOME/miniforge3/etc/profile.d/conda.sh"
