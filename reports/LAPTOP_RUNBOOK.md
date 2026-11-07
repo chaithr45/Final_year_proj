@@ -74,6 +74,11 @@ python scripts/baselines/evaluate_predictions.py --run results/runs/<same run> -
 ```
 
 Repeat with `configs/baselines/chrononet_clean.yaml` (no epoch selection on test patients).
+
+All of it unattended: `scripts/laptop/start.sh finish` waits for the running ChronoNet training, then
+writes its test predictions and scores, then trains, predicts and scores the clean variant (about
+5 h more on an RTX 3060). It can be started while `night` is still training; the internet must be on
+for the predictions (the test EEG is streamed from S3, one file at a time). It resumes like the others.
 `--final-test` is required because the published baseline is scored on the validation (= test)
 patients; this is the M2 reproduction and is logged in `TEST_ACCESS.log`.
 
