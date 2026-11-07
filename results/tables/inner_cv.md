@@ -5,6 +5,7 @@ Operating points chosen on pooled out-of-fold predictions. Hardware numbers are 
 | Config | AUROC | AUPR | Event-F1 | Sens | Prec | FP/24h | gate/k | Sens @<=1 FA/h (FP/24h) | Est. LUTs | Comparators | Multipliers | Run |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | catboost | 0.863 | 0.060 | 0.286 | 0.337 | 0.356 | 3.0 | both/10 | 0.618 (22.1) | 27,738 | 1,021 | 0 | 20261106-200254_catboost_s0 |
+| dwn_L100_b16_learn | 0.829 | 0.013 | 0.140 | 0.290 | 0.146 | 6.2 | both/10 | 0.493 (23.0) | 1,653 | 273 | 0 | 20261107-210416_dwn_L100_b16_learn_s0 |
 | dwn_L50_b16_learn | 0.826 | 0.011 | 0.135 | 0.399 | 0.122 | 10.9 | both/10 | 0.521 (21.1) | 1,066 | 181 | 0 | 20261107-160623_dwn_L50_b16_learn_s0 |
 | dwn_L50_b16_rando | 0.818 | 0.008 | 0.124 | 0.337 | 0.145 | 8.4 | both/10 | 0.480 (20.4) | 1,380 | 243 | 0 | 20261107-184605_dwn_L50_b16_rando_s0 |
 | dwn_L50_b4_learn | 0.820 | 0.007 | 0.081 | 0.385 | 0.075 | 20.5 | any/10 | 0.429 (22.8) | 684 | 107 | 0 | 20261107-191213_dwn_L50_b4_learn_s0 |
