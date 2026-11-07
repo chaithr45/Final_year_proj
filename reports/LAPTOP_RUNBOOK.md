@@ -37,6 +37,7 @@ and its window stays open at the end so errors can be read with `tmux attach -t 
 Every job resumes: if it is interrupted (exit 143 in the log = stopped from outside, e.g. the window
 was closed, Windows slept or restarted), run the same `start.sh` command again. The ChronoNet data step
 keeps a per-recording progress file and training continues from the last finished epoch (`--resume auto`).
+Memory: WSL gets half the laptop's RAM (7.4 GB here). The ChronoNet data step needs scipy 1.18 (`pip install scipy==1.18.1`): with the conda scipy 1.16.3 a single long recording needs ~5 GB and the out-of-memory killer stops the whole tmux session (`journalctl -b | grep -i oom` shows it).
 To keep a job alive overnight: leave one Ubuntu window open, laptop on the charger, and in Windows
 power settings set sleep to Never and closing the lid to Do nothing (when plugged in).
 

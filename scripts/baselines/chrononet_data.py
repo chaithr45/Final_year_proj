@@ -69,6 +69,10 @@ def main() -> int:
     ap.add_argument("--downloads", type=int, default=4, help="EDF downloads running ahead of processing")
     ap.add_argument("--final-test", action="store_true", help="allow test patients (official epoch selection)")
     args = ap.parse_args()
+    import scipy
+    if tuple(int(v) for v in scipy.__version__.split(".")[:2]) < (1, 18):
+        print(f"WARNING: scipy {scipy.__version__}: its FFT needs up to ~5 GB for the longest recordings "
+              "(1.2 GB with scipy 1.18); on an 8 GB machine run  pip install scipy==1.18.1  first", flush=True)
     cfg = yaml.safe_load(Path(args.config).read_text())
     ds = yaml.safe_load((REPO / "configs/dataset.yaml").read_text())
     root = REPO / ds["dataset"]["root"]

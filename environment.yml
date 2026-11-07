@@ -7,6 +7,9 @@
 # reimplementations; tests/test_dwn.py checks the DWN against the torch-dwn kernel's equations.
 # brevitas is not installed either: it pulls numpy<2, which breaks scikit-learn; src/models/mlp_int8.py
 # implements INT8 quantisation-aware training directly.
+# scipy comes from pip (1.18.1), not conda (1.16.3): SciPy 1.16's FFT needs ~3.3 GB for one 22 h EEG
+# channel whose length has a large prime factor (1.2 GB in 1.18.1), which ran an 8 GB WSL out of memory
+# in the ChronoNet data step.
 name: seizelut
 channels:
   - conda-forge
@@ -14,7 +17,6 @@ dependencies:
   - python=3.12
   - pip
   - numpy=2.3.4
-  - scipy=1.16.3
   - pandas=2.3.3
   - scikit-learn=1.7.2
   - pyyaml=6.0.3
@@ -27,6 +29,7 @@ dependencies:
       - --extra-index-url https://download.pytorch.org/whl/cu124
       - torch==2.6.0+cu124
       - numpy==2.3.4         # pinned again here so no pip package can downgrade it
+      - scipy==1.18.1        # see the header: FFT memory on long recordings
       - pyedflib==0.1.42
       - openneuro-py==2026.9.1
       - timescoring==0.0.7
