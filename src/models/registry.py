@@ -633,6 +633,7 @@ REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomFores
 def build(spec: dict, log=None) -> Model:
     cls = REGISTRY[spec["type"]]
     params = dict(spec.get("params", {}))
-    if cls is DWNModel:
-        params["log"] = log
+    import inspect
+    if "log" in inspect.signature(cls.__init__).parameters:
+        params["log"] = log             # every trainable family reports its epochs in the run log
     return cls(**params)
