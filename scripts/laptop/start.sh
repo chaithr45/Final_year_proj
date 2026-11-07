@@ -20,12 +20,27 @@ case "${1:-}" in
   sweep)  cmd="python scripts/make_dwn_sweep.py && scripts/run_queue.sh configs/m4/sweep/*.yaml" ;;
   *) echo "usage: $0 feat|chrono|night|sweep"; exit 2 ;;
 esac
+# A session of the same name whose job has ended (only its shell is left) is replaced; a running one is kept.
+if tmux has-session -t "$1" 2>/dev/null; then
+  if [[ "$(tmux list-panes -t "$1" -F '#{pane_current_command}' | head -1)" == bash ]]; then
+    tmux kill-session -t "$1"
+  else
+    echo "'$1' is still running: watch with  tmux attach -t $1   or  tail -n 3 logs/$1.log"; exit 0
+  fi
+fi
+# The job is retried (every step resumes) up to 10 times if it stops with an error.
 cat > "logs/$1.sh" <<INNER
 source "\$HOME/miniforge3/etc/profile.d/conda.sh"
 conda activate seizelut
 cd "$(pwd)"
-( $cmd ) 2>&1 | tee -a "logs/$1.log"
-echo "=== $1 finished (exit \${PIPESTATUS[0]}) \$(date) ===" | tee -a "logs/$1.log"
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  ( $cmd ) 2>&1 | tee -a "logs/$1.log"
+  rc=\${PIPESTATUS[0]}
+  echo "=== $1 finished (exit \$rc) \$(date) ===" | tee -a "logs/$1.log"
+  [ "\$rc" -eq 0 ] && break
+  echo "=== retrying in 60 s (attempt \$attempt of 10) ===" | tee -a "logs/$1.log"
+  sleep 60
+done
 exec bash
 INNER
 tmux new-session -d -s "$1" "bash --rcfile logs/$1.sh"
