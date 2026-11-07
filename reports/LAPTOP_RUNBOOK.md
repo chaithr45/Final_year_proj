@@ -82,6 +82,29 @@ for the predictions (the test EEG is streamed from S3, one file at a time). It r
 `--final-test` is required because the published baseline is scored on the validation (= test)
 patients; this is the M2 reproduction and is logged in `TEST_ACCESS.log`.
 
+## Sending results back
+
+`scripts/laptop/push_runs.sh` commits every scored ChronoNet run folder (unfinished ones are skipped)
+and pushes it. Pushing needs a GitHub token once:
+
+1. On github.com: Settings, Developer settings, Personal access tokens, Fine-grained tokens,
+   Generate new token. Repository access: only `Final_year_proj`. Repository permissions:
+   Contents, Read and write. A short expiry (7 days) is enough.
+2. On the laptop, so the token is asked for only once (it is saved in plain text in
+   `~/.git-credentials`; delete that file or revoke the token when done):
+
+```bash
+git config --global credential.helper store
+```
+
+3. Then (username: your GitHub user name; password: the token):
+
+```bash
+git pull && scripts/laptop/push_runs.sh
+```
+
+Pulling while `finish` is running is safe: the running steps have already loaded their code.
+
 ## 3. M4: DWN size sweep on the inner folds (about 8-12 h)
 
 ```bash
