@@ -92,3 +92,7 @@ Method results and keep/drop decisions are appended below as runs finish.
 * **n1_stack5** (N1, DWN 200 LUT6 on the last 5 windows, MI top-40 over the 585 stacked columns): AUROC 0.750,
   event-F1 0.103 (sens 0.171, 2.7 FP/24 h, gate any), sens 0.441 at <= 1 FA/h; about 1.6k LUTs. **Drop**: worse than
   the single-window DWN because the selection kept only about 11 distinct features (D31); re-run as `n1_stack5_base`.
+* **n1_stateful_s16** (N1 stateful LUT network, 16 state bits): fold 1 was killed by the out-of-memory killer at
+  02:47 UTC, most likely because a dry-run test of `n1_stack5_base` was running alongside it on the same 15 GB machine;
+  fold 0 (2,873 estimated LUTs, 16 flip-flops) is kept and the run resumes from fold 1. Dry-run tests are no longer run
+  next to the queue. A third container restart (about 06:45 UTC) interrupted `lgn_mi40` after fold 1; it resumed from fold 2.
