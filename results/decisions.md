@@ -98,7 +98,16 @@ Method results and keep/drop decisions are appended below as runs finish.
   next to the queue. A third container restart (about 06:45 UTC) interrupted `lgn_mi40` after fold 1; it resumed from fold 2.
 * **lgn_mi40** result (resumed twice, fold- and epoch-level; 4,000 two-input gates, top-40 MI features): AUROC 0.843,
   event-F1 0.171 (sens 0.330, prec 0.197, 4.9 FP/24 h, gate both), sens 0.540 at <= 1 FA/h; vs lgbm per-patient F1
-  p = 3e-05, FP/24 h p = 1e-09. **7,491 estimated LUTs** (4,000 network as an upper bound of one LUT per gate, 1,479 encoder,
+  p = 3e-05, FP/24 h p = 1e-09; vs dwn_l200 per-patient F1 p = 0.92. **7,491 estimated LUTs** (4,000 network as an upper bound of one LUT per gate, 1,479 encoder,
   2,000 popcount, 12 post-processing), 0 multipliers. Slightly above the 1.8k-LUT DWN (AUROC 0.821, F1 0.167) at about four
   times the estimated cost, and below TreeLUT w5 (F1 0.266) at a similar cost. **Keep** as the Tier-1 logic-gate reference
   row; no further LGN tuning is queued. The DWN size sweep decides the LUT-native entry.
+* **n1_stack5_base** (N1 re-run with D31: MI ranked on the t-0 block, every lag of the top 40 kept; DWN 200 LUT6 on the
+  last 5 windows): AUROC 0.836, event-F1 0.164 (sens 0.460, prec 0.147, 10.8 FP/24 h, gate both), sens 0.583 at <= 1 FA/h;
+  about 3.8k estimated LUTs (637 comparators). vs the single-window dwn_l200: per-patient F1 p = 0.70 (no difference),
+  FP/24 h at the best-F1 point +2.9 (p = 1e-14), AUROC +0.015 and sens at <= 1 FA/h 0.583 vs 0.490. **Not adopted**: no
+  event-F1 gain at about twice the cost. The higher sensitivity at <= 1 FA/h is noted; stacking is revisited on the base
+  DWN size that the sweep picks.
+* **n1_stateful_s16** fold 2 was killed by the out-of-memory killer at about 14:59 UTC with nothing else running
+  (python anon-rss 13.9 GB of the 15 GB machine); folds 0 and 1 are complete (about 2.9k estimated LUTs, 16 flip-flops).
+  The memory use is the run's own and is being investigated before it is re-queued.
