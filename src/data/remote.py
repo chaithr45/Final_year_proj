@@ -46,3 +46,19 @@ def local_edf(run, modality: str, tmp_dir: str | os.PathLike | None = None):
         dest = Path(tmp) / rel.name
         _download(f"{BUCKET}/{urllib.parse.quote(str(rel))}", dest)
         yield dest
+
+
+def fetch_edf(run, modality: str, dest_dir: str | os.PathLike) -> tuple[Path, bool]:
+    """Return (path, is_temporary): the local EDF if present, else a fresh download into dest_dir
+    that the caller deletes. Lets downloads run ahead of (memory-heavy) processing."""
+    if modality in run.edf and Path(run.edf[modality]).exists():
+        return Path(run.edf[modality]), False
+    rel = run.sidecar[modality].relative_to(run.root).with_suffix(".edf")
+    fd, name = tempfile.mkstemp(dir=dest_dir, suffix="_" + rel.name)
+    os.close(fd)
+    try:
+        _download(f"{BUCKET}/{urllib.parse.quote(str(rel))}", Path(name))
+    except BaseException:
+        Path(name).unlink(missing_ok=True)
+        raise
+    return Path(name), True
