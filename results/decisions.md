@@ -110,4 +110,7 @@ Method results and keep/drop decisions are appended below as runs finish.
   DWN size that the sweep picks.
 * **n1_stateful_s16** fold 2 was killed by the out-of-memory killer at about 14:59 UTC with nothing else running
   (python anon-rss 13.9 GB of the 15 GB machine); folds 0 and 1 are complete (about 2.9k estimated LUTs, 16 flip-flops).
-  The memory use is the run's own and is being investigated before it is re-queued.
+  Cause: the sequence sampler held every training run's full feature matrix in memory (about 24 M windows for 77
+  patients). Fixed in 049e3bc (start points drawn from the labels, each needed run read once, uint8 bits, grouped
+  validation scoring); a test checks the new sampler gives the same draws, order and values as the old one. Fold 2
+  resumed at 16:23 UTC drew the same 19,980 sequences (3,374 with seizure) with a peak of 3.1 GB instead of 13.9 GB.
