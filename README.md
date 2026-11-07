@@ -13,8 +13,11 @@ Phase 2 (FPGA build) has its own prompt.
 | Milestone | State |
 |---|---|
 | M1 repository setup and data audit | done: [`reports/data_audit.md`](reports/data_audit.md), [`reports/M1_status.md`](reports/M1_status.md) |
-| M2 baseline reproduction | next |
-| M3–M8 | not started |
+| M2 baseline reproduction | ChronoNet (official protocol) trained on the GPU laptop; test-patient scoring and the clean variant (no epoch selection on test patients) running. SVM waits for the 42-feature table of Vandecasteele et al. 2020 |
+| M3 golden integer features + float twin | done: 117 features, [`spec/fixed_point.md`](spec/fixed_point.md); integer vs float LightGBM AUROC 0.736 vs 0.735 ([`results/m3/int_float_gap.md`](results/m3/int_float_gap.md)) |
+| M4 Tier-1 comparison (inner folds) | in progress: LR, LightGBM, XGBoost, CatBoost, RF, TreeLUT, DWN, LGN and INT8 MLP done ([`results/tables/inner_cv.md`](results/tables/inner_cv.md)); DWN size sweep running |
+| M5 Tier-2 (N1–N7) | in progress: N1 stacked windows not adopted, N1 stateful kept provisionally; N2–N7 not started. Every decision: [`results/decisions.md`](results/decisions.md) |
+| M6–M8 | not started (no test patient scored by any of our methods) |
 
 Key audit facts that differ from the original plan: biopotentials are **256 Hz** (not 250 Hz),
 **883** seizures (not 886), no centre/age labels in the public release, no visibility labels.
