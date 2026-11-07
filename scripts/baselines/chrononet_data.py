@@ -79,16 +79,44 @@ def main() -> int:
         keys = keys[: cfg["train"]["max_windows"]]
     print(f"{len(runs)} training recordings, {len(keys)} windows ({int(keys[:, 3].sum())} seizure)", flush=True)
 
-    x = np.lib.format.open_memmap(out / "train_x.npy", mode="w+", dtype=np.float32, shape=(len(keys), 500, 2))
+    # Resumable: recordings already cut are listed in train_progress.txt (written only after the
+    # memmap is flushed), so an interrupted run continues where it stopped; COMPLETE skips everything.
+    done_f, prog_f = out / "COMPLETE", out / "train_progress.txt"
+    sig = f"{cfg['seed']} {cfg['data']['factor']} {len(runs)} {len(keys)} {int(keys[:, 3].sum())}"
+    if done_f.exists() and done_f.read_text().strip() == sig:
+        print("ChronoNet data already complete for this config; nothing to do")
+        return 0
+    have = out / "train_x.npy"
+    resume = prog_f.exists() and have.exists() and prog_f.read_text().split("\n", 1)[0] == sig
+    if resume:
+        x = np.load(have, mmap_mode="r+")
+        assert x.shape == (len(keys), 500, 2)
+        finished = {int(v) for v in prog_f.read_text().split("\n")[1:] if v.strip()}
+    else:
+        x = np.lib.format.open_memmap(have, mode="w+", dtype=np.float32, shape=(len(keys), 500, 2))
+        prog_f.write_text(sig + "\n")
+        finished = set()
     jobs = []
     for i in sorted(set(keys[:, 0].astype(int))):
+        if i in finished:
+            continue
         sel = np.flatnonzero(keys[:, 0] == i)
-        jobs.append((sel, (runs[i], keys[sel, 1], str(tmp))))
+        jobs.append((i, sel, (runs[i], keys[sel, 1], str(tmp))))
+    n_rec = len(set(keys[:, 0].astype(int)))
+    if resume:
+        print(f"resuming: {len(finished)} of {n_rec} recordings already cut", flush=True)
+    pending = []
     with ProcessPoolExecutor(args.workers) as pool:
-        for n, ((sel, _), w) in enumerate(zip(jobs, pool.map(_cut, [j[1] for j in jobs]))):
+        for n, ((i, sel, _), w) in enumerate(zip(jobs, pool.map(_cut, [j[2] for j in jobs]))):
             x[sel] = w
+            pending.append(i)
+            if len(pending) >= 20 or n == len(jobs) - 1:
+                x.flush()
+                with open(prog_f, "a") as fh:
+                    fh.write("".join(f"{v}\n" for v in pending))
+                pending = []
             if n % 50 == 0:
-                print(f"  {n}/{len(jobs)} recordings", flush=True)
+                print(f"  {len(finished) + n}/{n_rec} recordings", flush=True)
     x.flush()
     np.save(out / "train_y.npy", keys[:, 3].astype(np.uint8))
     np.save(out / "train_keys.npy", keys)
@@ -112,6 +140,7 @@ def main() -> int:
         np.save(out / "sel_y.npy", np.concatenate(ys).astype(np.uint8))
         np.save(out / "sel_block.npy", np.concatenate(bs))
         print(f"selection set: {len(blocks)} blocks around test-patient seizures (official protocol)")
+    done_f.write_text(sig + "\n")
     print("done")
     return 0
 

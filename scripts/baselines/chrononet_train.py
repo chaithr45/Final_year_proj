@@ -37,6 +37,9 @@ def main() -> int:
     ap.add_argument("--config", required=True)
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--resume", default=None,
+                    help="'auto' (newest unfinished run of this config, else a new run) or a run directory; "
+                         "continues from the last completed epoch (model, optimiser, lr and RNG states)")
     args = ap.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
     seed = args.seed if args.seed is not None else cfg["seed"]
@@ -45,7 +48,20 @@ def main() -> int:
     cache = REPO / cfg["data"]["cache_dir"]
     x = np.load(cache / "train_x.npy", mmap_mode="r")
     y = np.load(cache / "train_y.npy")
-    run = new_run_dir(cfg["name"], cfg, seed)
+    run = None
+    if args.resume:
+        cands = ([Path(args.resume).resolve()] if args.resume != "auto" else
+                 sorted((REPO / "results" / "runs").glob(f"*_{cfg['name']}_s{seed}"), reverse=True))
+        for d in cands:
+            if (not (d / "selected_epoch.json").exists() and (REPO / "checkpoints" / d.name / "last.pt").exists()
+                    and yaml.safe_load((d / "config.yaml").read_text()) == yaml.safe_load(yaml.safe_dump(cfg, sort_keys=False))):
+                run = d
+                break
+        if run is None and args.resume != "auto":
+            raise SystemExit(f"{args.resume}: no resumable state (finished, different config, or no last.pt)")
+    resumed = run is not None
+    if not resumed:
+        run = new_run_dir(cfg["name"], cfg, seed)
     print(f"run dir {run}; {len(y)} windows ({int(y.sum())} seizure); device {args.device}", flush=True)
 
     sel = None
@@ -63,7 +79,18 @@ def main() -> int:
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     hist = []
     rng = np.random.default_rng(seed)
-    for epoch in range(tc["epochs"]):
+    start = 0
+    if resumed:
+        st = torch.load(ckpt_dir / "last.pt", map_location=dev, weights_only=False)
+        model.load_state_dict(st["model"])
+        opt.load_state_dict(st["opt"])
+        lr, hist, start = st["lr"], st["hist"], st["epoch"]
+        rng.bit_generator.state = st["np_rng"]
+        torch.set_rng_state(st["torch_rng"])
+        if st.get("cuda_rng") is not None and dev.type == "cuda":
+            torch.cuda.set_rng_state(st["cuda_rng"])
+        print(f"resumed after epoch {start}", flush=True)
+    for epoch in range(start, tc["epochs"]):
         lr = decay_schedule(epoch, lr)
         for g in opt.param_groups:
             g["lr"] = lr
@@ -92,6 +119,11 @@ def main() -> int:
             row["val_score"] = float(np.nanmean(scores))
         hist.append(row)
         torch.save(model.state_dict(), ckpt_dir / f"epoch_{epoch + 1:03d}.pt")
+        tmp_last = ckpt_dir / "last.pt.tmp"
+        torch.save({"model": model.state_dict(), "opt": opt.state_dict(), "lr": lr, "hist": hist,
+                    "epoch": epoch + 1, "np_rng": rng.bit_generator.state, "torch_rng": torch.get_rng_state(),
+                    "cuda_rng": torch.cuda.get_rng_state() if dev.type == "cuda" else None}, tmp_last)
+        tmp_last.replace(ckpt_dir / "last.pt")      # atomic: an interruption never leaves a half-written state
         print(json.dumps(row), flush=True)
         with open(run / "history.csv", "w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=list(hist[-1]))

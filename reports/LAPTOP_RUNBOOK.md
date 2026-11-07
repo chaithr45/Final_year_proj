@@ -34,6 +34,12 @@ Use `scripts/laptop/start.sh feat|chrono|sweep`: each job runs in its own tmux s
 closing the window's tab, not shutting WSL down: keep one Ubuntu window open), logs to `logs/<job>.log`,
 and its window stays open at the end so errors can be read with `tmux attach -t <job>`.
 
+Every job resumes: if it is interrupted (exit 143 in the log = stopped from outside, e.g. the window
+was closed, Windows slept or restarted), run the same `start.sh` command again. The ChronoNet data step
+keeps a per-recording progress file and training continues from the last finished epoch (`--resume auto`).
+To keep a job alive overnight: leave one Ubuntu window open, laptop on the charger, and in Windows
+power settings set sleep to Never and closing the lid to Do nothing (when plugged in).
+
 ## 1. Data (about 126 GB download, then 7 GB of features)
 
 ```bash
