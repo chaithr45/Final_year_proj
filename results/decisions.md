@@ -114,3 +114,11 @@ Method results and keep/drop decisions are appended below as runs finish.
   patients). Fixed in 049e3bc (start points drawn from the labels, each needed run read once, uint8 bits, grouped
   validation scoring); a test checks the new sampler gives the same draws, order and values as the old one. Fold 2
   resumed at 16:23 UTC drew the same 19,980 sequences (3,374 with seizure) with a peak of 3.1 GB instead of 13.9 GB.
+* **n1_stateful_s16** result (N1 stateful LUT network: 200 vote LUT6 + 16 state bits fed back each second, trained on
+  60 s sequences; folds 2-4 after the memory fix): AUROC 0.834, event-F1 0.198 (sens 0.320, prec 0.213, 2.9 FP/24 h,
+  no gate), sens 0.593 at <= 1 FA/h; about 2.9k estimated LUTs (450 comparators) + 16 flip-flops, 0 multipliers.
+  vs the single-window dwn_l200 (1.8k LUTs): pooled F1 +0.031, FP/24 h -0.6, sens at <= 1 FA/h +0.10, AUROC +0.013, but
+  per-patient F1 p = 0.17 and FP/24 h p = 0.26 (not significant). vs lgbm: F1 p = 3e-04. **Kept, provisionally**, as the
+  N1 candidate: the best LUT-native model so far on every pooled metric at about 1.2k extra LUTs, but not yet shown
+  better per patient. It is re-run on the base DWN size the sweep picks, before N1 is closed; still below TreeLUT w5
+  (F1 0.266 at 6.4k LUTs).

@@ -1,0 +1,40 @@
+name: n1_stateful_s16
+seed: 0
+model:
+  type: stateful_dwn
+  params:
+    bits: 8
+    n_state: 16
+    n_vote: 200
+    n: 6
+    mapping: learnable
+    tau: 3.3333
+    seq_len: 60
+    pos_per_seizure: 6
+    neg_ratio: 5
+    burn_in: 10
+    epochs: 15
+    lr: 0.01
+    batch: 64
+    threads: 4
+features:
+  mi_top: 40
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json
