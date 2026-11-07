@@ -84,6 +84,9 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--mode", default="int", help="feature cache: int (golden) or float (twin)")
     ap.add_argument("--device", default=None, help="override the model's torch device (e.g. cuda)")
+    ap.add_argument("--resume", default=None,
+                    help="unfinished run directory to continue: folds whose out-of-fold scores were fully "
+                         "written are reloaded instead of retrained (same config required)")
     ap.add_argument("--folds-file", default=str(REPO / "configs/folds_inner5.json"),
                     help="patient->fold map (default: the fixed inner folds); smaller maps for dry runs")
     args = ap.parse_args()
@@ -102,8 +105,18 @@ def main() -> int:
     cols = select_features(cfg.get("features", "all"), names)
     bits_of = lambda i: S.FEATURE_BITS[S.FEATURES[i % len(S.FEATURES)]]
     feat_bits = [bits_of(i) for i in cols]
-    run = new_run_dir(cfg["name"], {**cfg, "folds_run": fold_ids, "feature_mode": args.mode,
-                                    "folds_file": str(Path(args.folds_file).name)}, seed)
+    run_cfg = {**cfg, "folds_run": fold_ids, "feature_mode": args.mode,
+               "folds_file": str(Path(args.folds_file).name)}
+    if args.resume:
+        run = Path(args.resume).resolve()
+        if not (run / ".gitignore").exists():
+            raise SystemExit(f"{run} is not an unfinished run")
+        if yaml.safe_load((run / "config.yaml").read_text()) != yaml.safe_load(yaml.safe_dump(run_cfg, sort_keys=False)):
+            raise SystemExit(f"config of {run} differs from {args.config}; start a new run instead")
+        if json.loads((run / "run.json").read_text())["seed"] != seed:
+            raise SystemExit("seed differs from the unfinished run")
+    else:
+        run = new_run_dir(cfg["name"], run_cfg, seed)
     logf = open(run / "log.txt", "a")
 
     def log(msg):
@@ -119,6 +132,18 @@ def main() -> int:
         tr = sorted(s for s, f in folds.items() if f != k)
         va = sorted(s for s, f in folds.items() if f == k)
         t0 = time.time()
+        done_f = oof_dir / f"_fold_{k}.json"
+        if done_f.exists():
+            # resumed run: this fold finished before the interruption; reload its scores
+            info = json.loads(done_f.read_text())
+            for r in store.iter_runs(va):
+                s = np.load(oof_dir / f"{r.subject}_{r.run}.npy")
+                oof.append({"subject": r.subject, "fold": k, "score": s, "artefact": r.artefact,
+                            "seizures": r.seizures, "duration_s": r.duration_s, "y": r.y})
+            costs.append(info["cost"])
+            fold_info.append(info)
+            log(f"fold {k}: reloaded from the interrupted run ({info['val_windows']} val windows)")
+            continue
         spec_model = build(cfg["model"], log=log)
         if getattr(spec_model, "needs_store", False):
             # sequence models (N1): sample their own training sequences from the store
@@ -137,6 +162,7 @@ def main() -> int:
             _save_model(spec_model, run, k, cols)
             fold_info.append({"fold": k, "val_windows": n_win, "seconds": round(time.time() - t0, 1), "cost": c})
             log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
+            done_f.write_text(json.dumps(fold_info[-1], default=float))
             continue
         X, y, _, _, keys = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"))
         log(f"fold {k}: train {len(tr)} patients, {len(y)} windows ({int(y.sum())} seizure); val {len(va)} patients")
@@ -197,6 +223,7 @@ def main() -> int:
                           "features": [names[i] for i in fcols],
                           "seconds": round(time.time() - t0, 1), "cost": c})
         log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
+        done_f.write_text(json.dumps(fold_info[-1], default=float))
 
     post = cfg.get("post", {})
     rows = sweep(oof, ks=post.get("k", (6, 8, 10)), gates=post.get("gate", ("none", "both", "any")),

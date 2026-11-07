@@ -87,4 +87,4 @@ Method results and keep/drop decisions are appended below as runs finish.
   7.8 FP/24 h); 9,600 multiplications per window. The 1.8k-LUT DWN (F1 0.167, 0 multipliers) is at least as good.
 * **lgn_mi40** (difflogic-style logic-gate network): the first attempt was lost to a container restart after 3 of 5 folds
   (about 45 min per fold on CPU; no metrics were written, the incomplete directory was deleted). Re-queued after N1;
-  `scripts/run_queue.sh` now skips configs that already have a complete run, so the queue resumes after restarts.
+  A second restart then cut `n1_stack5` at fold 4 of 5. `scripts/run_queue.sh` now skips configs that already have a complete run and continues an unfinished one with `run_inner_cv.py --resume`, which reloads every fold whose out-of-fold scores were fully written (marker `_fold_<k>.json`) instead of retraining it; an interrupted-then-resumed dry run gave metrics identical to an uninterrupted one. Each fold is seeded by `seed + k` and trained only on its own training folds, so a resumed run is the same experiment.
