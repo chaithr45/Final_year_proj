@@ -151,8 +151,13 @@ def main() -> int:
             # sequence models (N1): sample their own training sequences from the store
             log(f"fold {k}: train {len(tr)} patients (sequence model); val {len(va)} patients")
             spec_model.fit_store(store, tr, cols, seed + k)
-            runs_va = list(store.iter_runs(va))
-            scores = spec_model.score_runs([r.X[:, cols] for r in runs_va])
+            runs_va, X_va = [], []
+            for r in store.iter_runs(va):        # keep only the model's columns of each validation run
+                X_va.append(np.ascontiguousarray(r.X[:, cols]))
+                r.X = None
+                runs_va.append(r)
+            scores = spec_model.score_runs(X_va)
+            del X_va
             n_win = 0
             for r, s in zip(runs_va, scores):
                 np.save(oof_dir / f"{r.subject}_{r.run}.npy", s)

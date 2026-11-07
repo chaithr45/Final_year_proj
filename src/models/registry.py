@@ -537,30 +537,50 @@ class StatefulDWNModel(Model):
         self.threads, self.log = threads, (log or (lambda *a: None))
 
     def _sequences(self, store, subjects, cols, rng):
-        T = self.p["seq_len"]
-        seqs, labs = [], []
-        pos_n = 0
-        runs = list(store.iter_runs(subjects))
-        for r in runs:
-            pos = np.flatnonzero(r.y == 1)
-            if len(pos) == 0 or len(r.y) < T:
+        """Training sequences: every start point is drawn from the labels alone, then each needed run is
+        read once and only its sequences are kept (holding every training run in memory needed about
+        14 GB for 77 patients and was killed by the out-of-memory killer). Same draws, same order and
+        same values as reading all runs first."""
+        T, bi, pps = self.p["seq_len"], self.p["burn_in"], self.p["pos_per_seizure"]
+        keys = store.runs_of(subjects)
+        ys = [store.load_labels(k) for k in keys]
+        picks = []                                   # (run index, start) in draw order
+        for i, y in enumerate(ys):
+            pos = np.flatnonzero(y == 1)
+            if len(pos) == 0 or len(y) < T:
                 continue
             # one block of consecutive positive windows per seizure
             breaks = np.flatnonzero(np.diff(pos) > 1)
             for a, b in zip(np.r_[pos[0], pos[breaks + 1]], np.r_[pos[breaks], pos[-1]]):
-                lo, hi = max(0, a - T + self.p["burn_in"] + 1), min(len(r.y) - T, b - self.p["burn_in"])
+                lo, hi = max(0, a - T + bi + 1), min(len(y) - T, b - bi)
                 if hi < lo:
-                    lo = hi = int(np.clip(a - T // 2, 0, len(r.y) - T))
-                for st in rng.integers(lo, hi + 1, self.p["pos_per_seizure"]):
-                    seqs.append(r.X[st:st + T][:, cols]); labs.append(r.y[st:st + T]); pos_n += 1
-        n_neg = self.p["neg_ratio"] * pos_n
-        lens = np.array([max(0, len(r.y) - T) for r in runs], dtype=float)
-        pick = rng.choice(len(runs), size=n_neg, p=lens / lens.sum())
-        for i in pick:
-            r = runs[i]
-            st = int(rng.integers(0, len(r.y) - T))
-            seqs.append(r.X[st:st + T][:, cols]); labs.append(r.y[st:st + T])
-        return np.stack(seqs), np.stack(labs)
+                    lo = hi = int(np.clip(a - T // 2, 0, len(y) - T))
+                picks += [(i, int(st)) for st in rng.integers(lo, hi + 1, pps)]
+        n_neg = self.p["neg_ratio"] * len(picks)
+        lens = np.array([max(0, len(y) - T) for y in ys], dtype=float)
+        for i in rng.choice(len(keys), size=n_neg, p=lens / lens.sum()):
+            picks.append((int(i), int(rng.integers(0, len(ys[i]) - T))))
+        by_run: dict[int, list] = {}
+        for j, (i, st) in enumerate(picks):
+            by_run.setdefault(i, []).append((j, st))
+        Xs = Ys = None
+        for i in sorted(by_run):
+            r = store.load_run(keys[i])
+            if Xs is None:
+                Xs = np.empty((len(picks), T, len(cols)), dtype=r.X.dtype)
+                Ys = np.empty((len(picks), T), dtype=r.y.dtype)
+            for j, st in by_run[i]:
+                Xs[j] = r.X[st:st + T][:, cols]
+                Ys[j] = r.y[st:st + T]
+        return Xs, Ys
+
+    def _encode_u8(self, X, chunk=262_144):
+        """Thermometer bits as uint8, encoded in row chunks (the float32 encoding of every training
+        window at once is 4x larger)."""
+        out = np.empty((len(X), self.therm.n_bits), dtype=np.uint8)
+        for i in range(0, len(X), chunk):
+            out[i:i + chunk] = self.therm.encode(X[i:i + chunk]).numpy()
+        return out
 
     def fit_store(self, store, subjects, cols, seed):
         import torch
@@ -573,7 +593,7 @@ class StatefulDWNModel(Model):
         self.log(f"    {len(Xs)} sequences of {p['seq_len']} s ({int((Ys.sum(1) > 0).sum())} with seizure)")
         self.therm = DistributiveThermometer(p["bits"]).fit(Xs.reshape(-1, Xs.shape[-1]))
         B, T, F = Xs.shape
-        bits = self.therm.encode(Xs.reshape(-1, F)).reshape(B, T, -1)
+        bits = torch.from_numpy(self._encode_u8(Xs.reshape(-1, F))).reshape(B, T, -1)
         self.net = StatefulDWN(bits.shape[-1], p["n_state"], p["n_vote"], p["n"], p["mapping"], p["tau"], p["hidden"], seed)
         opt = torch.optim.Adam(self.net.parameters(), lr=p["lr"])
         sched = torch.optim.lr_scheduler.StepLR(opt, max(1, int(p["epochs"] * p["decay_at"])), 0.1)
@@ -588,7 +608,7 @@ class StatefulDWNModel(Model):
             tot, t0 = 0.0, time.time()
             for i in range(0, B, p["batch"]):
                 idx = perm[i:i + p["batch"]]
-                logits, _ = self.net(bits[idx])
+                logits, _ = self.net(bits[idx].float())
                 loss = torch.nn.functional.cross_entropy(logits[:, bi:].reshape(-1, 2), yt[idx, bi:].reshape(-1), weight=w)
                 opt.zero_grad()
                 loss.backward()
@@ -601,10 +621,17 @@ class StatefulDWNModel(Model):
         self.exported = self.net.export()
         return self
 
-    def score_runs(self, X_list):
+    def score_runs(self, X_list, group=32):
+        """Integer scores per run. Runs are independent (the state starts at zero in each), so they are
+        scored in groups of similar length to bound memory; the result does not depend on `group`."""
         from .stateful import batched_integer_forward
-        bits = [self.therm.encode(X).numpy().astype(np.uint8) for X in X_list]
-        return [s.astype(np.float32) for s in batched_integer_forward(bits, self.exported)]
+        order = np.argsort([len(X) for X in X_list], kind="stable")
+        out = [None] * len(X_list)
+        for g in range(0, len(order), group):
+            idx = order[g:g + group]
+            for i, s in zip(idx, batched_integer_forward([self._encode_u8(X_list[i]) for i in idx], self.exported)):
+                out[i] = s.astype(np.float32)
+        return out
 
     def score(self, X):
         return self.score_runs([X])[0]

@@ -202,3 +202,61 @@ def test_training_resumes_from_epoch_checkpoint(cfg, tmp_path):
     m2 = build(cfg)
     m2.ckpt_path = tmp_path / "fold.pt"
     assert np.array_equal(m2.fit(X, y).score(X), ref)
+
+
+def _old_sequences(p, store, subjects, cols, rng):
+    """The sampler before the memory fix (every training run held in memory), kept as the reference."""
+    T = p["seq_len"]
+    seqs, labs, pos_n = [], [], 0
+    runs = list(store.iter_runs(subjects))
+    for r in runs:
+        pos = np.flatnonzero(r.y == 1)
+        if len(pos) == 0 or len(r.y) < T:
+            continue
+        breaks = np.flatnonzero(np.diff(pos) > 1)
+        for a, b in zip(np.r_[pos[0], pos[breaks + 1]], np.r_[pos[breaks], pos[-1]]):
+            lo, hi = max(0, a - T + p["burn_in"] + 1), min(len(r.y) - T, b - p["burn_in"])
+            if hi < lo:
+                lo = hi = int(np.clip(a - T // 2, 0, len(r.y) - T))
+            for st in rng.integers(lo, hi + 1, p["pos_per_seizure"]):
+                seqs.append(r.X[st:st + T][:, cols]); labs.append(r.y[st:st + T]); pos_n += 1
+    lens = np.array([max(0, len(r.y) - T) for r in runs], dtype=float)
+    for i in rng.choice(len(runs), size=p["neg_ratio"] * pos_n, p=lens / lens.sum()):
+        r = runs[i]
+        st = int(rng.integers(0, len(r.y) - T))
+        seqs.append(r.X[st:st + T][:, cols]); labs.append(r.y[st:st + T])
+    return np.stack(seqs), np.stack(labs)
+
+
+def test_stateful_sequences_and_grouped_scoring_match_reference(tmp_path):
+    from seizelut.data.featureset import FeatureStore
+    from seizelut.models.registry import StatefulDWNModel
+    from seizelut.models.stateful import batched_integer_forward
+    rng = np.random.default_rng(5)
+    d = tmp_path / "int"
+    d.mkdir()
+    for s in range(1, 4):
+        for run in range(1, 4):
+            n = int(rng.integers(30, 400))
+            y = np.zeros(n, np.int8)
+            for _ in range(int(rng.integers(0, 3))):        # 0-2 seizures, some shorter than the burn-in
+                a = int(rng.integers(0, n - 5)); y[a:a + int(rng.integers(3, 40))] = 1
+            X = rng.integers(-500, 500, (n, 12)).astype(np.int16)
+            X[y == 1, :3] += 400
+            np.savez(d / f"sub-{s:03d}_run-{run:02d}.npz", X=X, y=y, artefact=np.zeros((n, 2), bool),
+                     present=np.ones((n, 4), bool), seizures=np.zeros((0, 2)), duration_s=float(n))
+    store = FeatureStore(root=tmp_path)
+    subs, cols = ["sub-001", "sub-002", "sub-003"], [0, 1, 2, 5, 7]
+    m = StatefulDWNModel(bits=4, n_state=4, n_vote=16, n=4, mapping="random", seq_len=20, burn_in=4,
+                         pos_per_seizure=3, neg_ratio=2, epochs=1, batch=16, threads=1)
+    Xn, Yn = m._sequences(store, subs, cols, np.random.default_rng(11))
+    Xo, Yo = _old_sequences(m.p, store, subs, cols, np.random.default_rng(11))
+    assert Xn.dtype == Xo.dtype and Yn.dtype == Yo.dtype
+    np.testing.assert_array_equal(Xn, Xo)
+    np.testing.assert_array_equal(Yn, Yo)
+    m.fit_store(store, subs, cols, seed=0)
+    X_list = [r.X[:, cols] for r in store.iter_runs(subs)]
+    ref = batched_integer_forward([m.therm.encode(X).numpy().astype(np.uint8) for X in X_list], m.exported)
+    for group in (1, 3, 100):
+        for a, b in zip(m.score_runs(X_list, group=group), ref):
+            np.testing.assert_array_equal(a, b.astype(np.float32))

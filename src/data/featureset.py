@@ -56,6 +56,11 @@ class FeatureStore:
         return RunFeatures(sub, run, X, d["y"].astype(np.int8), d["artefact"].astype(bool),
                            d["present"].astype(bool), d["seizures"], float(d["duration_s"]))
 
+    def load_labels(self, key: str) -> np.ndarray:
+        """Window labels of one run without reading its features."""
+        with np.load(self.files[key]) as d:
+            return d["y"].astype(np.int8)
+
     def iter_runs(self, subjects):
         for k in self.runs_of(subjects):
             yield self.load_run(k)
