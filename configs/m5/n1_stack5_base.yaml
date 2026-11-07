@@ -1,0 +1,11 @@
+# N1 baseline, corrected: MI top-40 base features on the current window, each fed at all 5 lags (200 inputs); D31.
+name: n1_stack5_base
+seed: 0
+stack: 5
+model:
+  type: dwn
+  params: {bits: 8, layers: [200], n: 6, mapping: learnable, tau: 3.3333, epochs: 15, lr: 0.01,
+           batch: 2048, decay_at: 0.7, loss: ce, threads: 4}
+features: {mi_top: 40, mi_on: base}
+train: {bg_ratio: 10}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

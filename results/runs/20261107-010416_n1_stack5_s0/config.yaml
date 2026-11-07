@@ -1,0 +1,41 @@
+name: n1_stack5
+seed: 0
+stack: 5
+model:
+  type: dwn
+  params:
+    bits: 8
+    layers:
+    - 200
+    n: 6
+    mapping: learnable
+    tau: 3.3333
+    epochs: 15
+    lr: 0.01
+    batch: 2048
+    decay_at: 0.7
+    loss: ce
+    threads: 4
+features:
+  mi_top: 40
+train:
+  bg_ratio: 10
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json

@@ -173,8 +173,17 @@ def main() -> int:
             from sklearn.feature_selection import mutual_info_classif
             rs = np.random.default_rng(seed + k)
             sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
-            mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed + k)
-            fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
+            if fspec.get("mi_on") == "base" and store.stack > 1:
+                # rank the base features on the current window (t-0 block) only, then keep every lag of
+                # the winners: ranking the stacked columns picks lagged copies of a few features (D31)
+                nF = len(S.FEATURES)
+                cur = list(range((store.stack - 1) * nF, store.stack * nF))
+                mi = mutual_info_classif(X[sub][:, cur].astype(np.float32), y[sub], random_state=seed + k)
+                top = sorted(np.argsort(-mi)[: fspec["mi_top"]].tolist(), key=lambda i: -mi[i])
+                fcols = [b * nF + i for i in top for b in range(store.stack)]
+            else:
+                mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed + k)
+                fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
             log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
         fold_bits = [bits_of(i) for i in fcols]
         model = build(cfg["model"], log=log)
