@@ -13,7 +13,7 @@ Phase 2 (FPGA build) has its own prompt.
 | Milestone | State |
 |---|---|
 | M1 repository setup and data audit | done: [`reports/data_audit.md`](reports/data_audit.md), [`reports/M1_status.md`](reports/M1_status.md) |
-| M2 baseline reproduction | ChronoNet (official protocol) trained on the GPU laptop; test-patient scoring and the clean variant (no epoch selection on test patients) running. SVM waits for the 42-feature table of Vandecasteele et al. 2020 |
+| M2 baseline reproduction | ChronoNet (official protocol) scored on the test patients: **not reproduced** (sensitivity 74.5% vs 84.2% published, AUROC 0.741 vs 0.792, AUPR 0.0044 vs 0.104; likely metric definitions, see `results/decisions.md`). Clean variant (no epoch selection on test patients) training on the GPU laptop. SVM waits for the 42-feature table of Vandecasteele et al. 2020 |
 | M3 golden integer features + float twin | done: 117 features, [`spec/fixed_point.md`](spec/fixed_point.md); integer vs float LightGBM AUROC 0.736 vs 0.735 ([`results/m3/int_float_gap.md`](results/m3/int_float_gap.md)) |
 | M4 Tier-1 comparison (inner folds) | in progress: LR, LightGBM, XGBoost, CatBoost, RF, TreeLUT, DWN, LGN and INT8 MLP done ([`results/tables/inner_cv.md`](results/tables/inner_cv.md)); DWN size sweep running |
 | M5 Tier-2 (N1–N7) | in progress: N1 stacked windows not adopted, N1 stateful kept provisionally; N2–N7 not started. Every decision: [`results/decisions.md`](results/decisions.md) |

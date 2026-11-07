@@ -44,3 +44,28 @@ def test_signal_audit_and_report_on_fixture(bids_root, tmp_path):
     summary = json.loads(report.with_suffix(".json").read_text())
     assert summary["n_seizures"] == 4 and summary["n_subjects"] == 3
     assert (tmp_path / "figs" / "seizure_duration_hist.png").exists()
+
+
+def test_evaluate_predictions_end_to_end(tmp_path):
+    """The laptop scores ChronoNet with this script unattended: it must run on 1 Hz predictions."""
+    import numpy as np
+    pred, rd = tmp_path / "pred", tmp_path / "run"
+    pred.mkdir()
+    rd.mkdir()
+    (rd / ".gitignore").write_text("*\n")
+    rng = np.random.default_rng(0)
+    for i, sz in enumerate([(100, 160), (300, 340), None]):
+        y = np.zeros(600, np.int8)
+        if sz:
+            y[sz[0]:sz[1]] = 1
+        p = np.clip(0.6 * y + 0.5 * rng.random(600), 0, 1).astype(np.float32)
+        rms = np.full(600, 40.0, np.float32)
+        np.savez_compressed(pred / f"sub-00{i + 1}_run-01.npz", y_pred=p, y_true=y, rms1=rms, rms2=rms,
+                            duration_s=600.0)
+    r = run("scripts/baselines/evaluate_predictions.py", "--run", rd, "--predictions", pred)
+    assert r.returncode == 0, r.stderr
+    m = json.loads((rd / "metrics.json").read_text())
+    assert m["n_recordings"] == 3 and m["seizeit2_as_published"]["n_rec_auc"] == 2
+    assert 0 < m["seizeit2_as_published"]["aupr_rec_mean"] <= 1
+    assert "Per recording" in (rd / "metrics.md").read_text()
+    assert not (rd / ".gitignore").exists()

@@ -198,3 +198,20 @@ def epoch_auc(y_score_all: np.ndarray, y_true_all: np.ndarray) -> dict:
         return {"auroc": float("nan"), "aupr": float("nan")}
     return {"auroc": float(roc_auc_score(y_true_all, y_score_all)),
             "aupr": float(average_precision_score(y_true_all, y_score_all))}
+
+
+def recording_auc(recs) -> dict:
+    """The other reading of 'epoch-based' AUROC/AUPR: per recording, then the mean over the
+    recordings that contain a seizure (the others have no AUC; every other Table 2 metric is
+    averaged over recordings the same way). recs: iterable of (y_score, y_true) at 1 Hz."""
+    from sklearn.metrics import average_precision_score, roc_auc_score
+    roc, pr = [], []
+    for y_score, y_true in recs:
+        y_true = np.asarray(y_true).astype(int)
+        if y_true.min() == y_true.max():
+            continue
+        roc.append(roc_auc_score(y_true, y_score))
+        pr.append(average_precision_score(y_true, y_score))
+    nan = float("nan")
+    return {"auroc_rec_mean": float(np.mean(roc)) if roc else nan,
+            "aupr_rec_mean": float(np.mean(pr)) if pr else nan, "n_rec_auc": len(roc)}

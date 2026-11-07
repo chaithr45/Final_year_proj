@@ -44,6 +44,7 @@ def seizeit2_family(recs, as_published: bool) -> dict:
     gated = [(s2.rms_gate(r["y_pred"], r["rms1"], r["rms2"], as_published=as_published), r["y_true"]) for r in recs]
     res = s2.evaluate_recordings([(p, t[:len(p)]) for p, t in gated], fixed=not as_published)
     res.update(s2.epoch_auc(np.concatenate([p for p, _ in gated]), np.concatenate([t[:len(p)] for p, t in gated])))
+    res.update(s2.recording_auc([(p, t[:len(p)]) for p, t in gated]))
     return res
 
 
@@ -96,6 +97,10 @@ def main() -> int:
           f"| ours, corrected | {100 * c05['sens_ovlp']:.1f} | {c05['fa_ovlp']:.1f} | {cor['auroc']:.4f} | {cor['aupr']:.4f} | {c05['score']:.1f} |",
           "\nFA/h here is the any-overlap false-alarm rate (FP events per hour); the epoch-based rate is "
           f"{p05['fa_epoch']:.1f} (as published). The paper does not say which one Table 2 uses.\n",
+          "AUROC/AUPR above pool every 1 s epoch of all recordings. Per recording, then the mean over the "
+          f"{pub['n_rec_auc']} recordings with a seizure: AUROC {pub['auroc_rec_mean']:.4f}, AUPR "
+          f"{pub['aupr_rec_mean']:.4f} (as published); {cor['auroc_rec_mean']:.4f}, {cor['aupr_rec_mean']:.4f} "
+          "(corrected). The paper does not say which one either.\n",
           "## SzCORE (official post-processing, threshold 0.5; not comparable with the table above)\n",
           "| Sensitivity | Precision | F1 | FP/24h | sample F1 |", "|---|---|---|---|---|",
           f"| {s05['sensitivity']:.3f} | {s05['precision']:.3f} | {s05['f1']:.3f} | {s05['fp_per_24h']:.1f} | {s05['sample_f1']:.3f} |"]

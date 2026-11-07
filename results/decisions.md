@@ -36,6 +36,34 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D14 | Test-set guard: any script touching sub-097..125 needs `--final-test` and logs the access | Honesty rule 10.4 | `src/eval/runlog.py` |
 | D15 | SVM baseline pending the 42-feature definition | The dataset paper (now read, `reports/seizeit2_paper_notes.md`) gives the SVM protocol but defers the features to Vandecasteele et al., Epilepsia 2020 (doi 10.1111/epi.16470), which is not reachable from the coding environment; C and kernel scale are not stated | Question for the user: that paper's feature table |
 
+### M2 results (published baseline on the official test patients: reproduction only, every access logged in the run's `TEST_ACCESS.log`)
+
+* **chrononet_official** (run `20261107-125159_chrononet_official_s1`, seed 1, epoch chosen by the val score on blocks
+  around the test patients' seizures, as the released code does; 778 recordings, 29 patients). Numbers transcribed
+  from the laptop's `metrics.md` until the run folder is pushed (`scripts/laptop/push_runs.sh`).
+
+  | | Sens OVLP (%) | FA/h (any-overlap) | AUROC (pooled) | AUPR (pooled) |
+  |---|---|---|---|---|
+  | published (Table 2) | 84.2 | 100.5 | 0.7921 | 0.1042 |
+  | ours, as published | 74.5 | 22.6 | 0.7412 | 0.0044 |
+  | ours, corrected | 65.4 | 15.2 | 0.7041 | 0.0043 |
+
+  Epoch-based FA rate 503.4/h (as published); official score -194.7 (as published), -135.9 (corrected). SzCORE at
+  threshold 0.5 on the baseline's own post-processing: sens 0.867, precision 0.019, F1 0.032, 154.0 FP/24 h, sample
+  F1 0.010. These are test-patient numbers and are not comparable with the inner-CV results log below; our models
+  meet this baseline only at M6, on the same 29 patients.
+
+  **Not reproduced.** Sensitivity is 9.7 points lower and AUROC 0.051 lower; AUPR is 24 times lower; the published
+  FA/h (100.5) lies between our any-overlap rate (22.6) and our epoch-based rate (503.4), so it matches neither
+  definition. Seizure time is 0.123% of all EEG time (M1 audit), so our pooled AUPR is about 3-4 times chance, while
+  0.104 would be about 85 times chance; with the FA/h mismatch this points first at metric definitions the paper does
+  not state. Next: (1) AUROC/AUPR per recording, then the mean over recordings with a seizure (added to
+  `evaluate_predictions.py`; this run is re-scored from its saved predictions, no retraining); (2) the clean run
+  (last epoch, no selection on test patients) for the leak-free number; (3) untested candidate causes: one seed
+  (the paper's seed count is not stated), the Keras-to-PyTorch port (D12), and the dataset version (OpenNeuro
+  ds005873 today vs. the paper's copy; we count 886 seizures, 182 in the test split, against the paper's 883 and 181).
+  The baseline is reported as measured, with the published numbers beside it and this gap stated.
+
 ## M3: integer feature pipeline
 
 | ID | Decision | Why | Evidence |
@@ -64,7 +92,7 @@ Format: `D<n> | milestone | decision | why | evidence`.
 
 Method results and keep/drop decisions are appended below as runs finish.
 
-## Results log (inner CV on the 96 training patients only; no test patient has been scored)
+## Results log (inner CV on the 96 training patients only; none of our models has been scored on a test patient)
 
 * **M3 int vs float twin** (10 training patients, `results/m3/int_float_gap.md`): median feature correlation 0.9965 (min 0.889,
   extrema-count features), artefact flags agree 99.7 %, LightGBM leave-patients-out AUROC int 0.736 vs float 0.735. Integer

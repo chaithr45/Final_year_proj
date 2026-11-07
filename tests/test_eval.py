@@ -145,3 +145,19 @@ def test_stats():
     assert paired_wilcoxon(a + 1, a)["p"] < 0.001
     ci = bootstrap_ci(np.ones(10) * 3, n_boot=200)
     assert ci["low"] == ci["high"] == 3
+
+
+def test_recording_auc_means_over_recordings_with_seizures():
+    from sklearn.metrics import average_precision_score, roc_auc_score
+    rng = np.random.default_rng(0)
+    recs = []
+    for has_sz in (True, True, False):
+        t = np.zeros(300, int)
+        if has_sz:
+            t[100:140] = 1
+        recs.append((np.clip(0.3 * t + rng.random(300) * 0.8, 0, 1), t))
+    out = s2.recording_auc(recs)
+    assert out["n_rec_auc"] == 2
+    assert out["auroc_rec_mean"] == pytest.approx(np.mean([roc_auc_score(t, p) for p, t in recs[:2]]))
+    assert out["aupr_rec_mean"] == pytest.approx(np.mean([average_precision_score(t, p) for p, t in recs[:2]]))
+    assert math.isnan(s2.recording_auc(recs[2:])["aupr_rec_mean"])
