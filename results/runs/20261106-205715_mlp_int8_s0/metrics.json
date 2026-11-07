@@ -1,0 +1,1965 @@
+{
+ "name": "mlp_int8",
+ "seed": 0,
+ "folds": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "n_features": 117,
+ "window_auroc": 0.8301791398100742,
+ "window_aupr": 0.011768288771891977,
+ "operating_points": {
+  "best_f1": {
+   "gate": "none",
+   "k": 10,
+   "threshold": 4.287715833377387,
+   "sensitivity": 0.22450451825451823,
+   "precision": 0.18823368438034338,
+   "f1": 0.1465131798047085,
+   "fp_per_24h": 7.802091744688098,
+   "pooled_sensitivity": 0.16400580551523947,
+   "pooled_precision": 0.04866494401378122,
+   "pooled_f1": 0.07505812022583859,
+   "pooled_fp_per_24h": 6.083487496930886,
+   "per_fold": {
+    "0": {
+     "sensitivity": 0.15743243243243243,
+     "precision": 0.16100831146106737,
+     "f1": 0.11816197460329239,
+     "fp_per_24h": 15.994357777314907,
+     "pooled_sensitivity": 0.15217391304347827,
+     "pooled_precision": 0.015873015873015872,
+     "pooled_f1": 0.02874743326488706,
+     "pooled_fp_per_24h": 14.567852919759407
+    },
+    "1": {
+     "sensitivity": 0.18289473684210528,
+     "precision": 0.17922918155116294,
+     "f1": 0.13650105656297606,
+     "fp_per_24h": 5.073789080765778,
+     "pooled_sensitivity": 0.10135135135135136,
+     "pooled_precision": 0.15,
+     "pooled_f1": 0.12096774193548389,
+     "pooled_fp_per_24h": 1.581632729976915
+    },
+    "2": {
+     "sensitivity": 0.1659983291562239,
+     "precision": 0.13898593466424683,
+     "f1": 0.08458274617936834,
+     "fp_per_24h": 3.154536651820862,
+     "pooled_sensitivity": 0.09166666666666666,
+     "pooled_precision": 0.0738255033557047,
+     "pooled_f1": 0.08178438661710037,
+     "pooled_fp_per_24h": 1.781641347850411
+    },
+    "3": {
+     "sensitivity": 0.38734335839599,
+     "precision": 0.1993428208701139,
+     "f1": 0.17363838787453603,
+     "fp_per_24h": 12.659961813183106,
+     "pooled_sensitivity": 0.32142857142857145,
+     "pooled_precision": 0.0743801652892562,
+     "pooled_f1": 0.12080536912751677,
+     "pooled_fp_per_24h": 7.79170334326299
+    },
+    "4": {
+     "sensitivity": 0.2323838442259495,
+     "precision": 0.26403508771929823,
+     "f1": 0.22117390249818095,
+     "fp_per_24h": 1.696641503901786,
+     "pooled_sensitivity": 0.14685314685314685,
+     "pooled_precision": 0.14482758620689656,
+     "pooled_f1": 0.14583333333333337,
+     "pooled_fp_per_24h": 1.7546517449642776
+    }
+   },
+   "per_subject": {
+    "sub-004": [
+     0,
+     0,
+     4,
+     18.5
+    ],
+    "sub-007": [
+     0,
+     0,
+     2,
+     68.46277777777777
+    ],
+    "sub-011": [
+     0,
+     34,
+     4,
+     113.32916666666667
+    ],
+    "sub-013": [
+     0,
+     0,
+     2,
+     19.274444444444445
+    ],
+    "sub-020": [
+     0,
+     0,
+     1,
+     115.68444444444444
+    ],
+    "sub-025": [
+     1,
+     0,
+     3,
+     98.01916666666665
+    ],
+    "sub-033": [
+     0,
+     15,
+     1,
+     113.33555555555556
+    ],
+    "sub-042": [
+     0,
+     10,
+     11,
+     73.15555555555554
+    ],
+    "sub-048": [
+     0,
+     16,
+     1,
+     90.42388888888888
+    ],
+    "sub-053": [
+     0,
+     3,
+     2,
+     25.79083333333333
+    ],
+    "sub-057": [
+     0,
+     7,
+     1,
+     61.23055555555556
+    ],
+    "sub-058": [
+     1,
+     0,
+     1,
+     19.951944444444443
+    ],
+    "sub-071": [
+     1,
+     2,
+     6,
+     194.82166666666663
+    ],
+    "sub-073": [
+     11,
+     9,
+     74,
+     280.70722222222224
+    ],
+    "sub-078": [
+     0,
+     6,
+     3,
+     397.1144444444443
+    ],
+    "sub-081": [
+     4,
+     1139,
+     4,
+     100.28222222222225
+    ],
+    "sub-085": [
+     0,
+     40,
+     3,
+     55.90888888888888
+    ],
+    "sub-086": [
+     0,
+     13,
+     4,
+     89.2161111111111
+    ],
+    "sub-089": [
+     0,
+     2,
+     5,
+     102.51972222222223
+    ],
+    "sub-092": [
+     3,
+     6,
+     6,
+     107.26833333333336
+    ],
+    "sub-002": [
+     1,
+     1,
+     15,
+     99.18361111111113
+    ],
+    "sub-003": [
+     0,
+     2,
+     1,
+     114.91333333333333
+    ],
+    "sub-016": [
+     0,
+     2,
+     3,
+     47.98638888888889
+    ],
+    "sub-017": [
+     0,
+     15,
+     1,
+     115.27027777777779
+    ],
+    "sub-027": [
+     1,
+     5,
+     1,
+     100.9672222222222
+    ],
+    "sub-028": [
+     2,
+     2,
+     4,
+     88.48666666666668
+    ],
+    "sub-029": [
+     1,
+     1,
+     4,
+     116.90277777777777
+    ],
+    "sub-037": [
+     0,
+     3,
+     2,
+     21.130277777777778
+    ],
+    "sub-039": [
+     0,
+     1,
+     75,
+     91.87194444444444
+    ],
+    "sub-041": [
+     0,
+     0,
+     2,
+     20.982222222222223
+    ],
+    "sub-043": [
+     1,
+     12,
+     5,
+     87.68249999999999
+    ],
+    "sub-050": [
+     1,
+     3,
+     3,
+     70.07777777777778
+    ],
+    "sub-054": [
+     0,
+     7,
+     1,
+     75.09416666666667
+    ],
+    "sub-055": [
+     0,
+     17,
+     8,
+     42.214166666666664
+    ],
+    "sub-084": [
+     1,
+     0,
+     4,
+     54.95083333333333
+    ],
+    "sub-090": [
+     7,
+     10,
+     8,
+     3.55
+    ],
+    "sub-091": [
+     0,
+     0,
+     5,
+     1.0588888888888888
+    ],
+    "sub-093": [
+     0,
+     0,
+     1,
+     93.73111111111113
+    ],
+    "sub-094": [
+     0,
+     4,
+     5,
+     43.752222222222215
+    ],
+    "sub-005": [
+     0,
+     1,
+     2,
+     121.2138888888889
+    ],
+    "sub-008": [
+     0,
+     3,
+     2,
+     114.12916666666666
+    ],
+    "sub-018": [
+     0,
+     1,
+     1,
+     115.09027777777779
+    ],
+    "sub-021": [
+     2,
+     1,
+     4,
+     111.77111111111111
+    ],
+    "sub-030": [
+     1,
+     3,
+     7,
+     117.40333333333334
+    ],
+    "sub-038": [
+     0,
+     4,
+     1,
+     94.99472222222222
+    ],
+    "sub-047": [
+     1,
+     4,
+     40,
+     68.33583333333334
+    ],
+    "sub-049": [
+     0,
+     1,
+     2,
+     80.93944444444443
+    ],
+    "sub-060": [
+     0,
+     2,
+     25,
+     48.46861111111111
+    ],
+    "sub-063": [
+     0,
+     1,
+     2,
+     67.87583333333333
+    ],
+    "sub-064": [
+     1,
+     28,
+     3,
+     41.300555555555555
+    ],
+    "sub-067": [
+     1,
+     7,
+     4,
+     35.626111111111115
+    ],
+    "sub-068": [
+     2,
+     62,
+     3,
+     53.07944444444445
+    ],
+    "sub-074": [
+     1,
+     0,
+     9,
+     154.70555555555555
+    ],
+    "sub-075": [
+     0,
+     1,
+     2,
+     223.16194444444452
+    ],
+    "sub-076": [
+     0,
+     0,
+     3,
+     88.90138888888887
+    ],
+    "sub-080": [
+     1,
+     3,
+     8,
+     154.11638888888888
+    ],
+    "sub-088": [
+     0,
+     5,
+     1,
+     63.43194444444445
+    ],
+    "sub-095": [
+     1,
+     11,
+     1,
+     104.41444444444441
+    ],
+    "sub-010": [
+     0,
+     3,
+     1,
+     102.09444444444443
+    ],
+    "sub-014": [
+     0,
+     18,
+     2,
+     50.773611111111116
+    ],
+    "sub-015": [
+     0,
+     3,
+     9,
+     88.62111111111112
+    ],
+    "sub-022": [
+     1,
+     168,
+     7,
+     113.46527777777777
+    ],
+    "sub-023": [
+     1,
+     10,
+     1,
+     100.23944444444444
+    ],
+    "sub-024": [
+     2,
+     141,
+     2,
+     117.40694444444443
+    ],
+    "sub-026": [
+     1,
+     0,
+     4,
+     90.54138888888889
+    ],
+    "sub-032": [
+     1,
+     4,
+     1,
+     88.95138888888889
+    ],
+    "sub-034": [
+     0,
+     1,
+     30,
+     95.3125
+    ],
+    "sub-036": [
+     0,
+     2,
+     3,
+     20.09888888888889
+    ],
+    "sub-040": [
+     1,
+     0,
+     3,
+     53.71722222222222
+    ],
+    "sub-046": [
+     2,
+     8,
+     4,
+     97.64638888888886
+    ],
+    "sub-052": [
+     4,
+     50,
+     10,
+     82.28583333333333
+    ],
+    "sub-065": [
+     0,
+     14,
+     2,
+     88.16972222222222
+    ],
+    "sub-069": [
+     1,
+     6,
+     1,
+     193.2113888888889
+    ],
+    "sub-070": [
+     2,
+     1,
+     2,
+     141.71277777777777
+    ],
+    "sub-079": [
+     1,
+     4,
+     15,
+     95.46166666666667
+    ],
+    "sub-087": [
+     28,
+     117,
+     42,
+     20.812777777777782
+    ],
+    "sub-096": [
+     0,
+     10,
+     1,
+     84.38888888888884
+    ],
+    "sub-001": [
+     1,
+     1,
+     4,
+     106.5775
+    ],
+    "sub-006": [
+     0,
+     1,
+     1,
+     109.55
+    ],
+    "sub-009": [
+     0,
+     2,
+     1,
+     99.43472222222222
+    ],
+    "sub-012": [
+     3,
+     1,
+     3,
+     113.89972222222224
+    ],
+    "sub-019": [
+     1,
+     2,
+     1,
+     121.08416666666665
+    ],
+    "sub-031": [
+     1,
+     2,
+     3,
+     107.32222222222225
+    ],
+    "sub-035": [
+     0,
+     1,
+     55,
+     72.29777777777777
+    ],
+    "sub-044": [
+     0,
+     2,
+     4,
+     99.41166666666666
+    ],
+    "sub-045": [
+     0,
+     0,
+     2,
+     97.17861111111111
+    ],
+    "sub-051": [
+     0,
+     0,
+     5,
+     27.516666666666666
+    ],
+    "sub-056": [
+     3,
+     2,
+     13,
+     62.73305555555555
+    ],
+    "sub-059": [
+     1,
+     1,
+     8,
+     47.17861111111111
+    ],
+    "sub-061": [
+     0,
+     75,
+     1,
+     90.13416666666667
+    ],
+    "sub-062": [
+     0,
+     4,
+     3,
+     67.31444444444445
+    ],
+    "sub-066": [
+     0,
+     2,
+     4,
+     117.80416666666667
+    ],
+    "sub-072": [
+     10,
+     0,
+     21,
+     126.10222222222225
+    ],
+    "sub-077": [
+     0,
+     0,
+     9,
+     61.61416666666667
+    ],
+    "sub-082": [
+     0,
+     28,
+     4,
+     105.62166666666667
+    ],
+    "sub-083": [
+     1,
+     0,
+     1,
+     63.28749999999999
+    ]
+   }
+  },
+  "sens_at_1fah": {
+   "gate": "none",
+   "k": 10,
+   "threshold": 1.8131297826766968,
+   "sensitivity": 0.5200026610964111,
+   "precision": 0.0901542687788049,
+   "f1": 0.10763953784776407,
+   "fp_per_24h": 23.638964359934402,
+   "pooled_sensitivity": 0.40783744557329465,
+   "pooled_precision": 0.03585098239346772,
+   "pooled_f1": 0.0659082913099566,
+   "pooled_fp_per_24h": 20.811641020510052,
+   "per_fold": {
+    "0": {
+     "sensitivity": 0.5021089271089271,
+     "precision": 0.13332161837116827,
+     "f1": 0.14044685691077743,
+     "fp_per_24h": 27.75559546494015,
+     "pooled_sensitivity": 0.5072463768115942,
+     "pooled_precision": 0.028397565922920892,
+     "pooled_f1": 0.05378409527468306,
+     "pooled_fp_per_24h": 26.797240969910735
+    },
+    "1": {
+     "sensitivity": 0.5863157894736841,
+     "precision": 0.183843093611568,
+     "f1": 0.1861820238959384,
+     "fp_per_24h": 18.30476387749299,
+     "pooled_sensitivity": 0.4189189189189189,
+     "pooled_precision": 0.07302709069493522,
+     "pooled_f1": 0.12437311935807423,
+     "pooled_fp_per_24h": 14.644058335198025
+    },
+    "2": {
+     "sensitivity": 0.4448370927318295,
+     "precision": 0.04465984160305568,
+     "f1": 0.07591151305191024,
+     "fp_per_24h": 18.674397430458505,
+     "pooled_sensitivity": 0.275,
+     "pooled_precision": 0.02930728241563055,
+     "pooled_f1": 0.052969502407704656,
+     "pooled_fp_per_24h": 14.11111589275724
+    },
+    "3": {
+     "sensitivity": 0.5820802005012532,
+     "precision": 0.05026369794740506,
+     "f1": 0.07190543489229018,
+     "fp_per_24h": 38.291852774777226,
+     "pooled_sensitivity": 0.5071428571428571,
+     "pooled_precision": 0.02993254637436762,
+     "pooled_f1": 0.05652866242038217,
+     "pooled_fp_per_24h": 32.01555248722882
+    },
+    "4": {
+     "sensitivity": 0.48561307113938695,
+     "precision": 0.03641112659280841,
+     "f1": 0.06202515948458755,
+     "fp_per_24h": 14.951547457002851,
+     "pooled_sensitivity": 0.3146853146853147,
+     "pooled_precision": 0.043859649122807015,
+     "pooled_f1": 0.07698887938408895,
+     "pooled_fp_per_24h": 13.88155936943513
+    }
+   },
+   "per_subject": {
+    "sub-004": [
+     2,
+     0,
+     4,
+     18.5
+    ],
+    "sub-007": [
+     2,
+     7,
+     2,
+     68.46277777777777
+    ],
+    "sub-011": [
+     3,
+     141,
+     4,
+     113.32916666666667
+    ],
+    "sub-013": [
+     0,
+     9,
+     2,
+     19.274444444444445
+    ],
+    "sub-020": [
+     0,
+     3,
+     1,
+     115.68444444444444
+    ],
+    "sub-025": [
+     2,
+     37,
+     3,
+     98.01916666666665
+    ],
+    "sub-033": [
+     1,
+     84,
+     1,
+     113.33555555555556
+    ],
+    "sub-042": [
+     2,
+     167,
+     11,
+     73.15555555555554
+    ],
+    "sub-048": [
+     0,
+     44,
+     1,
+     90.42388888888888
+    ],
+    "sub-053": [
+     0,
+     4,
+     2,
+     25.79083333333333
+    ],
+    "sub-057": [
+     0,
+     35,
+     1,
+     61.23055555555556
+    ],
+    "sub-058": [
+     1,
+     0,
+     1,
+     19.951944444444443
+    ],
+    "sub-071": [
+     2,
+     75,
+     6,
+     194.82166666666663
+    ],
+    "sub-073": [
+     39,
+     205,
+     74,
+     280.70722222222224
+    ],
+    "sub-078": [
+     2,
+     134,
+     3,
+     397.1144444444443
+    ],
+    "sub-081": [
+     4,
+     1203,
+     4,
+     100.28222222222225
+    ],
+    "sub-085": [
+     3,
+     89,
+     3,
+     55.90888888888888
+    ],
+    "sub-086": [
+     3,
+     79,
+     4,
+     89.2161111111111
+    ],
+    "sub-089": [
+     0,
+     30,
+     5,
+     102.51972222222223
+    ],
+    "sub-092": [
+     4,
+     49,
+     6,
+     107.26833333333336
+    ],
+    "sub-002": [
+     8,
+     77,
+     15,
+     99.18361111111113
+    ],
+    "sub-003": [
+     1,
+     7,
+     1,
+     114.91333333333333
+    ],
+    "sub-016": [
+     2,
+     36,
+     3,
+     47.98638888888889
+    ],
+    "sub-017": [
+     1,
+     100,
+     1,
+     115.27027777777779
+    ],
+    "sub-027": [
+     1,
+     57,
+     1,
+     100.9672222222222
+    ],
+    "sub-028": [
+     4,
+     21,
+     4,
+     88.48666666666668
+    ],
+    "sub-029": [
+     1,
+     42,
+     4,
+     116.90277777777777
+    ],
+    "sub-037": [
+     1,
+     25,
+     2,
+     21.130277777777778
+    ],
+    "sub-039": [
+     23,
+     46,
+     75,
+     91.87194444444444
+    ],
+    "sub-041": [
+     0,
+     2,
+     2,
+     20.982222222222223
+    ],
+    "sub-043": [
+     2,
+     74,
+     5,
+     87.68249999999999
+    ],
+    "sub-050": [
+     1,
+     22,
+     3,
+     70.07777777777778
+    ],
+    "sub-054": [
+     1,
+     105,
+     1,
+     75.09416666666667
+    ],
+    "sub-055": [
+     4,
+     92,
+     8,
+     42.214166666666664
+    ],
+    "sub-084": [
+     1,
+     17,
+     4,
+     54.95083333333333
+    ],
+    "sub-090": [
+     8,
+     10,
+     8,
+     3.55
+    ],
+    "sub-091": [
+     1,
+     0,
+     5,
+     1.0588888888888888
+    ],
+    "sub-093": [
+     1,
+     0,
+     1,
+     93.73111111111113
+    ],
+    "sub-094": [
+     1,
+     54,
+     5,
+     43.752222222222215
+    ],
+    "sub-005": [
+     1,
+     21,
+     2,
+     121.2138888888889
+    ],
+    "sub-008": [
+     0,
+     17,
+     2,
+     114.12916666666666
+    ],
+    "sub-018": [
+     1,
+     7,
+     1,
+     115.09027777777779
+    ],
+    "sub-021": [
+     4,
+     22,
+     4,
+     111.77111111111111
+    ],
+    "sub-030": [
+     3,
+     128,
+     7,
+     117.40333333333334
+    ],
+    "sub-038": [
+     1,
+     61,
+     1,
+     94.99472222222222
+    ],
+    "sub-047": [
+     6,
+     80,
+     40,
+     68.33583333333334
+    ],
+    "sub-049": [
+     1,
+     13,
+     2,
+     80.93944444444443
+    ],
+    "sub-060": [
+     1,
+     31,
+     25,
+     48.46861111111111
+    ],
+    "sub-063": [
+     0,
+     12,
+     2,
+     67.87583333333333
+    ],
+    "sub-064": [
+     1,
+     119,
+     3,
+     41.300555555555555
+    ],
+    "sub-067": [
+     4,
+     35,
+     4,
+     35.626111111111115
+    ],
+    "sub-068": [
+     2,
+     171,
+     3,
+     53.07944444444445
+    ],
+    "sub-074": [
+     3,
+     37,
+     9,
+     154.70555555555555
+    ],
+    "sub-075": [
+     0,
+     103,
+     2,
+     223.16194444444452
+    ],
+    "sub-076": [
+     0,
+     5,
+     3,
+     88.90138888888887
+    ],
+    "sub-080": [
+     4,
+     33,
+     8,
+     154.11638888888888
+    ],
+    "sub-088": [
+     0,
+     60,
+     1,
+     63.43194444444445
+    ],
+    "sub-095": [
+     1,
+     138,
+     1,
+     104.41444444444441
+    ],
+    "sub-010": [
+     0,
+     19,
+     1,
+     102.09444444444443
+    ],
+    "sub-014": [
+     1,
+     186,
+     2,
+     50.773611111111116
+    ],
+    "sub-015": [
+     3,
+     109,
+     9,
+     88.62111111111112
+    ],
+    "sub-022": [
+     5,
+     419,
+     7,
+     113.46527777777777
+    ],
+    "sub-023": [
+     1,
+     125,
+     1,
+     100.23944444444444
+    ],
+    "sub-024": [
+     2,
+     482,
+     2,
+     117.40694444444443
+    ],
+    "sub-026": [
+     3,
+     8,
+     4,
+     90.54138888888889
+    ],
+    "sub-032": [
+     1,
+     56,
+     1,
+     88.95138888888889
+    ],
+    "sub-034": [
+     4,
+     13,
+     30,
+     95.3125
+    ],
+    "sub-036": [
+     0,
+     10,
+     3,
+     20.09888888888889
+    ],
+    "sub-040": [
+     1,
+     26,
+     3,
+     53.71722222222222
+    ],
+    "sub-046": [
+     2,
+     44,
+     4,
+     97.64638888888886
+    ],
+    "sub-052": [
+     7,
+     197,
+     10,
+     82.28583333333333
+    ],
+    "sub-065": [
+     0,
+     64,
+     2,
+     88.16972222222222
+    ],
+    "sub-069": [
+     1,
+     62,
+     1,
+     193.2113888888889
+    ],
+    "sub-070": [
+     2,
+     103,
+     2,
+     141.71277777777777
+    ],
+    "sub-079": [
+     5,
+     126,
+     15,
+     95.46166666666667
+    ],
+    "sub-087": [
+     32,
+     150,
+     42,
+     20.812777777777782
+    ],
+    "sub-096": [
+     1,
+     102,
+     1,
+     84.38888888888884
+    ],
+    "sub-001": [
+     4,
+     67,
+     4,
+     106.5775
+    ],
+    "sub-006": [
+     0,
+     21,
+     1,
+     109.55
+    ],
+    "sub-009": [
+     1,
+     38,
+     1,
+     99.43472222222222
+    ],
+    "sub-012": [
+     3,
+     36,
+     3,
+     113.89972222222224
+    ],
+    "sub-019": [
+     1,
+     32,
+     1,
+     121.08416666666665
+    ],
+    "sub-031": [
+     1,
+     90,
+     3,
+     107.32222222222225
+    ],
+    "sub-035": [
+     0,
+     15,
+     55,
+     72.29777777777777
+    ],
+    "sub-044": [
+     1,
+     41,
+     4,
+     99.41166666666666
+    ],
+    "sub-045": [
+     0,
+     16,
+     2,
+     97.17861111111111
+    ],
+    "sub-051": [
+     0,
+     8,
+     5,
+     27.516666666666666
+    ],
+    "sub-056": [
+     12,
+     93,
+     13,
+     62.73305555555555
+    ],
+    "sub-059": [
+     1,
+     52,
+     8,
+     47.17861111111111
+    ],
+    "sub-061": [
+     1,
+     179,
+     1,
+     90.13416666666667
+    ],
+    "sub-062": [
+     1,
+     98,
+     3,
+     67.31444444444445
+    ],
+    "sub-066": [
+     0,
+     13,
+     4,
+     117.80416666666667
+    ],
+    "sub-072": [
+     16,
+     42,
+     21,
+     126.10222222222225
+    ],
+    "sub-077": [
+     0,
+     6,
+     9,
+     61.61416666666667
+    ],
+    "sub-082": [
+     2,
+     86,
+     4,
+     105.62166666666667
+    ],
+    "sub-083": [
+     1,
+     48,
+     1,
+     63.28749999999999
+    ]
+   }
+  }
+ },
+ "fold_info": [
+  {
+   "fold": 0,
+   "train_windows": 644910,
+   "val_windows": 7721247,
+   "features": [
+    "eeg_mav_mean",
+    "eeg_mav_max",
+    "eeg_mav_absdiff",
+    "eeg_ll_mean",
+    "eeg_ll_max",
+    "eeg_ll_absdiff",
+    "eeg_mob_mean",
+    "eeg_mob_max",
+    "eeg_mob_absdiff",
+    "eeg_zc_mean",
+    "eeg_zc_max",
+    "eeg_zc_absdiff",
+    "eeg_ext_mean",
+    "eeg_ext_max",
+    "eeg_ext_absdiff",
+    "eeg_delta_mean",
+    "eeg_delta_max",
+    "eeg_delta_absdiff",
+    "eeg_theta_mean",
+    "eeg_theta_max",
+    "eeg_theta_absdiff",
+    "eeg_alpha_mean",
+    "eeg_alpha_max",
+    "eeg_alpha_absdiff",
+    "eeg_beta_mean",
+    "eeg_beta_max",
+    "eeg_beta_absdiff",
+    "eeg_hf_mean",
+    "eeg_hf_max",
+    "eeg_hf_absdiff",
+    "eeg_ch1_mav",
+    "eeg_ch1_ll",
+    "eeg_ch1_mob",
+    "eeg_ch1_zc",
+    "eeg_ch1_ext",
+    "eeg_ch1_delta",
+    "eeg_ch1_theta",
+    "eeg_ch1_alpha",
+    "eeg_ch1_beta",
+    "eeg_ch1_hf",
+    "eeg_ch2_mav",
+    "eeg_ch2_ll",
+    "eeg_ch2_mob",
+    "eeg_ch2_zc",
+    "eeg_ch2_ext",
+    "eeg_ch2_delta",
+    "eeg_ch2_theta",
+    "eeg_ch2_alpha",
+    "eeg_ch2_beta",
+    "eeg_ch2_hf",
+    "eeg_sign_agree",
+    "eeg_art_ch1",
+    "eeg_art_ch2",
+    "ecg_log_rr",
+    "ecg_log_masrd",
+    "ecg_quality_bad",
+    "emg_mav",
+    "emg_ll",
+    "emg_zc",
+    "emg_hl_ratio",
+    "mov_acc_mag",
+    "mov_acc_jerk",
+    "mov_acc_act",
+    "mov_acc_band",
+    "mov_gyr_mag",
+    "mov_gyr_jerk",
+    "mov_gyr_act",
+    "mov_gyr_band",
+    "present_ecg",
+    "present_emg",
+    "present_mov_acc",
+    "present_mov_gyr",
+    "eeg_mav_mean_ctx",
+    "eeg_mav_max_ctx",
+    "eeg_mav_absdiff_ctx",
+    "eeg_ll_mean_ctx",
+    "eeg_ll_max_ctx",
+    "eeg_ll_absdiff_ctx",
+    "eeg_mob_mean_ctx",
+    "eeg_mob_max_ctx",
+    "eeg_mob_absdiff_ctx",
+    "eeg_zc_mean_ctx",
+    "eeg_zc_max_ctx",
+    "eeg_zc_absdiff_ctx",
+    "eeg_ext_mean_ctx",
+    "eeg_ext_max_ctx",
+    "eeg_ext_absdiff_ctx",
+    "eeg_delta_mean_ctx",
+    "eeg_delta_max_ctx",
+    "eeg_delta_absdiff_ctx",
+    "eeg_theta_mean_ctx",
+    "eeg_theta_max_ctx",
+    "eeg_theta_absdiff_ctx",
+    "eeg_alpha_mean_ctx",
+    "eeg_alpha_max_ctx",
+    "eeg_alpha_absdiff_ctx",
+    "eeg_beta_mean_ctx",
+    "eeg_beta_max_ctx",
+    "eeg_beta_absdiff_ctx",
+    "eeg_hf_mean_ctx",
+    "eeg_hf_max_ctx",
+    "eeg_hf_absdiff_ctx",
+    "eeg_sign_agree_ctx",
+    "ecg_log_rr_ctx",
+    "ecg_log_masrd_ctx",
+    "emg_mav_ctx",
+    "emg_ll_ctx",
+    "emg_zc_ctx",
+    "emg_hl_ratio_ctx",
+    "mov_acc_mag_ctx",
+    "mov_acc_jerk_ctx",
+    "mov_acc_act_ctx",
+    "mov_acc_band_ctx",
+    "mov_gyr_mag_ctx",
+    "mov_gyr_jerk_ctx",
+    "mov_gyr_act_ctx",
+    "mov_gyr_band_ctx"
+   ],
+   "seconds": 58.8,
+   "cost": {
+    "macs": 9600,
+    "weights": 9698,
+    "weight_bits": 8,
+    "multipliers": 9600
+   }
+  },
+  {
+   "fold": 1,
+   "train_windows": 689157,
+   "val_windows": 4642985,
+   "features": [
+    "eeg_mav_mean",
+    "eeg_mav_max",
+    "eeg_mav_absdiff",
+    "eeg_ll_mean",
+    "eeg_ll_max",
+    "eeg_ll_absdiff",
+    "eeg_mob_mean",
+    "eeg_mob_max",
+    "eeg_mob_absdiff",
+    "eeg_zc_mean",
+    "eeg_zc_max",
+    "eeg_zc_absdiff",
+    "eeg_ext_mean",
+    "eeg_ext_max",
+    "eeg_ext_absdiff",
+    "eeg_delta_mean",
+    "eeg_delta_max",
+    "eeg_delta_absdiff",
+    "eeg_theta_mean",
+    "eeg_theta_max",
+    "eeg_theta_absdiff",
+    "eeg_alpha_mean",
+    "eeg_alpha_max",
+    "eeg_alpha_absdiff",
+    "eeg_beta_mean",
+    "eeg_beta_max",
+    "eeg_beta_absdiff",
+    "eeg_hf_mean",
+    "eeg_hf_max",
+    "eeg_hf_absdiff",
+    "eeg_ch1_mav",
+    "eeg_ch1_ll",
+    "eeg_ch1_mob",
+    "eeg_ch1_zc",
+    "eeg_ch1_ext",
+    "eeg_ch1_delta",
+    "eeg_ch1_theta",
+    "eeg_ch1_alpha",
+    "eeg_ch1_beta",
+    "eeg_ch1_hf",
+    "eeg_ch2_mav",
+    "eeg_ch2_ll",
+    "eeg_ch2_mob",
+    "eeg_ch2_zc",
+    "eeg_ch2_ext",
+    "eeg_ch2_delta",
+    "eeg_ch2_theta",
+    "eeg_ch2_alpha",
+    "eeg_ch2_beta",
+    "eeg_ch2_hf",
+    "eeg_sign_agree",
+    "eeg_art_ch1",
+    "eeg_art_ch2",
+    "ecg_log_rr",
+    "ecg_log_masrd",
+    "ecg_quality_bad",
+    "emg_mav",
+    "emg_ll",
+    "emg_zc",
+    "emg_hl_ratio",
+    "mov_acc_mag",
+    "mov_acc_jerk",
+    "mov_acc_act",
+    "mov_acc_band",
+    "mov_gyr_mag",
+    "mov_gyr_jerk",
+    "mov_gyr_act",
+    "mov_gyr_band",
+    "present_ecg",
+    "present_emg",
+    "present_mov_acc",
+    "present_mov_gyr",
+    "eeg_mav_mean_ctx",
+    "eeg_mav_max_ctx",
+    "eeg_mav_absdiff_ctx",
+    "eeg_ll_mean_ctx",
+    "eeg_ll_max_ctx",
+    "eeg_ll_absdiff_ctx",
+    "eeg_mob_mean_ctx",
+    "eeg_mob_max_ctx",
+    "eeg_mob_absdiff_ctx",
+    "eeg_zc_mean_ctx",
+    "eeg_zc_max_ctx",
+    "eeg_zc_absdiff_ctx",
+    "eeg_ext_mean_ctx",
+    "eeg_ext_max_ctx",
+    "eeg_ext_absdiff_ctx",
+    "eeg_delta_mean_ctx",
+    "eeg_delta_max_ctx",
+    "eeg_delta_absdiff_ctx",
+    "eeg_theta_mean_ctx",
+    "eeg_theta_max_ctx",
+    "eeg_theta_absdiff_ctx",
+    "eeg_alpha_mean_ctx",
+    "eeg_alpha_max_ctx",
+    "eeg_alpha_absdiff_ctx",
+    "eeg_beta_mean_ctx",
+    "eeg_beta_max_ctx",
+    "eeg_beta_absdiff_ctx",
+    "eeg_hf_mean_ctx",
+    "eeg_hf_max_ctx",
+    "eeg_hf_absdiff_ctx",
+    "eeg_sign_agree_ctx",
+    "ecg_log_rr_ctx",
+    "ecg_log_masrd_ctx",
+    "emg_mav_ctx",
+    "emg_ll_ctx",
+    "emg_zc_ctx",
+    "emg_hl_ratio_ctx",
+    "mov_acc_mag_ctx",
+    "mov_acc_jerk_ctx",
+    "mov_acc_act_ctx",
+    "mov_acc_band_ctx",
+    "mov_gyr_mag_ctx",
+    "mov_gyr_jerk_ctx",
+    "mov_gyr_act_ctx",
+    "mov_gyr_band_ctx"
+   ],
+   "seconds": 55.8,
+   "cost": {
+    "macs": 9600,
+    "weights": 9698,
+    "weight_bits": 8,
+    "multipliers": 9600
+   }
+  },
+  {
+   "fold": 2,
+   "train_windows": 762804,
+   "val_windows": 6691832,
+   "features": [
+    "eeg_mav_mean",
+    "eeg_mav_max",
+    "eeg_mav_absdiff",
+    "eeg_ll_mean",
+    "eeg_ll_max",
+    "eeg_ll_absdiff",
+    "eeg_mob_mean",
+    "eeg_mob_max",
+    "eeg_mob_absdiff",
+    "eeg_zc_mean",
+    "eeg_zc_max",
+    "eeg_zc_absdiff",
+    "eeg_ext_mean",
+    "eeg_ext_max",
+    "eeg_ext_absdiff",
+    "eeg_delta_mean",
+    "eeg_delta_max",
+    "eeg_delta_absdiff",
+    "eeg_theta_mean",
+    "eeg_theta_max",
+    "eeg_theta_absdiff",
+    "eeg_alpha_mean",
+    "eeg_alpha_max",
+    "eeg_alpha_absdiff",
+    "eeg_beta_mean",
+    "eeg_beta_max",
+    "eeg_beta_absdiff",
+    "eeg_hf_mean",
+    "eeg_hf_max",
+    "eeg_hf_absdiff",
+    "eeg_ch1_mav",
+    "eeg_ch1_ll",
+    "eeg_ch1_mob",
+    "eeg_ch1_zc",
+    "eeg_ch1_ext",
+    "eeg_ch1_delta",
+    "eeg_ch1_theta",
+    "eeg_ch1_alpha",
+    "eeg_ch1_beta",
+    "eeg_ch1_hf",
+    "eeg_ch2_mav",
+    "eeg_ch2_ll",
+    "eeg_ch2_mob",
+    "eeg_ch2_zc",
+    "eeg_ch2_ext",
+    "eeg_ch2_delta",
+    "eeg_ch2_theta",
+    "eeg_ch2_alpha",
+    "eeg_ch2_beta",
+    "eeg_ch2_hf",
+    "eeg_sign_agree",
+    "eeg_art_ch1",
+    "eeg_art_ch2",
+    "ecg_log_rr",
+    "ecg_log_masrd",
+    "ecg_quality_bad",
+    "emg_mav",
+    "emg_ll",
+    "emg_zc",
+    "emg_hl_ratio",
+    "mov_acc_mag",
+    "mov_acc_jerk",
+    "mov_acc_act",
+    "mov_acc_band",
+    "mov_gyr_mag",
+    "mov_gyr_jerk",
+    "mov_gyr_act",
+    "mov_gyr_band",
+    "present_ecg",
+    "present_emg",
+    "present_mov_acc",
+    "present_mov_gyr",
+    "eeg_mav_mean_ctx",
+    "eeg_mav_max_ctx",
+    "eeg_mav_absdiff_ctx",
+    "eeg_ll_mean_ctx",
+    "eeg_ll_max_ctx",
+    "eeg_ll_absdiff_ctx",
+    "eeg_mob_mean_ctx",
+    "eeg_mob_max_ctx",
+    "eeg_mob_absdiff_ctx",
+    "eeg_zc_mean_ctx",
+    "eeg_zc_max_ctx",
+    "eeg_zc_absdiff_ctx",
+    "eeg_ext_mean_ctx",
+    "eeg_ext_max_ctx",
+    "eeg_ext_absdiff_ctx",
+    "eeg_delta_mean_ctx",
+    "eeg_delta_max_ctx",
+    "eeg_delta_absdiff_ctx",
+    "eeg_theta_mean_ctx",
+    "eeg_theta_max_ctx",
+    "eeg_theta_absdiff_ctx",
+    "eeg_alpha_mean_ctx",
+    "eeg_alpha_max_ctx",
+    "eeg_alpha_absdiff_ctx",
+    "eeg_beta_mean_ctx",
+    "eeg_beta_max_ctx",
+    "eeg_beta_absdiff_ctx",
+    "eeg_hf_mean_ctx",
+    "eeg_hf_max_ctx",
+    "eeg_hf_absdiff_ctx",
+    "eeg_sign_agree_ctx",
+    "ecg_log_rr_ctx",
+    "ecg_log_masrd_ctx",
+    "emg_mav_ctx",
+    "emg_ll_ctx",
+    "emg_zc_ctx",
+    "emg_hl_ratio_ctx",
+    "mov_acc_mag_ctx",
+    "mov_acc_jerk_ctx",
+    "mov_acc_act_ctx",
+    "mov_acc_band_ctx",
+    "mov_gyr_mag_ctx",
+    "mov_gyr_jerk_ctx",
+    "mov_gyr_act_ctx",
+    "mov_gyr_band_ctx"
+   ],
+   "seconds": 57.2,
+   "cost": {
+    "macs": 9600,
+    "weights": 9698,
+    "weight_bits": 8,
+    "multipliers": 9600
+   }
+  },
+  {
+   "fold": 3,
+   "train_windows": 733152,
+   "val_windows": 6209360,
+   "features": [
+    "eeg_mav_mean",
+    "eeg_mav_max",
+    "eeg_mav_absdiff",
+    "eeg_ll_mean",
+    "eeg_ll_max",
+    "eeg_ll_absdiff",
+    "eeg_mob_mean",
+    "eeg_mob_max",
+    "eeg_mob_absdiff",
+    "eeg_zc_mean",
+    "eeg_zc_max",
+    "eeg_zc_absdiff",
+    "eeg_ext_mean",
+    "eeg_ext_max",
+    "eeg_ext_absdiff",
+    "eeg_delta_mean",
+    "eeg_delta_max",
+    "eeg_delta_absdiff",
+    "eeg_theta_mean",
+    "eeg_theta_max",
+    "eeg_theta_absdiff",
+    "eeg_alpha_mean",
+    "eeg_alpha_max",
+    "eeg_alpha_absdiff",
+    "eeg_beta_mean",
+    "eeg_beta_max",
+    "eeg_beta_absdiff",
+    "eeg_hf_mean",
+    "eeg_hf_max",
+    "eeg_hf_absdiff",
+    "eeg_ch1_mav",
+    "eeg_ch1_ll",
+    "eeg_ch1_mob",
+    "eeg_ch1_zc",
+    "eeg_ch1_ext",
+    "eeg_ch1_delta",
+    "eeg_ch1_theta",
+    "eeg_ch1_alpha",
+    "eeg_ch1_beta",
+    "eeg_ch1_hf",
+    "eeg_ch2_mav",
+    "eeg_ch2_ll",
+    "eeg_ch2_mob",
+    "eeg_ch2_zc",
+    "eeg_ch2_ext",
+    "eeg_ch2_delta",
+    "eeg_ch2_theta",
+    "eeg_ch2_alpha",
+    "eeg_ch2_beta",
+    "eeg_ch2_hf",
+    "eeg_sign_agree",
+    "eeg_art_ch1",
+    "eeg_art_ch2",
+    "ecg_log_rr",
+    "ecg_log_masrd",
+    "ecg_quality_bad",
+    "emg_mav",
+    "emg_ll",
+    "emg_zc",
+    "emg_hl_ratio",
+    "mov_acc_mag",
+    "mov_acc_jerk",
+    "mov_acc_act",
+    "mov_acc_band",
+    "mov_gyr_mag",
+    "mov_gyr_jerk",
+    "mov_gyr_act",
+    "mov_gyr_band",
+    "present_ecg",
+    "present_emg",
+    "present_mov_acc",
+    "present_mov_gyr",
+    "eeg_mav_mean_ctx",
+    "eeg_mav_max_ctx",
+    "eeg_mav_absdiff_ctx",
+    "eeg_ll_mean_ctx",
+    "eeg_ll_max_ctx",
+    "eeg_ll_absdiff_ctx",
+    "eeg_mob_mean_ctx",
+    "eeg_mob_max_ctx",
+    "eeg_mob_absdiff_ctx",
+    "eeg_zc_mean_ctx",
+    "eeg_zc_max_ctx",
+    "eeg_zc_absdiff_ctx",
+    "eeg_ext_mean_ctx",
+    "eeg_ext_max_ctx",
+    "eeg_ext_absdiff_ctx",
+    "eeg_delta_mean_ctx",
+    "eeg_delta_max_ctx",
+    "eeg_delta_absdiff_ctx",
+    "eeg_theta_mean_ctx",
+    "eeg_theta_max_ctx",
+    "eeg_theta_absdiff_ctx",
+    "eeg_alpha_mean_ctx",
+    "eeg_alpha_max_ctx",
+    "eeg_alpha_absdiff_ctx",
+    "eeg_beta_mean_ctx",
+    "eeg_beta_max_ctx",
+    "eeg_beta_absdiff_ctx",
+    "eeg_hf_mean_ctx",
+    "eeg_hf_max_ctx",
+    "eeg_hf_absdiff_ctx",
+    "eeg_sign_agree_ctx",
+    "ecg_log_rr_ctx",
+    "ecg_log_masrd_ctx",
+    "emg_mav_ctx",
+    "emg_ll_ctx",
+    "emg_zc_ctx",
+    "emg_hl_ratio_ctx",
+    "mov_acc_mag_ctx",
+    "mov_acc_jerk_ctx",
+    "mov_acc_act_ctx",
+    "mov_acc_band_ctx",
+    "mov_gyr_mag_ctx",
+    "mov_gyr_jerk_ctx",
+    "mov_gyr_act_ctx",
+    "mov_gyr_band_ctx"
+   ],
+   "seconds": 57.2,
+   "cost": {
+    "macs": 9600,
+    "weights": 9698,
+    "weight_bits": 8,
+    "multipliers": 9600
+   }
+  },
+  {
+   "fold": 4,
+   "train_windows": 739641,
+   "val_windows": 6105561,
+   "features": [
+    "eeg_mav_mean",
+    "eeg_mav_max",
+    "eeg_mav_absdiff",
+    "eeg_ll_mean",
+    "eeg_ll_max",
+    "eeg_ll_absdiff",
+    "eeg_mob_mean",
+    "eeg_mob_max",
+    "eeg_mob_absdiff",
+    "eeg_zc_mean",
+    "eeg_zc_max",
+    "eeg_zc_absdiff",
+    "eeg_ext_mean",
+    "eeg_ext_max",
+    "eeg_ext_absdiff",
+    "eeg_delta_mean",
+    "eeg_delta_max",
+    "eeg_delta_absdiff",
+    "eeg_theta_mean",
+    "eeg_theta_max",
+    "eeg_theta_absdiff",
+    "eeg_alpha_mean",
+    "eeg_alpha_max",
+    "eeg_alpha_absdiff",
+    "eeg_beta_mean",
+    "eeg_beta_max",
+    "eeg_beta_absdiff",
+    "eeg_hf_mean",
+    "eeg_hf_max",
+    "eeg_hf_absdiff",
+    "eeg_ch1_mav",
+    "eeg_ch1_ll",
+    "eeg_ch1_mob",
+    "eeg_ch1_zc",
+    "eeg_ch1_ext",
+    "eeg_ch1_delta",
+    "eeg_ch1_theta",
+    "eeg_ch1_alpha",
+    "eeg_ch1_beta",
+    "eeg_ch1_hf",
+    "eeg_ch2_mav",
+    "eeg_ch2_ll",
+    "eeg_ch2_mob",
+    "eeg_ch2_zc",
+    "eeg_ch2_ext",
+    "eeg_ch2_delta",
+    "eeg_ch2_theta",
+    "eeg_ch2_alpha",
+    "eeg_ch2_beta",
+    "eeg_ch2_hf",
+    "eeg_sign_agree",
+    "eeg_art_ch1",
+    "eeg_art_ch2",
+    "ecg_log_rr",
+    "ecg_log_masrd",
+    "ecg_quality_bad",
+    "emg_mav",
+    "emg_ll",
+    "emg_zc",
+    "emg_hl_ratio",
+    "mov_acc_mag",
+    "mov_acc_jerk",
+    "mov_acc_act",
+    "mov_acc_band",
+    "mov_gyr_mag",
+    "mov_gyr_jerk",
+    "mov_gyr_act",
+    "mov_gyr_band",
+    "present_ecg",
+    "present_emg",
+    "present_mov_acc",
+    "present_mov_gyr",
+    "eeg_mav_mean_ctx",
+    "eeg_mav_max_ctx",
+    "eeg_mav_absdiff_ctx",
+    "eeg_ll_mean_ctx",
+    "eeg_ll_max_ctx",
+    "eeg_ll_absdiff_ctx",
+    "eeg_mob_mean_ctx",
+    "eeg_mob_max_ctx",
+    "eeg_mob_absdiff_ctx",
+    "eeg_zc_mean_ctx",
+    "eeg_zc_max_ctx",
+    "eeg_zc_absdiff_ctx",
+    "eeg_ext_mean_ctx",
+    "eeg_ext_max_ctx",
+    "eeg_ext_absdiff_ctx",
+    "eeg_delta_mean_ctx",
+    "eeg_delta_max_ctx",
+    "eeg_delta_absdiff_ctx",
+    "eeg_theta_mean_ctx",
+    "eeg_theta_max_ctx",
+    "eeg_theta_absdiff_ctx",
+    "eeg_alpha_mean_ctx",
+    "eeg_alpha_max_ctx",
+    "eeg_alpha_absdiff_ctx",
+    "eeg_beta_mean_ctx",
+    "eeg_beta_max_ctx",
+    "eeg_beta_absdiff_ctx",
+    "eeg_hf_mean_ctx",
+    "eeg_hf_max_ctx",
+    "eeg_hf_absdiff_ctx",
+    "eeg_sign_agree_ctx",
+    "ecg_log_rr_ctx",
+    "ecg_log_masrd_ctx",
+    "emg_mav_ctx",
+    "emg_ll_ctx",
+    "emg_zc_ctx",
+    "emg_hl_ratio_ctx",
+    "mov_acc_mag_ctx",
+    "mov_acc_jerk_ctx",
+    "mov_acc_act_ctx",
+    "mov_acc_band_ctx",
+    "mov_gyr_mag_ctx",
+    "mov_gyr_jerk_ctx",
+    "mov_gyr_act_ctx",
+    "mov_gyr_band_ctx"
+   ],
+   "seconds": 57.2,
+   "cost": {
+    "macs": 9600,
+    "weights": 9698,
+    "weight_bits": 8,
+    "multipliers": 9600
+   }
+  }
+ ],
+ "cost_median": {
+  "macs": 9600.0,
+  "weights": 9698.0,
+  "weight_bits": 8.0,
+  "multipliers": 9600.0
+ }
+}

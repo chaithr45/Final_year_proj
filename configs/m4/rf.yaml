@@ -1,0 +1,6 @@
+name: rf
+seed: 0
+model: {type: rf, params: {n_estimators: 200, max_depth: 12, min_samples_leaf: 20}}
+features: all
+train: {bg_ratio: 20}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

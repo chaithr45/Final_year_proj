@@ -1,0 +1,12 @@
+fold 0: train 76 patients, 644910 windows (30710 seizure); val 20 patients
+  fold 0 done in 78 s; estimated cost {'split_nodes': 9000, 'distinct_comparators': 3138, 'leaves': 9300, 'trees': 300, 'comparator_luts': 18828, 'leaf_luts': 11700, 'total_luts': 30540, 'multipliers': 0}
+fold 1: train 77 patients, 689157 windows (32817 seizure); val 19 patients
+  fold 1 done in 139 s; estimated cost {'split_nodes': 9000, 'distinct_comparators': 3205, 'leaves': 9300, 'trees': 300, 'comparator_luts': 19230, 'leaf_luts': 11700, 'total_luts': 30942, 'multipliers': 0}
+fold 2: train 77 patients, 762804 windows (36324 seizure); val 19 patients
+  fold 2 done in 140 s; estimated cost {'split_nodes': 9000, 'distinct_comparators': 3114, 'leaves': 9300, 'trees': 300, 'comparator_luts': 18684, 'leaf_luts': 11700, 'total_luts': 30396, 'multipliers': 0}
+fold 3: train 77 patients, 733152 windows (34912 seizure); val 19 patients
+  fold 3 done in 127 s; estimated cost {'split_nodes': 9000, 'distinct_comparators': 3119, 'leaves': 9300, 'trees': 300, 'comparator_luts': 18714, 'leaf_luts': 11700, 'total_luts': 30426, 'multipliers': 0}
+fold 4: train 77 patients, 739641 windows (35221 seizure); val 19 patients
+  fold 4 done in 119 s; estimated cost {'split_nodes': 9000, 'distinct_comparators': 3129, 'leaves': 9300, 'trees': 300, 'comparator_luts': 18774, 'leaf_luts': 11700, 'total_luts': 30486, 'multipliers': 0}
+RESULT lgbm: window AUROC 0.872 AUPR 0.062 | best-F1 op (gate none, k 10): F1 0.292 sens 0.339 prec 0.347 FP/24h 3.0 | sens@<=1FA/h 0.589 (FP/24h 19.9)
+run dir: /home/user/Final_year_proj/results/runs/20261106-174027_lgbm_s0

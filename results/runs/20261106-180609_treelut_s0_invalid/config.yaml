@@ -1,0 +1,32 @@
+name: treelut
+seed: 0
+model:
+  type: treelut
+  params:
+    w_feature: 8
+    w_tree: 3
+    n_estimators: 100
+    max_depth: 4
+    learning_rate: 0.3
+features: all
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json

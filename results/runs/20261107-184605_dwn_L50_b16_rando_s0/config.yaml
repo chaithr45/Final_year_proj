@@ -1,0 +1,41 @@
+name: dwn_L50_b16_rando
+seed: 0
+model:
+  type: dwn
+  params:
+    bits: 16
+    layers:
+    - 50
+    n: 6
+    mapping: random
+    tau: 3.3333
+    epochs: 30
+    lr: 0.01
+    batch: 4096
+    decay_at: 0.7
+    loss: ce
+    device: cpu
+    threads: 8
+features:
+  mi_top: 40
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json

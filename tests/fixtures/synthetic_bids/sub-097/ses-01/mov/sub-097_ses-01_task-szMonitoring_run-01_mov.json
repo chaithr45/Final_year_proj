@@ -1,0 +1,11 @@
+{
+    "MOVReference": "n/a",
+    "SamplingFrequency": 25,
+    "PowerLineFrequency": "n/a",
+    "SoftwareFilters": "n/a",
+    "MOVChannelCount": 12,
+    "MOVMontage": "n/a",
+    "RecordingType": "discontinuous",
+    "RecordingDuration": 90.0,
+    "TaskName": "szMonitoring"
+}

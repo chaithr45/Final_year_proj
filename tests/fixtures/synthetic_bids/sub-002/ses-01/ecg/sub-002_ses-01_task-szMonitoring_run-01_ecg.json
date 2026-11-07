@@ -1,0 +1,11 @@
+{
+    "ECGReference": "n/a",
+    "SamplingFrequency": 250,
+    "PowerLineFrequency": "n/a",
+    "SoftwareFilters": "n/a",
+    "ECGChannelCount": 1,
+    "ECGMontage": "n/a",
+    "RecordingType": "discontinuous",
+    "RecordingDuration": 90.0,
+    "TaskName": "szMonitoring"
+}

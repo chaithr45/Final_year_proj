@@ -1,0 +1,6 @@
+name: mlp_int8
+seed: 0
+model: {type: mlp_int8, params: {hidden: [64, 32], epochs: 20, lr: 0.001, batch: 2048}}
+features: all
+train: {bg_ratio: 20}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

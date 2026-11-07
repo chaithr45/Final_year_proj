@@ -1,0 +1,12 @@
+fold 0: train 76 patients, 644910 windows (30710 seizure); val 20 patients
+  fold 0 done in 74 s; estimated cost {'macs': 117, 'weights': 118, 'weight_bits': 8, 'multipliers': 117}
+fold 1: train 77 patients, 689157 windows (32817 seizure); val 19 patients
+  fold 1 done in 103 s; estimated cost {'macs': 117, 'weights': 118, 'weight_bits': 8, 'multipliers': 117}
+fold 2: train 77 patients, 762804 windows (36324 seizure); val 19 patients
+  fold 2 done in 111 s; estimated cost {'macs': 117, 'weights': 118, 'weight_bits': 8, 'multipliers': 117}
+fold 3: train 77 patients, 733152 windows (34912 seizure); val 19 patients
+  fold 3 done in 110 s; estimated cost {'macs': 117, 'weights': 118, 'weight_bits': 8, 'multipliers': 117}
+fold 4: train 77 patients, 739641 windows (35221 seizure); val 19 patients
+  fold 4 done in 94 s; estimated cost {'macs': 117, 'weights': 118, 'weight_bits': 8, 'multipliers': 117}
+RESULT lr: window AUROC 0.806 AUPR 0.007 | best-F1 op (gate any, k 10): F1 0.104 sens 0.216 prec 0.114 FP/24h 8.9 | sens@<=1FA/h 0.409 (FP/24h 20.0)
+run dir: /home/user/Final_year_proj/results/runs/20261106-175412_lr_s0

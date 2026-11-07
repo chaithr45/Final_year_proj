@@ -1,0 +1,9 @@
+# Tier-1 classical ML: LightGBM on all 117 golden integer features.
+name: lgbm
+seed: 0
+model:
+  type: lgbm
+  params: {n_estimators: 300, num_leaves: 31, learning_rate: 0.05}
+features: all
+train: {bg_ratio: 20}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}
