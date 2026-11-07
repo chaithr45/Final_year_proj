@@ -170,3 +170,35 @@ def test_stateful_dwn_learns_memory_and_export_matches():
     batched = batched_integer_forward([bits[i].numpy().astype(np.uint8) for i in range(5)], exp)
     for i in range(5):
         np.testing.assert_allclose(batched[i], ref[i], atol=1e-3)
+
+
+@pytest.mark.parametrize("cfg", [
+    {"type": "lgn", "params": {"bits": 4, "layers": [64, 64], "epochs": 4, "batch": 256, "threads": 1}},
+    {"type": "dwn", "params": {"bits": 4, "layers": [32], "epochs": 4, "batch": 256, "threads": 1, "decay_at": 0.5}},
+    {"type": "mlp_int8", "params": {"hidden": [16], "epochs": 4, "batch": 256, "threads": 1}},
+])
+def test_training_resumes_from_epoch_checkpoint(cfg, tmp_path):
+    """A fold interrupted after epoch 2 and resumed from its checkpoint gives the uninterrupted model."""
+    from seizelut.models.registry import build
+    rng = np.random.default_rng(0)
+    X = rng.integers(0, 256, size=(1500, 6)).astype(np.int32)
+    y = (X[:, 0] + rng.integers(0, 60, 1500) > 200).astype(np.int64)
+    ref = build(cfg).fit(X, y).score(X)
+
+    class Stop(Exception):
+        pass
+
+    m = build(cfg)
+    m.ckpt_path = tmp_path / "fold.pt"
+    save = m._ckpt_save
+
+    def save_then_stop(epoch, *a):
+        save(epoch, *a)
+        if epoch == 2:
+            raise Stop
+    m._ckpt_save = save_then_stop
+    with pytest.raises(Stop):
+        m.fit(X, y)
+    m2 = build(cfg)
+    m2.ckpt_path = tmp_path / "fold.pt"
+    assert np.array_equal(m2.fit(X, y).score(X), ref)

@@ -17,6 +17,35 @@ from ..hw import cost as hw
 
 class Model:
     name = "base"
+    ckpt_path = None        # set by the CV runner: per-epoch training state so a fold survives restarts
+
+    def _ckpt_load(self, mods, opt, sched, gen):
+        """Restore the state saved after the last finished epoch; returns the epoch to start from."""
+        from pathlib import Path
+        if not self.ckpt_path or not Path(self.ckpt_path).exists():
+            return 0
+        import torch
+        st = torch.load(self.ckpt_path, map_location="cpu", weights_only=False)
+        for k, m in mods.items():
+            m.load_state_dict(st["mods"][k])
+        opt.load_state_dict(st["opt"])
+        if sched is not None:
+            sched.load_state_dict(st["sched"])
+        gen.set_state(st["gen"])
+        torch.set_rng_state(st["rng"])
+        getattr(self, "log", lambda *a: None)(f"    resumed after epoch {st['epoch']} (fold checkpoint)")
+        return st["epoch"]
+
+    def _ckpt_save(self, epoch, mods, opt, sched, gen):
+        if not self.ckpt_path:
+            return
+        import os
+        import torch
+        tmp = str(self.ckpt_path) + ".tmp"
+        torch.save({"epoch": epoch, "mods": {k: m.state_dict() for k, m in mods.items()}, "opt": opt.state_dict(),
+                    "sched": sched.state_dict() if sched is not None else None, "gen": gen.get_state(),
+                    "rng": torch.get_rng_state()}, tmp)
+        os.replace(tmp, self.ckpt_path)         # atomic: never a half-written checkpoint
 
     def fit(self, X, y):
         raise NotImplementedError
@@ -232,7 +261,9 @@ class DWNModel(Model):
         soft_t = torch.as_tensor(soft, dtype=torch.float32) if soft is not None else None
         bag_t = torch.as_tensor(bags, dtype=torch.long) if bags is not None else None
         g = torch.Generator().manual_seed(p["seed"])
-        for ep in range(p["epochs"]):
+        mods = {"net": self.net, **({"lenc": self.lenc} if learned else {})}
+        start = self._ckpt_load(mods, opt, sched, g)
+        for ep in range(start, p["epochs"]):
             self.net.train()
             perm = torch.randperm(len(yt), generator=g)
             tot, t0 = 0.0, time.time()
@@ -268,6 +299,7 @@ class DWNModel(Model):
                 tot += float(loss.detach()) * len(idx)
             sched.step()
             self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / len(perm):.4f} ({time.time() - t0:.0f} s)")
+            self._ckpt_save(ep + 1, mods, opt, sched, g)
         self.net.eval()
         if learned:
             self.therm = self.lenc.freeze()
@@ -401,7 +433,8 @@ class LGNModel(Model):
         yt = torch.as_tensor(y, dtype=torch.long)
         w = torch.tensor([1.0, float((y == 0).sum()) / max(1, int((y == 1).sum()))])
         g = torch.Generator().manual_seed(p["seed"])
-        for ep in range(p["epochs"]):
+        start = self._ckpt_load({"net": self.net}, opt, None, g)
+        for ep in range(start, p["epochs"]):
             self.net.train()
             perm = torch.randperm(len(yt), generator=g)
             tot, t0 = 0.0, time.time()
@@ -413,6 +446,7 @@ class LGNModel(Model):
                 opt.step()
                 tot += float(loss.detach()) * len(idx)
             self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / len(perm):.4f} ({time.time() - t0:.0f} s)")
+            self._ckpt_save(ep + 1, {"net": self.net}, opt, None, g)
         self.net.eval()
         self.exported = self.net.export()
         return self
@@ -461,7 +495,8 @@ class Int8MLPModel(Model):
         yt = torch.as_tensor(y, dtype=torch.long)
         w = torch.tensor([1.0, float((y == 0).sum()) / max(1, int((y == 1).sum()))])
         g = torch.Generator().manual_seed(self.p["seed"])
-        for ep in range(self.p["epochs"]):
+        start = self._ckpt_load({"net": self.net}, opt, None, g)
+        for ep in range(start, self.p["epochs"]):
             self.net.train()
             perm = torch.randperm(len(yt), generator=g)
             tot = 0.0
@@ -473,6 +508,7 @@ class Int8MLPModel(Model):
                 opt.step()
                 tot += float(loss.detach()) * len(idx)
             self.log(f"    epoch {ep + 1}/{self.p['epochs']} loss {tot / len(perm):.4f}")
+            self._ckpt_save(ep + 1, {"net": self.net}, opt, None, g)
         self.net.eval()
         return self
 
@@ -545,7 +581,8 @@ class StatefulDWNModel(Model):
         bi = p["burn_in"]
         w = torch.tensor([1.0, float((Ys[:, bi:] == 0).sum()) / max(1, int((Ys[:, bi:] == 1).sum()))])
         g = torch.Generator().manual_seed(seed)
-        for ep in range(p["epochs"]):
+        start = self._ckpt_load({"net": self.net}, opt, sched, g)
+        for ep in range(start, p["epochs"]):
             self.net.train()
             perm = torch.randperm(B, generator=g)
             tot, t0 = 0.0, time.time()
@@ -559,6 +596,7 @@ class StatefulDWNModel(Model):
                 tot += float(loss.detach()) * len(idx)
             sched.step()
             self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / B:.4f} ({time.time() - t0:.0f} s)")
+            self._ckpt_save(ep + 1, {"net": self.net}, opt, sched, g)
         self.net.eval()
         self.exported = self.net.export()
         return self

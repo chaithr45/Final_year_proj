@@ -144,7 +144,9 @@ def main() -> int:
             fold_info.append(info)
             log(f"fold {k}: reloaded from the interrupted run ({info['val_windows']} val windows)")
             continue
+        ckpt = oof_dir / f"_fold_{k}_train.pt"     # per-epoch training state (deleted when the fold is done)
         spec_model = build(cfg["model"], log=log)
+        spec_model.ckpt_path = ckpt
         if getattr(spec_model, "needs_store", False):
             # sequence models (N1): sample their own training sequences from the store
             log(f"fold {k}: train {len(tr)} patients (sequence model); val {len(va)} patients")
@@ -163,6 +165,7 @@ def main() -> int:
             fold_info.append({"fold": k, "val_windows": n_win, "seconds": round(time.time() - t0, 1), "cost": c})
             log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
             done_f.write_text(json.dumps(fold_info[-1], default=float))
+            ckpt.unlink(missing_ok=True)
             continue
         X, y, _, _, keys = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"))
         log(f"fold {k}: train {len(tr)} patients, {len(y)} windows ({int(y.sum())} seizure); val {len(va)} patients")
@@ -187,6 +190,7 @@ def main() -> int:
             log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
         fold_bits = [bits_of(i) for i in fcols]
         model = build(cfg["model"], log=log)
+        model.ckpt_path = None if tc.get("hard_negative") else ckpt   # hard-negative retrains a second model
         if cfg["model"]["type"] == "dwn":
             model.p["seed"] = seed + k
         if tc.get("modality_dropout"):
@@ -233,6 +237,7 @@ def main() -> int:
                           "seconds": round(time.time() - t0, 1), "cost": c})
         log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
         done_f.write_text(json.dumps(fold_info[-1], default=float))
+        ckpt.unlink(missing_ok=True)
 
     post = cfg.get("post", {})
     rows = sweep(oof, ks=post.get("k", (6, 8, 10)), gates=post.get("gate", ("none", "both", "any")),
