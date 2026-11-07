@@ -15,7 +15,8 @@ from __future__ import annotations
 import argparse
 import random
 import sys
-from concurrent.futures import ProcessPoolExecutor
+import time
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 import numpy as np
@@ -33,8 +34,9 @@ REPO = Path(__file__).resolve().parents[2]
 def _cut(args):
     run, starts, tmp = args
     with local_edf(run, "eeg", tmp) as p:
+        size = p.stat().st_size
         chans = off.preprocess_eeg(read_edf(p))
-    return off.cut_windows(chans, starts)
+    return off.cut_windows(chans, starts), size
 
 
 def selection_blocks(runs, block_s=600):
@@ -105,18 +107,33 @@ def main() -> int:
     n_rec = len(set(keys[:, 0].astype(int)))
     if resume:
         print(f"resuming: {len(finished)} of {n_rec} recordings already cut", flush=True)
-    pending = []
+    # recordings are stored as soon as each one finishes (any order); progress is saved every 5
+    # recordings or 2 minutes, and the speed / time left is printed every 10 recordings
+    dur = {i: rec_events[i][2] for i in set(keys[:, 0].astype(int))}
+    total_h = sum(dur.values()) / 3600
+    done_h = sum(dur[i] for i in finished) / 3600
+    pending, t0, last, mb, h_now = [], time.time(), time.time(), 0.0, 0.0
+    print(f"  {len(jobs)} recordings to cut ({total_h - done_h:.0f} of {total_h:.0f} EEG hours), "
+          f"{args.workers} in parallel", flush=True)
     with ProcessPoolExecutor(args.workers) as pool:
-        for n, ((i, sel, _), w) in enumerate(zip(jobs, pool.map(_cut, [j[2] for j in jobs]))):
+        futs = {pool.submit(_cut, a): (i, sel) for i, sel, a in jobs}
+        for n, f in enumerate(as_completed(futs), 1):
+            i, sel = futs[f]
+            w, size = f.result()
             x[sel] = w
             pending.append(i)
-            if len(pending) >= 20 or n == len(jobs) - 1:
+            mb += size / 1e6
+            h_now += dur[i] / 3600
+            if len(pending) >= 5 or time.time() - last > 120 or n == len(jobs):
                 x.flush()
                 with open(prog_f, "a") as fh:
                     fh.write("".join(f"{v}\n" for v in pending))
-                pending = []
-            if n % 50 == 0:
-                print(f"  {len(finished) + n}/{n_rec} recordings", flush=True)
+                pending, last = [], time.time()
+            if n % 10 == 0 or n == len(jobs):
+                el = time.time() - t0
+                left = el * (total_h - done_h - h_now) / max(h_now, 1e-9)
+                print(f"  {len(finished) + n}/{n_rec} recordings ({100 * (done_h + h_now) / total_h:.0f}% of the EEG), "
+                      f"{mb / el:.1f} MB/s, about {left / 3600:.1f} h left", flush=True)
     x.flush()
     np.save(out / "train_y.npy", keys[:, 3].astype(np.uint8))
     np.save(out / "train_keys.npy", keys)
@@ -132,7 +149,7 @@ def main() -> int:
             by_run.setdefault(ri, []).append((bi, starts, labels))
         for ri, items in by_run.items():
             allstarts = np.concatenate([s for _, s, _ in items])
-            w = _cut((truns[ri], allstarts, str(tmp)))
+            w, _ = _cut((truns[ri], allstarts, str(tmp)))
             k = 0
             for bi, s, lab in items:
                 xs.append(w[k:k + len(s)]); ys.append(lab); bs.append(np.full(len(s), bi)); k += len(s)
