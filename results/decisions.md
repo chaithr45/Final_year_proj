@@ -96,3 +96,9 @@ Method results and keep/drop decisions are appended below as runs finish.
   02:47 UTC, most likely because a dry-run test of `n1_stack5_base` was running alongside it on the same 15 GB machine;
   fold 0 (2,873 estimated LUTs, 16 flip-flops) is kept and the run resumes from fold 1. Dry-run tests are no longer run
   next to the queue. A third container restart (about 06:45 UTC) interrupted `lgn_mi40` after fold 1; it resumed from fold 2.
+* **lgn_mi40** result (resumed twice, fold- and epoch-level; 4,000 two-input gates, top-40 MI features): AUROC 0.843,
+  event-F1 0.171 (sens 0.330, prec 0.197, 4.9 FP/24 h, gate both), sens 0.540 at <= 1 FA/h; vs lgbm per-patient F1
+  p = 3e-05, FP/24 h p = 1e-09. **7,491 estimated LUTs** (4,000 network as an upper bound of one LUT per gate, 1,479 encoder,
+  2,000 popcount, 12 post-processing), 0 multipliers. Slightly above the 1.8k-LUT DWN (AUROC 0.821, F1 0.167) at about four
+  times the estimated cost, and below TreeLUT w5 (F1 0.266) at a similar cost. **Keep** as the Tier-1 logic-gate reference
+  row; no further LGN tuning is queued. The DWN size sweep decides the LUT-native entry.
