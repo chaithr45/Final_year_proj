@@ -1,0 +1,511 @@
+{
+ "operating_point": {
+  "gate": "both",
+  "k": 10,
+  "threshold": 9.0
+ },
+ "n_true_alarms": 195,
+ "n_false_alarms": 2950,
+ "static_reads": {
+  "ecg_log_rr": 90,
+  "mov_acc_jerk": 70,
+  "eeg_ch2_theta": 67,
+  "eeg_theta_max_ctx": 61,
+  "eeg_hf_max_ctx": 61,
+  "eeg_theta_max": 59,
+  "eeg_hf_mean_ctx": 58,
+  "eeg_ch1_theta": 57,
+  "eeg_ch2_hf": 52,
+  "eeg_theta_mean_ctx": 46,
+  "eeg_delta_max": 43,
+  "eeg_mav_mean_ctx": 43,
+  "eeg_ch2_beta": 43,
+  "mov_gyr_jerk": 43,
+  "eeg_ch2_ll": 42,
+  "eeg_beta_mean": 42,
+  "eeg_ch2_delta": 42,
+  "eeg_ch1_mav": 40,
+  "eeg_art_ch2": 39,
+  "eeg_beta_mean_ctx": 37,
+  "eeg_beta_max_ctx": 36,
+  "eeg_beta_max": 33,
+  "eeg_alpha_mean_ctx": 33,
+  "eeg_ll_mean": 33,
+  "eeg_art_ch1": 32,
+  "eeg_alpha_max_ctx": 28,
+  "eeg_ch1_alpha": 26,
+  "eeg_alpha_max": 26,
+  "eeg_delta_mean": 25,
+  "eeg_theta_mean": 24,
+  "eeg_mav_max_ctx": 23,
+  "eeg_ch2_alpha": 23,
+  "eeg_mav_max": 19,
+  "eeg_ll_max": 18,
+  "eeg_alpha_mean": 16,
+  "eeg_ch1_delta": 15,
+  "eeg_ll_max_ctx": 14,
+  "eeg_hf_max": 12,
+  "eeg_ch2_mav": 10,
+  "eeg_delta_mean_ctx": 8,
+  "eeg_ll_mean_ctx": 7,
+  "eeg_mav_mean": 4
+ },
+ "usage_true_alarms": {
+  "eeg_ll_max": 0.27841119854059704,
+  "eeg_mav_mean_ctx": 0.41566063373836304,
+  "eeg_beta_mean": 0.800514596803188,
+  "eeg_theta_max": 0.757536303123318,
+  "eeg_ll_max_ctx": 0.1827075406651784,
+  "mov_acc_jerk": 1.4195483466732226,
+  "eeg_hf_mean_ctx": 0.5902162309718642,
+  "eeg_ch1_alpha": 0.27854573198527177,
+  "eeg_ch2_ll": 0.6897643105949762,
+  "eeg_ch1_mav": 0.5752085572900928,
+  "ecg_log_rr": 1.6092403821367882,
+  "eeg_ch1_theta": 0.6343231964890276,
+  "eeg_ch2_delta": 0.5698318892969351,
+  "eeg_art_ch2": 0.305755227772511,
+  "eeg_beta_max": 0.25273698522266425,
+  "eeg_alpha_max": 0.3700316307639422,
+  "eeg_theta_mean_ctx": 0.7198129517734908,
+  "eeg_hf_max_ctx": 0.46028888075388463,
+  "eeg_mav_max": 0.18130623534673457,
+  "eeg_beta_max_ctx": 0.34202850829049564,
+  "eeg_ch2_theta": 0.891855651178635,
+  "eeg_alpha_mean_ctx": 0.3697715839889288,
+  "eeg_ch2_beta": 0.5025840963243347,
+  "eeg_delta_max": 0.7213815665094232,
+  "eeg_beta_mean_ctx": 0.5099192610872804,
+  "eeg_ch2_alpha": 0.26850433558991343,
+  "eeg_delta_mean": 0.24866339906363344,
+  "eeg_theta_max_ctx": 0.5739184398220911,
+  "eeg_mav_mean": 0.09852897879617649,
+  "eeg_art_ch1": 0.33392777156909337,
+  "eeg_theta_mean": 0.18068191854592391,
+  "eeg_ch2_mav": 0.09812522972957967,
+  "eeg_alpha_mean": 0.1440441583693818,
+  "eeg_delta_mean_ctx": 0.1578509655907455,
+  "eeg_mav_max_ctx": 0.14489759167447022,
+  "eeg_alpha_max_ctx": 0.22296242808007918,
+  "eeg_ch1_delta": 0.10245661907942599,
+  "mov_gyr_jerk": 0.2216987279242181,
+  "eeg_ll_mean": 0.2210625296555239,
+  "eeg_ll_mean_ctx": 0.049135962292326515,
+  "eeg_ch2_hf": 0.3778860195241358,
+  "eeg_hf_max": 0.05523215630509134
+ },
+ "usage_false_alarms": {
+  "eeg_ll_max": 0.27766013673223244,
+  "eeg_mav_mean_ctx": 0.43013459288914396,
+  "eeg_beta_mean": 0.7166446571243945,
+  "eeg_theta_max": 0.7148740702701795,
+  "eeg_ll_max_ctx": 0.2014279566325928,
+  "mov_acc_jerk": 1.2564981647879625,
+  "eeg_hf_mean_ctx": 0.6053961101215977,
+  "eeg_ch1_alpha": 0.28236053776324277,
+  "eeg_ch2_ll": 0.5696458532642872,
+  "eeg_ch1_mav": 0.641479182984527,
+  "ecg_log_rr": 1.3564757232917253,
+  "eeg_ch1_theta": 0.6968346641199047,
+  "eeg_ch2_delta": 0.5510153699456954,
+  "eeg_art_ch2": 0.32328761161782843,
+  "eeg_beta_max": 0.2795100549290413,
+  "eeg_alpha_max": 0.4627053785235871,
+  "eeg_theta_mean_ctx": 0.7255423055146565,
+  "eeg_hf_max_ctx": 0.5441174967504542,
+  "eeg_mav_max": 0.1735035418795208,
+  "eeg_beta_max_ctx": 0.3491409764809711,
+  "eeg_ch2_theta": 0.8652083283749765,
+  "eeg_alpha_mean_ctx": 0.4172191931199353,
+  "eeg_ch2_beta": 0.48772294691332496,
+  "eeg_delta_max": 0.6525084973401094,
+  "eeg_beta_mean_ctx": 0.47767587036108516,
+  "eeg_ch2_alpha": 0.2909779840163328,
+  "eeg_delta_mean": 0.30080262342783215,
+  "eeg_theta_max_ctx": 0.6356179140120402,
+  "eeg_mav_mean": 0.06188256044401924,
+  "eeg_art_ch1": 0.32077497099219016,
+  "eeg_theta_mean": 0.20165391805263305,
+  "eeg_ch2_mav": 0.05826050690373663,
+  "eeg_alpha_mean": 0.1438586144315073,
+  "eeg_delta_mean_ctx": 0.1317260668153243,
+  "eeg_mav_max_ctx": 0.142100131022292,
+  "eeg_alpha_max_ctx": 0.2853712971381344,
+  "eeg_ch1_delta": 0.05811248060894959,
+  "mov_gyr_jerk": 0.03801306791962457,
+  "eeg_ll_mean": 0.2588577795519261,
+  "eeg_ll_mean_ctx": 0.09242087907061591,
+  "eeg_ch2_hf": 0.6589724307173324,
+  "eeg_hf_max": 0.10603458445381155
+ },
+ "cases": {
+  "tp": {
+   "subject": "sub-002",
+   "run": "run-10",
+   "start_s": 4544.0,
+   "end_s": 4568.0,
+   "peak_score": 18.0,
+   "top_features": [
+    [
+     "ecg_log_rr",
+     2.7799999999999994
+    ],
+    [
+     "mov_acc_jerk",
+     2.4799999999999995
+    ],
+    [
+     "eeg_beta_mean",
+     1.3866666666666667
+    ],
+    [
+     "eeg_ch2_delta",
+     1.22
+    ],
+    [
+     "eeg_theta_mean_ctx",
+     0.9133333333333333
+    ],
+    [
+     "eeg_delta_max",
+     0.8333333333333333
+    ]
+   ],
+   "example_luts": [
+    {
+     "lut": 25,
+     "reads": [
+      [
+       "eeg_ch1_theta",
+       108.0
+      ],
+      [
+       "eeg_ch2_ll",
+       90.0
+      ],
+      [
+       "mov_acc_jerk",
+       69.0
+      ],
+      [
+       "eeg_ch1_theta",
+       99.0
+      ],
+      [
+       "eeg_ch2_theta",
+       113.0
+      ],
+      [
+       "eeg_theta_mean_ctx",
+       -2.0
+      ]
+     ]
+    },
+    {
+     "lut": 31,
+     "reads": [
+      [
+       "eeg_ch2_delta",
+       115.0
+      ],
+      [
+       "eeg_beta_mean",
+       101.0
+      ],
+      [
+       "ecg_log_rr",
+       0.0
+      ],
+      [
+       "mov_acc_jerk",
+       49.0
+      ],
+      [
+       "eeg_beta_mean",
+       97.0
+      ],
+      [
+       "mov_acc_jerk",
+       61.0
+      ]
+     ]
+    },
+    {
+     "lut": 35,
+     "reads": [
+      [
+       "eeg_alpha_mean_ctx",
+       1.0
+      ],
+      [
+       "eeg_mav_max",
+       120.0
+      ],
+      [
+       "eeg_beta_mean",
+       107.0
+      ],
+      [
+       "eeg_hf_mean_ctx",
+       -2.0
+      ],
+      [
+       "eeg_hf_mean_ctx",
+       1.0
+      ],
+      [
+       "eeg_ch2_ll",
+       104.0
+      ]
+     ]
+    }
+   ]
+  },
+  "fp": {
+   "subject": "sub-081",
+   "run": "run-36",
+   "start_s": 3228.0,
+   "end_s": 3273.0,
+   "peak_score": 22.0,
+   "top_features": [
+    [
+     "ecg_log_rr",
+     2.6086956521739126
+    ],
+    [
+     "mov_acc_jerk",
+     2.373188405797101
+    ],
+    [
+     "eeg_ch2_ll",
+     1.4420289855072466
+    ],
+    [
+     "eeg_theta_max",
+     1.2282608695652173
+    ],
+    [
+     "eeg_ch1_theta",
+     1.0036231884057971
+    ],
+    [
+     "eeg_ch1_mav",
+     0.9710144927536232
+    ]
+   ],
+   "example_luts": [
+    {
+     "lut": 26,
+     "reads": [
+      [
+       "eeg_hf_mean_ctx",
+       4.0
+      ],
+      [
+       "eeg_ch1_alpha",
+       106.0
+      ],
+      [
+       "eeg_ch2_ll",
+       88.0
+      ],
+      [
+       "mov_acc_jerk",
+       86.0
+      ],
+      [
+       "eeg_ch1_mav",
+       121.0
+      ],
+      [
+       "ecg_log_rr",
+       57.0
+      ]
+     ]
+    },
+    {
+     "lut": 27,
+     "reads": [
+      [
+       "mov_acc_jerk",
+       51.0
+      ],
+      [
+       "ecg_log_rr",
+       63.0
+      ],
+      [
+       "eeg_ch1_theta",
+       103.0
+      ],
+      [
+       "mov_acc_jerk",
+       59.0
+      ],
+      [
+       "eeg_ch2_delta",
+       112.0
+      ],
+      [
+       "eeg_beta_mean",
+       107.0
+      ]
+     ]
+    },
+    {
+     "lut": 28,
+     "reads": [
+      [
+       "eeg_ch1_theta",
+       107.0
+      ],
+      [
+       "eeg_mav_mean_ctx",
+       2.0
+      ],
+      [
+       "mov_acc_jerk",
+       70.0
+      ],
+      [
+       "eeg_ch1_mav",
+       106.0
+      ],
+      [
+       "eeg_art_ch2",
+       0.0
+      ],
+      [
+       "ecg_log_rr",
+       0.0
+      ]
+     ]
+    }
+   ]
+  }
+ },
+ "shap_mean_abs": {
+  "ecg_log_rr": 0.9769546413221024,
+  "eeg_theta_max": 0.942773594182737,
+  "eeg_theta_mean": 0.7642149248673894,
+  "ecg_log_masrd": 0.7421588091132365,
+  "eeg_ch2_theta": 0.7090686312265628,
+  "ecg_log_rr_ctx": 0.6775581753101869,
+  "mov_acc_jerk": 0.5264328462137858,
+  "mov_gyr_jerk": 0.5197112006880092,
+  "eeg_ch2_hf": 0.5168245483763744,
+  "eeg_hf_mean_ctx": 0.4750378703877311,
+  "eeg_sign_agree": 0.4695573978482337,
+  "emg_mav": 0.4387830522396318,
+  "mov_acc_mag": 0.43834650294365507,
+  "emg_zc": 0.4313199463488133,
+  "eeg_theta_mean_ctx": 0.41338636167758813,
+  "emg_ll": 0.3973550012319811,
+  "mov_gyr_act_ctx": 0.376301310853703,
+  "eeg_beta_mean_ctx": 0.37425589671859316,
+  "mov_gyr_mag": 0.35724557246852523,
+  "eeg_theta_absdiff": 0.35259554179477004,
+  "ecg_quality_bad": 0.3373298958371862,
+  "eeg_ll_absdiff": 0.3361925325311704,
+  "eeg_mav_mean": 0.32163499040717286,
+  "eeg_ext_absdiff_ctx": 0.318836465134061,
+  "eeg_ext_absdiff": 0.3133504851148682,
+  "eeg_mob_mean_ctx": 0.30878000177089665,
+  "eeg_beta_absdiff": 0.3032573853324193,
+  "eeg_hf_max_ctx": 0.30166074071030136,
+  "present_mov_acc": 0.2855925922820489,
+  "eeg_delta_mean": 0.26240800964842026,
+  "eeg_zc_mean": 0.2610113921834217,
+  "eeg_theta_max_ctx": 0.25926506495844537,
+  "eeg_ch2_ext": 0.25219961873290697,
+  "mov_acc_mag_ctx": 0.24922676735402594,
+  "mov_acc_jerk_ctx": 0.2445917902515206,
+  "eeg_theta_absdiff_ctx": 0.23673207524814444,
+  "eeg_alpha_absdiff": 0.23658499647700587,
+  "eeg_hf_absdiff_ctx": 0.22521613426521686,
+  "eeg_hf_mean": 0.22411650627213855,
+  "mov_gyr_jerk_ctx": 0.22298235482090478,
+  "eeg_ch2_ll": 0.22264265639209996,
+  "eeg_hf_absdiff": 0.2145530519110194,
+  "eeg_ch1_theta": 0.21296273040296604,
+  "eeg_ch2_mav": 0.20405447222820122,
+  "eeg_delta_max": 0.20336460169506998,
+  "mov_acc_band": 0.20190724007142263,
+  "mov_gyr_mag_ctx": 0.19897621749597483,
+  "eeg_ext_mean_ctx": 0.1973810460932637,
+  "present_mov_gyr": 0.19347224975226895,
+  "eeg_art_ch2": 0.19252820424750844,
+  "eeg_hf_max": 0.18645431394431966,
+  "eeg_ch1_beta": 0.18154797485151333,
+  "eeg_alpha_mean_ctx": 0.1812559725609738,
+  "eeg_delta_absdiff": 0.17955224693160068,
+  "mov_gyr_band": 0.16346719340281404,
+  "emg_hl_ratio": 0.1622228747601857,
+  "eeg_ext_mean": 0.15773924389088664,
+  "emg_mav_ctx": 0.15490698421575266,
+  "eeg_mav_max": 0.15301171244529724,
+  "eeg_ch1_hf": 0.15050890077689633,
+  "eeg_beta_absdiff_ctx": 0.15031695186027752,
+  "emg_zc_ctx": 0.1501120534304053,
+  "eeg_sign_agree_ctx": 0.1474318104148936,
+  "eeg_delta_absdiff_ctx": 0.14571686970922812,
+  "eeg_beta_max_ctx": 0.1419523230079557,
+  "ecg_log_masrd_ctx": 0.14048657610503779,
+  "eeg_ch2_zc": 0.14037646787237065,
+  "eeg_mav_absdiff": 0.13975110558148648,
+  "eeg_ll_max": 0.13430498961950166,
+  "mov_gyr_band_ctx": 0.13345738450754357,
+  "eeg_beta_max": 0.13303724249063145,
+  "mov_acc_act_ctx": 0.12180401792490546,
+  "eeg_mob_max_ctx": 0.11553046329160178,
+  "eeg_mob_mean": 0.11536832878087998,
+  "eeg_zc_mean_ctx": 0.11146810398866469,
+  "eeg_ch2_alpha": 0.11140287353995286,
+  "eeg_ch2_mob": 0.10737571601301743,
+  "eeg_ch1_delta": 0.10670425232443362,
+  "eeg_ch1_zc": 0.10270240735948664,
+  "eeg_ch1_ext": 0.10113269996125422,
+  "eeg_ch1_ll": 0.10081853960727427,
+  "eeg_mob_absdiff_ctx": 0.09983425283749578,
+  "eeg_ch2_beta": 0.09869785375574287,
+  "eeg_ch2_delta": 0.09137771267178163,
+  "eeg_mob_max": 0.08272947739530115,
+  "eeg_alpha_max_ctx": 0.08169444727213566,
+  "eeg_ext_max": 0.081366505725189,
+  "eeg_ch1_mav": 0.08058038560859583,
+  "eeg_beta_mean": 0.07873950574325014,
+  "eeg_alpha_absdiff_ctx": 0.0750181385190027,
+  "eeg_alpha_mean": 0.07379421621560361,
+  "eeg_ch1_mob": 0.07332144580680035,
+  "eeg_mav_absdiff_ctx": 0.07287780106967397,
+  "eeg_ll_absdiff_ctx": 0.07187065501907264,
+  "mov_acc_band_ctx": 0.06937510037048274,
+  "eeg_mob_absdiff": 0.06911203922157741,
+  "emg_ll_ctx": 0.06882579229898934,
+  "mov_acc_act": 0.06333537756886251,
+  "mov_gyr_act": 0.056832820921949585,
+  "eeg_ch1_alpha": 0.05674741500625313,
+  "eeg_alpha_max": 0.055711491742283986,
+  "eeg_ll_mean_ctx": 0.053562661813219066,
+  "eeg_ll_max_ctx": 0.0480730648514924,
+  "eeg_ll_mean": 0.038962937137407554,
+  "eeg_mav_max_ctx": 0.03618365696480009,
+  "eeg_zc_absdiff": 0.03594756619652158,
+  "eeg_zc_max_ctx": 0.03515570418647784,
+  "eeg_delta_max_ctx": 0.034898988276112035,
+  "eeg_zc_max": 0.029245256462199557,
+  "eeg_art_ch1": 0.022280309817527606,
+  "eeg_mav_mean_ctx": 0.02068137884545022,
+  "eeg_delta_mean_ctx": 0.019971103112898812,
+  "eeg_ext_max_ctx": 0.019970385081405945,
+  "emg_hl_ratio_ctx": 0.017570889473608523,
+  "present_ecg": 0.010604017609016374,
+  "eeg_zc_absdiff_ctx": 0.010591396560468015,
+  "present_emg": 0.0023979231885460726
+ },
+ "spearman_dwn_true_alarm_usage_vs_shap": {
+  "rho": 0.4117170407584475,
+  "p": 0.006748286243846779,
+  "n_features": 42
+ }
+}
