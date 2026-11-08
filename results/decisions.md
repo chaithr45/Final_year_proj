@@ -219,4 +219,10 @@ Method results and keep/drop decisions are appended below as runs finish.
   per-patient F1 p = 0.004 (still below). **Adopted (D34)**: best LUT-native result so far, under 1k estimated LUTs.
   The selected features now include ecg_log_rr, ecg_log_rr_ctx, ecg_log_masrd, EMG and motion features in every fold.
   The M5 configs are regenerated on this base; the recipe check dwn_L50_b8_lgbm40_e15bg10 decides the training recipe.
+* **dwn_L50_b8_lgbm40_e15bg10** (the D34 base with the earlier recipe: 15 epochs, batch 2048, background ratio 10):
+  AUROC 0.840, AUPR 0.021, event-F1 0.211, 2.4 FP/24 h, sens 0.581 at <= 1 FA/h, 964 estimated LUTs. Against the
+  30-epoch / ratio-20 recipe: per-patient F1 +0.003 [-0.037, +0.045], p = 0.88; FP/24 h p = 0.11. Equal results at about
+  a quarter of the training time, so **the M5 base is dwn_L50_b8_lgbm40_e15bg10**; the 18 Tier-2 configs are
+  regenerated on it and run first on the cloud, followed by LGN, LogicNets-style and GRU on the same features and a
+  size check at this base (100 and 200 LUTs).
 
