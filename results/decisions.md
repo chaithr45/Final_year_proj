@@ -61,7 +61,8 @@ Format: `D<n> | milestone | decision | why | evidence`.
   `evaluate_predictions.py`; this run is re-scored from its saved predictions, no retraining); (2) the clean run
   (last epoch, no selection on test patients) for the leak-free number; (3) untested candidate causes: one seed
   (the paper's seed count is not stated), the Keras-to-PyTorch port (D12), and the dataset version (OpenNeuro
-  ds005873 today vs. the paper's copy; we count 886 seizures, 182 in the test split, against the paper's 883 and 181).
+  ds005873 today vs. the paper's copy; the files hold 883 seizures, 181 in the test split, against the 886 and
+  182 the paper reports; this sentence first had the two counts swapped, corrected 8 Nov).
   The baseline is reported as measured, with the published numbers beside it and this gap stated.
 * **Per-recording AUROC/AUPR** (the official run re-scored from its saved predictions on 8 Nov, no retraining): mean
   over the 90 test recordings with a seizure, AUROC 0.680 and AUPR 0.109 as published (0.642 and 0.093 corrected).
@@ -111,6 +112,7 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D30 | Downloads are checked against Content-Length, extraction refuses EDFs whose size disagrees with the header, and `scripts/verify_feature_cache.py` checks every cached run against the M1 audit durations; the first LGBM, LR and partial XGB runs are marked `_invalid` and re-run | The float-twin comparison exposed sub-020 run-01 with ECG cut at 51,855 of 71,835 s. The verifier then found 9 runs (7 training, 2 test) silently truncated by short S3 reads, two of them in EEG (sub-078 run-30 had 12 of 16,363 windows). All 9 were re-extracted; all 2,850 runs now agree with the audit. 51 runs whose only motion sensor is the head (EEG) module have no motion features by design (chest module only) | `src/data/remote.py`, `scripts/extract_features.py`, `scripts/verify_feature_cache.py` |
 | D31 | For stacked (multi-window) inputs, mutual information ranks the base features on the current window and every lag of the top 40 is kept (`features: {mi_top: 40, mi_on: base}`); `n1_stack5` is kept in the log as the failed variant | Ranking the 585 stacked columns directly chose lagged copies of only 11 to 13 distinct features per fold, fewer than the 40 the single-window DWN sees, and `n1_stack5` fell to AUROC 0.750 / F1 0.103 against 0.821 / 0.167. The hardware cost model counts one comparator set per stacked column, an over-estimate when lags share comparators through a delay line | `scripts/run_inner_cv.py`, `configs/m5/n1_stack5_base.yaml`, run `20261107-010416_n1_stack5_s0` |
 | D32 | The Section 6.1 sweep is split: the cloud CPU runs the <= 200-LUT grid plus `dwn_L500_b8_learn` and `dwn_L500_b16_learn`; the laptop GPU runs the other 21 configs (>= 500 LUTs), most informative first | On the 4-core cloud a 200-LUT config takes about 2.1 h and time grows roughly linearly with LUTs, so the 23 configs with >= 500 LUTs would need about a week there (D27 already assigns them to the GPU). The whole grid still runs; nothing is pruned | `scripts/laptop/sweep_big.sh` |
+| D33 | Base DWN for M5: 50 LUT6 in one layer, 8-bit thermometer, learnable mapping, MI top-40 features (`configs/m4/sweep/dwn_L50_b8_learn.yaml`, about 880 estimated LUTs). Rule: the smallest size whose per-patient event-F1 is not significantly below the best <= 200-LUT config (paired Wilcoxon, p >= 0.05), at the bits and mapping the sweep favours | Among the five best <= 200-LUT configs (pooled F1 0.135-0.167) no pair differs per patient (p 0.15-0.97); 8 bits beat 4 (F1 p = 0.009 at 50 LUTs; FP/24 h lower at 50 and 100 LUTs, p < 1e-10) and 16 bits add false alarms over 8 without F1 gain (p < 1e-4); learnable mapping has fewer false alarms than random in 7 of 8 pairs (p < 0.01). A 50-LUT run takes about 30 min on the 4-core cloud against about 1.6-2 h at 200 LUTs, which makes the 18 Tier-2 variants feasible. If the >= 500-LUT runs (laptop) beat it per patient, the kept methods are re-run at that size | `results/tables/inner_cv.md`, `results/tables/inner_cv_tests.md` |
 
 Method results and keep/drop decisions are appended below as runs finish.
 
@@ -179,4 +181,11 @@ Method results and keep/drop decisions are appended below as runs finish.
   rests on a confounded comparison. Fixed: sequence models (N1, GRU) now get the same per-fold MI selection, drawn
   from the fold's training windows; window models are unchanged (same code, same seeds). N1 is re-run with the fix
   on the base DWN size before it is decided.
+* **DWN size sweep, <= 200 LUTs** (16 of the 18 configs of the grid at 50/100/200 LUTs x 4/8/16 bits x learnable/random
+  mapping; single seed each). Best pooled event-F1: dwn_l200_b8_mi40 0.167 (1,745 LUTs; the earlier, shorter training),
+  dwn_L200_b16_learn 0.163 (2,281), dwn_L50_b8_learn 0.148 (883), dwn_L100_b16_learn 0.140 (1,653), dwn_L50_b16_learn
+  0.135 (1,066); these five do not differ per patient (paired Wilcoxon on event-F1, p 0.15-0.97, median difference 0).
+  Size alone does not raise F1 between 50 and 200 LUTs on these features. 4-bit encoders are the weakest (F1 0.068-0.093);
+  random mapping costs more LUTs (more comparators) and raises false alarms. Decision D33: base = dwn_L50_b8_learn.
+  Window AUROC stays at 0.81-0.83 for every config, below the tree models (0.85-0.87).
 
