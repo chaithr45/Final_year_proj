@@ -1,0 +1,9 @@
+{
+  "name": "n46_distill_dropout",
+  "seed": 0,
+  "git": {
+    "commit": "7e1439b3194347b5fcf27a4f330f99ddbac02ac5",
+    "dirty": false
+  },
+  "created": "20261108-155851"
+}
