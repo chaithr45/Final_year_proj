@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Commit the finished run folders on the laptop (ChronoNet, DWN sweep) and push them to the working branch.
+# Commit the finished run folders on the laptop (ChronoNet, DWN sweep) and reports/LAPTOP_STATUS.md, and push
+# them to the working branch.
 #   scripts/laptop/push_runs.sh        (safe to run again: only runs not yet committed are added)
 # A run still in progress has a .gitignore of '*' (removed when it is scored), so git skips it.
 # Only a run's small text files go in git (config, history, selected epoch, metrics, TEST_ACCESS.log);
@@ -16,12 +17,13 @@ fi
 shopt -s nullglob
 dirs=(results/runs/*_chrononet_official_s* results/runs/*_chrononet_clean_s* results/runs/*_dwn_L*_s*)
 [ ${#dirs[@]} -gt 0 ] && git add -- "${dirs[@]}"
+[ -f reports/LAPTOP_STATUS.md ] && git add reports/LAPTOP_STATUS.md
 if git diff --cached --quiet; then
   echo "no newly finished run to commit"
 else
   git diff --cached --stat
   names=$(git diff --cached --name-only | sed -n 's#^results/runs/\([^/]*\)/.*#\1#p' | sort -u | paste -sd' ' -)
-  git commit -q -m "Laptop runs: $names"
+  git commit -q -m "Laptop runs: ${names:-status note}"
 fi
 git pull -q --rebase --autostash origin "$branch"
 git push origin "HEAD:$branch"

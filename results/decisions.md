@@ -77,8 +77,8 @@ Format: `D<n> | milestone | decision | why | evidence`.
   | ours, corrected | 62.2 | 8.7 | 0.7051 | 0.0047 |
 
   Epoch-based FA rate 256.8/h; official score -73.0 (as published), -45.5 (corrected). SzCORE at threshold 0.5: sens
-  0.790, precision 0.015, F1 0.027, 106.3 FP/24 h, sample F1 0.016. (Scored before the per-recording AUC existed; the
-  re-score is pending on the laptop.) Against the official run: 7.4 points less sensitivity for about half the false
+  0.790, precision 0.015, F1 0.027, 106.3 FP/24 h, sample F1 0.016. Per recording (90 recordings with a seizure):
+  AUROC 0.682, AUPR 0.111 as published (0.643 and 0.092 corrected), again close to the published AUPR. Against the official run: 7.4 points less sensitivity for about half the false
   alarms (11.9 vs 22.6 per hour any-overlap, 257 vs 503 epoch-based) and slightly higher pooled AUROC and AUPR. The
   official selection score (100 x event sensitivity - 0.4 x false-positive fraction on seizure blocks) rewards
   over-prediction and chose an early epoch. **Decision: chrononet_clean is the ChronoNet row our models are compared
