@@ -10,6 +10,8 @@
 
 FA/h here is the any-overlap false-alarm rate (FP events per hour); the epoch-based rate is 256.8 (as published). The paper does not say which one Table 2 uses.
 
+AUROC/AUPR above pool every 1 s epoch of all recordings. Per recording, then the mean over the 90 recordings with a seizure: AUROC 0.6817, AUPR 0.1106 (as published); 0.6425, 0.0923 (corrected). The paper does not say which one either.
+
 ## SzCORE (official post-processing, threshold 0.5; not comparable with the table above)
 
 | Sensitivity | Precision | F1 | FP/24h | sample F1 |
