@@ -1,0 +1,86 @@
+{
+ "rtl": "rtl/lutnet_classifier.v",
+ "recordings": {
+  "sub-097_run-02": {
+   "windows": 68636,
+   "pass": true,
+   "simulator_output": [
+    "PASS 68636 vectors, 0 mismatches",
+    "/tmp/tmpf1bhfag9/tb.v:35: $finish called at 686445000 (1ps)"
+   ]
+  },
+  "sub-097_run-04": {
+   "windows": 76312,
+   "pass": true,
+   "simulator_output": [
+    "PASS 76312 vectors, 0 mismatches",
+    "/tmp/tmp4l54761x/tb.v:35: $finish called at 763205000 (1ps)"
+   ]
+  },
+  "sub-097_run-05": {
+   "windows": 6465,
+   "pass": true,
+   "simulator_output": [
+    "PASS 6465 vectors, 0 mismatches",
+    "/tmp/tmprti6hyzd/tb.v:35: $finish called at 64735000 (1ps)"
+   ]
+  },
+  "sub-097_run-07": {
+   "windows": 41797,
+   "pass": true,
+   "simulator_output": [
+    "PASS 41797 vectors, 0 mismatches",
+    "/tmp/tmp2kdjvwsb/tb.v:35: $finish called at 418055000 (1ps)"
+   ]
+  },
+  "sub-097_run-09": {
+   "windows": 77152,
+   "pass": true,
+   "simulator_output": [
+    "PASS 77152 vectors, 0 mismatches",
+    "/tmp/tmpgmccimls/tb.v:35: $finish called at 771605000 (1ps)"
+   ]
+  },
+  "sub-097_run-10": {
+   "windows": 424,
+   "pass": true,
+   "simulator_output": [
+    "PASS 424 vectors, 0 mismatches",
+    "/tmp/tmp9owlmgb7/tb.v:35: $finish called at 4325000 (1ps)"
+   ]
+  },
+  "sub-098_run-03": {
+   "windows": 76568,
+   "pass": true,
+   "simulator_output": [
+    "PASS 76568 vectors, 0 mismatches",
+    "/tmp/tmpzt1p75pc/tb.v:35: $finish called at 765765000 (1ps)"
+   ]
+  },
+  "sub-099_run-01": {
+   "windows": 75816,
+   "pass": true,
+   "simulator_output": [
+    "PASS 75816 vectors, 0 mismatches",
+    "/tmp/tmpns4goqp5/tb.v:35: $finish called at 758245000 (1ps)"
+   ]
+  },
+  "sub-099_run-02": {
+   "windows": 4936,
+   "pass": true,
+   "simulator_output": [
+    "PASS 4936 vectors, 0 mismatches",
+    "/tmp/tmp6_yi34ip/tb.v:35: $finish called at 49445000 (1ps)"
+   ]
+  },
+  "sub-100_run-03": {
+   "windows": 3854,
+   "pass": true,
+   "simulator_output": [
+    "PASS 3854 vectors, 0 mismatches",
+    "/tmp/tmpibmclo0w/tb.v:35: $finish called at 38625000 (1ps)"
+   ]
+  }
+ },
+ "all_pass": true
+}
