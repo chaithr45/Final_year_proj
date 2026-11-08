@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Commit the finished run folders on the laptop (ChronoNet, DWN sweep) and reports/LAPTOP_STATUS.md, and push
+# Commit the finished run folders on the laptop (ChronoNet, DWN sweep, raw CNN/TCN) and reports/LAPTOP_STATUS.md, and push
 # them to the working branch.
 #   scripts/laptop/push_runs.sh        (safe to run again: only runs not yet committed are added)
 # A run still in progress has a .gitignore of '*' (removed when it is scored), so git skips it.
@@ -14,9 +14,7 @@ if [ -z "$(git config user.email || true)" ]; then
   echo '  git config --global user.name "<your name>" && git config --global user.email "<your GitHub email>"'
   exit 1
 fi
-shopt -s nullglob
-dirs=(results/runs/*_chrononet_official_s* results/runs/*_chrononet_clean_s* results/runs/*_dwn_L*_s*)
-[ ${#dirs[@]} -gt 0 ] && git add -- "${dirs[@]}"
+git add -- results/runs    # every finished run (unfinished ones are hidden by their .gitignore)
 [ -f reports/LAPTOP_STATUS.md ] && git add reports/LAPTOP_STATUS.md
 if git diff --cached --quiet; then
   echo "no newly finished run to commit"
