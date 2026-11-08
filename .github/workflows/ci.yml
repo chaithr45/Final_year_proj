@@ -1,7 +1,9 @@
 name: ci
 
 on:
+  # results-only commits (experiment runs, tables, figures, notes) change no code: no test run for them
   push:
+    paths-ignore: ["results/**", "paper/**", "export/**", "reports/**", "**/*.md"]
   pull_request:
 
 jobs:
