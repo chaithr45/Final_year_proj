@@ -1,0 +1,12 @@
+# Tier-1 small neural networks on raw behind-the-ear EEG (Section 6.2): a 1-D CNN and a TCN on the
+# ChronoNet input (2 s x 250 Hz x 2 channels, official preprocessing), inner folds, GPU laptop.
+# Training windows: the clean ChronoNet cache (96 training patients only). Run with
+#   python scripts/run_inner_cv_raw.py --config configs/m4/raw_cnn_tcn.yaml --device cuda
+name: raw_cnn_tcn
+seed: 0
+data: {cache_dir: cache/chrononet, config: configs/baselines/chrononet_clean.yaml}
+models:
+  - {name: cnn1d_raw, type: cnn1d, params: {channels: [16, 32, 64, 64], kernels: [7, 7, 5, 3], pools: [4, 4, 2, 1]}}
+  - {name: tcn_raw, type: tcn, params: {channels: 24, dilations: [1, 2, 4, 8, 16, 32]}}
+train: {epochs: 30, batch: 256, lr: 0.001}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

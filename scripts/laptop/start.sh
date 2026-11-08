@@ -6,6 +6,8 @@
 #   scripts/laptop/start.sh night    metadata fetch (resumable, retried once), then the whole chrono job
 #   scripts/laptop/start.sh sweep    the laptop's share of the DWN sweep (>= 500 LUTs, GPU); builds and checks
 #                                    the feature cache first if it is missing
+#   scripts/laptop/start.sh raw      raw-EEG 1-D CNN and TCN on the inner folds (after `sweep`: needs its
+#                                    training feature cache and the ChronoNet cache; streams the EEG)
 #   scripts/laptop/start.sh finish   waits for the chrono training, then its test predictions and scores,
 #                                    then the clean variant (last epoch, no selection): train, predict, score
 # Every step resumes: re-running the same command after an interruption (window closed, laptop
@@ -21,8 +23,9 @@ case "${1:-}" in
   chrono) cmd="python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda --resume auto" ;;
   night)  cmd="(python scripts/fetch_metadata.py || python scripts/fetch_metadata.py) && python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda --resume auto" ;;
   sweep)  cmd="scripts/laptop/sweep_big.sh" ;;
+  raw)    cmd="python scripts/run_inner_cv_raw.py --config configs/m4/raw_cnn_tcn.yaml --device cuda" ;;
   finish) cmd="scripts/laptop/chrono_eval.sh chrononet_official && python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_clean.yaml && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_clean.yaml --device cuda --resume auto && scripts/laptop/chrono_eval.sh chrononet_clean" ;;
-  *) echo "usage: $0 feat|chrono|night|sweep|finish"; exit 2 ;;
+  *) echo "usage: $0 feat|chrono|night|sweep|finish|raw"; exit 2 ;;
 esac
 # A session of the same name whose job has ended (only its shell is left) is replaced; a running one is kept.
 if tmux has-session -t "$1" 2>/dev/null; then

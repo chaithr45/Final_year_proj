@@ -176,3 +176,57 @@ def test_every_m5_variant_runs(tmp_path):
                 "--features-root", tmp_path / "feat")
         assert r.returncode == 0, f"{c.name}: {r.stderr[-1500:]}"
         assert f"RESULT {d['name']}" in r.stdout
+
+
+def test_run_inner_cv_raw_end_to_end(tmp_path, bids_root):
+    """Raw-EEG CNN and TCN on two folds of the fixture: train from a segment cache, stream the held-out
+    recordings, score, and write one finished run per model."""
+    import numpy as np
+    import yaml
+    from seizelut.data.bids import discover_runs
+    from seizelut.data.split import official_train_subjects
+    runs = discover_runs(bids_root, official_train_subjects())
+    assert {r.subject for r in runs} == {"sub-001", "sub-002"}
+    rng = np.random.default_rng(0)
+    n = 300
+    data = tmp_path / "chrono"
+    data.mkdir()
+    keys = np.zeros((n, 4))
+    keys[:, 0] = rng.integers(0, len(runs), n)
+    keys[:, 3] = rng.random(n) < 0.3
+    x = rng.normal(0, 20, size=(n, 500, 2)).astype(np.float32)
+    x[keys[:, 3] == 1] *= 3
+    np.save(data / "train_x.npy", x)
+    np.save(data / "train_y.npy", keys[:, 3].astype(np.uint8))
+    np.save(data / "train_keys.npy", keys)
+    (tmp_path / "cc.yaml").write_text(yaml.safe_dump({"train_subjects": "official_train"}))
+    feat = tmp_path / "feat" / "int"
+    feat.mkdir(parents=True)
+    for r in runs:
+        m = 4000
+        y = np.zeros(m, np.int8)
+        y[1000:1060] = 1
+        np.savez(feat / f"{r.key}.npz", X=np.zeros((m, 117), np.int16), y=y, artefact=np.zeros((m, 2), bool),
+                 present=np.ones((m, 4), bool), seizures=np.array([[1000.0, 1061.0]]), duration_s=float(m + 1))
+    (tmp_path / "folds.json").write_text(json.dumps({"folds": {"sub-001": 0, "sub-002": 1}}))
+    cfg = {"name": "raw_test", "seed": 0, "data": {"cache_dir": str(data), "config": str(tmp_path / "cc.yaml")},
+           "models": [{"name": "cnn_t", "type": "cnn1d", "params": {"channels": [4, 8, 8, 8]}},
+                      {"name": "tcn_t", "type": "tcn", "params": {"channels": 4, "dilations": [1, 2]}}],
+           "train": {"epochs": 1, "batch": 64}, "post": {"k": [4], "gate": ["none"], "n_thresholds": 5}}
+    (tmp_path / "raw.yaml").write_text(yaml.safe_dump(cfg))
+    r = run("scripts/run_inner_cv_raw.py", "--config", tmp_path / "raw.yaml", "--device", "cpu",
+            "--folds-file", tmp_path / "folds.json", "--dataset-root", bids_root, "--features-root", tmp_path / "feat",
+            "--out", tmp_path / "out")
+    assert r.returncode == 0, r.stderr[-2000:]
+    for name in ("cnn_t", "tcn_t"):
+        assert f"RESULT {name}" in r.stdout
+        d = next((tmp_path / "out" / "results" / "runs").glob(f"*_{name}_s0"))
+        m = json.loads((d / "metrics.json").read_text())
+        assert m["cost_median"]["multipliers"] > 0 and not (d / ".gitignore").exists()
+    # a second call finds both runs finished and starts nothing
+    r2 = run("scripts/run_inner_cv_raw.py", "--config", tmp_path / "raw.yaml", "--device", "cpu",
+             "--folds-file", tmp_path / "folds.json", "--dataset-root", bids_root, "--features-root", tmp_path / "feat",
+             "--out", tmp_path / "out")
+    assert r2.returncode == 0, r2.stderr[-2000:]
+    assert "cnn_t: a finished run exists, skipped" in r2.stdout
+    assert len(list((tmp_path / "out" / "results" / "runs").glob("*_cnn_t_s0"))) == 1

@@ -117,6 +117,14 @@ connection; runs already cached are skipped), checks it against the M1 audit, th
 recording in memory and WSL has 7.4 GB. The cloud runs the rest of the grid. Send finished runs with
 `scripts/laptop/push_runs.sh` (any time; unfinished runs are skipped).
 
-## 4. Raw-EEG CNN/TCN and GRU references
+## 4. Raw-EEG 1-D CNN and TCN references (after the sweep)
 
-Not yet implemented in this branch; they will be added as configs that run with `--device cuda`.
+```bash
+scripts/laptop/start.sh raw
+```
+
+Trains both on the ChronoNet cache of the 96 training patients (already on the laptop), fold by fold,
+then streams the held-out patients' EEG once per fold and scores every second (most of the time goes
+into streaming: roughly the 96 patients' EEG once). Uses the training feature cache from `sweep` for
+the artefact flags and labels. Resumable per fold, recording and epoch. The GRU reference runs on the
+cloud (`configs/m4/gru_mi40.yaml`).

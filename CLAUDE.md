@@ -22,8 +22,10 @@ status are in `README.md`; every decision and result is in `results/decisions.md
 ### If you are the laptop session
 
 1. Your jobs are in `reports/LAPTOP_RUNBOOK.md` and start with `scripts/laptop/start.sh <job>` (tmux; every job
-   resumes, so after an interruption run the same command again). Current job: `sweep` (builds the feature
-   cache, then trains 21 DWN configs). Progress: `tail -n 3 logs/sweep.log`.
+   resumes, so after an interruption run the same command again). Jobs in order, one at a time:
+   `sweep` (builds the training feature cache, then trains 21 DWN configs; progress `tail -n 3 logs/sweep.log`),
+   then `raw` (raw-EEG CNN and TCN, `logs/raw.log`). Start the next job when the log of the previous one ends
+   with "finished (exit 0)".
 2. Send finished runs with `scripts/laptop/push_runs.sh` (it also sends `reports/LAPTOP_STATUS.md`).
 3. If a job fails, read the log and retry once. If it fails again, do not edit `src/`, `scripts/` or configs:
    write the error, the log excerpt and your diagnosis into `reports/LAPTOP_STATUS.md` and run `push_runs.sh`.
