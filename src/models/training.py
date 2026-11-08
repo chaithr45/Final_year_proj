@@ -50,8 +50,8 @@ def select_features(spec, names):
         return [i for i, n in enumerate(names) if not n.startswith(tuple(spec["exclude_prefix"]))]
     if isinstance(spec, dict) and "include_prefix" in spec:
         return [i for i, n in enumerate(names) if n.startswith(tuple(spec["include_prefix"]))]
-    if isinstance(spec, dict) and "mi_top" in spec:
-        return list(range(len(names)))          # selected per training set by mi_select()
+    if isinstance(spec, dict) and ("mi_top" in spec or spec.get("rank_by")):
+        return list(range(len(names)))          # selected per training set by rank_select()
     if isinstance(spec, dict) and "ranking" in spec:
         order = json.loads((REPO / spec["ranking"]).read_text())["order"]
         return sorted(names.index(n) for n in order[: spec["top"]])
@@ -89,6 +89,30 @@ def mi_select(fspec, X, y, cols, names, stack, seed, log):
     return fcols
 
 
+def lgbm_select(fspec, X, y, cols, names, seed, log):
+    """Rank by the gain importance of a LightGBM trained on the training windows only (200k-row sample).
+    Unlike one-feature-at-a-time mutual information, it credits features that matter in combination
+    (e.g. heart rate relative to the rest)."""
+    import lightgbm as lgb
+    rs = np.random.default_rng(seed)
+    sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
+    m = lgb.LGBMClassifier(n_estimators=200, num_leaves=31, learning_rate=0.05, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.8, min_child_samples=50, importance_type="gain", random_state=seed,
+                           n_jobs=4, verbose=-1)
+    m.fit(X[sub][:, cols].astype(np.float32), y[sub])
+    order = np.argsort(-m.feature_importances_, kind="stable")
+    fcols = [cols[i] for i in order[: fspec["top"]]]
+    log(f"  LightGBM-gain top {fspec['top']}: {[names[i] for i in fcols[:10]]} ...")
+    return fcols
+
+
+def rank_select(fspec, X, y, cols, names, stack, seed, log):
+    """Per-training-set feature selection: mutual information (mi_top) or LightGBM gain (rank_by: lgbm, top)."""
+    if fspec.get("rank_by") == "lgbm":
+        return lgbm_select(fspec, X, y, cols, names, seed, log)
+    return mi_select(fspec, X, y, cols, names, stack, seed, log)
+
+
 def fit_config(cfg, store, subjects, seed, log, ckpt=None, seed_all_models=False):
     """Train `cfg` on `subjects`. Returns (model, columns, number of training windows or None).
 
@@ -110,9 +134,9 @@ def fit_config(cfg, store, subjects, seed, log, ckpt=None, seed_all_models=False
         # sequence models (N1, GRU) sample their own training sequences from the store
         model.ckpt_path = ckpt
         scols = cols
-        if isinstance(fspec, dict) and "mi_top" in fspec:
+        if isinstance(fspec, dict) and ("mi_top" in fspec or fspec.get("rank_by")):
             Xm, ym, _, _, _ = store.training_set(subjects, tc.get("bg_ratio", 20), seed=seed, max_bg=tc.get("max_bg"))
-            scols = mi_select(fspec, Xm, ym, cols, names, store.stack, seed, log)
+            scols = rank_select(fspec, Xm, ym, cols, names, store.stack, seed, log)
             del Xm, ym
         model.fit_store(store, subjects, scols, seed)
         return model, scols, None
@@ -120,8 +144,8 @@ def fit_config(cfg, store, subjects, seed, log, ckpt=None, seed_all_models=False
     X, y, _, _, _ = store.training_set(subjects, tc.get("bg_ratio", 20), seed=seed, max_bg=tc.get("max_bg"))
     log(f"  training windows: {len(y)} ({int(y.sum())} seizure)")
     fcols = cols
-    if isinstance(fspec, dict) and "mi_top" in fspec:
-        fcols = mi_select(fspec, X, y, cols, names, store.stack, seed, log)
+    if isinstance(fspec, dict) and ("mi_top" in fspec or fspec.get("rank_by")):
+        fcols = rank_select(fspec, X, y, cols, names, store.stack, seed, log)
     if isinstance(fspec, dict) and fspec.get("always"):
         # N6 gated fusion: quality and presence bits are always inputs, whatever their MI rank
         fcols = list(fcols) + [names.index(n) for n in fspec["always"] if names.index(n) not in fcols]

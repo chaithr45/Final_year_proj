@@ -121,6 +121,8 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
                         "features": {"mi_top": 10}, "train": {"bg_ratio": 3}}
     cfgs["gru"] = {"model": {"type": "gru", "params": {"hidden": 8, **seq}}, "features": {"mi_top": 10},
                    "train": {"bg_ratio": 3}}
+    cfgs["lgbmsel"] = {"model": {"type": "dwn", "params": dwn}, "features": {"rank_by": "lgbm", "top": 10},
+                       "train": {"bg_ratio": 3}}
     cfgs["logicnet"] = {"model": {"type": "logicnet", "params": {"hidden": [16, 8], "epochs": 1, "batch": 256,
                                                                   "threads": 1}},
                         "features": {"mi_top": 10}, "train": {"bg_ratio": 3}}
@@ -138,8 +140,8 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
         if name == "gated":
             assert "present_emg" in m["fold_info"][0]["features"]
             assert "teacher lgbm trained" in (rd / "log.txt").read_text()
-        if name in ("stateful", "gru"):
-            assert len(m["fold_info"][0]["features"]) == 10       # MI selection now applies to sequence models
+        if name in ("stateful", "gru", "lgbmsel"):
+            assert len(m["fold_info"][0]["features"]) == 10       # per-fold selection (sequence models too)
         if name == "late":
             assert "late fusion: ecg" in (rd / "log.txt").read_text()
             assert m["cost_median"]["fusion_adder_luts"] > 0

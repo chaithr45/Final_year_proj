@@ -1,0 +1,36 @@
+# Base DWN (dwn_L50_b8_learn) with features ranked per fold by LightGBM gain instead of mutual
+# information: the MI top 40 is ~34 EEG + 4 presence bits and misses ECG/EMG features the trees rely on.
+name: dwn_L50_b8_lgbm40
+seed: 0
+model:
+  type: dwn
+  params:
+    bits: 8
+    layers:
+    - 50
+    n: 6
+    mapping: learnable
+    tau: 3.3333
+    epochs: 30
+    lr: 0.01
+    batch: 4096
+    decay_at: 0.7
+    loss: ce
+    device: cuda
+    threads: 8
+features:
+  rank_by: lgbm
+  top: 40
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
