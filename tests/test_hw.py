@@ -75,6 +75,12 @@ def test_test_vectors_match_golden_model(tmp_path, bids_root):
         for rel, info in man["recordings"][key]["files"].items():
             assert hashlib.sha256((d / "vectors" / rel).read_bytes()).hexdigest() == info["sha256"]
         assert (d / "vectors" / key / "sample.csv").read_text().startswith("second,")
+    # Section 8.5: the generated Verilog reproduces the vectors (score, decision, alarm) on every second
+    import shutil as _sh
+    if _sh.which("iverilog"):
+        r = subprocess.run([sys.executable, "scripts/verify_verilog.py", "--export", str(d)], cwd=repo,
+                           capture_output=True, text=True)
+        assert r.returncode == 0 and "ALL PASS" in r.stdout, r.stdout[-1500:] + r.stderr[-1500:]
 
 
 def test_baseline_exports_reproduce_the_models(tmp_path):

@@ -68,8 +68,14 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier") -> di
         j = fidx[bdef["feature"]]
         t = int(bdef["threshold"])
         wd = widths[j]
-        lit = f"-{wd}'sd{abs(t)}" if t < 0 else f"{wd}'sd{t}"
-        w(f"    assign b[{i}] = (x{j} > {lit});")
+        lo, hi = -(1 << (wd - 1)), (1 << (wd - 1)) - 1
+        if t >= hi:            # a W-bit signed feature can never exceed it: constant 0 (no comparator)
+            w(f"    assign b[{i}] = 1'b0;   // threshold {t} >= max {hi} of {feats[j]['name']}")
+        elif t < lo:           # always exceeded: constant 1
+            w(f"    assign b[{i}] = 1'b1;   // threshold {t} < min {lo} of {feats[j]['name']}")
+        else:
+            lit = f"-{wd}'sd{abs(t)}" if t < 0 else f"{wd}'sd{t}"
+            w(f"    assign b[{i}] = (x{j} > {lit});")
     prev, prev_w = "b", len(bits)
     art_pipe = ["art_r"]
     for li, (layer, tabs) in enumerate(zip(layers, tables)):
@@ -163,11 +169,13 @@ def make_testbench(pkg: dict, info: dict, vec_path: Path, n_vectors: int, out_pa
     Path(out_path).write_text("\n".join(L) + "\n")
 
 
-def write_vectors(pkg: dict, info: dict, X: np.ndarray, artefact: np.ndarray, golden: dict, path: Path) -> int:
-    """Hex test vectors matching testbench(): {alarm, decision, score, artefact, packed features}."""
+def write_vectors(pkg: dict, info: dict, X: np.ndarray, artefact: np.ndarray, golden: dict, path: Path,
+                  full_features: bool = False) -> int:
+    """Hex test vectors matching testbench(): {alarm, decision, score, artefact, packed features}.
+    X: the model's input columns, or with full_features=True all 117 features in spec order."""
     widths = info["widths"]
     sw = info["score_bits"]
-    cols = [f["column"] for f in pkg["thresholds"]["features"]]
+    cols = [f["spec_index" if full_features else "column"] for f in pkg["thresholds"]["features"]]
     lines = []
     for t in range(len(X)):
         v = 0
