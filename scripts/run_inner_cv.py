@@ -27,7 +27,7 @@ from seizelut.data.split import load_folds
 from seizelut.eval.innercv import finalize
 from seizelut.eval.runlog import new_run_dir
 from seizelut.features import spec as S
-from seizelut.models.training import bits_of, feature_names, fit_config, select_features
+from seizelut.models.training import bits_of, feature_names, fit_config, set_device, select_features
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -64,8 +64,7 @@ def main() -> int:
     args = ap.parse_args()
     out = Path(args.out).resolve() if args.out else REPO
     cfg = yaml.safe_load(Path(args.config).read_text())
-    if args.device:
-        cfg["model"].setdefault("params", {})["device"] = args.device
+    set_device(cfg, args.device)
     seed = args.seed if args.seed is not None else cfg.get("seed", 0)
     folds = load_folds(args.folds_file)
     fold_ids = args.folds if args.folds is not None else sorted(set(folds.values()))

@@ -23,6 +23,17 @@ MODALITY_PREFIX = {"ecg": ("ecg_", "present_ecg"), "emg": ("emg_", "present_emg"
 DWN_LIKE = ("dwn", "dwn_late")
 
 
+def set_device(cfg: dict, device: str | None) -> None:
+    """Override the model's torch device, for models that take one (sequence models train on the CPU)."""
+    if not device:
+        return
+    import inspect
+    from .registry import REGISTRY
+    sig = inspect.signature(REGISTRY[cfg["model"]["type"]].__init__).parameters
+    if "device" in sig or any(v.kind == v.VAR_KEYWORD for v in sig.values()):
+        cfg["model"].setdefault("params", {})["device"] = device
+
+
 def feature_names(stack: int) -> list[str]:
     return S.FEATURES if stack == 1 else [f"{n}@t-{j}" for j in range(stack - 1, -1, -1) for n in S.FEATURES]
 

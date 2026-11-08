@@ -129,7 +129,7 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
         path = tmp_path / f"{name}.yaml"
         path.write_text(yaml.safe_dump(cfg, sort_keys=False))
         r = run("scripts/run_inner_cv.py", "--config", path, "--folds-file", folds, "--out", tmp_path / "out",
-                "--features-root", tmp_path / "feat")
+                "--features-root", tmp_path / "feat", "--device", "cpu")      # as the cloud queue (DEVICE=cpu)
         assert r.returncode == 0, f"{name}: {r.stderr[-2000:]}"
         assert f"RESULT t_{name}" in r.stdout
         rd = next((tmp_path / "out" / "results" / "runs").glob(f"*_t_{name}_s0"))

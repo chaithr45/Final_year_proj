@@ -1,0 +1,36 @@
+# Tier-2 variant of dwn_L50_b8_learn (scripts/make_m5_configs.py)
+name: n1_stateful_mi
+seed: 0
+model:
+  type: stateful_dwn
+  params:
+    bits: 8
+    n_state: 16
+    n_vote: 50
+    n: 6
+    mapping: learnable
+    tau: 3.3333
+    seq_len: 60
+    pos_per_seizure: 6
+    neg_ratio: 5
+    burn_in: 10
+    epochs: 15
+    lr: 0.01
+    batch: 64
+    threads: 8
+features:
+  mi_top: 40
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+base_config: dwn_L50_b8_learn

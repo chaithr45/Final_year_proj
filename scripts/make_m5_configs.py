@@ -30,12 +30,12 @@ def variants(base: dict) -> dict:
     p = base["model"]["params"]
     L = sum(p["layers"][:1])
     v = {
-        "n1_stateful": {"type": "stateful_dwn", "replace_params": {
+        "n1_stateful_mi": {"type": "stateful_dwn", "replace_params": {
             "bits": p.get("bits", 8), "n_state": 16, "n_vote": L, "n": p.get("n", 6),
             "mapping": p.get("mapping", "learnable"), "tau": p.get("tau", 3.3333),
             "seq_len": 60, "pos_per_seizure": 6, "neg_ratio": 5, "burn_in": 10, "epochs": 15, "lr": 0.01,
             "batch": 64, "threads": p.get("threads", 4)}},
-        "n1_stack5": {"stack": 5, "features": {"mi_top": base["features"]["mi_top"], "mi_on": "base"}},
+        "n1_stack5_mi": {"stack": 5, "features": {"mi_top": base["features"]["mi_top"], "mi_on": "base"}},
         "n2_uniform": {"params": {"encoder": "uniform"}},
         "n2_gaussian": {"params": {"encoder": "gaussian"}},
         "n2_learned": {"params": {"encoder": "learned", "comparator_penalty": 1e-4}},

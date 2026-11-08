@@ -35,7 +35,7 @@ from seizelut.eval.operating import gate_mask, kth_of_last
 from seizelut.eval.runlog import mark_complete, log_test_access, new_run_dir, require_test_access
 from seizelut.eval.stats import bootstrap_ci
 from seizelut.eval.szcore import aggregate, score_recording
-from seizelut.models.training import bits_of, feature_names, fit_config
+from seizelut.models.training import bits_of, feature_names, fit_config, set_device
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -59,8 +59,7 @@ def main() -> int:
     test = args.test_subjects or official_test_subjects()
     require_test_access(test, args.final_test)
     cfg = yaml.safe_load(Path(args.config).read_text())
-    if args.device:
-        cfg["model"].setdefault("params", {})["device"] = args.device
+    set_device(cfg, args.device)
     cv = json.loads((Path(args.cv_run) / "metrics.json").read_text())
     ops = {k: v for k, v in cv["operating_points"].items() if v}
     store = FeatureStore(root=Path(args.features_root) if args.features_root else None)
