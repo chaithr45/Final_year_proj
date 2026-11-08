@@ -239,3 +239,10 @@ Method results and keep/drop decisions are appended below as runs finish.
   p = 0.66; FP/24 h -1.3 [-3.0, -0.3], p = 0.013; AUROC +0.021, sens at <= 1 FA/h +0.013. **Not adopted** (event-F1, the
   primary metric, is not better): its best-F1 point trades sensitivity (0.22 vs 0.32) for fewer false alarms. The
   higher AUROC and the significant false-alarm reduction are kept in view for the combination run after M5.
+* **n1_stack5_sel** (N1 baseline with stacked windows: the base DWN on the last 5 windows, LightGBM ranking on the
+  current window and every lag of the top 40 kept): AUROC 0.855, AUPR 0.029, event-F1 0.217 (sens 0.326, prec 0.256,
+  2.1 FP/24 h, no gate, k 10), sens 0.582 at <= 1 FA/h; median estimated LUTs +478 over the base (more comparators).
+  Against the base: per-patient F1 +0.006 [-0.041, +0.049], p = 0.25; FP/24 h -0.3 [-1.3, +0.5], p = 0.81. **Not
+  adopted** (no significant gain, about 1.5 times the cost). **N1 so far:** neither memory variant raises event-F1 on
+  the D34 base; the stateful network lowers false alarms (p = 0.013) at lower sensitivity. The GRU reference
+  (`gru_lgbm40`, queued) tells whether any sequence model gains on these features before N1 is closed.
