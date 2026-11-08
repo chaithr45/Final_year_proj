@@ -1,0 +1,35 @@
+# LogicNets-style sparse quantized MLP on the top 40 features by LightGBM gain per training fold (D34), like the base DWN.
+name: logicnet_lgbm40
+seed: 0
+model:
+  type: logicnet
+  params:
+    hidden:
+    - 128
+    - 64
+    - 32
+    fan_in: 3
+    act_bits: 2
+    in_bits: 2
+    tau: 1.0
+    epochs: 30
+    lr: 0.01
+    batch: 4096
+    decay_at: 0.7
+    threads: 4
+features:
+  rank_by: lgbm
+  top: 40
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
