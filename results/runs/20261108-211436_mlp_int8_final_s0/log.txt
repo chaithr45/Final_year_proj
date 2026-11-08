@@ -1,0 +1,158 @@
+seed 0: training on 96 patients
+  training windows: 892416 (42496 seizure)
+    epoch 1/20 loss 0.3975
+    epoch 2/20 loss 0.2984
+    epoch 3/20 loss 0.2652
+    epoch 4/20 loss 0.2456
+    epoch 5/20 loss 0.2294
+    epoch 6/20 loss 0.2181
+    epoch 7/20 loss 0.2068
+    epoch 8/20 loss 0.1995
+    epoch 9/20 loss 0.1929
+    epoch 10/20 loss 0.1848
+    epoch 11/20 loss 0.1808
+    epoch 12/20 loss 0.1757
+    epoch 13/20 loss 0.1705
+    epoch 14/20 loss 0.1671
+    epoch 15/20 loss 0.1629
+    epoch 16/20 loss 0.1595
+    epoch 17/20 loss 0.1558
+    epoch 18/20 loss 0.1535
+    epoch 19/20 loss 0.1515
+    epoch 20/20 loss 0.1474
+seed 0 best_f1: SzCORE sens 0.252 prec 0.161 F1 0.153 FP/24h 2.8
+seed 0 sens_at_1fah: SzCORE sens 0.477 prec 0.050 F1 0.081 FP/24h 17.8
+seed 1: training on 96 patients
+  training windows: 892416 (42496 seizure)
+    epoch 1/20 loss 0.3988
+    epoch 2/20 loss 0.2986
+    epoch 3/20 loss 0.2621
+    epoch 4/20 loss 0.2391
+    epoch 5/20 loss 0.2227
+    epoch 6/20 loss 0.2102
+    epoch 7/20 loss 0.1989
+    epoch 8/20 loss 0.1908
+    epoch 9/20 loss 0.1832
+    epoch 10/20 loss 0.1767
+    epoch 11/20 loss 0.1711
+    epoch 12/20 loss 0.1659
+    epoch 13/20 loss 0.1612
+    epoch 14/20 loss 0.1586
+    epoch 15/20 loss 0.1531
+    epoch 16/20 loss 0.1499
+    epoch 17/20 loss 0.1477
+    epoch 18/20 loss 0.1449
+    epoch 19/20 loss 0.1433
+    epoch 20/20 loss 0.1392
+seed 1 best_f1: SzCORE sens 0.286 prec 0.158 F1 0.165 FP/24h 1.3
+seed 1 sens_at_1fah: SzCORE sens 0.425 prec 0.050 F1 0.075 FP/24h 17.4
+seed 2: training on 96 patients
+  training windows: 892416 (42496 seizure)
+    epoch 1/20 loss 0.3922
+    epoch 2/20 loss 0.2938
+    epoch 3/20 loss 0.2603
+    epoch 4/20 loss 0.2389
+    epoch 5/20 loss 0.2229
+    epoch 6/20 loss 0.2107
+    epoch 7/20 loss 0.2005
+    epoch 8/20 loss 0.1917
+    epoch 9/20 loss 0.1850
+    epoch 10/20 loss 0.1777
+    epoch 11/20 loss 0.1720
+    epoch 12/20 loss 0.1682
+    epoch 13/20 loss 0.1624
+    epoch 14/20 loss 0.1571
+    epoch 15/20 loss 0.1538
+    epoch 16/20 loss 0.1504
+    epoch 17/20 loss 0.1476
+    epoch 18/20 loss 0.1442
+    epoch 19/20 loss 0.1401
+    epoch 20/20 loss 0.1380
+seed 2 best_f1: SzCORE sens 0.248 prec 0.187 F1 0.161 FP/24h 1.5
+seed 2 sens_at_1fah: SzCORE sens 0.376 prec 0.065 F1 0.087 FP/24h 13.1
+seed 3: training on 96 patients
+  training windows: 892416 (42496 seizure)
+    epoch 1/20 loss 0.3961
+    epoch 2/20 loss 0.2992
+    epoch 3/20 loss 0.2628
+    epoch 4/20 loss 0.2396
+    epoch 5/20 loss 0.2225
+    epoch 6/20 loss 0.2093
+    epoch 7/20 loss 0.2000
+    epoch 8/20 loss 0.1915
+    epoch 9/20 loss 0.1848
+    epoch 10/20 loss 0.1778
+    epoch 11/20 loss 0.1728
+    epoch 12/20 loss 0.1672
+    epoch 13/20 loss 0.1627
+    epoch 14/20 loss 0.1584
+    epoch 15/20 loss 0.1543
+    epoch 16/20 loss 0.1507
+    epoch 17/20 loss 0.1473
+    epoch 18/20 loss 0.1431
+    epoch 19/20 loss 0.1413
+    epoch 20/20 loss 0.1398
+seed 3 best_f1: SzCORE sens 0.267 prec 0.150 F1 0.151 FP/24h 1.5
+seed 3 sens_at_1fah: SzCORE sens 0.419 prec 0.047 F1 0.075 FP/24h 17.4
+seed 4: training on 96 patients
+  training windows: 892416 (42496 seizure)
+    epoch 1/20 loss 0.4026
+    epoch 2/20 loss 0.3008
+    epoch 3/20 loss 0.2641
+    epoch 4/20 loss 0.2415
+    epoch 5/20 loss 0.2266
+    epoch 6/20 loss 0.2142
+    epoch 7/20 loss 0.2030
+    epoch 8/20 loss 0.1959
+    epoch 9/20 loss 0.1880
+    epoch 10/20 loss 0.1819
+    epoch 11/20 loss 0.1770
+    epoch 12/20 loss 0.1714
+    epoch 13/20 loss 0.1657
+    epoch 14/20 loss 0.1626
+    epoch 15/20 loss 0.1575
+    epoch 16/20 loss 0.1550
+    epoch 17/20 loss 0.1506
+    epoch 18/20 loss 0.1494
+    epoch 19/20 loss 0.1445
+    epoch 20/20 loss 0.1424
+seed 4 best_f1: SzCORE sens 0.193 prec 0.158 F1 0.144 FP/24h 1.6
+seed 4 sens_at_1fah: SzCORE sens 0.352 prec 0.058 F1 0.087 FP/24h 11.2
+{
+ "best_f1": {
+  "sensitivity": {
+   "mean": 0.24909756289066634,
+   "std": 0.03468305865090246
+  },
+  "precision": {
+   "mean": 0.16310696923018947,
+   "std": 0.014013598687952523
+  },
+  "f1": {
+   "mean": 0.15486589365538003,
+   "std": 0.008217503635952382
+  },
+  "fp_per_24h": {
+   "mean": 1.7204805664599028,
+   "std": 0.602574476946113
+  }
+ },
+ "sens_at_1fah": {
+  "sensitivity": {
+   "mean": 0.4099025050749188,
+   "std": 0.04841279870441733
+  },
+  "precision": {
+   "mean": 0.054246232012851316,
+   "std": 0.007207780092087467
+  },
+  "f1": {
+   "mean": 0.08121265100809509,
+   "std": 0.005778625687554485
+  },
+  "fp_per_24h": {
+   "mean": 15.402417098959301,
+   "std": 3.0114306704286093
+  }
+ }
+}

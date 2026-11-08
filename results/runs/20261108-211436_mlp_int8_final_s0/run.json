@@ -1,0 +1,9 @@
+{
+  "name": "mlp_int8_final",
+  "seed": 0,
+  "git": {
+    "commit": "8a61b3526f3850f4ff978b49951eecfd737764f3",
+    "dirty": false
+  },
+  "created": "20261108-211436"
+}
