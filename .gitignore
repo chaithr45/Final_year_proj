@@ -43,3 +43,8 @@ results/runs/*smoke*/
 results/queue_*.log
 /catboost_info/
 /logs/
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.out

@@ -1,152 +1,199 @@
-% LUT-native multimodal seizure detection on SeizeIT2 -- Phase 1 draft.
-% Every number in this file must come from a file in results/ produced by a committed script.
-% Result tables are \input from paper/tables/*.tex (scripts/make_tables.py). Hardware results
-% are placeholders for Phase 2 and are marked \PHASETWO.
+% LUT-native multimodal seizure detection on SeizeIT2.
+% Every number in this file comes from a file in results/ produced by a committed script.
+% \RESULT{...} marks numbers that come from the final evaluation on the 29 test patients (M6), filled in once it has
+% run; \PHASETWO{...} marks measured hardware results of Phase 2.
 \documentclass[conference]{IEEEtran}
 \usepackage{amsmath,amssymb,graphicx,booktabs,xcolor,cite}
+\usepackage[hidelinks]{hyperref}
 \newcommand{\PHASETWO}[1]{\textcolor{red}{[Phase 2: #1]}}
-\newcommand{\TODO}[1]{\textcolor{blue}{[TODO: #1]}}
-\newcommand{\RESULT}[1]{\textcolor{teal}{[result: #1]}}
+\newcommand{\RESULT}[1]{\textcolor{teal}{[test result: #1]}}
 
 \begin{document}
-\title{Multiplier-Free Seizure Detection with LUT-Native Neural Networks on Behind-the-Ear EEG, ECG, EMG and Motion}
-\author{\IEEEauthorblockN{\TODO{authors}}\IEEEauthorblockA{National Institute of Technology Warangal, India}}
+\title{Multiplier-Free Seizure Detection with a LUT-Native Neural Network on Behind-the-Ear EEG, ECG, EMG and
+Motion}
+\author{\IEEEauthorblockN{[Authors]}\IEEEauthorblockA{Department of Electronics and Communication Engineering,
+National Institute of Technology Warangal, India}}
 \maketitle
 
 \begin{abstract}
-Wearable seizure detection must run for days on a small battery, which favours classifiers
-without multipliers. We study LUT-native neural networks, whose neurons are FPGA lookup tables,
-for patient-independent detection of focal seizures from two-channel behind-the-ear EEG, single-lead
-ECG, deltoid EMG and chest motion in the SeizeIT2 dataset (125 patients, 11,626 hours).
-All features are computed by an integer, causal, multiplier-free front end, encoded by thermometer
-comparators, and classified by a differentiable weightless neural network (DWN) whose prediction is a
-popcount difference. On the official split, \RESULT{headline detection result vs.\ the official
-baselines, SzCORE event metrics, mean $\pm$ std over 5 seeds}, at an estimated \RESULT{LUT count}
-LUTs and zero multipliers in the classifier. \TODO{one sentence on the strongest new method (N1--N6)}.
-Hardware measurements are left to future work.
+Wearable seizure detection has to run for days on a small battery, which favours classifiers without multipliers.
+We study LUT-native neural networks, whose neurons are FPGA lookup tables, for patient-independent seizure detection
+from two-channel behind-the-ear EEG, ECG, EMG and motion in the SeizeIT2 dataset (125 patients, 11,626 hours, 883
+seizures). A bit-exact integer front end computes 117 features without multipliers; a thermometer encoder and a
+Differentiable Weightless Neural Network (DWN) of 50 six-input LUTs turn them into a popcount score. On five-fold
+cross-validation over the 96 training patients the DWN reaches an event-F1 of 0.211 with 2.4 false alarms per day at
+about 960 estimated LUTs and no multipliers, seven to eight times fewer LUTs than TreeLUT and a logic-gate network,
+and better than an INT8 network that needs 9,600 multiplications per decision, though below gradient-boosted trees
+(0.292). Training with random sensor dropout keeps the detector working when the ECG is missing (event-F1 0.172
+against 0.092, $p = 0.005$). On the 29 held-out test patients, \RESULT{SzCORE event metrics, mean $\pm$ std over 5
+seeds, against clean ChronoNet and LightGBM}. We also report an independent reproduction of the published
+ChronoNet baseline, whose released code selects its model on the test patients.
 \end{abstract}
 
 \section{Introduction}
-Long-term monitoring with wearable sensors is the most practical way to document focal seizures
-outside the epilepsy monitoring unit, but the devices have little energy for computation. Behind-the-ear
-(bte) EEG is unobtrusive yet sees only two channels, so focal seizures that are clear on full-scalp
-EEG can be faint or invisible on the wearable \cite{vandecasteele2020}. Adding ECG, EMG and motion
-helps \cite{vandecasteele2021,bhagubai2023}, but most detectors that use them rely on multiply-heavy
-models.
+Patients are often unaware of their own seizures, so diaries undercount them \cite{elger2018underreporting}, and
+wearable detection is clinically recommended today only for tonic-clonic seizures \cite{beniczky2021guideline}.
+Focal seizures that do not become tonic-clonic (822 of the 883 in SeizeIT2) remain the open problem, with false alarms the main obstacle
+\cite{swinnen2026seizeit2}. Behind-the-ear (bte) EEG is discreet but sees only two channels; adding ECG, EMG and motion
+helps \cite{vandecasteele2021ecg,zhang2024tcs}, but the detectors that fuse them are floating-point software or
+multiply-accumulate networks on microcontrollers \cite{ingolfsson2024brainfusenet}.
 
-LUT-native neural networks replace weighted sums by lookup tables: each neuron is a Boolean function
-of a few input bits that maps one-to-one onto an FPGA LUT. Differentiable weightless neural networks
-(DWNs) \cite{bacellar2024} and differentiable logic-gate networks \cite{petersen2022} train such
-networks with gradient descent and reach strong accuracy at a few thousand LUTs on tabular and image
-benchmarks; tree ensembles can be mapped to LUTs in the same spirit \cite{khataei2025}. They have
-not been studied for seizure detection, and clinical biosignals bring problems that benchmark datasets
-do not: extreme class imbalance (0.12\,\% seizure time), patient-to-patient variability, missing
-modalities, labels taken from a different sensor, and event-level clinical scoring.
+LUT-native networks replace weighted sums by lookup tables: each neuron is a Boolean function of a few input bits that
+maps one-to-one onto an FPGA LUT. DWNs \cite{bacellar2024dwn}, logic-gate networks \cite{petersen2022dlgn} and LUT
+networks \cite{umuroglu2020logicnets} train such networks by gradient descent, and tree ensembles can be mapped to LUTs
+in the same spirit \cite{khataei2025treelut}. They have been applied to ECG arrhythmia \cite{mommen2026ecg} and EEG
+classification \cite{dharia2026eeglgn}, but not to seizure detection, which brings extreme class imbalance (0.12\,\%
+seizure time), patient-to-patient variability, missing sensors and event-level clinical scoring.
 
-\textbf{Contributions.}
-(i)~The first differentiable LUT-native seizure detectors and the first benchmark of the LUT-native
-family (DWN, logic-gate networks, TreeLUT) against standard machine learning on the official SeizeIT2
-split, with SzCORE event-based scoring \cite{dan2024}.
-(ii)~A fully integer, causal, multiplier-free multimodal feature front end with a bit-exact golden model,
-a fixed-point specification and a reference Verilog implementation of the classifier that matches the
-golden model on all test vectors.
-\TODO{(iii)--(iv): the two or three Tier-2 methods that win on the inner folds (Section~\ref{sec:methods}),
-stated only if they pass the paired test.}
+\textbf{Contributions.} (i)~The first differentiable LUT-native seizure detector and the first benchmark of LUT-native
+models (DWN, logic-gate network, TreeLUT) against standard machine learning on the official SeizeIT2 split with
+SzCORE event scoring \cite{dan2024szcore}. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG
+and motion, with a fixed-point specification and a reference Verilog classifier that matches the software on all test
+vectors. (iii)~Modality dropout for a LUT network, which makes it robust to missing ECG and motion, selected among
+seven families of extensions by per-patient tests. (iv)~An independent reproduction of the SeizeIT2 ChronoNet
+baseline, with a protocol that uses no test information.
 
 \section{Related Work}
-\textit{Wearable bte-EEG seizure detection.} Vandecasteele et al.\ showed that two bte channels
-capture many focal seizures \cite{vandecasteele2020}; the SeizeIT2 dataset paper reports SVM and
-ChronoNet baselines on its official split: 71.1\,\% sensitivity at 11.0 false alarms per hour and
-84.2\,\% at 100.5 per hour \cite{bhagubai2025}. SeizFt won the 2023 wearable-EEG challenge with
-CatBoost on engineered features \cite{alhussaini2023}.
-\textit{Multimodal detection.} ECG adds value to limited-channel EEG \cite{vandecasteele2021,bhagubai2023};
-EMG and motion target motor seizures \cite{beniczky2018,leijten2018}.
-\textit{Hardware detectors.} Busia et al.\ run a spiking network on a low-power FPGA for patient-specific
-detection on scalp EEG (CHB-MIT) \cite{busia2025}; BrainFuseNet fuses EEG, PPG and accelerometry for
-edge deployment \cite{ingolfsson2024}.
-\textit{LUT-native networks on biosignals.} Logic-gate and LUT networks have been applied to inter-patient
-ECG arrhythmia classification on an Artix-7 FPGA \cite{mommen2026} and logic-gate networks to EEG
-dementia and emotion classification on a CPU \cite{dharia2026}; recurrent logic-gate networks have been
-proposed for sequence modelling \cite{buhrer2025}; the cost of thermometer encoding in DWN accelerators
-has been measured \cite{mecik2025}. None addresses seizures, multimodal input, missing modalities or
-event-level clinical metrics.
+\textit{Wearable bte-EEG.} Two bte channels capture many focal seizures \cite{vandecasteele2020bte}; ECG raises
+sensitivity by 8--11\,\% \cite{vandecasteele2021ecg}. Tree ensembles won the ICASSP 2023 wearable-EEG challenge
+\cite{bhagubai2024challenge,alhussaini2023seizft}. The SeizeIT2 paper reports SVM and ChronoNet \cite{roy2019chrononet}
+baselines \cite{bhagubai2025seizeit2}. \textit{Hardware detectors.} ASICs reach nJ--\textmu J per classification with
+SVMs and trees \cite{altaf2015jssc,shoaran2018jetcas,shin2022neuraltree}; an SNN on a small iCE40 FPGA detects
+seizures on four scalp channels \cite{busia2025fpga}; transformers and fusion networks run on microcontrollers
+\cite{busia2024eegformer,ingolfsson2024brainfusenet}. Almost all use EEG only, patient-specific training and
+epoch-level metrics. \textit{LUT-native networks.} Beyond the works above, the thermometer encoder can dominate the
+cost of small DWNs \cite{mecik2025thermo}, and a recurrent logic-gate network exists for language
+\cite{buhrer2025rdlgn}. The only weightless seizure work is a WiSARD study on four patients \cite{deaguiar2015wisard}.
 
 \section{Dataset and Protocol}
-\textit{Data.} SeizeIT2 (OpenNeuro ds005873 v1.1.0, CC0) \cite{bhagubai2025} contains 125 patients with
-focal epilepsy from five European epilepsy monitoring units recorded with the Byteflies Sensor Dot:
-2-channel bte-EEG (all patients), single-lead chest ECG, left-deltoid EMG and chest-module accelerometer
-and gyroscope. Our audit of the release (Table~\ref{tab:audit}) found 2,850 recordings, 11,626 hours of
-EEG, 883 annotated seizures (702 in the 96 training patients, 181 in the 29 test patients), EEG/ECG/EMG
-at 256\,Hz and motion at 25\,Hz, ECG/EMG missing in 3.1\,\% and motion in 3.9\,\% of the EEG time.
-Seizures are annotated from video and full-scalp EEG, so some are not visible on the wearable; the release
-does not mark which, and it does not contain centre or age per patient.
-\textit{Split.} We use the official split exactly: training sub-001 to sub-096, testing sub-097 to sub-125
-(the official ``validation'' set; there is no separate test set). All design choices, hyperparameters,
-thresholds and post-processing are tuned with 5-fold patient-wise cross-validation inside the training
-patients; each final model is scored once per seed on the test patients.
-\textit{Scoring.} Primary: SzCORE event-based scoring \cite{dan2024} computed with the \texttt{timescoring}
-library (any overlap, 30\,s pre- and 60\,s post-ictal tolerance, events closer than 90\,s merged, events
-longer than 5\,min split), averaged over patients, with false positives per 24\,h. For comparison with the
-dataset paper we also report its own metrics (any-overlap sensitivity, false alarms per hour, AUROC, AUPR),
-computed with a port of the authors' evaluation code; the two metric families are never mixed.
-\textit{Statistics.} Per-patient paired Wilcoxon tests against each baseline, Friedman test across models,
-95\,\% patient-bootstrap intervals, mean $\pm$ standard deviation over 5 seeds.
+\textit{Data.} SeizeIT2 (OpenNeuro ds005873 v1.1.0) \cite{bhagubai2025seizeit2}: 125 patients with focal epilepsy from
+five European monitoring units, 2,850 recordings, 11,626 hours of two-channel bte-EEG, single-lead ECG and EMG at
+256\,Hz and accelerometer and gyroscope at 25\,Hz; ECG/EMG are missing in 3.1\,\% and motion in 3.9\,\% of the time.
+Our audit found 883 seizures (702 in the 96 training patients, 181 in the 29 test patients; the paper states 886), and
+256\,Hz rather than the documented 250\,Hz. Seizures were annotated on video and full-scalp EEG.
+\textit{Split and tuning.} Official split: training sub-001--096, test sub-097--125. Every choice (features,
+hyperparameters, thresholds, post-processing, extensions) is made by five-fold patient-wise cross-validation inside
+the training patients; each final model is then trained on all 96 and scored once per seed on the test patients.
+\textit{Scoring.} SzCORE event scoring \cite{dan2024szcore} (any overlap, 30\,s pre- and 60\,s post-ictal tolerance,
+events closer than 90\,s merged), averaged over patients, with false alarms per 24\,h. A decision is made every second;
+an alarm is raised when at least $k$ of the last 10 decisions are positive; the threshold, $k$ and an artefact gate are
+chosen on pooled out-of-fold predictions. Per-patient paired Wilcoxon tests and patient-bootstrap 95\,\% intervals;
+an extension is kept only if $p < 0.05$ in its favour.
 
-\section{Method}\label{sec:methods}
+\section{Method}
 \subsection{Integer multimodal front end}
-Samples arrive as int16 at a fixed scale (0.25\,$\mu$V per count for biopotentials). Every filter is a
-second-order section with coefficients rounded to at most five signed powers of two, implemented in direct
-form~I with second-order error feedback: without it, the rounding error of the 0.5\,Hz high-pass is
-amplified about 1,700 times at DC and exceeds the EEG itself. Features are computed every second over
-2\,s windows (512 samples, so every mean is a shift): per EEG channel the mean absolute value, line length,
-a log-domain Hjorth-mobility proxy, zero crossings, local extrema and four band magnitudes; symmetric
-cross-channel combinations (mean, maximum, absolute difference) make the model insensitive to the
-patient-specific montage; ECG heart rate and RR variability from a multiplier-free R-peak detector, in the
-log domain so no division is needed; EMG magnitude, line length, zero crossings and a high/low band
-ratio; chest accelerometer and gyroscope magnitude, jerk, activity count and 1--5\,Hz band magnitude;
-per-modality ``present'' bits; and, for each magnitude feature, its difference from a causal 64\,s
-moving average (a shift). Magnitudes are log-compressed by a leading-one detector with three mantissa bits.
-The artefact flag replaces the official RMS rule by the mean absolute value against the same limits scaled
-by $\sqrt{2/\pi}$, which agrees with the float rule on \RESULT{agreement}. The full front end uses no
-multipliers (\texttt{spec/fixed\_point.md}).
+Samples arrive as int16 (0.25\,\textmu V per count). Every filter is a second-order section with coefficients rounded to
+at most five signed powers of two and second-order error feedback; without it the rounding error of the 0.5\,Hz
+high-pass exceeds the EEG itself. Every second, 2-s windows give per-channel and cross-channel EEG magnitude, line
+length, mobility, zero crossings, extrema and four band magnitudes; ECG heart rate and RR variability in the log
+domain (no division); EMG magnitude, line length, zero crossings and a band ratio; accelerometer and gyroscope
+magnitude, jerk, activity and band magnitude; per-modality presence bits; and, for most features, the difference from a
+causal 64-s moving average. On 10 training patients the integer features match a floating-point twin (median
+correlation 0.9965; LightGBM AUROC 0.736 against 0.735).
+
 \subsection{Thermometer encoding and DWN}
-Each feature is compared against $b$ thresholds placed at training quantiles; each distinct threshold is
-one comparator. A DWN layer of LUT6 neurons reads these bits through a learnable mapping and is trained
-with extended finite differences \cite{bacellar2024}; a GroupSum over two classes gives the seizure score
-as the popcount difference of the seizure and background neuron groups. A decision is made every second
-when the score reaches a threshold and the artefact gate is clear; an alarm is raised when at least $k$ of
-the last 10 decisions are positive.
-\subsection{New methods}
-\TODO{Describe only the methods kept after the inner-fold decision (results/decisions.md): N1 stateful LUT
-network, N2 comparator-budgeted encoding, N3 label-free per-patient threshold adaptation, N4 distillation,
-N5 seizure-level multiple-instance learning and noise-robust losses, N6 reliability-gated fusion,
-N7 interpretable alarms.}
+Each of the 40 selected features is compared against 8 thresholds at training quantiles, $b_{f,i} = [x_f > t_{f,i}]$.
+A layer of 50 LUT6 neurons reads these bits through a learnable mapping and is trained with extended finite differences
+\cite{bacellar2024dwn}; the score is the popcount of the seizure group minus that of the background group. Features are
+ranked inside each training set by the gain of a LightGBM model; this replaced mutual information after an
+interpretability study showed that mutual information ignored the heart-rate features (event-F1 0.148 $\to$ 0.208,
+$p = 0.047$). Estimated cost: about 850 LUTs of comparators, 50 network LUTs, 57 popcount and 12 post-processing LUTs.
+
+\subsection{Extensions and modality dropout}
+We tested seven families of extensions against this base: a stateful network with 16 state bits fed back each second
+and stacked windows (N1), encoder designs (N2), label-free per-patient threshold adaptation (N3), distillation from
+LightGBM and teacher-guided hard negatives (N4), focal, noise-robust and multiple-instance losses and onset weighting
+(N5), modality dropout, reliability-gated and late fusion (N6), and alarm interpretation (N7). The one adopted is
+\emph{modality dropout}: during training, ECG, EMG and motion are each removed independently with probability 0.2 per
+window, exactly as when the sensor is absent (features and presence bits set to zero).
 
 \section{Results}
-\RESULT{Table: detection results on the 29 test patients (dataset-paper metrics and SzCORE).}
-\RESULT{Table: LUT-native family benchmark with estimated LUTs, comparators, multipliers.}
-\RESULT{Table: new-method ablations with differences, 95\,\% intervals and p-values.}
-\RESULT{Table: modalities and missing-modality robustness.}
-\RESULT{Table: results by seizure type (by centre and age group not possible with the public release).}
-\RESULT{Figure: event sensitivity vs.\ false alarms per 24\,h; Pareto plot of event-F1 vs.\ estimated LUTs.}
+\subsection{Baseline reproduction}
+On the 29 test patients, our PyTorch port of ChronoNet with the released protocol detects 74.5\,\% of seizures at 22.6
+false alarms per hour (published: 84.2\,\% at 100.5) with AUROC 0.741 (0.792); the per-recording AUPR (0.109)
+matches the published 0.104. The released code selects the training epoch on the test patients; a clean run (last
+epoch) gives 67.1\,\% at 11.9 false alarms per hour, and under SzCORE an event-F1 of 0.027 at 106 false alarms per day.
+The clean run is our ChronoNet reference.
+
+\subsection{Model comparison (training patients)}
+Table~\ref{tab:cv} compares the model families on cross-validation. The DWN is the most compact model, with one of the
+lowest false-alarm rates, and beats the INT8 MLP on every metric; it remains below gradient-boosted trees (per-patient
+event-F1 against LightGBM, $p = 0.004$). Between 50 and 200 LUTs, size did not change event-F1 significantly; four
+thresholds per feature were worst at every size.
+
+\begin{table}[t]\centering
+\caption{Five-fold cross-validation on the 96 training patients (SzCORE, mean over patients; best-F1 operating point;
+hardware cost estimated).}\label{tab:cv}
+\resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrr}\toprule
+Model & AUROC & F1 & Sens & FA/24h & Cost \\ \midrule
+LightGBM & 0.870 & 0.292 & 0.327 & 3.6 & $\approx$30.6k LUTs \\
+CatBoost & 0.863 & 0.286 & 0.337 & 3.0 & $\approx$27.7k LUTs \\
+XGBoost & 0.867 & 0.277 & 0.286 & 3.4 & $\approx$47.9k LUTs \\
+TreeLUT (5-bit leaves) & 0.857 & 0.266 & 0.329 & 4.2 & $\approx$6.4k LUTs \\
+\textbf{DWN, 50 LUT6} & 0.840 & 0.211 & 0.315 & 2.4 & $\approx$960 LUTs \\
+DWN + modality dropout & 0.849 & 0.188 & 0.275 & 1.9 & $\approx$945 LUTs \\
+Random forest & 0.852 & 0.198 & 0.216 & 0.5 & $\approx$323k LUTs \\
+Logic-gate network & 0.843 & 0.171 & 0.330 & 4.9 & $\approx$7.5k LUTs \\
+INT8 MLP & 0.830 & 0.147 & 0.225 & 7.8 & 9,600 mult. \\
+Logistic regression & 0.806 & 0.105 & 0.216 & 8.8 & 117 mult. \\
+\bottomrule\end{tabular}}
+\end{table}
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{figures/pareto_inner_cv.pdf}
+\caption{Event-F1 against estimated LUTs on the training folds, with the Pareto front.}\label{fig:pareto}
+\end{figure}
+
+\subsection{Extensions and missing sensors}
+None of the N1, N3 and N5 extensions improved event-F1 (Table~\ref{tab:abl}); the stateful network and onset
+weighting cut false alarms ($p = 0.013$, $p = 0.014$) at lower sensitivity, and the focal and noise-robust losses were
+significantly worse. The base loses most of its accuracy without ECG or motion (Table~\ref{tab:missing}). Modality
+dropout keeps it working: without ECG its event-F1 is 0.172 against 0.092 for the base ($p = 0.005$), without motion
+0.192 against 0.136 ($p = 0.021$), at no significant cost when every sensor is present ($p = 0.23$). Late fusion, one
+small DWN per modality, collapsed whenever a modality was missing.
+\RESULT{N2 encoder and N4 distillation results, still running at the time of writing.}
+
+\input{tables/m5_ablation}
+
+\begin{table}[t]\centering
+\caption{Event-F1 with sensors removed at test time (training folds, each model at its own operating point).}\label{tab:missing}
+\begin{tabular}{lrrrrr}\toprule
+Model & intact & no ECG & no EMG & no motion & EEG only \\ \midrule
+DWN base & 0.211 & 0.092 & 0.199 & 0.136 & 0.074 \\
++ modality dropout & 0.188 & 0.172 & 0.190 & 0.192 & 0.112 \\
+late fusion & 0.134 & 0.070 & 0.012 & 0.056 & 0.000 \\
+\bottomrule\end{tabular}
+\end{table}
+
+\subsection{Seizure types}
+Out of fold, the base detects 29 of 33 focal to bilateral tonic-clonic seizures (88\,\%), but 17\,\% of focal impaired
+awareness, 9\,\% of focal aware and 8\,\% of focal seizures with unknown awareness.
+
+\subsection{Held-out test patients}
+\RESULT{Table: SzCORE and paper metrics on the 29 test patients for the final DWN (modality dropout), LightGBM, TreeLUT,
+INT8 MLP, logistic regression and clean ChronoNet, mean $\pm$ std over 5 seeds, with per-patient tests against
+ChronoNet and LightGBM; results by seizure type and with sensors removed.}
 
 \section{Hardware}
-\PHASETWO{post-synthesis LUT/FF/BRAM counts on KV260 and Artix-7, power with switching activity,
-bit-exact replay of the test recordings, comparison with the INT8 MLP through the same flow.}
-Phase~1 reports only estimated costs computed from the exported models (Section~VI tables, labelled
-``estimated'').
+The final DWN is exported as thresholds, input mapping, truth tables and popcount head, with test vectors for every
+stage from raw samples to alarms; a generated reference Verilog classifier matches the software on all test vectors in
+Icarus Verilog. \PHASETWO{post-synthesis LUT, flip-flop and timing results and power on a low-power FPGA, with the INT8
+MLP and TreeLUT through the same flow.} Until then, costs are analytical estimates.
 
-\section{Limitations}
-Results come from retrospective replay of recordings, not live patients. Annotations come from full-scalp
-EEG and video, so some seizures are invisible on the wearable channels, and the release does not identify
-them. One dataset is used. Centre and age are not in the public release, so the folds cannot be stratified
-by centre and no centre or adult/child breakdown is reported. Hardware costs are software estimates until
-Phase~2.
+\section{Discussion and Limitations}
+Accuracy per LUT favours the DWN by a wide margin, and the thermometer encoder, not the network, dominates its cost,
+as also measured by \cite{mecik2025thermo}. Focal seizures remain mostly undetected, consistent with the clinical evidence that wearable detection is
+established only for tonic-clonic seizures \cite{beniczky2021guideline}. Results come from retrospective recordings of one dataset; the public release has no centre
+or age labels, so no centre or age breakdown is possible; and hardware costs are estimates until synthesis.
 
-\section*{Reproducibility and Ethics}
-Code, configurations, export packages and the Verilog generator are released with the paper. Dataset:
-SeizeIT2, DOI 10.18112/openneuro.ds005873.v1.1.0. The original study was approved by the UZ Leuven ethics
-committee (S63631; data sharing S67350).
+\section{Conclusion}
+A 50-LUT weightless network on integer multimodal features detects seizures across patients with no multipliers and
+about 960 estimated LUTs, and modality dropout makes it robust to missing ECG and motion. \RESULT{one sentence on the
+test-patient result.}
+
+\section*{Reproducibility}
+Code, configurations, decision log, export packages and the Verilog generator are released with the paper. Dataset:
+SeizeIT2, DOI 10.18112/openneuro.ds005873.v1.1.0.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}
