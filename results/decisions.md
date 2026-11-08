@@ -172,3 +172,11 @@ Method results and keep/drop decisions are appended below as runs finish.
   N1 candidate: the best LUT-native model so far on every pooled metric at about 1.2k extra LUTs, but not yet shown
   better per patient. It is re-run on the base DWN size the sweep picks, before N1 is closed; still below TreeLUT w5
   (F1 0.266 at 6.4k LUTs).
+* **Correction (8 Nov): n1_stateful_s16 used all 117 features**, not the MI top 40 its config names. The CV runner
+  applied the per-fold mutual-information selection only to window models; sequence models received every column
+  (the run's `metrics.json` has `n_features` 117, and its log has no "MI top" line). Its comparison with dwn_l200
+  (top 40) therefore mixes the state bits with a different feature set, and the "kept provisionally" decision above
+  rests on a confounded comparison. Fixed: sequence models (N1, GRU) now get the same per-fold MI selection, drawn
+  from the fold's training windows; window models are unchanged (same code, same seeds). N1 is re-run with the fix
+  on the base DWN size before it is decided.
+

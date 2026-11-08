@@ -648,6 +648,84 @@ class StatefulDWNModel(Model):
         return c
 
 
+class GRUFeatureModel(StatefulDWNModel):
+    """GRU on the same per-window features (N1's upper reference, Section 6.3): the same training
+    sequences as N1, standardised features, one GRU layer and a linear head; at inference the state
+    runs through each whole recording, like N1's state bits. Multiplier-based (cost in MACs)."""
+    name = "gru"
+    needs_store = True
+
+    def __init__(self, hidden=32, seq_len=60, pos_per_seizure=6, neg_ratio=5, burn_in=10, epochs=15, lr=1e-3,
+                 batch=64, decay_at=0.7, seed=0, threads=4, log=None):
+        self.p = dict(hidden=hidden, seq_len=seq_len, pos_per_seizure=pos_per_seizure, neg_ratio=neg_ratio,
+                      burn_in=burn_in, epochs=epochs, lr=lr, batch=batch, decay_at=decay_at, seed=seed)
+        self.threads, self.log = threads, (log or (lambda *a: None))
+
+    def _std(self, X):
+        return (np.asarray(X, dtype=np.float32) - self.mu) / self.sd
+
+    def fit_store(self, store, subjects, cols, seed):
+        import torch
+        torch.set_num_threads(self.threads)
+        torch.manual_seed(seed)
+        p = self.p
+        Xs, Ys = self._sequences(store, subjects, cols, np.random.default_rng(seed))
+        self.log(f"    {len(Xs)} sequences of {p['seq_len']} s ({int((Ys.sum(1) > 0).sum())} with seizure)")
+        flat = Xs.reshape(-1, Xs.shape[-1]).astype(np.float32)
+        self.mu, self.sd = flat.mean(0), np.maximum(flat.std(0), 1e-3).astype(np.float32)
+        x = torch.from_numpy(self._std(Xs))
+        self.gru = torch.nn.GRU(x.shape[-1], p["hidden"], batch_first=True)
+        self.head = torch.nn.Linear(p["hidden"], 2)
+        params = list(self.gru.parameters()) + list(self.head.parameters())
+        opt = torch.optim.Adam(params, lr=p["lr"])
+        sched = torch.optim.lr_scheduler.StepLR(opt, max(1, int(p["epochs"] * p["decay_at"])), 0.1)
+        yt = torch.as_tensor(Ys, dtype=torch.long)
+        bi = p["burn_in"]
+        w = torch.tensor([1.0, float((Ys[:, bi:] == 0).sum()) / max(1, int((Ys[:, bi:] == 1).sum()))])
+        g = torch.Generator().manual_seed(seed)
+        mods = {"gru": self.gru, "head": self.head}
+        start = self._ckpt_load(mods, opt, sched, g)
+        B = len(x)
+        for ep in range(start, p["epochs"]):
+            self.gru.train()
+            perm = torch.randperm(B, generator=g)
+            tot, t0 = 0.0, time.time()
+            for i in range(0, B, p["batch"]):
+                idx = perm[i:i + p["batch"]]
+                h, _ = self.gru(x[idx])
+                logits = self.head(h[:, bi:])
+                loss = torch.nn.functional.cross_entropy(logits.reshape(-1, 2), yt[idx, bi:].reshape(-1), weight=w)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                tot += float(loss.detach()) * len(idx)
+            sched.step()
+            self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / B:.4f} ({time.time() - t0:.0f} s)")
+            self._ckpt_save(ep + 1, mods, opt, sched, g)
+        self.gru.eval()
+        self.n_in = x.shape[-1]
+        return self
+
+    def score_runs(self, X_list, chunk=20_000):
+        import torch
+        out = []
+        with torch.no_grad():
+            for X in X_list:
+                h, s = None, []
+                xs = torch.from_numpy(self._std(X))[None]
+                for i in range(0, xs.shape[1], chunk):       # the state carries across chunks
+                    o, h = self.gru(xs[:, i:i + chunk], h)
+                    lg = self.head(o[0])
+                    s.append((lg[:, 1] - lg[:, 0]).numpy())
+                out.append(np.concatenate(s).astype(np.float32) if s else np.zeros(0, np.float32))
+        return out
+
+    def cost(self, feature_bits):
+        H, F = self.p["hidden"], self.n_in
+        macs = 3 * (F * H + H * H) + 2 * H
+        return {"macs": int(macs), "weights": int(3 * (F * H + H * H + 2 * H) + 2 * H + 2), "multipliers": int(macs)}
+
+
 def torch_from(a):
     import torch
     return torch.from_numpy(np.ascontiguousarray(a))
@@ -735,7 +813,7 @@ class LateFusionDWN(Model):
 
 
 REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel,
-                                Int8MLPModel, StatefulDWNModel, LateFusionDWN)}
+                                Int8MLPModel, StatefulDWNModel, LateFusionDWN, GRUFeatureModel)}
 
 
 def build(spec: dict, log=None) -> Model:

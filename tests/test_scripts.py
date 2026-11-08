@@ -114,6 +114,12 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
                  "features": "all", "train": {"bg_ratio": 3}},
     }
     cfgs["gated"]["model"] = {"type": "dwn", "params": {**dwn, "distill_alpha": 0.5}}
+    seq = {"seq_len": 20, "burn_in": 4, "pos_per_seizure": 2, "neg_ratio": 2, "epochs": 1, "batch": 16, "threads": 1}
+    cfgs["stateful"] = {"model": {"type": "stateful_dwn", "params": {"bits": 4, "n_state": 4, "n_vote": 16, "n": 4,
+                                                                      "mapping": "random", **seq}},
+                        "features": {"mi_top": 10}, "train": {"bg_ratio": 3}}
+    cfgs["gru"] = {"model": {"type": "gru", "params": {"hidden": 8, **seq}}, "features": {"mi_top": 10},
+                   "train": {"bg_ratio": 3}}
     for name, c in cfgs.items():
         cfg = {"name": f"t_{name}", "seed": 0, **c, "post": post}
         path = tmp_path / f"{name}.yaml"
@@ -124,10 +130,12 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
         assert f"RESULT t_{name}" in r.stdout
         rd = next((tmp_path / "out" / "results" / "runs").glob(f"*_t_{name}_s0"))
         m = json.loads((rd / "metrics.json").read_text())
-        assert m["cost_median"]["total_luts"] > 0
+        assert m["cost_median"].get("total_luts", 1) > 0 and m["cost_median"]
         if name == "gated":
             assert "present_emg" in m["fold_info"][0]["features"]
             assert "teacher lgbm trained" in (rd / "log.txt").read_text()
+        if name in ("stateful", "gru"):
+            assert len(m["fold_info"][0]["features"]) == 10       # MI selection now applies to sequence models
         if name == "late":
             assert "late fusion: ecg" in (rd / "log.txt").read_text()
             assert m["cost_median"]["fusion_adder_luts"] > 0

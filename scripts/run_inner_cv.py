@@ -63,6 +63,26 @@ def modality_dropout(X, p, rng):
     return X
 
 
+def mi_select(fspec, X, y, cols, names, stack, seed, log):
+    """Section 5.2: rank by mutual information on the training folds only (200k-row sample)."""
+    from sklearn.feature_selection import mutual_info_classif
+    rs = np.random.default_rng(seed)
+    sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
+    if fspec.get("mi_on") == "base" and stack > 1:
+        # rank the base features on the current window (t-0 block) only, then keep every lag of
+        # the winners: ranking the stacked columns picks lagged copies of a few features (D31)
+        nF = len(S.FEATURES)
+        cur = list(range((stack - 1) * nF, stack * nF))
+        mi = mutual_info_classif(X[sub][:, cur].astype(np.float32), y[sub], random_state=seed)
+        top = sorted(np.argsort(-mi)[: fspec["mi_top"]].tolist(), key=lambda i: -mi[i])
+        fcols = [b * nF + i for i in top for b in range(stack)]
+    else:
+        mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed)
+        fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
+    log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
+    return fcols
+
+
 def _save_model(model, run, fold, cols, out=REPO):
     """Keep each fold's fitted model (checkpoints/, not committed) for post-hoc studies (N3, N7)."""
     import pickle
@@ -154,10 +174,17 @@ def main() -> int:
         if getattr(spec_model, "needs_store", False):
             # sequence models (N1): sample their own training sequences from the store
             log(f"fold {k}: train {len(tr)} patients (sequence model); val {len(va)} patients")
-            spec_model.fit_store(store, tr, cols, seed + k)
+            scols = cols
+            fspec = cfg.get("features")
+            if isinstance(fspec, dict) and "mi_top" in fspec:
+                # same per-fold selection as the window models (sequence models used every column before)
+                Xm, ym, _, _, _ = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"))
+                scols = mi_select(fspec, Xm, ym, cols, names, store.stack, seed + k, log)
+                del Xm, ym
+            spec_model.fit_store(store, tr, scols, seed + k)
             runs_va, X_va = [], []
             for r in store.iter_runs(va):        # keep only the model's columns of each validation run
-                X_va.append(np.ascontiguousarray(r.X[:, cols]))
+                X_va.append(np.ascontiguousarray(r.X[:, scols]))
                 r.X = None
                 runs_va.append(r)
             scores = spec_model.score_runs(X_va)
@@ -168,10 +195,11 @@ def main() -> int:
                 oof.append({"subject": r.subject, "fold": k, "score": s, "artefact": r.artefact,
                             "seizures": r.seizures, "duration_s": r.duration_s, "y": r.y})
                 n_win += len(s)
-            c = spec_model.cost(feat_bits)
+            c = spec_model.cost([bits_of(i) for i in scols])
             costs.append(c)
-            _save_model(spec_model, run, k, cols, out)
-            fold_info.append({"fold": k, "val_windows": n_win, "seconds": round(time.time() - t0, 1), "cost": c})
+            _save_model(spec_model, run, k, scols, out)
+            fold_info.append({"fold": k, "val_windows": n_win, "features": [names[i] for i in scols],
+                              "seconds": round(time.time() - t0, 1), "cost": c})
             log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
             done_f.write_text(json.dumps(fold_info[-1], default=float))
             ckpt.unlink(missing_ok=True)
@@ -181,22 +209,7 @@ def main() -> int:
         fcols = cols
         fspec = cfg.get("features")
         if isinstance(fspec, dict) and "mi_top" in fspec:
-            # Section 5.2: rank by mutual information on the training folds only
-            from sklearn.feature_selection import mutual_info_classif
-            rs = np.random.default_rng(seed + k)
-            sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
-            if fspec.get("mi_on") == "base" and store.stack > 1:
-                # rank the base features on the current window (t-0 block) only, then keep every lag of
-                # the winners: ranking the stacked columns picks lagged copies of a few features (D31)
-                nF = len(S.FEATURES)
-                cur = list(range((store.stack - 1) * nF, store.stack * nF))
-                mi = mutual_info_classif(X[sub][:, cur].astype(np.float32), y[sub], random_state=seed + k)
-                top = sorted(np.argsort(-mi)[: fspec["mi_top"]].tolist(), key=lambda i: -mi[i])
-                fcols = [b * nF + i for i in top for b in range(store.stack)]
-            else:
-                mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed + k)
-                fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
-            log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
+            fcols = mi_select(fspec, X, y, cols, names, store.stack, seed + k, log)
         if isinstance(fspec, dict) and fspec.get("always"):
             # N6 gated fusion: quality and presence bits are always inputs, whatever their MI rank
             fcols = list(fcols) + [names.index(n) for n in fspec["always"] if names.index(n) not in fcols]
