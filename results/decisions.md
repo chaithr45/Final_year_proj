@@ -203,4 +203,13 @@ Method results and keep/drop decisions are appended below as runs finish.
   and #6 ecg_log_rr_ctx in none, no EMG feature in any fold. Single-feature MI under-rates features that matter in
   combination or relative to a baseline (heart rate). Next: dwn_L50_b8_lgbm40 (top 40 by LightGBM gain on each
   fold's training windows) runs first; if it beats the base per patient, the base changes before the Tier-2 runs.
+* **N3 label-free per-patient adaptation** on the base DWN (`n3_adaptation.json` in the dwn_L50_b8_learn run folder;
+  thresholds re-fitted on each validation patient's first H hours, network unchanged, every variant scored against
+  the unadapted model on exactly the same data after the window, operating point re-chosen for both). H = 1 h: no
+  adaptation F1 0.144 / 6.8 FP/24 h; re-fitted quantiles 0.094 / 11.9 (per-patient F1 p = 0.06); per-feature offset
+  0.106 / 10.2 (p = 0.30); streaming integer tracker 0.057 / 39.5 (p = 0.003, worse). The same ordering at H = 2 h
+  (none 0.150 / 6.2) and H = 4 h (none 0.140 / 6.2). Seizures inside the adaptation window: 6, 20 and 36 of about
+  690. **Not adopted**: no variant lowers the false-alarm rate; every one raises it. The network was trained on
+  thresholds placed at population quantiles, and moving them per patient changes which bits fire for background as
+  much as for seizures. Revisited only if the base's feature set changes (dwn_L50_b8_lgbm40).
 
