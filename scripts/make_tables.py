@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import yaml
 
 from seizelut.eval.stats import paired_wilcoxon
 
@@ -42,6 +43,51 @@ def load_runs():
                 continue
             runs.append((d.name, j))
     return runs
+
+
+def ablation(latest, out):
+    """Section 9.2 table 3: every Tier-2 run against its own base (`base_config` in its config): per-patient
+    differences at the best-F1 operating points, bootstrap 95 % interval of the mean, paired Wilcoxon."""
+    from seizelut.eval.stats import bootstrap_ci
+    rows, tex = [], []
+    for cfg, (name, j) in sorted(latest.items()):
+        c = yaml.safe_load((REPO / "results" / "runs" / name / "config.yaml").read_text())
+        base = c.get("base_config")
+        if not base or base not in latest:
+            continue
+        cur = per_subject_f1(j["operating_points"]["best_f1"])
+        ref = per_subject_f1(latest[base][1]["operating_points"]["best_f1"])
+        subs = sorted(set(cur) & set(ref))
+        df1 = [cur[s][0] - ref[s][0] for s in subs]
+        dfp = [cur[s][1] - ref[s][1] for s in subs]
+        ci1, cifp = bootstrap_ci(df1), bootstrap_ci(dfp)
+        w1 = paired_wilcoxon([cur[s][0] for s in subs], [ref[s][0] for s in subs])
+        w2 = paired_wilcoxon([cur[s][1] for s in subs], [ref[s][1] for s in subs])
+        lut = j.get("cost_median", {}).get("total_luts")
+        blut = latest[base][1].get("cost_median", {}).get("total_luts")
+        dl = f"{int(lut - blut):+,}" if lut is not None and blut is not None else "-"
+        b, bb = j["operating_points"]["best_f1"], latest[base][1]["operating_points"]["best_f1"]
+        rows.append(f"| {cfg} | {base} | {b['f1']:.3f} ({b['f1'] - bb['f1']:+.3f}) | "
+                    f"{ci1['estimate']:+.3f} [{ci1['low']:+.3f}, {ci1['high']:+.3f}] | {w1['p']:.3g} | "
+                    f"{cifp['estimate']:+.1f} [{cifp['low']:+.1f}, {cifp['high']:+.1f}] | {w2['p']:.3g} | {dl} |")
+        tex.append(f"{cfg.replace('_', chr(92) + '_')} & {ci1['estimate']:+.3f} [{ci1['low']:+.3f}, {ci1['high']:+.3f}] & "
+                   f"{w1['p']:.2g} & {cifp['estimate']:+.1f} & {w2['p']:.2g} & {dl} \\\\")
+    if not rows:
+        (out / "m5_ablation.md").unlink(missing_ok=True)
+        return
+    md = ["# Tier-2 ablations against their own base (inner folds, per patient, best-F1 operating points)\n",
+          "Mean per-patient difference with a bootstrap 95 % interval (patients resampled) and the paired "
+          "Wilcoxon p-value. A method is kept if p < 0.05 in its favour (Section 6.6).\n",
+          "| Config | Base | Event-F1 (diff vs base) | mean dF1 [95 % CI] | p (F1) | mean dFP/24h [95 % CI] | p (FP/24h) | d est. LUTs |",
+          "|---|---|---|---|---|---|---|---|"] + rows
+    (out / "m5_ablation.md").write_text("\n".join(md) + "\n")
+    t = ["\\begin{table}[t]\\centering\\caption{Tier-2 methods against their own baselines (inner folds; mean "
+         "per-patient difference, bootstrap 95\\% interval, paired Wilcoxon).}\\label{tab:ablation}",
+         "\\resizebox{\\columnwidth}{!}{\\begin{tabular}{lrrrrr}\\toprule",
+         "Method & $\\Delta$F1 [95\\% CI] & $p$ & $\\Delta$FP/24h & $p$ & $\\Delta$LUTs \\\\ \\midrule"] + tex + [
+         "\\bottomrule\\end{tabular}}\\end{table}"]
+    (REPO / "paper" / "tables").mkdir(parents=True, exist_ok=True)
+    (REPO / "paper" / "tables" / "m5_ablation.tex").write_text("\n".join(t) + "\n")
 
 
 def main() -> int:
@@ -95,6 +141,7 @@ def main() -> int:
             w2 = paired_wilcoxon([cur[s][1] for s in subs], [ref[s][1] for s in subs])
             t.append(f"| {cfg} | {w1['median_diff']:+.3f} | {w1['p']:.3g} | {w2['median_diff']:+.1f} | {w2['p']:.3g} |")
         (out / "inner_cv_tests.md").write_text("\n".join(t) + "\n")
+    ablation(latest, out)
     tex = ["\\begin{table}[t]\\centering\\caption{Inner 5-fold cross-validation on the 96 training patients "
            "(SzCORE event metrics, mean over patients; hardware estimated).}\\label{tab:innercv}",
            "\\resizebox{\\columnwidth}{!}{\\begin{tabular}{lrrrrrr}\\toprule",
