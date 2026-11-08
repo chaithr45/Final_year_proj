@@ -281,3 +281,18 @@ Method results and keep/drop decisions are appended below as runs finish.
   0.9 FP/24 h), sens 0.597 at <= 1 FA/h. **Adopted (D37)**: false alarms -1.5 per day (p = 3e-07) with no loss of
   event-F1 (+0.018, p = 0.26) and 91 fewer estimated LUTs. Combination with modality dropout (`n46_distill_dropout`)
   running.
+* **Bug (8 Nov): n4_distill_hardneg trained without distillation.** In the hard-negative round, `fit_config` rebuilt
+  the DWN's fit arguments without the soft targets, so the retrained model (the one kept) saw hard labels only, and
+  `n4_distill_hardneg` gave exactly the numbers of `n4_hardneg_teacher` (F1 0.133, AUROC 0.827, 4.1 FP/24 h). Found
+  because the two runs were identical. Fixed in `src/models/training.py` (soft targets recomputed on the retraining
+  set) with a regression test; the run is marked `_invalid` and re-run. Only configs with both distillation and hard
+  negatives were affected.
+* **n4_hardneg_teacher** (teacher-guided hard negatives, no distillation): event-F1 0.133 (-0.079 [-0.126, -0.031],
+  p = 0.0006), FP/24 h 4.1 (+1.7, p = 0.005). **Dropped.**
+* **n46_distill_dropout** (distillation + modality dropout): AUROC 0.854, event-F1 0.195 (-0.016 [-0.055, +0.024],
+  p = 0.20), FP/24 h 1.4 (-1.0, p = 0.006), 113 fewer estimated LUTs. Intact event-F1 below n4_distill (0.229); the
+  choice between the two for the final model is made on the missing-sensor test (running).
+* **N2 encoders:** **n2_uniform** (uniform thresholds) event-F1 0.158 (-0.053, p = 0.038), 461 fewer estimated LUTs:
+  **dropped** (significantly worse), though it is the cheapest encoder. **n2_gaussian** event-F1 0.191 (-0.020, p = 0.26),
+  FP/24 h -0.3 (p = 0.005), 52 fewer LUTs: **not adopted** under D37 (mean event-F1 difference negative). Learned
+  thresholds running.

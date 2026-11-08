@@ -288,3 +288,30 @@ def test_run_final_end_to_end(tmp_path):
     np.testing.assert_array_equal(golden_from_export(pkg, X, full_features=True)["score"],
                                   obj["model"].score(X[:, obj["cols"]]).astype(np.int64))
     assert pkg["manifest"]["seed"] == 1 and pkg["manifest"]["cv_run"] == cv.name
+
+
+def test_hard_negative_retraining_keeps_distillation(tmp_path, monkeypatch):
+    """N4: with distillation AND hard negatives, the retrained DWN must also get soft targets (it once did not, and
+    n4_distill_hardneg silently equalled n4_hardneg_teacher)."""
+    from seizelut.data.featureset import FeatureStore
+    from seizelut.models import registry
+    from seizelut.models.training import fit_config
+    _synthetic_feature_cache(tmp_path / "feat")
+    store = FeatureStore("int", root=tmp_path / "feat")
+    calls = []
+    orig = registry.DWNModel.fit
+
+    def spy(self, X, y, **kw):
+        calls.append(sorted(kw))
+        return orig(self, X, y, **kw)
+
+    monkeypatch.setattr(registry.DWNModel, "fit", spy)
+    cfg = {"model": {"type": "dwn", "params": {"bits": 4, "layers": [8], "n": 6, "epochs": 1, "batch": 512,
+                                                "device": "cpu", "distill_alpha": 0.5, "distill_T": 2.0}},
+           "features": {"rank_by": "lgbm", "top": 10},
+           "train": {"bg_ratio": 5, "distill": {"teacher": {"type": "lgbm", "params": {"n_estimators": 20}}},
+                     "hard_negative": {"by": "teacher", "top_fraction": 0.01,
+                                       "teacher": {"type": "lgbm", "params": {"n_estimators": 20}}}}}
+    subjects = [f"sub-{s:03d}" for s in range(1, 5)]
+    fit_config(cfg, store, subjects, 0, lambda *a, **k: None)
+    assert len(calls) == 2 and all("soft" in c for c in calls), calls

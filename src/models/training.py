@@ -196,5 +196,7 @@ def fit_config(cfg, store, subjects, seed, log, ckpt=None, seed_all_models=False
         seed_model(model)
         if dwn_like:
             fit_kw = {"onset": store.last_onset, "bags": store.last_bags}
+            if tc.get("distill"):
+                fit_kw["soft"] = teacher.score(X[:, fcols])    # the retraining set's own soft targets
         model.fit(X[:, fcols], y, **fit_kw)
     return model, fcols, int(len(y))
