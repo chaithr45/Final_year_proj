@@ -225,4 +225,11 @@ Method results and keep/drop decisions are appended below as runs finish.
   a quarter of the training time, so **the M5 base is dwn_L50_b8_lgbm40_e15bg10**; the 18 Tier-2 configs are
   regenerated on it and run first on the cloud, followed by LGN, LogicNets-style and GRU on the same features and a
   size check at this base (100 and 200 LUTs).
+* **Breakdown of the M5 base** (dwn_L50_b8_lgbm40_e15bg10, `breakdown.md` in its run folder; inner folds, its own best-F1
+  operating point). Sensitivity by seizure type (alarm within onset - 30 s .. end + 60 s): FBTC 0.879 (29 of 33),
+  FIA 0.173 (50/289), FA 0.095 (26/274), focal with unknown awareness 0.079 (8/101). Missing modalities at test time
+  (features and present bits zeroed, operating point unchanged): no ECG F1 0.092 (from 0.211; per-patient p = 2e-05),
+  no motion 0.136 (p = 0.004; FP/24 h 5.2 from 2.4), no EMG 0.199 (p = 0.64), EEG only 0.074 (p = 2e-06). The base
+  relies on ECG and motion and is not robust to losing either: the baseline N6 (modality dropout, gated and late
+  fusion) is measured against. Tonic-clonic seizures are detected; focal seizures on behind-the-ear EEG mostly not.
 
