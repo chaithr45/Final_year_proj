@@ -188,4 +188,19 @@ Method results and keep/drop decisions are appended below as runs finish.
   Size alone does not raise F1 between 50 and 200 LUTs on these features. 4-bit encoders are the weakest (F1 0.068-0.093);
   random mapping costs more LUTs (more comparators) and raises false alarms. Decision D33: base = dwn_L50_b8_learn.
   Window AUROC stays at 0.81-0.83 for every config, below the tree models (0.85-0.87).
+* **dwn_L200_b8_learn** (the D33 check): AUROC 0.822, event-F1 0.124, 5.3 FP/24 h, sens 0.534 at <= 1 FA/h, 1,652
+  estimated LUTs. Against the 50-LUT base: per-patient F1 p = 0.38 (no difference), FP/24 h median -0.2 (p = 0.014).
+  D33 stands. Against dwn_l200_b8_mi40 (same size, earlier recipe: 15 epochs, batch 2048, background ratio 10):
+  F1 p = 0.047 in favour of the earlier recipe, so the training recipe may matter as much as size; checked at 50 LUTs
+  by dwn_L50_b8_e15bg10 before the Tier-2 runs.
+* **N7 on the base DWN** (dwn_L50_b8_learn, best-F1 operating point; `n7_interpretability.json` in the run folder,
+  `results/figures/n7_feature_usage.png`): 195 true and 2,950 false alarms over the 96 training patients' out-of-fold
+  predictions. The first-layer LUTs read almost the same features during true and false alarms (e.g. eeg_ll_max 0.278
+  vs 0.278 of its LUTs firing; eeg_beta_mean 0.80 vs 0.72; mov_acc_jerk 1.42 vs 1.26), i.e. the false alarms look like
+  seizures to the network. Its true-alarm feature usage correlates moderately with LightGBM's mean |SHAP|
+  (Spearman 0.41, p = 0.007, 42 features). **Finding:** the per-fold MI top 40 is about 34 EEG features + the 4
+  presence bits and misses what the trees rely on: SHAP #1 ecg_log_rr was selected in 2 of 5 folds, #4 ecg_log_masrd
+  and #6 ecg_log_rr_ctx in none, no EMG feature in any fold. Single-feature MI under-rates features that matter in
+  combination or relative to a baseline (heart rate). Next: dwn_L50_b8_lgbm40 (top 40 by LightGBM gain on each
+  fold's training windows) runs first; if it beats the base per patient, the base changes before the Tier-2 runs.
 
