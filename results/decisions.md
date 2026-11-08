@@ -254,7 +254,10 @@ Method results and keep/drop decisions are appended below as runs finish.
     sens 0.259. **Not adopted**: fewer false alarms bought with sensitivity, F1 not better.
   * **n5_focal** (focal loss): F1 0.154 (-0.057 [-0.106, -0.012], p = 0.038), FP/24 h 1.6 (p = 0.028), AUROC 0.809.
     **Dropped**: significantly worse event-F1.
-  * GCE and SCE (noise-robust losses) are running.
+  * **n5_gce** (generalised cross-entropy): F1 0.160 (-0.051 [-0.086, -0.019], p = 0.005). **Dropped.**
+  * **n5_sce** (symmetric cross-entropy): F1 0.144 (-0.067 [-0.111, -0.027], p = 0.003). **Dropped.**
+  * **N5 closed: no loss variant adopted.** The noise-robust losses lower the scores of the seizure windows the
+    base already ranks well, so fewer events cross the threshold; MIL is neutral.
 * **N6 on the D34 base** (missing-sensor tests with `m5_breakdown.py --missing`; event-F1 under each condition, same
   operating point as the intact model):
 
