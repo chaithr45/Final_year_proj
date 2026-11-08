@@ -1,0 +1,22 @@
+{
+ "groups": {
+  "background": [
+   0,
+   25
+  ],
+  "seizure": [
+   25,
+   50
+  ]
+ },
+ "score": "popcount(seizure group) - popcount(background group)",
+ "decision_threshold": 9,
+ "decision": "score >= decision_threshold and artefact gate clear",
+ "artefact_gate": "none",
+ "k": 10,
+ "n": 10,
+ "merge_s": 90,
+ "refractory_s": 0,
+ "window_s": 2,
+ "hop_s": 1
+}

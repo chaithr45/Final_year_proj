@@ -48,3 +48,7 @@ paper/*.blg
 paper/*.fdb_latexmk
 paper/*.fls
 paper/*.out
+# bulk test vectors (hundreds of MB): regenerate with scripts/make_test_vectors.py; only their manifest and the Verilog check are kept
+export/*/vectors/*
+!export/*/vectors/manifest.json
+!export/*/vectors/verilog_check.json

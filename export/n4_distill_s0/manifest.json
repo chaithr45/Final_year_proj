@@ -1,0 +1,84 @@
+{
+ "model_type": "dwn",
+ "n_input_bits": 146,
+ "luts_per_layer": [
+  50
+ ],
+ "lut_inputs": 6,
+ "git": {
+  "commit": "4a187b3aa3c5a20c5aa12d9dbd8c57af750336c2",
+  "dirty": false
+ },
+ "feature_spec_sha256_16": "f85b162c7d86e3f9",
+ "dataset": "SeizeIT2 ds005873 v1.1.0",
+ "training_run": "20261108-194022_n4_distill_final_s0",
+ "seed": 0,
+ "cv_run": "20261108-145504_n4_distill_s0",
+ "operating_point_name": "best_f1",
+ "config_sha256_16": "8f75a3623be924a4",
+ "config": {
+  "name": "n4_distill",
+  "seed": 0,
+  "model": {
+   "type": "dwn",
+   "params": {
+    "bits": 8,
+    "layers": [
+     50
+    ],
+    "n": 6,
+    "mapping": "learnable",
+    "tau": 3.3333,
+    "epochs": 15,
+    "lr": 0.01,
+    "batch": 2048,
+    "decay_at": 0.7,
+    "loss": "ce",
+    "device": "cpu",
+    "threads": 8,
+    "distill_alpha": 0.5,
+    "distill_T": 2.0
+   }
+  },
+  "features": {
+   "rank_by": "lgbm",
+   "top": 40
+  },
+  "train": {
+   "bg_ratio": 10,
+   "distill": {
+    "teacher": {
+     "type": "lgbm",
+     "params": {
+      "n_estimators": 300,
+      "num_leaves": 31,
+      "learning_rate": 0.05
+     }
+    }
+   }
+  },
+  "post": {
+   "k": [
+    4,
+    6,
+    8,
+    10
+   ],
+   "gate": [
+    "none",
+    "both",
+    "any"
+   ],
+   "n_thresholds": 40
+  },
+  "base_config": "dwn_L50_b8_lgbm40_e15bg10",
+  "cv_run": "20261108-145504_n4_distill_s0",
+  "seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ]
+ }
+}
