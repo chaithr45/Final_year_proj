@@ -2,7 +2,7 @@
 
 ## 3.1 SeizeIT2
 
-We use SeizeIT2 (Bhagubai et al., *Scientific Data* 12:1228, 2025), a public multimodal wearable dataset of
+We use SeizeIT2 [@bhagubai2025seizeit2], a public multimodal wearable dataset of
 patients with focal epilepsy, released on OpenNeuro as ds005873 (version 1.1.0, DOI 10.18112/openneuro.ds005873.v1.1.0,
 licence CC0). The patients were monitored in the epilepsy monitoring units of five European centres (Leuven, Coimbra,
 Freiburg, Karolinska and Aachen) with the Sensor Dot wearable, while the hospital video-EEG was recorded for the

@@ -1,20 +1,848 @@
-% Verify every entry against the publisher page before submission (the coding environment could
-% not open arXiv or publisher sites; entries follow the prompt's reference list and the literature check).
-@article{bhagubai2025, author={M. Bhagubai and others}, title={{SeizeIT2}: Wearable Dataset of Patients with Focal Epilepsy}, journal={Scientific Data}, year={2025}, doi={10.1038/s41597-025-05580-x}}
-@article{dan2024, author={J. Dan and others}, title={{SzCORE}: Seizure Community Open-Source Research Evaluation Framework for the Validation of {EEG}-Based Automated Seizure Detection Algorithms}, journal={Epilepsia}, year={2024}}
-@inproceedings{bacellar2024, author={A. Bacellar and Z. Susskind and M. Breternitz Jr. and E. John and L. John and P. Lima and F. Fran{\c{c}}a}, title={Differentiable Weightless Neural Networks}, booktitle={Proc. ICML (PMLR 235)}, year={2024}}
-@inproceedings{petersen2022, author={F. Petersen and C. Borgelt and H. Kuehne and O. Deussen}, title={Deep Differentiable Logic Gate Networks}, booktitle={Proc. NeurIPS}, year={2022}}
-@inproceedings{khataei2025, author={A. Khataei and K. Bazargan}, title={{TreeLUT}: An Efficient Alternative to Deep Neural Networks for Inference Acceleration Using Gradient Boosted Decision Trees}, booktitle={Proc. ACM/SIGDA FPGA}, year={2025}}
-@inproceedings{umuroglu2020, author={Y. Umuroglu and Y. Akhauri and N. Fraser and M. Blott}, title={{LogicNets}: Co-Designed Neural Networks and Circuits for Extreme-Throughput Applications}, booktitle={Proc. FPL}, pages={291--297}, year={2020}}
-@article{vandecasteele2020, author={K. Vandecasteele and others}, title={Visual Seizure Annotation and Automated Seizure Detection Using Behind-the-Ear Electroencephalographic Channels}, journal={Epilepsia}, volume={61}, pages={766--775}, year={2020}}
-@article{vandecasteele2021, author={K. Vandecasteele and others}, title={The Power of {ECG} in Multimodal Patient-Specific Seizure Monitoring: Added Value to an {EEG}-Based Detector Using Limited Channels}, journal={Epilepsia}, volume={62}, pages={2333--2343}, year={2021}}
-@article{bhagubai2023, author={M. Bhagubai and others}, title={The Power of {ECG} in Semi-Automated Seizure Detection in Addition to Two-Channel Behind-the-Ear {EEG}}, journal={Bioengineering}, volume={10}, pages={491}, year={2023}}
-@article{alhussaini2023, author={I. Al-Hussaini and C. S. Mitchell}, title={{SeizFt}: Interpretable Machine Learning for Seizure Detection Using Wearables}, journal={Bioengineering}, volume={10}, number={8}, pages={918}, year={2023}}
-@article{busia2025, author={P. Busia and G. Leone and A. Matticola and L. Raffo and others}, title={Wearable Epilepsy Seizure Detection on {FPGA} With Spiking Neural Networks}, journal={IEEE Trans. Biomed. Circuits Syst.}, volume={19}, number={6}, year={2025}}
-@article{ingolfsson2024, author={T. M. Ingolfsson and others}, title={{BrainFuseNet}: Enhancing Wearable Seizure Detection Through {EEG-PPG}-Accelerometer Sensor Fusion and Efficient Edge Deployment}, journal={IEEE Trans. Biomed. Circuits Syst.}, volume={18}, number={4}, pages={720--733}, year={2024}}
-@misc{mommen2026, author={W. Mommen and L. Keuninckx and P. Detterer and A. Colpaert and P. Wambacq}, title={Inter-patient {ECG} Arrhythmia Classification with {LGNs} and {LUTNs}}, howpublished={arXiv:2601.11433}, year={2026}}
-@misc{dharia2026, author={S. Dharia and others}, title={Differentiable Logic Gate Networks for Low-Latency {EEG} Classification on Edge Devices}, howpublished={arXiv:2607.18149}, year={2026}}
-@misc{buhrer2025, author={S. B{\"u}hrer and A. Plesner and T. Aczel and R. Wattenhofer}, title={Recurrent Deep Differentiable Logic Gate Networks}, howpublished={arXiv:2508.06097}, year={2025}}
-@inproceedings{mecik2025, author={M. Mecik and M. Kumm}, title={Implementation and Analysis of Thermometer Encoding in {DWN} {FPGA} Accelerators}, booktitle={Proc. Asilomar Conf. Signals, Systems, and Computers}, year={2025}}
-@article{beniczky2018, author={S. Beniczky and I. Conradsen and O. Henning and M. Fabricius and P. Wolf}, title={Automated Real-Time Detection of Tonic-Clonic Seizures Using a Wearable {EMG} Device}, journal={Neurology}, volume={90}, year={2018}}
-@article{leijten2018, author={F. S. S. Leijten}, title={Multimodal Seizure Detection: A Review}, journal={Epilepsia}, volume={59}, pages={42--47}, year={2018}}
+% Verified references for the Phase 1 report (literature survey, 8 Nov 2026).
+% Entries with a 'note' field carry an item to check against the publisher page before submission.
+
+@article{gbd2019epilepsy,
+  author  = {{GBD 2016 Epilepsy Collaborators}},
+  title   = {Global, regional, and national burden of epilepsy, 1990--2016: a systematic analysis for the Global Burden of Disease Study 2016},
+  journal = {The Lancet Neurology},
+  year    = {2019},
+  volume  = {18},
+  number  = {4},
+  pages   = {357--375},
+  doi     = {10.1016/S1474-4422(18)30454-X}
+}
+
+@article{fisher2017ilae,
+  author  = {Fisher, R. S. and Cross, J. H. and French, J. A. and Higurashi, N. and Hirsch, E. and Jansen, F. E. and Lagae, L. and Mosh{\'e}, S. L. and Peltola, J. and Roulet Perez, E. and Scheffer, I. E. and Zuberi, S. M.},
+  title   = {Operational classification of seizure types by the {International League Against Epilepsy}: Position Paper of the {ILAE} Commission for Classification and Terminology},
+  journal = {Epilepsia},
+  year    = {2017},
+  volume  = {58},
+  number  = {4},
+  pages   = {522--530},
+  doi     = {10.1111/epi.13670}
+}
+
+@article{elger2018underreporting,
+  author  = {Elger, C. E. and Hoppe, C.},
+  title   = {Diagnostic challenges in epilepsy: seizure under-reporting and seizure detection},
+  journal = {The Lancet Neurology},
+  year    = {2018},
+  volume  = {17},
+  number  = {3},
+  pages   = {279--288},
+  doi     = {10.1016/S1474-4422(18)30038-3}
+}
+
+@article{ryvlin2013mortemus,
+  author  = {Ryvlin, Philippe and Nashef, Lina and Lhatoo, Samden D. and others},
+  title   = {Incidence and mechanisms of cardiorespiratory arrests in epilepsy monitoring units ({MORTEMUS}): a retrospective study},
+  journal = {The Lancet Neurology},
+  year    = {2013},
+  volume  = {12},
+  number  = {10},
+  pages   = {966--977},
+  doi     = {10.1016/S1474-4422(13)70214-X}
+}
+
+@article{beniczky2021guideline,
+  author  = {Beniczky, S. and Wiebe, S. and Jeppesen, J. and Tatum, W. O. and Br{\'a}zdil, M. and Wang, Y. and Herman, S. T. and Ryvlin, P.},
+  title   = {Automated seizure detection using wearable devices: A clinical practice guideline of the {International League Against Epilepsy} and the {International Federation of Clinical Neurophysiology}},
+  journal = {Epilepsia},
+  year    = {2021},
+  volume  = {62},
+  number  = {3},
+  pages   = {632--646},
+  doi     = {10.1111/epi.16818}
+}
+
+@article{leijten2018review,
+  author  = {Leijten, Frans S. S. and {Dutch TeleEpilepsy Consortium}},
+  title   = {Multimodal seizure detection: A review},
+  journal = {Epilepsia},
+  year    = {2018},
+  volume  = {59},
+  number  = {S1},
+  pages   = {42--47},
+  doi     = {10.1111/epi.14047}
+}
+
+@article{beniczky2018emg,
+  author  = {Beniczky, S. and Conradsen, I. and Henning, O. and Fabricius, M. and Wolf, P.},
+  title   = {Automated real-time detection of tonic-clonic seizures using a wearable {EMG} device},
+  journal = {Neurology},
+  year    = {2018},
+  volume  = {90},
+  number  = {5},
+  pages   = {e428--e434},
+  doi     = {10.1212/WNL.0000000000004893}
+}
+
+@article{onorati2017empatica,
+  author  = {Onorati, Francesco and Regalia, Giulia and Caborni, Chiara and Migliorini, Matteo and Bender, Daniel and Poh, Ming-Zher and Frazier, Cherise and Kovitch Thropp, Eliana and Mynatt, Elizabeth D. and Bidwell, Jonathan and Mai, Roberto and LaFrance, Jr., W. Curt and Blum, Andrew S. and Friedman, Daniel and Loddenkemper, Tobias and Mohammadpour-Touserkani, Fatemeh and Reinsberger, Claus and Tognetti, Simone and Picard, Rosalind W.},
+  title   = {Multicenter clinical assessment of improved wearable multimodal convulsive seizure detectors},
+  journal = {Epilepsia},
+  year    = {2017},
+  volume  = {58},
+  number  = {11},
+  pages   = {1870--1879},
+  doi     = {10.1111/epi.13899}
+}
+
+@article{naganur2022meta,
+  author  = {Naganur, V. and Sivathamboo, S. and Chen, Z. and Kusmakar, S. and Antonic-Baker, A. and O'Brien, T. J. and Kwan, P.},
+  title   = {Automated seizure detection with noninvasive wearable devices: A systematic review and meta-analysis},
+  journal = {Epilepsia},
+  year    = {2022},
+  volume  = {63},
+  pages   = {1930--1941},
+  doi     = {10.1111/epi.17297}
+}
+
+@article{vandecasteele2020bte,
+  author  = {Vandecasteele, K. and De Cooman, T. and Dan, J. and Cleeren, E. and Van Huffel, S. and Hunyadi, B. and Van Paesschen, W.},
+  title   = {Visual seizure annotation and automated seizure detection using behind-the-ear electroencephalographic channels},
+  journal = {Epilepsia},
+  year    = {2020},
+  volume  = {61},
+  number  = {4},
+  pages   = {766--775},
+  doi     = {10.1111/epi.16470}
+}
+
+@article{vandecasteele2021ecg,
+  author  = {Vandecasteele, Kaat and De Cooman, Thomas and Chatzichristos, Christos and Cleeren, Evy and Swinnen, Lauren and Macea Ortiz, Jaiver and Van Huffel, Sabine and D{\"u}mpelmann, Matthias and Schulze-Bonhage, Andreas and De Vos, Maarten and Van Paesschen, Wim and Hunyadi, Borb{\'a}la},
+  title   = {The power of {ECG} in multimodal patient-specific seizure monitoring},
+  journal = {Epilepsia},
+  year    = {2021},
+  volume  = {62},
+  number  = {10},
+  pages   = {2333--2343},
+  doi     = {10.1111/epi.16990}
+}
+
+@article{bhagubai2023ecg,
+  author  = {Bhagubai, Miguel and Vandecasteele, Kaat and Swinnen, Lauren and Macea, Jaiver and Chatzichristos, Christos and De Vos, Maarten and Van Paesschen, Wim},
+  title   = {The Power of {ECG} in Semi-Automated Seizure Detection in Addition to Two-Channel behind-the-Ear {EEG}},
+  journal = {Bioengineering},
+  year    = {2023},
+  volume  = {10},
+  number  = {4},
+  pages   = {491},
+  doi     = {10.3390/bioengineering10040491}
+}
+
+@article{bhagubai2024challenge,
+  author  = {Bhagubai, Miguel and Swinnen, Lauren and Cleeren, Evy and Van Paesschen, Wim and De Vos, Maarten and Chatzichristos, Christos},
+  title   = {Towards Automated Seizure Detection With Wearable {EEG} -- Grand Challenge},
+  journal = {IEEE Open Journal of Signal Processing},
+  volume  = {5},
+  pages   = {717--724},
+  year    = {2024},
+  doi     = {10.1109/OJSP.2024.3378604}
+}
+
+@article{bhagubai2025seizeit2,
+  author  = {Bhagubai, Miguel and Chatzichristos, Christos and Swinnen, Lauren and Macea, Jaiver and Zhang, Jingwei and Lagae, Lieven and Jansen, Katrien and Schulze-Bonhage, Andreas and Sales, Francisco and Mahler, Benno and Weber, Yvonne and Van Paesschen, Wim and De Vos, Maarten},
+  title   = {{SeizeIT2}: Wearable Dataset Of Patients With Focal Epilepsy},
+  journal = {Scientific Data},
+  volume  = {12},
+  pages   = {1228},
+  year    = {2025},
+  doi     = {10.1038/s41597-025-05580-x},
+  note    = {Volume and article number from the published PDF (reports/seizeit2_paper_notes.md). Preprint: arXiv:2502.01224. Data used here: OpenNeuro ds005873 v1.1.0, doi 10.18112/openneuro.ds005873.v1.1.0}
+}
+
+@article{zhang2024tcs,
+  author  = {Zhang, Jingwei and Swinnen, Lauren and Chatzichristos, Christos and Broux, Victoria and Proost, Renee and Jansen, Katrien and Mahler, Benno and Zabler, Nicolas and Epitashvilli, Nino and D{\"u}mpelmann, Matthias and Schulze-Bonhage, Andreas and Schriewer, Elisabeth and Ermis, Ummahan and Wolking, Stefan and Linke, Florian and Weber, Yvonne and Symmonds, Mkael and Sen, Arjune and Biondi, Andrea and Richardson, Mark P. and Sulaiman I, Abuhaiba and Silva, Ana Isabel and Sales, Francisco and V{\'e}rtes, Gergely and Van Paesschen, Wim and De Vos, Maarten},
+  title   = {Multimodal wearable {EEG}, {EMG} and accelerometry measurements improve the accuracy of tonic-clonic seizure detection},
+  journal = {Physiological Measurement},
+  year    = {2024},
+  volume  = {45},
+  number  = {6},
+  doi     = {10.1088/1361-6579/ad4e94},
+  eprint  = {2403.13066},
+  archivePrefix = {arXiv},
+  note    = {Author names as given in the arXiv/PubMed records; article number not verified here.}
+}
+
+@article{swinnen2026seizeit2,
+  author  = {Swinnen, Lauren and others},
+  title   = {A multicenter, video-{EEG}-based validation of a multimodal wearable device for focal seizure detection in adults: The {SeizeIT2} study},
+  journal = {Epilepsia Open},
+  year    = {2026},
+  doi     = {10.1002/epi4.70260},
+  note    = {Full author list, volume and pages not verified here; published online April 2026 per the search record.}
+}
+
+@article{reintjes2025ecg,
+  author  = {Reintjes, Conrad and Hagenbeck, Janosch Fabio and Ballo, Mohamed and Rahlmeier, Tim and Wolf, Simon Maximilian and Schoder, Detlef},
+  title   = {{ECG}-Based Detection of Epileptic Seizures in Real-World Wearable Settings: Insights from the {SeizeIT2} Dataset},
+  journal = {Sensors},
+  year    = {2025},
+  volume  = {25},
+  number  = {24},
+  pages   = {7687},
+  doi     = {10.3390/s25247687}
+}
+
+@article{su2026cmepinet,
+  author  = {Su, Tianyi and Zhu, Haiyan and Chen, Shuai and Wang, Haifeng},
+  title   = {{CMEpiNet}: Complex-Valued Multimodal Epilepsy Detection Network Model},
+  journal = {Sensors},
+  year    = {2026},
+  doi     = {10.3390/s26134186},
+  note    = {Title as given by the CiteDrive record; volume/issue/article number not verified here.}
+}
+
+@article{ingolfsson2024brainfusenet,
+  author  = {Ingolfsson, Thorir Mar and Wang, Xiaying and Chakraborty, Upasana and Benatti, Simone and Bernini, Adriano and Ducouret, Pauline and Ryvlin, Philippe and Beniczky, Sandor and Benini, Luca and Cossettini, Andrea},
+  title   = {{BrainFuseNet}: Enhancing Wearable Seizure Detection Through {EEG-PPG}-Accelerometer Sensor Fusion and Efficient Edge Deployment},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {18},
+  number  = {4},
+  pages   = {720--733},
+  year    = {2024},
+  doi     = {10.1109/TBCAS.2024.3395534}
+}
+
+@article{zhang2024cyclic,
+  author  = {Zhang, Jingwei and Swinnen, Lauren and Chatzichristos, Christos and Van Paesschen, Wim and De Vos, Maarten},
+  title   = {Learning Robust Representations of Tonic-Clonic Seizures With Cyclic Transformer},
+  journal = {IEEE Journal of Biomedical and Health Informatics},
+  year    = {2024},
+  volume  = {28},
+  number  = {6},
+  pages   = {3721--3731},
+  doi     = {10.1109/JBHI.2024.3375123}
+}
+
+@article{regalia2019empatica,
+  author  = {Regalia, Giulia and Onorati, Francesco and Lai, Matteo and Caborni, Chiara and Picard, Rosalind W.},
+  title   = {Multimodal wrist-worn devices for seizure detection and advancing research: Focus on the {Empatica} wristbands},
+  journal = {Epilepsy Research},
+  year    = {2019},
+  volume  = {153},
+  pages   = {79--82},
+  doi     = {10.1016/j.eplepsyres.2019.02.007}
+}
+
+@inproceedings{shoeb2010icml,
+  author    = {Shoeb, Ali and Guttag, John},
+  title     = {Application of Machine Learning To Epileptic Seizure Detection},
+  booktitle = {Proceedings of the 27th International Conference on Machine Learning (ICML)},
+  pages     = {975--982},
+  year      = {2010},
+  url       = {https://archive.physionet.org/pn6/chbmit/shoeb-icml-2010.pdf}
+}
+
+@article{shah2018tusz,
+  author  = {Shah, Vinit and von Weltin, Eva and Lopez, Silvia and McHugh, James Riley and Veloso, Lillian and Golmohammadi, Meysam and Obeid, Iyad and Picone, Joseph},
+  title   = {The {Temple University Hospital} Seizure Detection Corpus},
+  journal = {Frontiers in Neuroinformatics},
+  year    = {2018},
+  doi     = {10.3389/fninf.2018.00083},
+  note    = {arXiv:1801.08085}
+}
+
+@article{alhussaini2023seizft,
+  author  = {Al-Hussaini, Irfan and Mitchell, Cassie S.},
+  title   = {{SeizFt}: Interpretable Machine Learning for Seizure Detection Using Wearables},
+  journal = {Bioengineering},
+  volume  = {10},
+  number  = {8},
+  pages   = {918},
+  year    = {2023},
+  doi     = {10.3390/bioengineering10080918}
+}
+
+@inproceedings{huang2023lightweight,
+  author    = {Huang, Baichuan and Abtahi, Azra and Aminifar, Amir},
+  title     = {Lightweight Machine Learning for Seizure Detection on Wearable Devices},
+  booktitle = {IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
+  year      = {2023},
+  url       = {https://portal.research.lu.se/en/publications/lightweight-machine-learning-for-seizure-detection-on-wearable-de/},
+  note      = {ICASSP 2023 Seizure Detection Challenge paper; DOI not verified}
+}
+
+@inproceedings{roy2019chrononet,
+  author    = {Roy, Subhrajit and Kiral-Kornek, Isabell and Harrer, Stefan},
+  title     = {{ChronoNet}: A Deep Recurrent Neural Network for Abnormal {EEG} Identification},
+  booktitle = {Artificial Intelligence in Medicine (AIME 2019)},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {11526},
+  publisher = {Springer},
+  year      = {2019},
+  doi       = {10.1007/978-3-030-21642-9_8},
+  eprint    = {1802.00308},
+  archivePrefix = {arXiv}
+}
+
+@article{lawhern2018eegnet,
+  author  = {Lawhern, Vernon J. and Solon, Amelia J. and Waytowich, Nicholas R. and Gordon, Stephen M. and Hung, Chou P. and Lance, Brent J.},
+  title   = {{EEGNet}: a compact convolutional neural network for {EEG}-based brain--computer interfaces},
+  journal = {Journal of Neural Engineering},
+  volume  = {15},
+  number  = {5},
+  pages   = {056013},
+  year    = {2018},
+  doi     = {10.1088/1741-2552/aace8c},
+  eprint  = {1611.08024},
+  archivePrefix = {arXiv}
+}
+
+@article{thuwajit2022eegwavenet,
+  author  = {Thuwajit, Punnawish and Rangpong, Phurin and Sawangjai, Phattarapong and Autthasan, Phairot and Chaisaen, Rattanaphon and Banluesombatkul, Nannapas and Boonchit, Puttaranun and Tatsaringkansakul, Nattasate and Sudhawiyangkul, T. and Wilaiprasitporn, Theerawit},
+  title   = {{EEGWaveNet}: Multiscale {CNN}-Based Spatiotemporal Feature Extraction for {EEG} Seizure Detection},
+  journal = {IEEE Transactions on Industrial Informatics},
+  volume  = {18},
+  number  = {8},
+  pages   = {5547--5557},
+  year    = {2022},
+  doi     = {10.1109/TII.2021.3133307}
+}
+
+@inproceedings{tang2022gnnssl,
+  author    = {Tang, Siyi and Dunnmon, Jared and Saab, Khaled Kamal and Zhang, Xuan and Huang, Qianying and Dubost, Florian and Rubin, Daniel and Lee-Messer, Christopher},
+  title     = {Self-Supervised Graph Neural Networks for Improved Electroencephalographic Seizure Analysis},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2022},
+  url       = {https://openreview.net/forum?id=k9bx1EfHI_-},
+  eprint    = {2104.08336},
+  archivePrefix = {arXiv}
+}
+
+@misc{wu2025seizuretransformer,
+  author  = {Wu, Kerui and Zhao, Ziyue and Yener, B{\"u}lent},
+  title   = {{SeizureTransformer}: Scaling {U-Net} with Transformer for Simultaneous Time-Step Level Seizure Detection from Long {EEG} Recordings},
+  year    = {2025},
+  eprint  = {2504.00336},
+  archivePrefix = {arXiv},
+  note    = {v2 retitled ``Large EEG-U-Transformer for Time-Step Level Detection Without Pre-Training''}
+}
+
+@misc{ziyabari2017metrics,
+  author  = {Ziyabari, Saeedeh and Shah, Vinit and Golmohammadi, Meysam and Obeid, Iyad and Picone, Joseph},
+  title   = {Objective evaluation metrics for automatic classification of {EEG} events},
+  year    = {2017},
+  eprint  = {1712.10107},
+  archivePrefix = {arXiv},
+  note    = {Extended as a chapter by V. Shah, M. Golmohammadi, I. Obeid and J. Picone in Biomedical Signal Processing: Innovation and Applications (Springer, 2021); chapter DOI not verified}
+}
+
+@article{dan2024szcore,
+  author  = {Dan, Jonathan and Pale, U. and Amirshahi, A. and Cappelletti, W. and Ingolfsson, Thorir Mar and Wang, Xiaying and Cossettini, Andrea and Bernini, Adriano and Benini, Luca and Beniczky, S{\'a}ndor and Atienza, David and Ryvlin, Philippe},
+  title   = {{SzCORE}: Seizure Community Open-Source Research Evaluation framework for the validation of electroencephalography-based automated seizure detection algorithms},
+  journal = {Epilepsia},
+  year    = {2024},
+  doi     = {10.1111/epi.18113},
+  note    = {Published online September 2024; print issue 66(S3):14--24 (2025); arXiv:2402.13005}
+}
+
+@misc{dan2025szcorechallenge,
+  author  = {Dan, Jonathan and Shahbazinia, Amirhossein and Kechris, Christodoulos and Atienza, David},
+  title   = {{SzCORE} as a benchmark: report from the seizure detection challenge at the 2025 {AI} in Epilepsy and Neurological Disorders Conference},
+  year    = {2025},
+  eprint  = {2505.18191},
+  archivePrefix = {arXiv},
+  note    = {Later retitled ``Quantifying the Generalization Gap in Seizure Detection: A Large-Scale Empirical Benchmark via the SzCORE Challenge''}
+}
+
+@article{brookshire2024leakage,
+  author  = {Brookshire, Geoffrey and Kasper, Jake and Blauch, Nicholas M. and Wu, Yunan Charles and Glatt, Ryan and Merrill, David A. and Gerrol, Spencer and Yoder, Keith J. and Quirk, Colin and Lucero, Ch{\'e}},
+  title   = {Data leakage in deep learning studies of translational {EEG}},
+  journal = {Frontiers in Neuroscience},
+  volume  = {18},
+  pages   = {1373515},
+  year    = {2024},
+  doi     = {10.3389/fnins.2024.1373515}
+}
+
+@article{shama2026bundl,
+  author  = {Shama, Deeksha M. and Venkataraman, Archana},
+  title   = {Bayesian uncertainty-aware deep learning with noisy labels: Tackling annotation ambiguity in {EEG} seizure detection},
+  journal = {PLOS ONE},
+  volume  = {21},
+  number  = {6},
+  year    = {2026},
+  doi     = {10.1371/journal.pone.0352191},
+  note    = {Preprint: arXiv:2410.19815 (2024), first titled ``BUNDL: Bayesian Uncertainty-aware Deep Learning with Noisy training Labels for Seizure Detection in EEG''}
+}
+
+@inproceedings{zheng2023kdgnn,
+  author    = {Zheng, Qinyue and Venkitaraman, Arun and Petravic, Simona and Frossard, Pascal},
+  title     = {Knowledge Distillation with Graph Neural Networks for Epileptic Seizure Detection},
+  booktitle = {Machine Learning and Knowledge Discovery in Databases (ECML PKDD 2023)},
+  series    = {Lecture Notes in Computer Science},
+  publisher = {Springer},
+  pages     = {547--563},
+  year      = {2023},
+  doi       = {10.1007/978-3-031-43427-3_33},
+  eprint    = {2304.06038},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{isaev2020mil,
+  author    = {Isaev, Dmitry Yu. and Tchapyjnikov, Dmitry and Cotten, C. Michael and Tanaka, David and Martinez, Natalia and Bertran, Martin and Sapiro, Guillermo and Carlson, David},
+  title     = {Attention-Based Network for Weak Labels in Neonatal Seizure Detection},
+  booktitle = {Proceedings of the 5th Machine Learning for Healthcare Conference},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {126},
+  pages     = {479--507},
+  year      = {2020},
+  url       = {https://proceedings.mlr.press/v126/isaev20a.html}
+}
+
+@article{saab2020weak,
+  author  = {Saab, Khaled and Dunnmon, Jared and R{\'e}, Christopher and Rubin, Daniel and Lee-Messer, Christopher},
+  title   = {Weak supervision as an efficient approach for automated seizure detection in electroencephalography},
+  journal = {npj Digital Medicine},
+  volume  = {3},
+  year    = {2020},
+  doi     = {10.1038/s41746-020-0264-0}
+}
+
+@inproceedings{yang2023biot,
+  author    = {Yang, Chaoqi and Westover, M. Brandon and Sun, Jimeng},
+  title     = {{BIOT}: Biosignal Transformer for Cross-data Learning in the Wild},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {36},
+  year      = {2023},
+  eprint    = {2305.10351},
+  archivePrefix = {arXiv}
+}
+
+@article{aleksander1984wisard,
+  author  = {Aleksander, Igor and Thomas, W. V. and Bowden, P. A.},
+  title   = {{WISARD}$\cdot$a radical step forward in image recognition},
+  journal = {Sensor Review},
+  volume  = {4},
+  number  = {3},
+  pages   = {120--124},
+  year    = {1984},
+  doi     = {10.1108/eb007637}
+}
+
+@inproceedings{susskind2022bthowen,
+  author    = {Susskind, Zachary and Arora, Aman and Miranda, Igor D. S. and Villon, Luis A. Q. and Katopodis, Rafael F. and de Ara{\'u}jo, Leandro S. and Dutra, Diego L. C. and Lima, Priscila M. V. and Fran{\c{c}}a, Felipe M. G. and Breternitz Jr., Mauricio and John, Lizy K.},
+  title     = {Weightless Neural Networks for Efficient Edge Inference},
+  booktitle = {Proceedings of the International Conference on Parallel Architectures and Compilation Techniques (PACT '22)},
+  pages     = {279--290},
+  publisher = {ACM},
+  year      = {2022},
+  doi       = {10.1145/3559009.3569680},
+  eprint    = {2203.01479},
+  archivePrefix = {arXiv}
+}
+
+@article{susskind2023uleen,
+  author  = {Susskind, Zachary and Arora, Aman and Miranda, Igor D. S. and Bacellar, Alan T. L. and Villon, Luis A. Q. and Katopodis, Rafael F. and de Ara{\'u}jo, Leandro S. and Dutra, Diego L. C. and Lima, Priscila M. V. and Fran{\c{c}}a, Felipe M. G. and Breternitz Jr., Mauricio and John, Lizy K.},
+  title   = {{ULEEN}: A Novel Architecture for Ultra Low-Energy Edge Neural Networks},
+  journal = {ACM Transactions on Architecture and Code Optimization},
+  volume  = {20},
+  number  = {4},
+  pages   = {61},
+  year    = {2023},
+  doi     = {10.1145/3629522},
+  eprint  = {2304.10618},
+  archivePrefix = {arXiv},
+  note    = {Author list as given in the authors' ULEEN code repository; check it against the ACM DL record before submission}
+}
+
+@inproceedings{bacellar2024dwn,
+  author    = {Bacellar, Alan T. L. and Susskind, Zachary and Breternitz Jr., Mauricio and John, Eugene and John, Lizy K. and Lima, Priscila M. V. and Fran{\c{c}}a, Felipe M. G.},
+  title     = {Differentiable Weightless Neural Networks},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {235},
+  pages     = {2277--2295},
+  publisher = {PMLR},
+  year      = {2024},
+  url       = {https://proceedings.mlr.press/v235/bacellar24a.html},
+  eprint    = {2410.11112},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{bacellar2025nanoml,
+  author    = {Bacellar, Alan T. L. and Jadhao, Mugdha P. and Nag, Shashank and Lima, Priscila M. V. and Fran{\c{c}}a, Felipe M. G. and John, Lizy K.},
+  title     = {nano{ML} for Human Activity Recognition},
+  booktitle = {tinyML Research Symposium},
+  year      = {2025},
+  eprint    = {2502.12173},
+  archivePrefix = {arXiv},
+  note      = {The arXiv comment names the 2025 EDGE AI FOUNDATION Austin event; the paper's ACM reference format names tinyML Research Symposium '25}
+}
+
+@misc{kresse2025dwc,
+  author  = {Kresse, Fabian and Lampert, Christoph H.},
+  title   = {Differentiable Weightless Controllers: Learning Logic Circuits for Continuous Control},
+  year    = {2025},
+  eprint  = {2512.01467},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  note    = {An ICML 2026 poster page exists (icml.cc/virtual/2026/poster/62491); cite the proceedings version once published}
+}
+
+@inproceedings{petersen2022dlgn,
+  author    = {Petersen, Felix and Borgelt, Christian and Kuehne, Hilde and Deussen, Oliver},
+  title     = {Deep Differentiable Logic Gate Networks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {35},
+  year      = {2022},
+  url       = {https://openreview.net/forum?id=vF3WefcoePW},
+  eprint    = {2210.08277},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{petersen2024convdlgn,
+  author    = {Petersen, Felix and Kuehne, Hilde and Borgelt, Christian and Welzel, Julian and Ermon, Stefano},
+  title     = {Convolutional Differentiable Logic Gate Networks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {37},
+  year      = {2024},
+  doi       = {10.52202/079017-3851},
+  eprint    = {2411.04732},
+  archivePrefix = {arXiv},
+  note      = {The DOI comes from a BibTeX/proceedings search snippet; check it at doi.org}
+}
+
+@misc{buhrer2025rdlgn,
+  author  = {B{\"u}hrer, Simon and Plesner, Andreas and Aczel, Till and Wattenhofer, Roger},
+  title   = {Recurrent Deep Differentiable Logic Gate Networks},
+  year    = {2025},
+  eprint  = {2508.06097},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+@inproceedings{ruttgers2026lightdlgn,
+  author    = {R{\"u}ttgers, Lukas and Aczel, Till and Plesner, Andreas and Wattenhofer, Roger},
+  title     = {Light Differentiable Logic Gate Networks},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2026},
+  eprint    = {2510.03250},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{wang2019lutnet,
+  author    = {Wang, Erwei and Davis, James J. and Cheung, Peter Y. K. and Constantinides, George A.},
+  title     = {{LUTNet}: Rethinking Inference in {FPGA} Soft Logic},
+  booktitle = {IEEE 27th Annual International Symposium on Field-Programmable Custom Computing Machines (FCCM)},
+  pages     = {26--34},
+  year      = {2019},
+  doi       = {10.1109/FCCM.2019.00014},
+  eprint    = {1904.00938},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{umuroglu2020logicnets,
+  author    = {Umuroglu, Yaman and Akhauri, Yash and Fraser, Nicholas J. and Blott, Michaela},
+  title     = {{LogicNets}: Co-Designed Neural Networks and Circuits for Extreme-Throughput Applications},
+  booktitle = {30th International Conference on Field-Programmable Logic and Applications (FPL)},
+  pages     = {291--297},
+  year      = {2020},
+  doi       = {10.1109/FPL50879.2020.00055},
+  eprint    = {2004.03021},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{andronic2023polylut,
+  author    = {Andronic, Marta and Constantinides, George A.},
+  title     = {{PolyLUT}: Learning Piecewise Polynomials for Ultra-Low Latency {FPGA} {LUT}-based Inference},
+  booktitle = {International Conference on Field Programmable Technology (ICFPT)},
+  pages     = {60--68},
+  year      = {2023},
+  doi       = {10.1109/ICFPT59805.2023.00012},
+  eprint    = {2309.02334},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{andronic2024neuralut,
+  author    = {Andronic, Marta and Constantinides, George A.},
+  title     = {{NeuraLUT}: Hiding Neural Network Density in Boolean Synthesizable Functions},
+  booktitle = {34th International Conference on Field-Programmable Logic and Applications (FPL)},
+  pages     = {140--148},
+  year      = {2024},
+  doi       = {10.1109/FPL64840.2024.00028},
+  eprint    = {2403.00849},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{weng2025amigolut,
+  author    = {Weng, Olivia and Andronic, Marta and Zuberi, Danial and Chen, Jiaqing and Geniesse, Caleb and Constantinides, George A. and Tran, Nhan and Fraser, Nicholas J. and Duarte, Javier Mauricio and Kastner, Ryan},
+  title     = {Greater than the Sum of its {LUTs}: Scaling Up {LUT}-based Neural Networks with {AmigoLUT}},
+  booktitle = {Proceedings of the 2025 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '25)},
+  pages     = {25--35},
+  publisher = {ACM},
+  year      = {2025},
+  note      = {DOI not verified (Crossref/dblp unreachable here); look it up before submission}
+}
+
+@inproceedings{cassidy2025reducedlut,
+  author    = {Cassidy, Oliver and Andronic, Marta and Coward, Samuel and Constantinides, George A.},
+  title     = {{ReducedLUT}: Table Decomposition with ``Don't Care'' Conditions},
+  booktitle = {Proceedings of the 2025 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '25)},
+  pages     = {36--42},
+  publisher = {ACM},
+  year      = {2025},
+  doi       = {10.1145/3706628.3708823},
+  eprint    = {2412.18579},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{khataei2025treelut,
+  author    = {Khataei, Alireza and Bazargan, Kia},
+  title     = {{TreeLUT}: An Efficient Alternative to Deep Neural Networks for Inference Acceleration Using Gradient Boosted Decision Trees},
+  booktitle = {Proceedings of the 2025 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '25)},
+  publisher = {ACM},
+  year      = {2025},
+  doi       = {10.1145/3706628.3708877},
+  eprint    = {2501.01511},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{mecik2025thermo,
+  author    = {Mecik, Michael and Kumm, Martin},
+  title     = {Implementation and Analysis of Thermometer Encoding in {DWN} {FPGA} Accelerators},
+  booktitle = {Asilomar Conference on Signals, Systems, and Computers},
+  year      = {2025},
+  eprint    = {2512.15251},
+  archivePrefix = {arXiv},
+  note      = {Accepted at Asilomar 2025 per arXiv; proceedings DOI not yet verified}
+}
+
+@misc{mommen2026ecg,
+  author  = {Mommen, Wout and Keuninckx, Lars and Detterer, Paul and Colpaert, Achiel and Wambacq, Piet},
+  title   = {Inter-patient {ECG} Arrhythmia Classification with {LGNs} and {LUTNs}},
+  year    = {2026},
+  eprint  = {2601.11433},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+@inproceedings{dharia2026eeglgn,
+  author    = {Dharia, Shyamal and Smith, Stephen and Valderrama, Camilo},
+  title     = {Differentiable Logic Gate Networks for Low-Latency {EEG} Classification on Edge Devices},
+  booktitle = {Proceedings of the 39th Canadian Conference on Artificial Intelligence},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {318},
+  pages     = {377--391},
+  publisher = {PMLR},
+  year      = {2026},
+  url       = {https://proceedings.mlr.press/v318/dharia26a.html},
+  eprint    = {2607.18149},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{deaguiar2015wisard,
+  author    = {de Aguiar, Kleber and Fran{\c{c}}a, Felipe M. G. and Barbosa, Valmir C. and Teixeira, C{\'e}sar A. D.},
+  title     = {Early detection of epilepsy seizures based on a weightless neural network},
+  booktitle = {37th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC)},
+  pages     = {4470--4474},
+  year      = {2015},
+  doi       = {10.1109/EMBC.2015.7319387},
+  pmid      = {26737287}
+}
+
+@article{verma2010micro,
+  author  = {Verma, Naveen and Shoeb, Ali and Bohorquez, Jose and Dawson, Joel and Guttag, John and Chandrakasan, Anantha P.},
+  title   = {A Micro-Power {EEG} Acquisition {SoC} With Integrated Feature Extraction Processor for a Chronic Seizure Detection System},
+  journal = {IEEE Journal of Solid-State Circuits},
+  volume  = {45},
+  number  = {4},
+  pages   = {804--816},
+  year    = {2010},
+  doi     = {10.1109/JSSC.2010.2042245}
+}
+
+@article{altaf2015jssc,
+  author  = {Bin Altaf, Muhammad Awais and Zhang, Chen and Yoo, Jerald},
+  title   = {A 16-Channel Patient-Specific Seizure Onset and Termination Detection {SoC} With Impedance-Adaptive Transcranial Electrical Stimulator},
+  journal = {IEEE Journal of Solid-State Circuits},
+  volume  = {50},
+  number  = {11},
+  pages   = {2728--2740},
+  year    = {2015},
+  doi     = {10.1109/JSSC.2015.2482498}
+}
+
+@article{altaf2016tbcas,
+  author  = {Bin Altaf, Muhammad Awais and Yoo, Jerald},
+  title   = {A 1.83 $\mu${J}/Classification, 8-Channel, Patient-Specific Epileptic Seizure Classification {SoC} Using a Non-Linear Support Vector Machine},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {10},
+  year    = {2016},
+  doi     = {10.1109/TBCAS.2014.2386891}
+}
+
+@article{shoaran2018jetcas,
+  author  = {Shoaran, Mahsa and Allahgholizadeh Haghi, Benyamin and Taghavi, Milad and Farivar, Masoud and Emami-Neyestanak, Azita},
+  title   = {Energy-Efficient Classification for Resource-Constrained Biomedical Applications},
+  journal = {IEEE Journal on Emerging and Selected Topics in Circuits and Systems},
+  volume  = {8},
+  number  = {4},
+  pages   = {693--707},
+  year    = {2018},
+  doi     = {10.1109/JETCAS.2018.2844733}
+}
+
+@article{shin2022neuraltree,
+  author  = {Shin, Uisub and Ding, Cong and Zhu, Bingzhao and Vyza, Yashwanth and Trouillet, Alix and Revol, Emilie and Lacour, St{\'e}phanie and Shoaran, Mahsa},
+  title   = {{NeuralTree}: A 256-Channel 0.227-$\mu${J}/Class Versatile Neural Activity Classification and Closed-Loop Neuromodulation {SoC}},
+  journal = {IEEE Journal of Solid-State Circuits},
+  volume  = {57},
+  number  = {11},
+  pages   = {3243--3257},
+  year    = {2022},
+  doi     = {10.1109/JSSC.2022.3204508},
+  eprint  = {2205.06090},
+  archivePrefix = {arXiv}
+}
+
+@article{wang2018access,
+  author  = {Wang, Hongda and Shi, Weiwei and Choy, Chiu-Sing},
+  title   = {Hardware Design of Real Time Epileptic Seizure Detection Based on {STFT} and {SVM}},
+  journal = {IEEE Access},
+  year    = {2018},
+  doi     = {10.1109/ACCESS.2018.2870883}
+}
+
+@article{elhosary2019tbcas,
+  author  = {Elhosary, Heba and Zakhari, Michael H. and Elgammal, Mohamed A. and Abd El Ghany, Mohamed A. and Salama, Khaled N. and Mostafa, Hassan},
+  title   = {Low-Power Hardware Implementation of a Support Vector Machine Training and Classification for Neural Seizure Detection},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {13},
+  number  = {6},
+  pages   = {1324--1337},
+  year    = {2019},
+  doi     = {10.1109/TBCAS.2019.2947044}
+}
+
+@article{razi2022tbcas,
+  author  = {Farhang Razi, Keyvan and Schmid, Alexandre},
+  title   = {Epileptic Seizure Detection With Patient-Specific Feature and Channel Selection for Low-power Applications},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {16},
+  number  = {4},
+  pages   = {626--635},
+  year    = {2022},
+  doi     = {10.1109/TBCAS.2022.3188966}
+}
+
+@article{busia2025fpga,
+  author  = {Busia, Paola and Leone, Gianluca and Matticola, Andrea and Raffo, Luigi and Meloni, Paolo},
+  title   = {Wearable Epilepsy Seizure Detection on {FPGA} With Spiking Neural Networks},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {19},
+  number  = {6},
+  year    = {2025},
+  doi     = {10.1109/TBCAS.2025.3575327}
+}
+
+@inproceedings{sopic2018eglass,
+  author    = {Sopic, Dionisije and Aminifar, Amir and Atienza, David},
+  title     = {e-{Glass}: A Wearable System for Real-Time Detection of Epileptic Seizures},
+  booktitle = {2018 IEEE International Symposium on Circuits and Systems (ISCAS)},
+  year      = {2018},
+  doi       = {10.1109/ISCAS.2018.8351728}
+}
+
+@article{busia2024eegformer,
+  author  = {Busia, Paola and Cossettini, Andrea and Ingolfsson, Thorir Mar and Benatti, Simone and Burrello, Alessio and Jung, Victor J. B. and Scherer, Moritz and Scrugli, Matteo A. and Bernini, Adriano and Ducouret, Pauline and Ryvlin, Philippe and Meloni, Paolo and Benini, Luca},
+  title   = {Reducing False Alarms in Wearable Seizure Detection With {EEGformer}: A Compact Transformer Model for {MCUs}},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {18},
+  number  = {3},
+  pages   = {608--621},
+  year    = {2024},
+  doi     = {10.1109/TBCAS.2024.3357509}
+}
+
+@inproceedings{hubara2016bnn,
+  author    = {Hubara, Itay and Courbariaux, Matthieu and Soudry, Daniel and El-Yaniv, Ran and Bengio, Yoshua},
+  title     = {Binarized Neural Networks},
+  booktitle = {Advances in Neural Information Processing Systems 29 (NIPS 2016)},
+  pages     = {4107--4115},
+  year      = {2016},
+  eprint    = {1602.02830},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{umuroglu2017finn,
+  author    = {Umuroglu, Yaman and Fraser, Nicholas J. and Gambardella, Giulio and Blott, Michaela and Leong, Philip and Jahre, Magnus and Vissers, Kees},
+  title     = {{FINN}: A Framework for Fast, Scalable Binarized Neural Network Inference},
+  booktitle = {Proceedings of the 2017 ACM/SIGDA International Symposium on Field-Programmable Gate Arrays (FPGA '17)},
+  pages     = {65--74},
+  publisher = {ACM},
+  year      = {2017},
+  doi       = {10.1145/3020078.3021744},
+  eprint    = {1612.07119},
+  archivePrefix = {arXiv}
+}
+
+@inproceedings{jacob2018quant,
+  author    = {Jacob, Benoit and Kligys, Skirmantas and Chen, Bo and Zhu, Menglong and Tang, Matthew and Howard, Andrew and Adam, Hartwig and Kalenichenko, Dmitry},
+  title     = {Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference},
+  booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  pages     = {2704--2713},
+  year      = {2018},
+  doi       = {10.1109/CVPR.2018.00286},
+  eprint    = {1712.05877},
+  archivePrefix = {arXiv}
+}
+
+@article{duarte2018hls4ml,
+  author  = {Duarte, Javier and Han, Song and Harris, Philip and Jindariani, Sergo and Kreinar, Edward and Kreis, Benjamin and Ngadiuba, Jennifer and Pierini, Maurizio and Rivera, Ryan and Tran, Nhan and Wu, Zhenbin},
+  title   = {Fast inference of deep neural networks in {FPGAs} for particle physics},
+  journal = {Journal of Instrumentation},
+  volume  = {13},
+  number  = {07},
+  pages   = {P07027},
+  year    = {2018},
+  doi     = {10.1088/1748-0221/13/07/P07027},
+  eprint  = {1804.06913},
+  archivePrefix = {arXiv}
+}
+
+@article{huang2020jssc,
+  author  = {Huang, Shuo-An and Chang, Kai-Chieh and Liou, Horng-Huei and Yang, Chia-Hsiang},
+  title   = {A 1.9-{mW} {SVM} Processor With On-Chip Active Learning for Epileptic Seizure Control},
+  journal = {IEEE Journal of Solid-State Circuits},
+  volume  = {55},
+  number  = {2},
+  pages   = {452--464},
+  year    = {2020},
+  doi     = {10.1109/JSSC.2019.2954775}
+}
+
+@article{vittimberga2025sensors,
+  author  = {Vittimberga, Andrea and Nicolini, Giovanni and Scotti, Giuseppe},
+  title   = {Real-Time Multi-Channel Epileptic Seizure Detection Exploiting an Ultra-Low-Complexity Algorithm--Hardware Co-Design Approach},
+  journal = {Sensors},
+  volume  = {25},
+  number  = {22},
+  pages   = {6889},
+  year    = {2025},
+  doi     = {10.3390/s25226889}
+}
+
+@article{kartsch2019biowolf,
+  author  = {Kartsch, Victor and Tagliavini, Giuseppe and Guermandi, Marco and Benatti, Simone and Rossi, Davide and Benini, Luca},
+  title   = {{BioWolf}: A Sub-10-{mW} 8-Channel Advanced Brain--Computer Interface Platform With a Nine-Core Processor and {BLE} Connectivity},
+  journal = {IEEE Transactions on Biomedical Circuits and Systems},
+  volume  = {13},
+  number  = {5},
+  pages   = {893--906},
+  year    = {2019},
+  doi     = {10.1109/TBCAS.2019.2927551}
+}
+
+@inproceedings{ingolfsson2022artifact,
+  author    = {Ingolfsson, Thorir Mar and Cossettini, Andrea and Benatti, Simone and Benini, Luca},
+  title     = {Energy-Efficient Tree-Based {EEG} Artifact Detection},
+  booktitle = {44th Annual International Conference of the IEEE Engineering in Medicine \& Biology Society (EMBC)},
+  pages     = {3723--3728},
+  year      = {2022},
+  eprint    = {2204.09577},
+  archivePrefix = {arXiv}
+}

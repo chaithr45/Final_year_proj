@@ -20,7 +20,7 @@ numbers D1–D35 in brackets). Failed ideas are kept there as well.
 | ChronoNet did not reproduce | Our run detected 74.5 % of seizures against 84.2 % published, with 22.6 instead of 100.5 false alarms per hour. | We ported the official code literally (verified on 900 random cases), then checked the metric definitions: the published AUPR matches only when averaged per recording (0.109 vs 0.104), and the published false-alarm rate matches neither definition in the code. The gap is reported as measured, not tuned away. |
 | The released code selects its model on the test patients | Its training loop picks the epoch with the best score on the same patients it is then evaluated on. | We reproduced it as published and also trained a "clean" version (last epoch, no test information), which is the honest reference for our final comparison (D13). |
 | Defects in the released evaluation code | True positives can be counted more than once, and the artefact gate (`a and b` on two Python lists) silently uses only one channel. | Reproduced as written for the comparison with the paper; corrected numbers reported in a separate column (D8, D11). |
-| The SVM baseline cannot be rebuilt yet | The dataset paper defers its 42 features to Vandecasteele et al. (Epilepsia 2020), which could not be retrieved from the coding environment. | Still open: we need that paper's feature table (D15). |
+| The SVM baseline cannot be rebuilt yet | The dataset paper defers its 42 features to Vandecasteele et al. [@vandecasteele2020bte], whose full text could not be retrieved from the coding environment. | Still open: we need that paper's feature table (D15). |
 
 ## 6.3 Hardware arithmetic
 

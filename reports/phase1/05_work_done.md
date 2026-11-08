@@ -11,9 +11,9 @@ patients yet**, by design.
 | Milestone | Content | Status |
 |---|---|---|
 | M1 | Repository, data loader, full data audit of SeizeIT2 | Done |
-| M2 | Reproduction of the published baselines | ChronoNet done; SVM waiting for the 42-feature definition of Vandecasteele et al. 2020 |
+| M2 | Reproduction of the published baselines | ChronoNet done; SVM waiting for the 42-feature definition of Vandecasteele et al. [@vandecasteele2020bte] |
 | M3 | Integer (hardware) feature pipeline and its floating-point twin | Done |
-| M4 | Comparison of model families on 5-fold cross-validation | Mostly done (10 families); large DWNs, GRU, LogicNets-style, raw-EEG CNN/TCN running |
+| M4 | Comparison of model families on 5-fold cross-validation | Mostly done (9 families); large DWNs, GRU, LogicNets-style, raw-EEG CNN/TCN running |
 | M5 | Our extensions N1–N7 | Running: N1, N3, N7 done; 17 variants of N1/N2/N4/N5/N6 in the queue |
 | M6 | Final test on the 29 held-out patients, 5 seeds | Phase 2 (code ready) |
 | M7 | Hardware handoff: export, test vectors, Verilog check | Phase 2 (code ready and tested) |
@@ -49,7 +49,7 @@ so far, logged). The released code chooses its training epoch using these same t
 
 | | Seizures detected (any-overlap) | False alarms / hour | AUROC | AUPR |
 |---|---|---|---|---|
-| Published (Bhagubai et al. 2025, Table 2) | 84.2 % | 100.5 | 0.792 | 0.104 |
+| Published [@bhagubai2025seizeit2, Table 2] | 84.2 % | 100.5 | 0.792 | 0.104 |
 | Ours, official protocol | 74.5 % | 22.6 | 0.741 | 0.109* |
 | Ours, clean protocol | 67.1 % | 11.9 | 0.746 | 0.111* |
 

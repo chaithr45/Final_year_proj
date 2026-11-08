@@ -50,7 +50,7 @@ A weightless neural network has no weights to multiply. Each neuron is a truth t
 forms an address and outputs the bit stored at that address. On an FPGA a 6-input truth table is exactly one LUT6,
 the basic logic element, so one neuron costs one LUT.
 
-The Differentiable Weightless Neural Network (DWN; Bacellar et al., ICML 2024) makes such networks trainable by
+The Differentiable Weightless Neural Network (DWN) [@bacellar2024dwn] makes such networks trainable by
 gradient descent:
 
 * **Thermometer encoding.** Feature f becomes bits b(f,i) = [x_f > t(f,i)] for thresholds t(f,1) < ... < t(f,8)
@@ -75,9 +75,9 @@ trained on the same windows (Chapter 5).
 
 | Tier | Models | Role |
 |---|---|---|
-| Published baselines | ChronoNet (deep CNN + GRU on raw EEG), SVM on 42 EEG features | The SeizeIT2 paper's reference results |
+| Published baselines | ChronoNet [@roy2019chrononet] (deep CNN + GRU on raw EEG), SVM on 42 EEG features [@vandecasteele2020bte] | The SeizeIT2 paper's reference results |
 | Tier 1: software references | logistic regression, random forest, XGBoost, LightGBM, CatBoost | Best accuracy achievable on our integer features, ignoring hardware |
-| Tier 1: hardware-oriented | INT8 quantised MLP (uses multipliers), TreeLUT (integer gradient-boosted trees), logic-gate network (LGN), LogicNets-style sparse quantised network, DWN | Accuracy per LUT |
+| Tier 1: hardware-oriented | INT8 quantised MLP (uses multipliers), TreeLUT [@khataei2025treelut], logic-gate network [@petersen2022dlgn], LogicNets-style network [@umuroglu2020logicnets], DWN [@bacellar2024dwn] | Accuracy per LUT |
 | Tier 1: other references | GRU on features; 1-D CNN and TCN on raw EEG | Sequence and raw-signal references |
 | Tier 2: our extensions to the DWN | N1–N7 (below) | Each kept only if it is significantly better than the base |
 
@@ -99,7 +99,7 @@ Tier-2 extensions:
   over the 96 training patients, split by patient (each fold's validation patients are never seen in its training).
   The 29 test patients are scored once, at the end, with every choice frozen; any script that touches them needs an
   explicit flag and logs the access.
-* **Event scoring (SzCORE).** A detected event counts as correct if it overlaps a reference seizure, with 30 s of
+* **Event scoring (SzCORE [@dan2024szcore]).** A detected event counts as correct if it overlaps a reference seizure, with 30 s of
   tolerance before onset and 60 s after the end; events closer than 90 s are merged. Reported per patient and
   averaged: sensitivity (share of seizures detected), precision, **event-F1**, and **false alarms per 24 hours**.
   Window-level AUROC and AUPR are reported as well.

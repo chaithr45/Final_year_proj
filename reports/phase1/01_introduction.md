@@ -2,7 +2,20 @@
 
 ## 1.1 Background
 
-<!-- BACKGROUND: written after the verified literature search (clinical need, wearables) -->
+Epilepsy is a common neurological disorder: an estimated 45.9 million people had active epilepsy in
+2016 [@gbd2019epilepsy]. Seizures are classified by onset; focal seizures start in one part of the brain, may or may
+not impair awareness, and can spread into bilateral tonic-clonic seizures [@fisher2017ilae]. Patients are often
+unaware of their own seizures, so seizure diaries undercount them [@elger2018underreporting], and tonic-clonic
+seizures carry a risk of sudden unexpected death in epilepsy [@ryvlin2013mortemus]. Reliable, automatic seizure
+detection outside the hospital would give clinicians objective seizure counts and caregivers timely alarms.
+
+In hospital, seizures are diagnosed with video-EEG from a full scalp electrode cap, which is not usable at home for
+days. Wearable devices are recommended today only for detecting tonic-clonic seizures [@beniczky2021guideline]; for
+focal seizures that do not become tonic-clonic (822 of the 883 seizures in SeizeIT2) the problem is open, and false
+alarms are the main obstacle [@swinnen2026seizeit2].
+Behind-the-ear EEG combined with ECG, EMG and motion sensors is a promising, discreet alternative
+[@vandecasteele2020bte; @vandecasteele2021ecg], and the SeizeIT2 dataset [@bhagubai2025seizeit2] now makes it
+possible to develop and evaluate detectors on 125 patients recorded with such a wearable.
 
 ## 1.2 Why a dedicated hardware detector
 
@@ -14,10 +27,10 @@ small lookup table (LUT), typically with six inputs, that can implement any Bool
 clock cycle.
 
 A family of recent machine-learning models, which we call **LUT-native**, is built from exactly this element:
-weightless neural networks, whose neurons are truth tables [@bacellar2024], logic-gate networks [@petersen2022],
-and LUT-based networks designed for FPGAs [@umuroglu2020]. They need no multipliers at inference time, so a
+weightless neural networks, whose neurons are truth tables [@bacellar2024dwn], logic-gate networks [@petersen2022dlgn],
+and LUT-based networks designed for FPGAs [@umuroglu2020logicnets]. They need no multipliers at inference time, so a
 classifier can cost a few hundred to a few thousand LUTs. They have been applied to image benchmarks, physics
-triggers and, very recently, ECG [@mommen2026] and EEG [@dharia2026] classification, but, to our knowledge, not to
+triggers and, very recently, ECG [@mommen2026ecg] and EEG [@dharia2026eeglgn] classification, but, to our knowledge, not to
 seizure detection on multimodal wearable data.
 
 ## 1.3 Problem statement
@@ -28,7 +41,7 @@ seizure detection on multimodal wearable data.
 
 ## 1.4 Objectives
 
-1. Audit the SeizeIT2 dataset [@bhagubai2025] completely and reproduce its published baselines.
+1. Audit the SeizeIT2 dataset [@bhagubai2025seizeit2] completely and reproduce its published baselines.
 2. Design an integer-only feature pipeline that a hardware front end can compute bit-exactly, and show that it
    loses no accuracy against floating point.
 3. Compare LUT-native models (DWN, logic-gate networks, TreeLUT, LogicNets-style networks) with software
@@ -38,7 +51,7 @@ seizure detection on multimodal wearable data.
    cheaper input encoders, adaptation to new patients, learning from a stronger model, losses for rare and noisily
    labelled events, robustness to missing sensors, interpretability), keeping only what is statistically
    significant.
-5. Evaluate the final models once on the 29 held-out test patients with event-based metrics (SzCORE [@dan2024]).
+5. Evaluate the final models once on the 29 held-out test patients with event-based metrics (SzCORE [@dan2024szcore]).
 6. Deliver a hardware handoff package (truth tables, thresholds, test vectors, verified reference Verilog) and
    implement the detector on an FPGA (Phase 2).
 
