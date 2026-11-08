@@ -120,6 +120,9 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
                         "features": {"mi_top": 10}, "train": {"bg_ratio": 3}}
     cfgs["gru"] = {"model": {"type": "gru", "params": {"hidden": 8, **seq}}, "features": {"mi_top": 10},
                    "train": {"bg_ratio": 3}}
+    cfgs["logicnet"] = {"model": {"type": "logicnet", "params": {"hidden": [16, 8], "epochs": 1, "batch": 256,
+                                                                  "threads": 1}},
+                        "features": {"mi_top": 10}, "train": {"bg_ratio": 3}}
     for name, c in cfgs.items():
         cfg = {"name": f"t_{name}", "seed": 0, **c, "post": post}
         path = tmp_path / f"{name}.yaml"

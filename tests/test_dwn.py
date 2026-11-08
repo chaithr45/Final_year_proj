@@ -260,3 +260,21 @@ def test_stateful_sequences_and_grouped_scoring_match_reference(tmp_path):
     for group in (1, 3, 100):
         for a, b in zip(m.score_runs(X_list, group=group), ref):
             np.testing.assert_array_equal(a, b.astype(np.float32))
+
+
+def test_logicnet_learns_and_scores_integers():
+    """LogicNets-style network: integer scores, zero multipliers, and it separates an easy problem."""
+    from seizelut.models.registry import build
+    rng = np.random.default_rng(0)
+    X = rng.integers(0, 100, size=(4000, 12)).astype(np.int16)
+    y = (X[:, 0] + X[:, 3] > 120).astype(np.int8)
+    m = build({"type": "logicnet", "params": {"hidden": [32, 16], "fan_in": 3, "act_bits": 2, "in_bits": 2,
+                                              "epochs": 8, "batch": 512, "threads": 1}})
+    m.fit(X, y)
+    s = m.score(X)
+    assert np.all(s == np.round(s))
+    from sklearn.metrics import roc_auc_score
+    assert roc_auc_score(y, s) > 0.75
+    c = m.cost([8] * 12)
+    assert c["multipliers"] == 0 and c["network_luts"] == (32 + 16) * 2      # 3 inputs x 2 bits = one LUT6 per bit
+    assert c["total_luts"] > c["network_luts"]

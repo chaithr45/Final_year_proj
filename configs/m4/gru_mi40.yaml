@@ -1,0 +1,11 @@
+# GRU on the MI top-40 features: N1's upper reference (Section 6.3), trained on the same 60 s
+# sequences as N1 and run through each whole recording at inference. Multiplier-based.
+name: gru_mi40
+seed: 0
+model:
+  type: gru
+  params: {hidden: 32, seq_len: 60, pos_per_seizure: 6, neg_ratio: 5, burn_in: 10, epochs: 15, lr: 0.001,
+           batch: 64, threads: 4}
+features: {mi_top: 40}
+train: {bg_ratio: 20}
+post: {k: [4, 6, 8, 10], gate: [none, both, any], n_thresholds: 40}

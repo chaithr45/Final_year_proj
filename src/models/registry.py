@@ -726,6 +726,80 @@ class GRUFeatureModel(StatefulDWNModel):
         return {"macs": int(macs), "weights": int(3 * (F * H + H * H + 2 * H) + 2 * H + 2), "multipliers": int(macs)}
 
 
+class LogicNetModel(Model):
+    """LogicNets-style sparse quantized MLP (src/models/logicnets.py), Tier-1 LUT-native family.
+    score() is the integer difference of the two output halves' activation codes."""
+    name = "logicnet"
+
+    def __init__(self, hidden=(128, 64, 32), fan_in=3, act_bits=2, in_bits=2, tau=1.0, epochs=30, lr=1e-2,
+                 batch=4096, decay_at=0.7, seed=0, device="cpu", threads=4, log=None):
+        self.p = dict(hidden=tuple(hidden), fan_in=fan_in, act_bits=act_bits, in_bits=in_bits, tau=tau,
+                      epochs=epochs, lr=lr, batch=batch, decay_at=decay_at, seed=seed, device=device)
+        self.threads, self.log = threads, (log or (lambda *a: None))
+
+    def _codes(self, X):
+        import torch
+        c = np.zeros(X.shape, dtype=np.int64)
+        for j in range(self.thresholds.shape[1]):
+            c += X > self.thresholds[:, j][None, :]
+        return torch.from_numpy(c)
+
+    def fit(self, X, y, **_):
+        import torch
+        from .logicnets import LogicNet
+        torch.set_num_threads(self.threads)
+        p = self.p
+        torch.manual_seed(p["seed"])
+        q = np.arange(1, 2 ** p["in_bits"]) / 2 ** p["in_bits"]
+        self.thresholds = np.floor(np.quantile(X.astype(np.float64), q, axis=0).T)   # (features, levels-1)
+        dev = torch.device(p["device"])
+        codes = self._codes(X)
+        self.net = LogicNet(X.shape[1], p["hidden"], p["fan_in"], p["act_bits"], p["in_bits"], p["tau"], p["seed"]).to(dev)
+        opt = torch.optim.Adam(self.net.parameters(), lr=p["lr"])
+        sched = torch.optim.lr_scheduler.StepLR(opt, step_size=max(1, int(p["epochs"] * p["decay_at"])), gamma=0.1)
+        yt = torch.as_tensor(y, dtype=torch.long)
+        w = torch.tensor([1.0, float((y == 0).sum()) / max(1, int((y == 1).sum()))], device=dev)
+        g = torch.Generator().manual_seed(p["seed"])
+        start = self._ckpt_load({"net": self.net}, opt, sched, g)
+        for ep in range(start, p["epochs"]):
+            self.net.train()
+            perm = torch.randperm(len(yt), generator=g)
+            tot, t0 = 0.0, time.time()
+            for i in range(0, len(perm), p["batch"]):
+                idx = perm[i:i + p["batch"]]
+                logits, _ = self.net(codes[idx].to(dev))
+                loss = torch.nn.functional.cross_entropy(logits, yt[idx].to(dev), weight=w)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                tot += float(loss.detach()) * len(idx)
+            sched.step()
+            self.log(f"    epoch {ep + 1}/{p['epochs']} loss {tot / len(perm):.4f} ({time.time() - t0:.0f} s)")
+            self._ckpt_save(ep + 1, {"net": self.net}, opt, sched, g)
+        self.net.eval().cpu()
+        return self
+
+    def score(self, X):
+        import torch
+        out = []
+        with torch.no_grad():
+            for i in range(0, len(X), 200_000):
+                out.append(self.net(self._codes(X[i:i + 200_000]))[1].numpy())
+        return np.concatenate(out).astype(np.float32)
+
+    def cost(self, feature_bits):
+        c = self.net.lut_cost()
+        comps = comp_bits = enc = 0
+        for f in self.net.used_inputs():
+            k = len(np.unique(self.thresholds[f]))
+            comps += k
+            comp_bits += k * feature_bits[f]
+            enc += k * math.ceil(feature_bits[f] / 2)
+        total = c["network_luts"] + c["adder_luts"] + enc + hw.POSTPROC_LUTS
+        return {**c, "encoder_comparators": int(comps), "encoder_comparator_bits": int(comp_bits),
+                "encoder_luts": int(enc), "postproc_luts": hw.POSTPROC_LUTS, "total_luts": int(total), "multipliers": 0}
+
+
 def torch_from(a):
     import torch
     return torch.from_numpy(np.ascontiguousarray(a))
@@ -813,7 +887,8 @@ class LateFusionDWN(Model):
 
 
 REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel,
-                                Int8MLPModel, StatefulDWNModel, LateFusionDWN, GRUFeatureModel)}
+                                Int8MLPModel, StatefulDWNModel, LateFusionDWN, GRUFeatureModel,
+                                LogicNetModel)}
 
 
 def build(spec: dict, log=None) -> Model:
