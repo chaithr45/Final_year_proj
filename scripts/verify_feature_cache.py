@@ -27,10 +27,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--mode", default="int")
     ap.add_argument("--fix", action="store_true")
+    ap.add_argument("--split", choices=["train", "test", "all"], default="all",
+                    help="which patients must be complete (the cache may hold more)")
     args = ap.parse_args()
     rows = {f"{r['subject']}_{r['run']}": r for r in csv.DictReader(open(REPO / "results/audit/runs.csv"))}
+    need = {k for k, r in rows.items() if args.split == "all" or r.get("split", args.split) == args.split}
     d = REPO / "cache" / "features" / args.mode
-    bad, n = [], 0
+    bad, n, done = [], 0, set()
     for p in sorted(d.glob("sub-*_run-*.npz")):
         if ".tmp" in p.name:
             continue
@@ -39,6 +42,7 @@ def main() -> int:
             bad.append((key, "not in audit"))
             continue
         n += 1
+        done.add(key)
         z = np.load(p)
         n_win = len(z["X"])
         exp_win = int(float(r["duration_eeg_s"])) - 1
@@ -62,13 +66,13 @@ def main() -> int:
     for k, why in bad:
         print(f"{k}: {why}")
     print(f"{n} runs checked, {len(bad)} disagree with the audit")
-    if n < len(rows):
-        print(f"INCOMPLETE: {len(rows) - n} of {len(rows)} audited runs have no cached features")
+    if need - done:
+        print(f"INCOMPLETE: {len(need - done)} of {len(need)} audited runs ({args.split}) have no cached features")
     if args.fix:
         for k, _ in bad:
             (d / f"{k}.npz").unlink(missing_ok=True)
         print(f"deleted {len(bad)} cache files")
-    return 1 if bad or n < len(rows) else 0
+    return 1 if bad or len(need - done) else 0
 
 
 if __name__ == "__main__":

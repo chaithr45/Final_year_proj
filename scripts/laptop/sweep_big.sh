@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 # The laptop's share of the Section 6.1 DWN sweep (decision D32): the 21 configs with >= 500 LUTs
 # except dwn_L500_b8_learn and dwn_L500_b16_learn, which run on the cloud. Builds the feature cache
-# first (streams from S3, resumable; runs already cached are skipped), checks it against the M1
-# audit, then trains on the GPU, most informative configs first. Start it with
+# of the 96 training patients first (the inner folds never read the test patients; streams from S3,
+# resumable: runs already cached are skipped), checks it against the M1 audit, then trains on the
+# GPU, most informative configs first. Start it with
 #   scripts/laptop/start.sh sweep
 set -euo pipefail
 cd "$(dirname "$0")/../.."
-python scripts/extract_features.py --workers 3
-python scripts/verify_feature_cache.py
+python scripts/extract_features.py --workers 3 --split train
+python scripts/verify_feature_cache.py --split train
 python scripts/make_dwn_sweep.py
 names=(
   dwn_L1000_b8_learn dwn_L1000_b16_learn dwn_L2000_b8_learn dwn_L2000_b16_learn
