@@ -1,0 +1,9 @@
+{
+  "name": "n4_distill_hardneg",
+  "seed": 0,
+  "git": {
+    "commit": "62f4782a635c832b78865c043be86877ac5b1375",
+    "dirty": false
+  },
+  "created": "20261108-181801"
+}
