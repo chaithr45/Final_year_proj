@@ -1,0 +1,41 @@
+# Full research environment for the GPU machine.
+# Create with:  conda env create -f environment.yml && conda activate seizelut
+# The torch / CUDA pair is provisional: match it to the GPU machine's driver
+# (`nvidia-smi`) before the first training run in M4, and record the change here.
+# torch-dwn and difflogic are NOT installed: both compile CUDA extensions at install time (they fail
+# without a CUDA toolkit, e.g. under WSL). src/models/dwn.py and src/models/lgn.py are pure-PyTorch
+# reimplementations; tests/test_dwn.py checks the DWN against the torch-dwn kernel's equations.
+# brevitas is not installed either: it pulls numpy<2, which breaks scikit-learn; src/models/mlp_int8.py
+# implements INT8 quantisation-aware training directly.
+# scipy comes from pip (1.18.1), not conda (1.16.3): SciPy 1.16's FFT needs ~3.3 GB for one 22 h EEG
+# channel whose length has a large prime factor (1.2 GB in 1.18.1), which ran an 8 GB WSL out of memory
+# in the ChronoNet data step.
+name: seizelut
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - numpy=2.3.4
+  - pandas=2.3.3
+  - scikit-learn=1.7.2
+  - pyyaml=6.0.3
+  - matplotlib=3.10.7
+  - numba=0.62.1
+  - pytest=8.4.2
+  - iverilog=12.0          # reference-Verilog check (M7)
+  - awscli                 # optional: `aws s3 sync --no-sign-request` download route
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cu124
+      - torch==2.6.0+cu124
+      - numpy==2.3.4         # pinned again here so no pip package can downgrade it
+      - scipy==1.18.1        # see the header: FFT memory on long recordings
+      - pyedflib==0.1.42
+      - openneuro-py==2026.9.1
+      - timescoring==0.0.7
+      - szcore-evaluation==0.0.7
+      - xgboost==3.1.1
+      - lightgbm==4.6.0
+      - catboost==1.2.8
+      - shap==0.49.1
+      - -e .

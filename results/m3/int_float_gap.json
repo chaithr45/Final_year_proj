@@ -1,0 +1,622 @@
+{
+ "runs": 115,
+ "background_fraction_kept": 0.1,
+ "subjects": [
+  "sub-001",
+  "sub-010",
+  "sub-020",
+  "sub-030",
+  "sub-040",
+  "sub-050",
+  "sub-060",
+  "sub-070",
+  "sub-080",
+  "sub-090"
+ ],
+ "windows": 333232,
+ "seizure_windows": 4936,
+ "artefact_agreement": {
+  "ch1": 0.9972421616171316,
+  "ch2": 0.996912061266625
+ },
+ "pearson_min": 0.8892541152244281,
+ "pearson_median": 0.9965404098023255,
+ "n_features_pearson_below_0.95": 7,
+ "lgbm_leave_patients_out": {
+  "int": {
+   "window_auroc": 0.7358649957460218,
+   "window_aupr": 0.06341037783864573
+  },
+  "float": {
+   "window_auroc": 0.7345076282653805,
+   "window_aupr": 0.0755383135583555
+  }
+ },
+ "per_feature": {
+  "eeg_mav_mean": {
+   "pearson": 0.9992046091289442,
+   "mean_abs_diff_lsb": 1.2055982923611934,
+   "p99_abs_diff_lsb": 1.9624252319335938
+  },
+  "eeg_mav_max": {
+   "pearson": 0.999292701046834,
+   "mean_abs_diff_lsb": 0.9491548114794521,
+   "p99_abs_diff_lsb": 1.6395545196533203
+  },
+  "eeg_mav_absdiff": {
+   "pearson": 0.9958190856211008,
+   "mean_abs_diff_lsb": 0.41377603624515163,
+   "p99_abs_diff_lsb": 1.2741515398025514
+  },
+  "eeg_ll_mean": {
+   "pearson": 0.9985377857498321,
+   "mean_abs_diff_lsb": 1.1618252497760864,
+   "p99_abs_diff_lsb": 1.9410916137695313
+  },
+  "eeg_ll_max": {
+   "pearson": 0.9989652517495633,
+   "mean_abs_diff_lsb": 0.9117901649253823,
+   "p99_abs_diff_lsb": 1.621846694946289
+  },
+  "eeg_ll_absdiff": {
+   "pearson": 0.9932328893272031,
+   "mean_abs_diff_lsb": 0.44893733857833706,
+   "p99_abs_diff_lsb": 1.378693826198578
+  },
+  "eeg_mob_mean": {
+   "pearson": 0.9930578058847259,
+   "mean_abs_diff_lsb": 0.41004470534171616,
+   "p99_abs_diff_lsb": 1.3002644634246827
+  },
+  "eeg_mob_max": {
+   "pearson": 0.9925206589565276,
+   "mean_abs_diff_lsb": 0.42694204121337465,
+   "p99_abs_diff_lsb": 1.314880523681641
+  },
+  "eeg_mob_absdiff": {
+   "pearson": 0.9691209120707417,
+   "mean_abs_diff_lsb": 0.60298433727662,
+   "p99_abs_diff_lsb": 1.9449959510192276
+  },
+  "eeg_zc_mean": {
+   "pearson": 0.998193548576224,
+   "mean_abs_diff_lsb": 0.8802440942046382,
+   "p99_abs_diff_lsb": 3.5
+  },
+  "eeg_zc_max": {
+   "pearson": 0.9975455338588097,
+   "mean_abs_diff_lsb": 1.0295409804580593,
+   "p99_abs_diff_lsb": 6.0
+  },
+  "eeg_zc_absdiff": {
+   "pearson": 0.9912744709070066,
+   "mean_abs_diff_lsb": 1.5057587506602006,
+   "p99_abs_diff_lsb": 6.0
+  },
+  "eeg_ext_mean": {
+   "pearson": 0.981944130245882,
+   "mean_abs_diff_lsb": 3.7226661905219185,
+   "p99_abs_diff_lsb": 11.5
+  },
+  "eeg_ext_max": {
+   "pearson": 0.9883609453923462,
+   "mean_abs_diff_lsb": 3.6464865319056994,
+   "p99_abs_diff_lsb": 14.0
+  },
+  "eeg_ext_absdiff": {
+   "pearson": 0.9350696170897557,
+   "mean_abs_diff_lsb": 3.5052425937484997,
+   "p99_abs_diff_lsb": 14.0
+  },
+  "eeg_delta_mean": {
+   "pearson": 0.999275714252547,
+   "mean_abs_diff_lsb": 1.1665277133820586,
+   "p99_abs_diff_lsb": 1.934790267944336
+  },
+  "eeg_delta_max": {
+   "pearson": 0.9993769451436065,
+   "mean_abs_diff_lsb": 0.9032051832459747,
+   "p99_abs_diff_lsb": 1.6043243408203125
+  },
+  "eeg_delta_absdiff": {
+   "pearson": 0.9965512441402394,
+   "mean_abs_diff_lsb": 0.4157759097757484,
+   "p99_abs_diff_lsb": 1.2933661079406744
+  },
+  "eeg_theta_mean": {
+   "pearson": 0.9990172146247722,
+   "mean_abs_diff_lsb": 1.222220227711499,
+   "p99_abs_diff_lsb": 1.9807110595703126
+  },
+  "eeg_theta_max": {
+   "pearson": 0.9991340414948592,
+   "mean_abs_diff_lsb": 0.9678762690811875,
+   "p99_abs_diff_lsb": 1.65802001953125
+  },
+  "eeg_theta_absdiff": {
+   "pearson": 0.9951569453485977,
+   "mean_abs_diff_lsb": 0.4114927188118785,
+   "p99_abs_diff_lsb": 1.2663207530975344
+  },
+  "eeg_alpha_mean": {
+   "pearson": 0.9990210445138882,
+   "mean_abs_diff_lsb": 1.2300409308007363,
+   "p99_abs_diff_lsb": 1.98199462890625
+  },
+  "eeg_alpha_max": {
+   "pearson": 0.999149572957957,
+   "mean_abs_diff_lsb": 0.9886398533620407,
+   "p99_abs_diff_lsb": 1.6643782043457032
+  },
+  "eeg_alpha_absdiff": {
+   "pearson": 0.9953542532309045,
+   "mean_abs_diff_lsb": 0.4126614100705518,
+   "p99_abs_diff_lsb": 1.269256443977356
+  },
+  "eeg_beta_mean": {
+   "pearson": 0.9991742235715296,
+   "mean_abs_diff_lsb": 1.2117572723456653,
+   "p99_abs_diff_lsb": 1.966494598388672
+  },
+  "eeg_beta_max": {
+   "pearson": 0.999261584309356,
+   "mean_abs_diff_lsb": 0.9503308358723991,
+   "p99_abs_diff_lsb": 1.6450424194335938
+  },
+  "eeg_beta_absdiff": {
+   "pearson": 0.9959767553292878,
+   "mean_abs_diff_lsb": 0.4145304498718013,
+   "p99_abs_diff_lsb": 1.2862082886695863
+  },
+  "eeg_hf_mean": {
+   "pearson": 0.9993680705493856,
+   "mean_abs_diff_lsb": 1.1958050198723158,
+   "p99_abs_diff_lsb": 1.9603000640869142
+  },
+  "eeg_hf_max": {
+   "pearson": 0.9994551491961918,
+   "mean_abs_diff_lsb": 0.9383638175770067,
+   "p99_abs_diff_lsb": 1.6479568481445312
+  },
+  "eeg_hf_absdiff": {
+   "pearson": 0.9969947900182913,
+   "mean_abs_diff_lsb": 0.4200715489964003,
+   "p99_abs_diff_lsb": 1.3187479782104494
+  },
+  "eeg_ch1_mav": {
+   "pearson": 0.9992513625301578,
+   "mean_abs_diff_lsb": 0.957915241801745,
+   "p99_abs_diff_lsb": 1.6444473266601562
+  },
+  "eeg_ch1_ll": {
+   "pearson": 0.9988819244131595,
+   "mean_abs_diff_lsb": 0.9096501737289442,
+   "p99_abs_diff_lsb": 1.6163435363769532
+  },
+  "eeg_ch1_mob": {
+   "pearson": 0.9942108556996823,
+   "mean_abs_diff_lsb": 0.4307214971202782,
+   "p99_abs_diff_lsb": 1.3211689376831055
+  },
+  "eeg_ch1_zc": {
+   "pearson": 0.9970552658994144,
+   "mean_abs_diff_lsb": 1.0315275843856533,
+   "p99_abs_diff_lsb": 6.0
+  },
+  "eeg_ch1_ext": {
+   "pearson": 0.9842013576523513,
+   "mean_abs_diff_lsb": 3.8173884860997744,
+   "p99_abs_diff_lsb": 14.0
+  },
+  "eeg_ch1_delta": {
+   "pearson": 0.9993299097884583,
+   "mean_abs_diff_lsb": 0.9204604432323796,
+   "p99_abs_diff_lsb": 1.6131415557861328
+  },
+  "eeg_ch1_theta": {
+   "pearson": 0.999058156212345,
+   "mean_abs_diff_lsb": 0.9707063097495493,
+   "p99_abs_diff_lsb": 1.6619391632080078
+  },
+  "eeg_ch1_alpha": {
+   "pearson": 0.9990790352268479,
+   "mean_abs_diff_lsb": 0.9745091517602235,
+   "p99_abs_diff_lsb": 1.6605892944335938
+  },
+  "eeg_ch1_beta": {
+   "pearson": 0.9992339570651363,
+   "mean_abs_diff_lsb": 0.9687771533542596,
+   "p99_abs_diff_lsb": 1.6508026123046875
+  },
+  "eeg_ch1_hf": {
+   "pearson": 0.9994029796445065,
+   "mean_abs_diff_lsb": 0.9544776595305073,
+   "p99_abs_diff_lsb": 1.652822036743164
+  },
+  "eeg_ch2_mav": {
+   "pearson": 0.9993752657732797,
+   "mean_abs_diff_lsb": 0.9585789006278359,
+   "p99_abs_diff_lsb": 1.6468048095703125
+  },
+  "eeg_ch2_ll": {
+   "pearson": 0.9981399416383828,
+   "mean_abs_diff_lsb": 0.9329102828904808,
+   "p99_abs_diff_lsb": 1.6415563201904297
+  },
+  "eeg_ch2_mob": {
+   "pearson": 0.9892442306331365,
+   "mean_abs_diff_lsb": 0.4534961735640241,
+   "p99_abs_diff_lsb": 1.3764080715179445
+  },
+  "eeg_ch2_zc": {
+   "pearson": 0.9976566607234242,
+   "mean_abs_diff_lsb": 0.8959853795553848,
+   "p99_abs_diff_lsb": 5.0
+  },
+  "eeg_ch2_ext": {
+   "pearson": 0.9670288402460911,
+   "mean_abs_diff_lsb": 3.5449026504057235,
+   "p99_abs_diff_lsb": 14.0
+  },
+  "eeg_ch2_delta": {
+   "pearson": 0.9994300371733746,
+   "mean_abs_diff_lsb": 0.9166096137696075,
+   "p99_abs_diff_lsb": 1.6208853912353516
+  },
+  "eeg_ch2_theta": {
+   "pearson": 0.9992849178465664,
+   "mean_abs_diff_lsb": 0.9768251816504182,
+   "p99_abs_diff_lsb": 1.6609168243408203
+  },
+  "eeg_ch2_alpha": {
+   "pearson": 0.9992785870786033,
+   "mean_abs_diff_lsb": 0.9876730658012717,
+   "p99_abs_diff_lsb": 1.664418716430664
+  },
+  "eeg_ch2_beta": {
+   "pearson": 0.9993364043641516,
+   "mean_abs_diff_lsb": 0.9628637219675584,
+   "p99_abs_diff_lsb": 1.649648208618164
+  },
+  "eeg_ch2_hf": {
+   "pearson": 0.9994731280124101,
+   "mean_abs_diff_lsb": 0.9478133513098999,
+   "p99_abs_diff_lsb": 1.6522650909423828
+  },
+  "eeg_sign_agree": {
+   "pearson": 0.9966275169544409,
+   "mean_abs_diff_lsb": 2.1857774763528113,
+   "p99_abs_diff_lsb": 8.0
+  },
+  "eeg_art_ch1": {
+   "pearson": 0.9938569196026557,
+   "mean_abs_diff_lsb": 0.002757838382868392,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "eeg_art_ch2": {
+   "pearson": 0.9938126827644332,
+   "mean_abs_diff_lsb": 0.003087938733374946,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "ecg_log_rr": {
+   "pearson": 0.9977168170405286,
+   "mean_abs_diff_lsb": 0.5043605455841901,
+   "p99_abs_diff_lsb": 1.5030632019042969
+  },
+  "ecg_log_masrd": {
+   "pearson": 0.9848484192820616,
+   "mean_abs_diff_lsb": 0.9667428048922213,
+   "p99_abs_diff_lsb": 7.372691020965577
+  },
+  "ecg_quality_bad": {
+   "pearson": 0.9701308163830028,
+   "mean_abs_diff_lsb": 0.010284126374417822,
+   "p99_abs_diff_lsb": 1.0
+  },
+  "emg_mav": {
+   "pearson": 0.9997436830399222,
+   "mean_abs_diff_lsb": 0.9766113925536516,
+   "p99_abs_diff_lsb": 1.6754126739501953
+  },
+  "emg_ll": {
+   "pearson": 0.99973304890601,
+   "mean_abs_diff_lsb": 0.9708837407878605,
+   "p99_abs_diff_lsb": 1.6717816162109376
+  },
+  "emg_zc": {
+   "pearson": 0.9623510747071878,
+   "mean_abs_diff_lsb": 1.231109257214193,
+   "p99_abs_diff_lsb": 6.0
+  },
+  "emg_hl_ratio": {
+   "pearson": 0.9713356160932799,
+   "mean_abs_diff_lsb": 0.41212757490693674,
+   "p99_abs_diff_lsb": 1.27904354095459
+  },
+  "mov_acc_mag": {
+   "pearson": 0.9987824041184512,
+   "mean_abs_diff_lsb": 0.9993770972260319,
+   "p99_abs_diff_lsb": 3.0577020263671884
+  },
+  "mov_acc_jerk": {
+   "pearson": 0.9996205377485466,
+   "mean_abs_diff_lsb": 0.9028448419332499,
+   "p99_abs_diff_lsb": 1.7091040802001953
+  },
+  "mov_acc_act": {
+   "pearson": 0.9999489864875828,
+   "mean_abs_diff_lsb": 0.005926801747731311,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "mov_acc_band": {
+   "pearson": 0.9993751283033255,
+   "mean_abs_diff_lsb": 0.9195049413519082,
+   "p99_abs_diff_lsb": 2.455089340209961
+  },
+  "mov_gyr_mag": {
+   "pearson": 0.9973259601348143,
+   "mean_abs_diff_lsb": 1.1819642971657103,
+   "p99_abs_diff_lsb": 6.102844963073732
+  },
+  "mov_gyr_jerk": {
+   "pearson": 0.9997002648224139,
+   "mean_abs_diff_lsb": 0.8927402962656519,
+   "p99_abs_diff_lsb": 1.6986744689941409
+  },
+  "mov_gyr_act": {
+   "pearson": 0.9999447182656024,
+   "mean_abs_diff_lsb": 0.007055144764008259,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "mov_gyr_band": {
+   "pearson": 0.9995296161140719,
+   "mean_abs_diff_lsb": 0.8804380001303874,
+   "p99_abs_diff_lsb": 2.0954347038269048
+  },
+  "present_ecg": {
+   "pearson": 1.0,
+   "mean_abs_diff_lsb": 0.0,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "present_emg": {
+   "pearson": 1.0,
+   "mean_abs_diff_lsb": 0.0,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "present_mov_acc": {
+   "pearson": 1.0,
+   "mean_abs_diff_lsb": 0.0,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "present_mov_gyr": {
+   "pearson": 1.0,
+   "mean_abs_diff_lsb": 0.0,
+   "p99_abs_diff_lsb": 0.0
+  },
+  "eeg_mav_mean_ctx": {
+   "pearson": 0.9937252625240415,
+   "mean_abs_diff_lsb": 0.9575219359465014,
+   "p99_abs_diff_lsb": 2.0169700032472613
+  },
+  "eeg_mav_max_ctx": {
+   "pearson": 0.9954209298911717,
+   "mean_abs_diff_lsb": 0.9667203149818073,
+   "p99_abs_diff_lsb": 2.044969060458243
+  },
+  "eeg_mav_absdiff_ctx": {
+   "pearson": 0.9851578844987466,
+   "mean_abs_diff_lsb": 0.9793033314548996,
+   "p99_abs_diff_lsb": 2.309377959370613
+  },
+  "eeg_ll_mean_ctx": {
+   "pearson": 0.9889756043970171,
+   "mean_abs_diff_lsb": 0.9285310123992174,
+   "p99_abs_diff_lsb": 1.9970349788665775
+  },
+  "eeg_ll_max_ctx": {
+   "pearson": 0.9917231037172923,
+   "mean_abs_diff_lsb": 0.9424963734016106,
+   "p99_abs_diff_lsb": 2.0253338763676583
+  },
+  "eeg_ll_absdiff_ctx": {
+   "pearson": 0.9761488072592122,
+   "mean_abs_diff_lsb": 0.9579293313702891,
+   "p99_abs_diff_lsb": 2.275367098450661
+  },
+  "eeg_mob_mean_ctx": {
+   "pearson": 0.9692369155693372,
+   "mean_abs_diff_lsb": 0.9630287444204221,
+   "p99_abs_diff_lsb": 2.171573206931353
+  },
+  "eeg_mob_max_ctx": {
+   "pearson": 0.9616674460732101,
+   "mean_abs_diff_lsb": 0.9718706533800895,
+   "p99_abs_diff_lsb": 2.2974252206087113
+  },
+  "eeg_mob_absdiff_ctx": {
+   "pearson": 0.9402263161090259,
+   "mean_abs_diff_lsb": 1.0103607920861297,
+   "p99_abs_diff_lsb": 2.7498318976163865
+  },
+  "eeg_zc_mean_ctx": {
+   "pearson": 0.99035436766927,
+   "mean_abs_diff_lsb": 1.2617311135833853,
+   "p99_abs_diff_lsb": 4.197748806476593
+  },
+  "eeg_zc_max_ctx": {
+   "pearson": 0.9868907077658526,
+   "mean_abs_diff_lsb": 1.5563695535460744,
+   "p99_abs_diff_lsb": 5.592705373764039
+  },
+  "eeg_zc_absdiff_ctx": {
+   "pearson": 0.9703430967257541,
+   "mean_abs_diff_lsb": 1.9213436482048447,
+   "p99_abs_diff_lsb": 7.126610498428345
+  },
+  "eeg_ext_mean_ctx": {
+   "pearson": 0.9576440689931659,
+   "mean_abs_diff_lsb": 2.0015557789039233,
+   "p99_abs_diff_lsb": 6.4901491546630865
+  },
+  "eeg_ext_max_ctx": {
+   "pearson": 0.9406837191830998,
+   "mean_abs_diff_lsb": 2.648632647500033,
+   "p99_abs_diff_lsb": 9.189824187904597
+  },
+  "eeg_ext_absdiff_ctx": {
+   "pearson": 0.8892541152244281,
+   "mean_abs_diff_lsb": 3.3685910816979066,
+   "p99_abs_diff_lsb": 12.522441560328009
+  },
+  "eeg_delta_mean_ctx": {
+   "pearson": 0.9955240976049322,
+   "mean_abs_diff_lsb": 0.9754402219184364,
+   "p99_abs_diff_lsb": 2.035715339444578
+  },
+  "eeg_delta_max_ctx": {
+   "pearson": 0.9966848658760646,
+   "mean_abs_diff_lsb": 0.9787347469250267,
+   "p99_abs_diff_lsb": 2.0669672729074957
+  },
+  "eeg_delta_absdiff_ctx": {
+   "pearson": 0.9900505137954152,
+   "mean_abs_diff_lsb": 0.9947196410477666,
+   "p99_abs_diff_lsb": 2.3320779937505725
+  },
+  "eeg_theta_mean_ctx": {
+   "pearson": 0.991121862845467,
+   "mean_abs_diff_lsb": 0.9577197735380726,
+   "p99_abs_diff_lsb": 2.0287378563918175
+  },
+  "eeg_theta_max_ctx": {
+   "pearson": 0.993863069822725,
+   "mean_abs_diff_lsb": 0.9679540503407986,
+   "p99_abs_diff_lsb": 2.053157698586584
+  },
+  "eeg_theta_absdiff_ctx": {
+   "pearson": 0.9833608149828875,
+   "mean_abs_diff_lsb": 0.9829566637168617,
+   "p99_abs_diff_lsb": 2.3146777784824373
+  },
+  "eeg_alpha_mean_ctx": {
+   "pearson": 0.9901046878926877,
+   "mean_abs_diff_lsb": 0.9470796515870442,
+   "p99_abs_diff_lsb": 2.0100630825757984
+  },
+  "eeg_alpha_max_ctx": {
+   "pearson": 0.9931406939961742,
+   "mean_abs_diff_lsb": 0.962009656094427,
+   "p99_abs_diff_lsb": 2.0501998901367187
+  },
+  "eeg_alpha_absdiff_ctx": {
+   "pearson": 0.9804487906072958,
+   "mean_abs_diff_lsb": 0.975200741081615,
+   "p99_abs_diff_lsb": 2.295090747475625
+  },
+  "eeg_beta_mean_ctx": {
+   "pearson": 0.9907766591670948,
+   "mean_abs_diff_lsb": 0.9282676670794476,
+   "p99_abs_diff_lsb": 1.994337489195168
+  },
+  "eeg_beta_max_ctx": {
+   "pearson": 0.9933781002958696,
+   "mean_abs_diff_lsb": 0.948410501480654,
+   "p99_abs_diff_lsb": 2.016706908345223
+  },
+  "eeg_beta_absdiff_ctx": {
+   "pearson": 0.9790370599933824,
+   "mean_abs_diff_lsb": 0.9594314615017592,
+   "p99_abs_diff_lsb": 2.266757624149323
+  },
+  "eeg_hf_mean_ctx": {
+   "pearson": 0.9926926355193353,
+   "mean_abs_diff_lsb": 0.9377383919955155,
+   "p99_abs_diff_lsb": 1.9815881424583497
+  },
+  "eeg_hf_max_ctx": {
+   "pearson": 0.9945523727125071,
+   "mean_abs_diff_lsb": 0.9462096949131333,
+   "p99_abs_diff_lsb": 2.0008894813060767
+  },
+  "eeg_hf_absdiff_ctx": {
+   "pearson": 0.9810421964564748,
+   "mean_abs_diff_lsb": 0.9463495899462957,
+   "p99_abs_diff_lsb": 2.2637140798568725
+  },
+  "eeg_sign_agree_ctx": {
+   "pearson": 0.991529138631113,
+   "mean_abs_diff_lsb": 2.3861430860969004,
+   "p99_abs_diff_lsb": 8.583623208999635
+  },
+  "ecg_log_rr_ctx": {
+   "pearson": 0.9779698847292089,
+   "mean_abs_diff_lsb": 0.804426783131761,
+   "p99_abs_diff_lsb": 2.0328487992286686
+  },
+  "ecg_log_masrd_ctx": {
+   "pearson": 0.9492720523941963,
+   "mean_abs_diff_lsb": 1.3304005301889672,
+   "p99_abs_diff_lsb": 7.1506763744354265
+  },
+  "emg_mav_ctx": {
+   "pearson": 0.9965404098023255,
+   "mean_abs_diff_lsb": 0.93072086152178,
+   "p99_abs_diff_lsb": 1.9662230521440507
+  },
+  "emg_ll_ctx": {
+   "pearson": 0.9965710267437785,
+   "mean_abs_diff_lsb": 0.9449998652103349,
+   "p99_abs_diff_lsb": 2.005583770275116
+  },
+  "emg_zc_ctx": {
+   "pearson": 0.9461905238265372,
+   "mean_abs_diff_lsb": 1.6593483758223324,
+   "p99_abs_diff_lsb": 7.138664326667788
+  },
+  "emg_hl_ratio_ctx": {
+   "pearson": 0.910435432172997,
+   "mean_abs_diff_lsb": 0.9094333405630305,
+   "p99_abs_diff_lsb": 2.213318408578635
+  },
+  "mov_acc_mag_ctx": {
+   "pearson": 0.9946969778982611,
+   "mean_abs_diff_lsb": 1.0239967421225857,
+   "p99_abs_diff_lsb": 2.962718348503113
+  },
+  "mov_acc_jerk_ctx": {
+   "pearson": 0.99717465428339,
+   "mean_abs_diff_lsb": 0.968176702646623,
+   "p99_abs_diff_lsb": 2.1548300838470458
+  },
+  "mov_acc_act_ctx": {
+   "pearson": 0.997368652855842,
+   "mean_abs_diff_lsb": 0.36080731143582573,
+   "p99_abs_diff_lsb": 1.459639847278595
+  },
+  "mov_acc_band_ctx": {
+   "pearson": 0.9969383418631407,
+   "mean_abs_diff_lsb": 0.9909710149142877,
+   "p99_abs_diff_lsb": 2.4125835037231447
+  },
+  "mov_gyr_mag_ctx": {
+   "pearson": 0.9910904334701808,
+   "mean_abs_diff_lsb": 1.1143331217152166,
+   "p99_abs_diff_lsb": 4.752510089874269
+  },
+  "mov_gyr_jerk_ctx": {
+   "pearson": 0.9979359871968778,
+   "mean_abs_diff_lsb": 0.9683738487083943,
+   "p99_abs_diff_lsb": 2.171085572242737
+  },
+  "mov_gyr_act_ctx": {
+   "pearson": 0.997164071865331,
+   "mean_abs_diff_lsb": 0.39434620330471915,
+   "p99_abs_diff_lsb": 1.4660608410835267
+  },
+  "mov_gyr_band_ctx": {
+   "pearson": 0.9975235775454955,
+   "mean_abs_diff_lsb": 0.9837331573509908,
+   "p99_abs_diff_lsb": 2.387243563234807
+  }
+ }
+}

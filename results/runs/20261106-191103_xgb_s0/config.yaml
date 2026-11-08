@@ -1,0 +1,30 @@
+name: xgb
+seed: 0
+model:
+  type: xgb
+  params:
+    n_estimators: 300
+    max_depth: 6
+    learning_rate: 0.05
+features: all
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json

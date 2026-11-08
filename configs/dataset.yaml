@@ -1,0 +1,40 @@
+# SeizeIT2 dataset settings shared by every experiment.
+dataset:
+  name: SeizeIT2
+  openneuro_id: ds005873
+  version: "1.1.0"                       # dataset_description.json DatasetDOI (v1.1.0 corrected the accelerometer data)
+  doi: "10.18112/openneuro.ds005873.v1.1.0"
+  root: data/raw/ds005873                # never committed
+  s3_url: https://s3.amazonaws.com/openneuro.org/ds005873
+  session: ses-01
+  task: szMonitoring
+  modalities: [eeg, ecg, emg, mov]
+
+# Official split (dataset paper; biomedepi/seizeit2 net/datasets/SZ2_*.tsv).
+# The release has no separate test split: the official "validation" patients are our test set.
+split:
+  train: {first: 1, last: 96}            # sub-001 .. sub-096
+  test: {first: 97, last: 125}           # sub-097 .. sub-125
+  inner_folds: 5
+  inner_fold_seed: 20261106
+  inner_folds_file: configs/folds_inner5.json
+
+# Section 5.1. Windows are defined in seconds and mapped to samples per modality,
+# so the code never assumes a fixed sampling rate (the audit found 256 Hz files).
+windows:
+  length_s: 2.0
+  hop_s: 1.0
+  seizure_aug_hop_s: 0.5                 # training only
+  label_min_overlap: 0.5                 # SzCORE sample-based rule
+  artefact_rms_uv: [13.0, 150.0]         # official rule: RMS outside -> artefact flag
+
+# Expected values from the prompt / dataset paper, checked by scripts/verify_data.py.
+expected:
+  n_subjects: 125
+  n_female: 51
+  total_hours: 11640
+  n_seizures: 886
+  train_seizures: 704
+  test_seizures: 182
+  fs_biopotential_hz: 250
+  fs_motion_hz: 25
