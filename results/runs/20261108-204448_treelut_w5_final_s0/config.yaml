@@ -1,0 +1,32 @@
+name: treelut_w5
+seed: 0
+model:
+  type: treelut
+  params:
+    w_feature: 8
+    w_tree: 5
+    n_estimators: 100
+    max_depth: 4
+    learning_rate: 0.3
+    device: cpu
+features: all
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+cv_run: 20261106-194800_treelut_w5_s0
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
