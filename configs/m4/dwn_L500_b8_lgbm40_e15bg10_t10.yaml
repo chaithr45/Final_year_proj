@@ -1,0 +1,35 @@
+# Large-DWN check at the D34 features (D35, laptop GPU): 500 LUTs, tau 1/0.1 (Section 6.1 ablation); otherwise dwn_L50_b8_lgbm40_e15bg10.
+features:
+  rank_by: lgbm
+  top: 40
+model:
+  params:
+    batch: 2048
+    bits: 8
+    decay_at: 0.7
+    device: cuda
+    epochs: 15
+    layers:
+    - 500
+    loss: ce
+    lr: 0.01
+    mapping: learnable
+    n: 6
+    tau: 10.0
+    threads: 8
+  type: dwn
+name: dwn_L500_b8_lgbm40_e15bg10_t10
+post:
+  gate:
+  - none
+  - both
+  - any
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  n_thresholds: 40
+seed: 0
+train:
+  bg_ratio: 10

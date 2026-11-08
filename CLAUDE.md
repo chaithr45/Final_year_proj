@@ -22,10 +22,11 @@ status are in `README.md`; every decision and result is in `results/decisions.md
 ### If you are the laptop session
 
 1. Your jobs are in `reports/LAPTOP_RUNBOOK.md` and start with `scripts/laptop/start.sh <job>` (tmux; every job
-   resumes, so after an interruption run the same command again). Jobs in order, one at a time:
-   `sweep` (builds the training feature cache, then trains 21 DWN configs; progress `tail -n 3 logs/sweep.log`),
-   then `raw` (raw-EEG CNN and TCN, `logs/raw.log`). Start the next job when the log of the previous one ends
-   with "finished (exit 0)".
+   resumes, so after an interruption run the same command again). **Current job: `big`** (decision D35; it replaces
+   `sweep`). If the `sweep` session is still running, stop it first with `tmux kill-session -t sweep` (its feature
+   extraction resumes inside `big`; nothing finished is lost), then `scripts/laptop/start.sh big`. `big` finishes the
+   training feature cache, trains 9 large DWN configs, then the raw-EEG CNN and TCN, and pushes the finished runs
+   itself. Progress: `tail -n 3 logs/big.log`. It is done when that log ends with "finished (exit 0)".
 2. Send finished runs with `scripts/laptop/push_runs.sh` (it also sends `reports/LAPTOP_STATUS.md`).
 3. If a job fails, read the log and retry once. If it fails again, do not edit `src/`, `scripts/` or configs:
    write the error, the log excerpt and your diagnosis into `reports/LAPTOP_STATUS.md` and run `push_runs.sh`.
@@ -38,5 +39,6 @@ status are in `README.md`; every decision and result is in `results/decisions.md
 ### If you are the cloud session
 
 Do not edit a script while the laptop is running it (bash reads scripts as it runs them); currently
-`scripts/laptop/sweep_big.sh`. Laptop results arrive as commits named "Laptop runs: ..."; regenerate the tables
+`scripts/laptop/big_lgbm.sh` (and `scripts/laptop/sweep_big.sh` if the
+laptop has not switched yet). Laptop results arrive as commits named "Laptop runs: ..."; regenerate the tables
 (`python scripts/make_tables.py`) and log them in `results/decisions.md`.

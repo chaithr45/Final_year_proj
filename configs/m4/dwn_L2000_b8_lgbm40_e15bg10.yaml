@@ -1,0 +1,35 @@
+# Large-DWN check at the D34 features (D35, laptop GPU): 2000 LUTs; otherwise dwn_L50_b8_lgbm40_e15bg10.
+features:
+  rank_by: lgbm
+  top: 40
+model:
+  params:
+    batch: 2048
+    bits: 8
+    decay_at: 0.7
+    device: cuda
+    epochs: 15
+    layers:
+    - 2000
+    loss: ce
+    lr: 0.01
+    mapping: learnable
+    n: 6
+    tau: 3.3333
+    threads: 8
+  type: dwn
+name: dwn_L2000_b8_lgbm40_e15bg10
+post:
+  gate:
+  - none
+  - both
+  - any
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  n_thresholds: 40
+seed: 0
+train:
+  bg_ratio: 10

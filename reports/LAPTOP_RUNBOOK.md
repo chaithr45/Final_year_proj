@@ -105,26 +105,34 @@ git pull && scripts/laptop/push_runs.sh
 
 Pulling while `finish` is running is safe: the running steps have already loaded their code.
 
-## 3. M4: DWN size sweep on the inner folds (the laptop's share, D32)
+## 3. Current job: large DWNs on the LightGBM-gain features, then the raw-EEG CNN and TCN (D35)
+
+If the old `sweep` job is still running, stop it first (its feature extraction resumes in the new job):
 
 ```bash
-scripts/laptop/start.sh sweep
+tmux kill-session -t sweep
 ```
-
-Builds the feature cache first if it is missing (streams the recordings from S3: hours, depending on the
-connection; runs already cached are skipped), checks it against the M1 audit, then trains the 21 configs with
->= 500 LUTs on the GPU, most informative first. Three extraction workers, not more: each holds a whole
-recording in memory and WSL has 7.4 GB. The cloud runs the rest of the grid. Send finished runs with
-`scripts/laptop/push_runs.sh` (any time; unfinished runs are skipped).
-
-## 4. Raw-EEG 1-D CNN and TCN references (after the sweep)
 
 ```bash
-scripts/laptop/start.sh raw
+git pull && scripts/laptop/start.sh big
 ```
+
+Finishes and checks the training feature cache (streams the recordings from S3; runs already cached are
+skipped; three workers, not more: each holds a whole recording in memory and WSL has 7.4 GB), trains 9 DWN
+configs on the GPU (500, 1000 and 2000 LUTs at 8 bits, 1000 LUTs at 16 bits, then the Section 6.1 ablations at
+500 LUTs: 4- and 5-input LUTs, tau 1 and 10, two layers), then the raw-EEG CNN and TCN (section 4), and pushes
+the finished runs itself (`scripts/laptop/push_runs.sh`). Progress: `tail -n 3 logs/big.log`.
+
+The old `sweep` job (21 configs on the mutual-information features, `scripts/laptop/sweep_big.sh`) is
+superseded: D34 showed that the LightGBM-gain features beat them at the same size, so the size question is
+asked again on the new features.
+
+## 4. Raw-EEG 1-D CNN and TCN references (part of `big`)
+
+Runs inside `big`; on its own (e.g. after a fix): `scripts/laptop/start.sh raw`.
 
 Trains both on the ChronoNet cache of the 96 training patients (already on the laptop), fold by fold,
 then streams the held-out patients' EEG once per fold and scores every second (most of the time goes
-into streaming: roughly the 96 patients' EEG once). Uses the training feature cache from `sweep` for
+into streaming: roughly the 96 patients' EEG once). Uses the training feature cache from `big` for
 the artefact flags and labels. Resumable per fold, recording and epoch. The GRU reference runs on the
-cloud (`configs/m4/gru_mi40.yaml`).
+cloud (`configs/m4/gru_lgbm40.yaml`).
