@@ -1,6 +1,6 @@
 # Chapter 5. Work done so far and results
 
-The project is organised in eight milestones (M1–M8). Phase 1 of the B.Tech project covers M1–M4 and most of M5;
+We have been working on this project for about two months. It is organised in eight milestones (M1–M8). Phase 1 of the B.Tech project covers M1–M4 and most of M5;
 Phase 2 covers the rest of M5, the final test (M6), the hardware handoff (M7), the FPGA implementation and the
 paper (M8). All numbers in this chapter come from result files in the repository (`results/`), and all model
 results are from cross-validation on the 96 training patients: **no model of ours has been scored on the 29 test

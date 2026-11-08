@@ -18,7 +18,7 @@ from behind-the-ear EEG, ECG, EMG and motion signals in patients it has never se
 classifier and a budget of a few thousand LUTs.
 
 We use SeizeIT2, a public wearable dataset of 125 patients with focal epilepsy (11,626 hours, 883 seizures), with its
-official split into 96 training and 29 test patients. Phase 1 covered: a complete audit of the dataset, which found
+official split into 96 training and 29 test patients. Phase 1, the first two months of the project, covered: a complete audit of the dataset, which found
 that it differs from its documentation (256 Hz instead of 250 Hz, 883 instead of 886 seizures); an independent
 reproduction of the published ChronoNet baseline, which was only partly reproduced and whose released code selects
 its model on the test patients; a bit-exact integer feature pipeline of 117 features that loses no accuracy against
