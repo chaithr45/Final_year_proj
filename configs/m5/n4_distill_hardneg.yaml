@@ -1,4 +1,4 @@
-# Tier-2 variant of dwn_L50_b8_learn (scripts/make_m5_configs.py)
+# Tier-2 variant of dwn_L50_b8_lgbm40_e15bg10 (scripts/make_m5_configs.py)
 name: n4_distill_hardneg
 seed: 0
 model:
@@ -10,9 +10,9 @@ model:
     n: 6
     mapping: learnable
     tau: 3.3333
-    epochs: 30
+    epochs: 15
     lr: 0.01
-    batch: 4096
+    batch: 2048
     decay_at: 0.7
     loss: ce
     device: cuda
@@ -20,9 +20,10 @@ model:
     distill_alpha: 0.5
     distill_T: 2.0
 features:
-  mi_top: 40
+  rank_by: lgbm
+  top: 40
 train:
-  bg_ratio: 20
+  bg_ratio: 10
   distill:
     teacher: &id001
       type: lgbm
@@ -45,4 +46,4 @@ post:
   - both
   - any
   n_thresholds: 40
-base_config: dwn_L50_b8_learn
+base_config: dwn_L50_b8_lgbm40_e15bg10

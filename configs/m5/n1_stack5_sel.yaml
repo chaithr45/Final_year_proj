@@ -1,0 +1,38 @@
+# Tier-2 variant of dwn_L50_b8_lgbm40_e15bg10 (scripts/make_m5_configs.py)
+name: n1_stack5_sel
+seed: 0
+model:
+  type: dwn
+  params:
+    bits: 8
+    layers:
+    - 50
+    n: 6
+    mapping: learnable
+    tau: 3.3333
+    epochs: 15
+    lr: 0.01
+    batch: 2048
+    decay_at: 0.7
+    loss: ce
+    device: cuda
+    threads: 8
+features:
+  rank_by: lgbm
+  top: 40
+  rank_on: base
+train:
+  bg_ratio: 10
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+base_config: dwn_L50_b8_lgbm40_e15bg10
+stack: 5
