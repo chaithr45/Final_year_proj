@@ -1,0 +1,92 @@
+{
+ "run": "20261108-082813_dwn_L50_b8_lgbm40_e15bg10_s0",
+ "operating_point": {
+  "gate": "none",
+  "k": 10,
+  "threshold": 10.0
+ },
+ "by_class": {
+  "FIA": {
+   "seizures": 289,
+   "detected": 50,
+   "sensitivity": 0.17301038062283736
+  },
+  "FA": {
+   "seizures": 274,
+   "detected": 26,
+   "sensitivity": 0.0948905109489051
+  },
+  "focal_unknown_awareness": {
+   "seizures": 101,
+   "detected": 8,
+   "sensitivity": 0.07920792079207921
+  },
+  "FBTC": {
+   "seizures": 33,
+   "detected": 29,
+   "sensitivity": 0.8787878787878788
+  },
+  "unknown_onset": {
+   "seizures": 1,
+   "detected": 0,
+   "sensitivity": 0.0
+  }
+ },
+ "missing_modality": {
+  "intact": {
+   "f1": 0.21109328886678116,
+   "sensitivity": 0.31485046625671625,
+   "precision": 0.24610748454939677,
+   "fp_per_24h": 2.4244280404237304,
+   "vs_intact": null
+  },
+  "no_ecg": {
+   "f1": 0.09175040461855793,
+   "sensitivity": 0.1076100837038337,
+   "precision": 0.13435528910012853,
+   "fp_per_24h": 0.8174689928706013,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 252.0,
+    "p": 2.401324404918959e-05
+   }
+  },
+  "no_emg": {
+   "f1": 0.19885844319440696,
+   "sensitivity": 0.26938702204327203,
+   "precision": 0.26166399916399913,
+   "fp_per_24h": 1.6066217890736259,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 542.5,
+    "p": 0.6407010529845959
+   }
+  },
+  "no_mov": {
+   "f1": 0.1363063106308353,
+   "sensitivity": 0.24760991964116963,
+   "precision": 0.15274204269958724,
+   "fp_per_24h": 5.170444232639681,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 447.5,
+    "p": 0.004244710869959586
+   }
+  },
+  "eeg_only": {
+   "f1": 0.07403649591149591,
+   "sensitivity": 0.10897015709515707,
+   "precision": 0.10736428313362956,
+   "fp_per_24h": 1.4175661972033236,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": -0.04926114715271342,
+    "statistic": 244.5,
+    "p": 2.2316293265222155e-06
+   }
+  }
+ }
+}
