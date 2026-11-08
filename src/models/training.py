@@ -23,9 +23,13 @@ MODALITY_PREFIX = {"ecg": ("ecg_", "present_ecg"), "emg": ("emg_", "present_emg"
 DWN_LIKE = ("dwn", "dwn_late")
 
 
+TORCH_TYPES = ("dwn", "dwn_late", "stateful_dwn", "gru", "lgn", "mlp_int8", "logicnet")
+
+
 def set_device(cfg: dict, device: str | None) -> None:
-    """Override the model's torch device, for models that take one (sequence models train on the CPU)."""
-    if not device:
+    """Override the model's torch device, for the PyTorch-trained models only: the tree and linear wrappers pass
+    their parameters straight to their libraries, and CatBoost and scikit-learn reject a `device` argument."""
+    if not device or cfg["model"]["type"] not in TORCH_TYPES:
         return
     import inspect
     from .registry import REGISTRY

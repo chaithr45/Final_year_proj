@@ -315,3 +315,17 @@ def test_hard_negative_retraining_keeps_distillation(tmp_path, monkeypatch):
     subjects = [f"sub-{s:03d}" for s in range(1, 5)]
     fit_config(cfg, store, subjects, 0, lambda *a, **k: None)
     assert len(calls) == 2 and all("soft" in c for c in calls), calls
+
+
+def test_set_device_only_touches_torch_models():
+    """--device must not reach CatBoost or scikit-learn (the M6 run of both once crashed on it)."""
+    from seizelut.models.registry import build
+    from seizelut.models.training import set_device
+    for typ, params in (("catboost", {"iterations": 5}), ("rf", {"n_estimators": 5}), ("lgbm", {}), ("lr", {})):
+        cfg = {"model": {"type": typ, "params": dict(params)}}
+        set_device(cfg, "cpu")
+        assert "device" not in cfg["model"]["params"]
+        build(cfg["model"])
+    cfg = {"model": {"type": "dwn", "params": {"layers": [8]}}}
+    set_device(cfg, "cpu")
+    assert cfg["model"]["params"]["device"] == "cpu"
