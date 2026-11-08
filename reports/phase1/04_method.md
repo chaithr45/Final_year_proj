@@ -15,14 +15,7 @@ The detector is meant to run on a small FPGA inside a wearable, next to the sens
 
 ## 4.2 System overview
 
-```
- bte-EEG (2 ch, 256 Hz) ─┐
- ECG (256 Hz) ───────────┤   integer front end           feature        thermometer       LUT network        decision
- EMG (256 Hz) ───────────┼─► (biquad filters, 1-s block ─► selection ──► encoder      ──►  (50 LUT6,     ──► logic      ──► alarm
- ACC + GYR (25 Hz) ──────┘    sums, 2-s windows,          (40 of 117)    (8 comparators    learnable         (threshold,
-                               117 integer features)                      per feature)      mapping,          k of 10 s,
-                                                                                            popcount score)   artefact gate)
-```
+![Block diagram of the proposed detector (estimated LUTs of the base configuration)](figures/system_overview.png)
 
 Every second the front end produces one feature vector describing the last 2 seconds (2-s windows, 1-s hop). The
 encoder turns each selected feature into 8 bits by comparing it with 8 thresholds; the LUT network maps those bits
