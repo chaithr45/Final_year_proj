@@ -107,8 +107,15 @@ def lgbm_select(fspec, X, y, cols, names, seed, log):
 
 
 def rank_select(fspec, X, y, cols, names, stack, seed, log):
-    """Per-training-set feature selection: mutual information (mi_top) or LightGBM gain (rank_by: lgbm, top)."""
+    """Per-training-set feature selection: mutual information (mi_top) or LightGBM gain (rank_by: lgbm, top).
+    For stacked windows with rank_on: base, LightGBM ranks the current window's columns and every lag of the
+    winners is kept (as mi_on: base, D31)."""
     if fspec.get("rank_by") == "lgbm":
+        if stack > 1 and fspec.get("rank_on") == "base":
+            nF = len(S.FEATURES)
+            cur = list(range((stack - 1) * nF, stack * nF))
+            top = lgbm_select(fspec, X, y, cur, names, seed, log)
+            return [b * nF + (c - (stack - 1) * nF) for c in top for b in range(stack)]
         return lgbm_select(fspec, X, y, cols, names, seed, log)
     return mi_select(fspec, X, y, cols, names, stack, seed, log)
 

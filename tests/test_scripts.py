@@ -4,6 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO = Path(__file__).resolve().parents[1]
 
 
@@ -155,20 +157,25 @@ def test_run_inner_cv_end_to_end_with_tier2_switches(tmp_path):
     assert set(b["missing_modality"]) == {"intact", "no_ecg", "no_emg", "no_mov", "eeg_only"}
 
 
-def test_every_m5_variant_runs(tmp_path):
-    """Each generated Tier-2 config (scripts/make_m5_configs.py) runs end to end on a synthetic cache."""
+@pytest.mark.parametrize("fspec,only", [({"mi_top": 10}, None),
+                                        ({"rank_by": "lgbm", "top": 10}, ("n1_stack5_sel", "n6_eeg_only", "n6_gated"))])
+def test_every_m5_variant_runs(tmp_path, fspec, only):
+    """Each generated Tier-2 config (scripts/make_m5_configs.py) runs end to end on a synthetic cache, for a base
+    with MI selection (all 18) and one with LightGBM-gain selection (the variants that rewrite the feature spec)."""
     import yaml
     folds = _synthetic_feature_cache(tmp_path / "feat")
     base = {"name": "tiny_base", "seed": 0,
             "model": {"type": "dwn", "params": {"bits": 4, "layers": [20], "n": 4, "mapping": "random",
                                                 "epochs": 1, "batch": 256, "threads": 1}},
-            "features": {"mi_top": 10}, "train": {"bg_ratio": 3}, "post": {"k": [4], "gate": ["none"], "n_thresholds": 5}}
+            "features": fspec, "train": {"bg_ratio": 3}, "post": {"k": [4], "gate": ["none"], "n_thresholds": 5}}
     (tmp_path / "base.yaml").write_text(yaml.safe_dump(base))
     r = run("scripts/make_m5_configs.py", "--base", tmp_path / "base.yaml", "--out", tmp_path / "m5")
     assert r.returncode == 0, r.stderr
     cfgs = sorted((tmp_path / "m5").glob("*.yaml"))
     assert len(cfgs) == 18
     for c in cfgs:
+        if only and c.stem not in only:
+            continue
         d = yaml.safe_load(c.read_text())
         assert d["base_config"] == "tiny_base"
         if d["model"]["type"] == "stateful_dwn":

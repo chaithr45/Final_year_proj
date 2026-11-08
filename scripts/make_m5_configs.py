@@ -29,13 +29,15 @@ GATE_BITS = ["present_ecg", "present_emg", "present_mov_acc", "present_mov_gyr",
 def variants(base: dict) -> dict:
     p = base["model"]["params"]
     L = sum(p["layers"][:1])
+    bf = base["features"]
+    on_base = {"rank_on": "base"} if bf.get("rank_by") else {"mi_on": "base"}
     v = {
-        "n1_stateful_mi": {"type": "stateful_dwn", "replace_params": {
+        "n1_stateful_sel": {"type": "stateful_dwn", "replace_params": {
             "bits": p.get("bits", 8), "n_state": 16, "n_vote": L, "n": p.get("n", 6),
             "mapping": p.get("mapping", "learnable"), "tau": p.get("tau", 3.3333),
             "seq_len": 60, "pos_per_seizure": 6, "neg_ratio": 5, "burn_in": 10, "epochs": 15, "lr": 0.01,
             "batch": 64, "threads": p.get("threads", 4)}},
-        "n1_stack5_mi": {"stack": 5, "features": {"mi_top": base["features"]["mi_top"], "mi_on": "base"}},
+        "n1_stack5_sel": {"stack": 5, "features": {**bf, **on_base}},
         "n2_uniform": {"params": {"encoder": "uniform"}},
         "n2_gaussian": {"params": {"encoder": "gaussian"}},
         "n2_learned": {"params": {"encoder": "learned", "comparator_penalty": 1e-4}},
@@ -50,9 +52,9 @@ def variants(base: dict) -> dict:
         "n5_sce": {"params": {"loss": "sce"}},
         "n5_mil": {"params": {"mil_topk": 0.5}},
         "n5_onset": {"params": {"onset_weight": 3.0}},
-        "n6_eeg_only": {"features": {"include_prefix": ["eeg_"], "mi_top": base["features"]["mi_top"]}},
+        "n6_eeg_only": {"features": {**bf, "include_prefix": ["eeg_"]}},
         "n6_dropout": {"train": {"modality_dropout": 0.2}},
-        "n6_gated": {"features": {**base["features"], "always": GATE_BITS}, "train": {"modality_dropout": 0.2}},
+        "n6_gated": {"features": {**bf, "always": GATE_BITS}, "train": {"modality_dropout": 0.2}},
         "n6_late": {"type": "dwn_late", "features": "all",
                     "params": {"layers": None, "groups": {
                         "eeg": {"prefix": ["eeg_"], "mi_top": 30, "layers": [round(0.6 * L)]},
