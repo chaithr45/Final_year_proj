@@ -1,0 +1,92 @@
+{
+ "run": "20261108-122742_n6_gated_s0",
+ "operating_point": {
+  "gate": "none",
+  "k": 10,
+  "threshold": 10.0
+ },
+ "by_class": {
+  "FIA": {
+   "seizures": 289,
+   "detected": 44,
+   "sensitivity": 0.1522491349480969
+  },
+  "FA": {
+   "seizures": 274,
+   "detected": 26,
+   "sensitivity": 0.0948905109489051
+  },
+  "focal_unknown_awareness": {
+   "seizures": 101,
+   "detected": 6,
+   "sensitivity": 0.0594059405940594
+  },
+  "FBTC": {
+   "seizures": 33,
+   "detected": 28,
+   "sensitivity": 0.8484848484848485
+  },
+  "unknown_onset": {
+   "seizures": 1,
+   "detected": 0,
+   "sensitivity": 0.0
+  }
+ },
+ "missing_modality": {
+  "intact": {
+   "f1": 0.2010256143050783,
+   "sensitivity": 0.2872914529164529,
+   "precision": 0.24093182371965263,
+   "fp_per_24h": 1.5330783835857105,
+   "vs_intact": null
+  },
+  "no_ecg": {
+   "f1": 0.12506693240234637,
+   "sensitivity": 0.18213597119847116,
+   "precision": 0.17616761614157447,
+   "fp_per_24h": 1.258737617725479,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 244.5,
+    "p": 0.0007214801013117418
+   }
+  },
+  "no_emg": {
+   "f1": 0.1981971397041408,
+   "sensitivity": 0.2953690720878221,
+   "precision": 0.26078556066897784,
+   "fp_per_24h": 1.8003193652365628,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 520.5,
+    "p": 0.48872125638215147
+   }
+  },
+  "no_mov": {
+   "f1": 0.19565509677384765,
+   "sensitivity": 0.36179425445050445,
+   "precision": 0.20979354490685506,
+   "fp_per_24h": 4.705787454431724,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 629.0,
+    "p": 0.5847670735683174
+   }
+  },
+  "eeg_only": {
+   "f1": 0.12859054083312976,
+   "sensitivity": 0.22264630686505682,
+   "precision": 0.1426699172487078,
+   "fp_per_24h": 3.168139151709486,
+   "vs_intact": {
+    "n": 96,
+    "median_diff": 0.0,
+    "statistic": 444.0,
+    "p": 0.003880056577329958
+   }
+  }
+ }
+}
