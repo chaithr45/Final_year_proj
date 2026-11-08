@@ -246,3 +246,11 @@ Method results and keep/drop decisions are appended below as runs finish.
   adopted** (no significant gain, about 1.5 times the cost). **N1 so far:** neither memory variant raises event-F1 on
   the D34 base; the stateful network lowers false alarms (p = 0.013) at lower sensitivity. The GRU reference
   (`gru_lgbm40`, queued) tells whether any sequence model gains on these features before N1 is closed.
+* **N5 on the D34 base** (each against dwn_L50_b8_lgbm40_e15bg10, per-patient event-F1 and FP/24 h, best-F1 points):
+  * **n5_mil** (seizure-level multiple-instance loss, weight 0.5): F1 0.212 (+0.000 [-0.038, +0.037], p = 0.91), FP/24 h
+    1.9 (-0.6, p = 0.11), AUROC 0.846. **Not adopted** (no difference).
+  * **n5_onset** (onset weighting 3.0): F1 0.191 (-0.021 [-0.058, +0.016], p = 0.28), FP/24 h 1.4 (-1.1, p = 0.014),
+    sens 0.259. **Not adopted**: fewer false alarms bought with sensitivity, F1 not better.
+  * **n5_focal** (focal loss): F1 0.154 (-0.057 [-0.106, -0.012], p = 0.038), FP/24 h 1.6 (p = 0.028), AUROC 0.809.
+    **Dropped**: significantly worse event-F1.
+  * GCE and SCE (noise-robust losses) are running.
