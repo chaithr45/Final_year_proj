@@ -1,0 +1,34 @@
+\chapter{Sources of the Reported Numbers}\label{app:sources}
+
+Every number in this report comes from a saved result file of the project. Table~\ref{tab:sources} lists where each
+group of numbers is stored; the run folders hold the configuration, the code version, the log and the metrics of each
+experiment.
+
+\begin{xltabular}{\textwidth}{@{}P{55mm}L@{}}
+\caption{Sources of the reported numbers.}\label{tab:sources}\\
+\toprule
+\textbf{Numbers} & \textbf{Source}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Numbers} & \textbf{Source}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\small Dataset inventory, seizure classes, differences from the documentation, signal quality (Chapter 3) &
+\small \texttt{reports/data\_audit.md}, \texttt{reports/data\_audit.json}, \texttt{results/audit/}\\
+\small Fixed-point specification of the features & \small \texttt{spec/fixed\_point.md}\\
+\small Integer against floating-point features & \small \texttt{results/m3/int\_float\_gap.md}\\
+\small ChronoNet reproduction (Table~\ref{tab:chrononet}) & \small runs \texttt{20261107-125159\_chrononet\_official\_s1}
+and \texttt{20261107-204035\_chrononet\_clean\_s1}\\
+\small Comparison of model families (Table~\ref{tab:families}) & \small \texttt{results/tables/inner\_cv.md} and the run
+folders named there\\
+\small Effect of the feature selection (Table~\ref{tab:featsel}) & \small runs \texttt{dwn\_L50\_b8\_learn} and
+\texttt{dwn\_L50\_b8\_lgbm40}\\
+\small Base DWN, training recipe, seizure types and missing sensors & \small run
+\texttt{20261108-082813\_dwn\_L50\_b8\_lgbm40\_e15bg10\_s0} (\texttt{metrics.json}, \texttt{breakdown.md})\\
+\small Extensions (Table~\ref{tab:ext-results}) & \small \texttt{results/tables/m5\_ablation.md};
+\texttt{n7\_interpretability.json} and \texttt{n3\_adaptation.json} in the run folder of \texttt{dwn\_L50\_b8\_learn}\\
+\small Decisions and their evidence & \small \texttt{results/decisions.md}\\
+\end{xltabular}

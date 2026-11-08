@@ -1,0 +1,36 @@
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\markboth{Abstract}{}
+
+Automatic seizure detection with wearable sensors could give people with epilepsy objective seizure counts and timely
+alarms, but the detector has to run for days on a small battery, next to the sensors. In this project we ask whether
+a \emph{LUT-native} neural network, whose neurons are the six-input lookup tables (LUTs) that make up an FPGA, can
+detect seizures from behind-the-ear EEG, ECG, EMG and motion signals in patients it has never seen, with no
+multipliers in the classifier and a budget of a few thousand LUTs.
+
+We use SeizeIT2, a public wearable dataset of 125 patients with focal epilepsy (11,626 hours of recordings, 883
+annotated seizures), with its official split into 96 training and 29 test patients. In Phase I, over the first two
+months of the project, we audited every file of the dataset and found that it differs from its documentation (all
+biopotentials are sampled at 256~Hz instead of 250~Hz, and the files hold 883 seizures instead of 886). We reproduced
+the published ChronoNet baseline: the published sensitivity was not reached (74.5\,\% against 84.2\,\%) at far fewer
+false alarms, and we found that the released code selects its model on the test patients, so we also trained a clean
+version that uses no test information. We designed a bit-exact integer feature pipeline of 117 features from the four
+modalities, with a fixed-point specification; it loses no accuracy against floating point (AUROC 0.736 against
+0.735). We then compared nine model families with patient-wise five-fold cross-validation on the training patients
+and event-based SzCORE metrics.
+
+On cross-validation, a Differentiable Weightless Neural Network of 50 six-input LUTs reaches an event-F1 of 0.211
+with 2.4 false alarms per day, at an estimated 960 LUTs and no multipliers. It is seven to eight times smaller than
+the next LUT-based models (TreeLUT and a logic-gate network) and better on every metric than an INT8 neural network
+that needs 9,600 multiplications per decision, but it is still below gradient-boosted trees (event-F1 0.292). It
+detects 88\,\% of tonic-clonic seizures but few focal seizures, and it depends on the ECG signal. An interpretability
+study of the network showed that the first feature selection ignored the heart-rate features; selecting the inputs by
+LightGBM importance instead raised event-F1 from 0.148 to 0.208 at the same size. The literature survey of 79
+references found no LUT-native seizure detector and no LUT network that fuses modalities or handles missing sensors.
+
+The 29 test patients have not been used to score any of our models yet. Phase II will complete the extensions of the
+network, evaluate the final models once on the held-out patients, and implement the detector on an FPGA.
+
+\vspace{4mm}
+\noindent\textbf{Index Terms:} epilepsy, seizure detection, wearable EEG, behind-the-ear EEG, multimodal fusion,
+weightless neural networks, lookup tables, FPGA, SeizeIT2.

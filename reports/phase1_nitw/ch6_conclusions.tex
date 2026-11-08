@@ -1,0 +1,133 @@
+\chapter{Discussion, Conclusions and Future Scope}\label{ch:concl}
+
+\section{Discussion and Current Findings}
+
+\paragraph{Accuracy per LUT.} The 50-LUT DWN gives the best accuracy per unit of hardware among the models compared:
+an event-F1 of 0.211 with 2.4 false alarms per day at about 960 estimated LUTs and no multipliers, against 0.266 for
+TreeLUT at about 6.4k LUTs and 0.292 for LightGBM, which is not a hardware design. The INT8 MLP, the conventional way
+to put a neural network on a chip, is worse on every metric while needing 9,600 multiplications per decision. Within
+the DWN family, size did not matter between 50 and 200 LUTs, while the choice of input features and the encoder
+resolution did.
+
+\paragraph{The encoder dominates the cost.} About 850 of the 960 estimated LUTs are comparators of the thermometer
+encoder; the network itself is 50 LUTs. This agrees with recent measurements of DWN hardware \cite{mecik2025thermo} and
+makes the encoder (extension N2) the main lever for reducing the hardware further.
+
+\paragraph{False alarms look like seizures to the network.} The interpretability study showed that the network reads
+almost the same inputs during true and false alarms. It also exposed a weakness of the first feature selection, which
+ignored the heart signal; fixing it was the largest single improvement of Phase I. Inspecting the trained LUTs was
+therefore more useful than tuning the network blindly.
+
+\paragraph{Tonic-clonic against focal seizures.} The detector finds 88\,\% of tonic-clonic seizures but 8--17\,\% of
+focal seizures, and loses most of its performance without ECG. This matches the literature, where wearable detection is
+established only for tonic-clonic seizures \cite{beniczky2021guideline}, and it shows where the remaining work lies:
+focal seizures and robustness to missing sensors.
+
+\paragraph{Reproducibility.} The published ChronoNet baseline could only be partly reproduced, and its released code
+selects the model on the test patients. Keeping our own test patients untouched until the design is frozen, and
+reporting a clean version of the baseline, is therefore essential for an honest final comparison.
+
+\section{Current Progress and Future Scope}
+
+Table~\ref{tab:phase1-months} summarises the work carried out in the two months of Phase I, and
+Table~\ref{tab:status} the status of every activity at the end of Phase I.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Work carried out during Phase I.}\label{tab:phase1-months}
+\begin{tabularx}{\textwidth}{@{}P{30mm}L@{}}
+\toprule
+\textbf{Period} & \textbf{Activities}\\
+\midrule
+Month 1 (September 2026) & Selection of the topic and definition of the problem with the guide; literature study on
+wearable seizure detection and LUT-based neural networks; study of the SeizeIT2 dataset, its baselines and its
+evaluation; setting up the software tools and data access; first experiments, whose results were weaker than those
+reported here.\\
+Month 2 (October -- November 2026) & Complete audit of the dataset; reproduction of the ChronoNet baseline (official
+and clean); integer feature pipeline and fixed-point specification; cross-validated comparison of nine model families;
+design study of the DWN and the improved feature selection; first extensions (N1, N3, N7); hardware handoff tools;
+this report.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{xltabular}{\textwidth}{@{}P{55mm}P{26mm}L@{}}
+\caption{Status of the project activities at the end of Phase I.}\label{tab:status}\\
+\toprule
+\textbf{Activity} & \textbf{Status} & \textbf{Remarks}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Activity} & \textbf{Status} & \textbf{Remarks}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\small Literature review & \small Completed & \small 79 references in five areas; research gaps identified\\
+\small Dataset access and audit & \small Completed & \small All 11,009 files measured; differences from the
+documentation recorded\\
+\small Reproduction of ChronoNet & \small Completed & \small Partly reproduced; the clean run is the reference for the
+final comparison\\
+\small Reproduction of the SVM baseline & \small Pending & \small Needs the 42-feature definition of the original
+study\\
+\small Integer feature pipeline and fixed-point specification & \small Completed & \small 117 features; no measurable
+accuracy loss\\
+\small Comparison of model families & \small Completed for nine families & \small LogicNets-style network, GRU and
+raw-EEG CNN/TCN running\\
+\small DWN design study & \small Completed up to 200 LUTs & \small 500--2,000 LUTs and further ablations running on the
+GPU\\
+\small Extensions N1, N3, N7 & \small Completed & \small None adopted alone; N7 led to the improved feature selection\\
+\small Extensions N2, N4, N5, N6 & \small In progress & \small 16 variants running; missing-sensor tests to follow\\
+\small Hardware handoff tools (export, test vectors, reference Verilog) & \small Completed and tested & \small Run on
+the final model in Phase II\\
+\small Final evaluation on the 29 test patients & \small Planned & \small After every design choice is frozen; five
+seeds per model\\
+\small FPGA implementation & \small Planned & \small Synthesis, measurements and demonstration in Phase II\\
+\end{xltabular}
+
+The remaining months will concentrate on the open questions of Phase I. The extensions will be completed and the
+winners combined; the large LUT networks and the raw-EEG references will close the model comparison; the design will
+then be frozen and evaluated once on the 29 test patients. The final DWN will be exported as truth tables with test
+vectors, implemented on a low-power FPGA and measured against the INT8 MLP and TreeLUT on the same device.
+Table~\ref{tab:plan} gives the month-wise plan.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Month-wise plan for the remaining project period.}\label{tab:plan}
+\begin{tabularx}{\textwidth}{@{}P{30mm}LP{42mm}@{}}
+\toprule
+\textbf{Month} & \textbf{Work} & \textbf{Expected deliverable}\\
+\midrule
+November -- December 2026 & Remaining extensions (N2, N4, N5, N6) and their combination; large DWNs, GRU and raw-EEG
+references; design frozen & Ablation table; final DWN design\\
+December 2026 & Final evaluation on the 29 test patients with five seeds; hardware handoff package & Test-set results;
+handoff package with verified reference Verilog\\
+January 2027 & FPGA synthesis and place-and-route; conference paper draft (EMBC 2027, full papers reportedly due 24
+January 2027) & Resource and timing report; paper draft\\
+February 2027 & Measured LUTs, power and latency; INT8 MLP and TreeLUT on the same device & Hardware comparison table\\
+March 2027 & On-board demonstration with recordings streamed through the design; documentation & Demonstration\\
+April 2027 & Final report and presentation & Final report\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Conclusions}
+
+Phase I established the foundation of the project and its first results:
+\begin{enumerate}
+\item The SeizeIT2 dataset was audited completely; its sampling rate, seizure count and labels differ from the
+  documentation, and the design follows the files.
+\item The published ChronoNet baseline was reproduced only partly, and a clean version without test information was
+  trained as the reference for the final comparison.
+\item A bit-exact integer feature pipeline for behind-the-ear EEG, ECG, EMG and motion loses no measurable accuracy
+  against floating point.
+\item A 50-LUT Differentiable Weightless Neural Network reaches an event-F1 of 0.211 with 2.4 false alarms per day on
+  cross-validation, at about 960 estimated LUTs and no multipliers: seven to eight times smaller than the other LUT
+  models and better than an INT8 network, though still below gradient-boosted trees.
+\item Interpretability of the LUT network led to the largest improvement of the phase, and the thermometer encoder was
+  identified as the dominant hardware cost.
+\item No LUT-native seizure detector exists in the literature, and no LUT network fuses modalities or handles missing
+  sensors; the project addresses both.
+\end{enumerate}
+Phase II will complete the extensions, evaluate the frozen design once on the 29 held-out patients, and implement and
+measure the detector on an FPGA.

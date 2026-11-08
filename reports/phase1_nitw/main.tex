@@ -1,0 +1,226 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------------------------------------------------------------- layout (NITW guidelines: A4, Times New Roman
+% 12 pt, 1.5 line spacing, left 30 mm, right 20 mm, header style with page number at the top right)
+\usepackage[a4paper,left=30mm,right=20mm,top=15mm,bottom=22mm,headheight=15pt,headsep=12mm,footskip=10mm,
+            includehead]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\renewcommand{\ttdefault}{pcr}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xltabular}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage[labelfont=bf,labelsep=space,font=small,justification=justified,singlelinecheck=true]{caption}
+\captionsetup[table]{position=top,skip=4pt}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{fancyhdr}
+\usepackage{titletoc}
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\urlstyle{same}
+\setlength{\parskip}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\makeatletter
+\renewcommand{\chaptermark}[1]{\markboth{\@chapapp\ \thechapter.\ #1}{}}
+\makeatother
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0.4pt}}
+\renewcommand{\figurename}{Figure}
+
+\newcommand{\projtitle}{SeizeLUT: A LUT-Native Multimodal Seizure Detector for Wearable Devices on FPGA,
+  Phase I: Dataset Study, Baselines and LUT Network Design}
+\newcommand{\projtitleshort}{SeizeLUT: A LUT-Native Multimodal Seizure Detector for Wearable Devices on FPGA}
+\newcommand{\studentA}{Sai Chaithr}
+\newcommand{\rollA}{23ECB0A20}
+\newcommand{\studentB}{[Student 2 name]}
+\newcommand{\rollB}{[Roll No.]}
+\newcommand{\studentC}{[Student 3 name]}
+\newcommand{\rollC}{[Roll No.]}
+\newcommand{\guide}{[Guide's name with title]}
+\newcommand{\guidedesig}{[Designation]}
+\newcommand{\dept}{Electronics and Communication Engineering}
+
+\begin{document}
+
+% ================================================================ title page
+\begin{titlepage}
+\centering
+{\Large\bfseries SEIZELUT: A LUT-NATIVE MULTIMODAL SEIZURE DETECTOR FOR WEARABLE DEVICES ON FPGA\par}
+\vspace{4mm}
+{\large\bfseries Phase I: Dataset Study, Baselines and LUT Network Design\par}
+\vspace{12mm}
+{\itshape\bfseries Phase I Project Progress Report submitted to the\\
+National Institute of Technology Warangal\\
+in partial fulfilment of the requirements for the award of the degree\par}
+\vspace{5mm}
+{\itshape\bfseries of\par}
+\vspace{5mm}
+{\large\bfseries Bachelor of Technology\\ in \dept\par}
+\vspace{5mm}
+{\itshape\bfseries by\par}
+\vspace{4mm}
+{\large\bfseries \studentA} (Roll No. \rollA)\\[1mm]
+{\large\bfseries \studentB} (Roll No. \rollB)\\[1mm]
+{\large\bfseries \studentC} (Roll No. \rollC)\par
+\vspace{8mm}
+Under the guidance of\par
+\vspace{3mm}
+{\large\bfseries \guide\par}
+{\small \guidedesig, Department of \dept\par}
+\vspace{8mm}
+\includegraphics[width=28mm]{figures/nitw_logo.png}\par
+\vfill
+{\bfseries DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING\\[1mm]
+NATIONAL INSTITUTE OF TECHNOLOGY WARANGAL\\[1mm]
+November 2026\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{2}
+
+% ================================================================ approval
+\chapter*{\centering\normalsize\bfseries\large APPROVAL OF THE PROJECT EVALUATION BOARD}
+\addcontentsline{toc}{chapter}{Certificate of Approval}
+\thispagestyle{plain}
+\hfill DD/MM/YYYY
+
+\vspace{8mm}
+Certified that the report entitled \textbf{\projtitleshort} submitted by \studentA\ (Roll No.\ \rollA),
+\studentB\ (Roll No.\ \rollB) and \studentC\ (Roll No.\ \rollC) to the National Institute of Technology
+Warangal, as the Phase I progress report of their Bachelor of Technology project in \dept, has been examined
+and accepted by the evaluation board.
+
+\vspace{30mm}
+\noindent(Member of the Board)\hfill(Member of the Board)\hfill(Member of the Board)
+
+\vspace{30mm}
+\noindent(Supervisor)\hfill(Co-Supervisor)
+
+\vspace{30mm}
+\noindent(Head of the Department)\hfill(Chairperson, Evaluation Board)
+
+% ================================================================ certificate
+\chapter*{}
+\addcontentsline{toc}{chapter}{Certificate}
+\thispagestyle{plain}
+\vspace{-30mm}
+\begin{center}
+(The certificate is to be printed on the Departmental Letter-Head)\\[14mm]
+{\large\bfseries\underline{CERTIFICATE}}
+\end{center}
+\vspace{8mm}
+This is to certify that the report entitled \textbf{\projtitleshort}, submitted by \textbf{\studentA\ (Roll No.\
+\rollA), \studentB\ (Roll No.\ \rollB) and \studentC\ (Roll No.\ \rollC)} to the National Institute of
+Technology Warangal, is a record of bona fide project work carried out by them under my (our) supervision during
+Phase I of their Bachelor of Technology project in \dept.
+
+\vspace{40mm}
+\noindent\rule{60mm}{0.4pt}\\
+\hspace*{14mm}Supervisor\\
+\hspace*{4mm}\guide
+
+\vspace{15mm}
+\noindent Date:
+
+% ================================================================ declaration
+\chapter*{\centering\large\bfseries DECLARATION}
+\addcontentsline{toc}{chapter}{Declaration}
+\thispagestyle{plain}
+We certify that
+\begin{enumerate}[label=\alph*.]
+\item The work contained in the report is original and has been done by us under the general supervision of our
+  supervisor(s).
+\item The work has not been submitted to any other Institute for any degree or diploma.
+\item We have followed the guidelines provided by the Institute in writing the report.
+\item Whenever we have used materials (data, theoretical analysis, and text) from other sources, we have given due
+  credit to them by citing them in the text of the report and giving their details in the references.
+\item Whenever we have quoted written materials from other sources, we have put them under quotation marks and given
+  due credit to the sources by citing them and giving required details in the references.
+\item An AI assistant was used to help write analysis code, check results and draft parts of the text. All numbers
+  in this report come from our saved experiment records and scripts, and we take responsibility for the content.
+\end{enumerate}
+
+\vspace{30mm}
+\noindent
+\begin{tabular}{@{}c@{\hspace{12mm}}c@{\hspace{12mm}}c@{}}
+\rule{40mm}{0.4pt} & \rule{40mm}{0.4pt} & \rule{40mm}{0.4pt}\\
+\studentA & \studentB & \studentC\\
+(\rollA) & (\rollB) & (\rollC)\\
+\multicolumn{3}{c}{Signatures of the Students}
+\end{tabular}
+
+% ================================================================ acknowledgements
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\thispagestyle{plain}
+We thank our project guide, \guide, \guidedesig, Department of \dept, for the guidance and encouragement given
+throughout Phase I of this project.
+
+We thank the Head of the Department and the faculty of the Department of \dept, National Institute of Technology
+Warangal, for the facilities and support provided. We also thank the SeizeIT2 consortium for releasing the dataset
+used in this work publicly, and the authors of the open-source tools on which our software builds.
+
+Finally, we thank our families and friends for their support.
+
+\vspace{10mm}
+\hfill\textbf{\studentA, \studentB\ and \studentC}
+
+% ================================================================ abstract
+\input{abstract}
+
+% ================================================================ lists
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Contents}
+\tableofcontents
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+\input{abbreviations}
+
+% ================================================================ chapters
+\cleardoublepage
+\pagenumbering{arabic}
+\input{ch1_introduction}
+\input{ch2_literature}
+\input{ch3_method}
+\input{ch4_results}
+\input{ch5_challenges}
+\input{ch6_conclusions}
+
+% ================================================================ references and appendices
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+\renewcommand{\bibname}{References}
+\markboth{References}{}
+{\small\singlespacing
+\bibliographystyle{IEEEtran}
+\bibliography{refs}}
+
+\appendix
+\input{appendix}
+
+\end{document}
