@@ -1,0 +1,138 @@
+seed 0: training on 96 patients
+  training windows: 467456 (42496 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'ecg_log_rr', 'eeg_ch2_theta', 'eeg_theta_max', 'eeg_beta_mean_ctx', 'ecg_log_rr_ctx', 'eeg_hf_mean_ctx', 'ecg_log_masrd', 'present_mov_acc', 'eeg_mav_absdiff'] ...
+    epoch 1/15 loss 0.4549 (9 s)
+    epoch 2/15 loss 0.4150 (6 s)
+    epoch 3/15 loss 0.3995 (6 s)
+    epoch 4/15 loss 0.3889 (6 s)
+    epoch 5/15 loss 0.3839 (5 s)
+    epoch 6/15 loss 0.3791 (5 s)
+    epoch 7/15 loss 0.3758 (5 s)
+    epoch 8/15 loss 0.3740 (5 s)
+    epoch 9/15 loss 0.3730 (5 s)
+    epoch 10/15 loss 0.3718 (5 s)
+    epoch 11/15 loss 0.3634 (5 s)
+    epoch 12/15 loss 0.3644 (5 s)
+    epoch 13/15 loss 0.3642 (5 s)
+    epoch 14/15 loss 0.3650 (5 s)
+    epoch 15/15 loss 0.3658 (5 s)
+seed 0 best_f1: SzCORE sens 0.249 prec 0.217 F1 0.209 FP/24h 0.4
+seed 0 sens_at_1fah: SzCORE sens 0.427 prec 0.065 F1 0.095 FP/24h 7.3
+seed 1: training on 96 patients
+  training windows: 467456 (42496 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'ecg_log_rr', 'eeg_ch2_theta', 'eeg_beta_mean_ctx', 'eeg_theta_max', 'ecg_log_rr_ctx', 'ecg_log_masrd', 'eeg_hf_mean_ctx', 'eeg_hf_max_ctx', 'present_mov_acc'] ...
+    epoch 1/15 loss 0.4514 (10 s)
+    epoch 2/15 loss 0.4134 (7 s)
+    epoch 3/15 loss 0.3976 (6 s)
+    epoch 4/15 loss 0.3882 (6 s)
+    epoch 5/15 loss 0.3843 (6 s)
+    epoch 6/15 loss 0.3786 (6 s)
+    epoch 7/15 loss 0.3765 (6 s)
+    epoch 8/15 loss 0.3742 (6 s)
+    epoch 9/15 loss 0.3740 (5 s)
+    epoch 10/15 loss 0.3717 (5 s)
+    epoch 11/15 loss 0.3587 (5 s)
+    epoch 12/15 loss 0.3626 (5 s)
+    epoch 13/15 loss 0.3627 (5 s)
+    epoch 14/15 loss 0.3647 (5 s)
+    epoch 15/15 loss 0.3654 (5 s)
+seed 1 best_f1: SzCORE sens 0.288 prec 0.321 F1 0.274 FP/24h 0.2
+seed 1 sens_at_1fah: SzCORE sens 0.418 prec 0.062 F1 0.097 FP/24h 7.5
+seed 2: training on 96 patients
+  training windows: 467456 (42496 seizure)
+  LightGBM-gain top 40: ['eeg_theta_max', 'eeg_theta_mean', 'ecg_log_rr', 'ecg_log_rr_ctx', 'eeg_ch2_theta', 'eeg_beta_mean_ctx', 'eeg_hf_mean_ctx', 'ecg_log_masrd', 'eeg_alpha_mean_ctx', 'present_mov_acc'] ...
+    epoch 1/15 loss 0.4521 (9 s)
+    epoch 2/15 loss 0.4081 (7 s)
+    epoch 3/15 loss 0.3931 (6 s)
+    epoch 4/15 loss 0.3845 (6 s)
+    epoch 5/15 loss 0.3802 (6 s)
+    epoch 6/15 loss 0.3758 (5 s)
+    epoch 7/15 loss 0.3748 (6 s)
+    epoch 8/15 loss 0.3730 (6 s)
+    epoch 9/15 loss 0.3711 (6 s)
+    epoch 10/15 loss 0.3699 (6 s)
+    epoch 11/15 loss 0.3598 (5 s)
+    epoch 12/15 loss 0.3623 (5 s)
+    epoch 13/15 loss 0.3621 (5 s)
+    epoch 14/15 loss 0.3624 (5 s)
+    epoch 15/15 loss 0.3639 (5 s)
+seed 2 best_f1: SzCORE sens 0.305 prec 0.333 F1 0.272 FP/24h 0.3
+seed 2 sens_at_1fah: SzCORE sens 0.490 prec 0.060 F1 0.092 FP/24h 9.5
+seed 3: training on 96 patients
+  training windows: 467456 (42496 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'ecg_log_rr', 'eeg_ch2_theta', 'ecg_log_rr_ctx', 'eeg_beta_mean_ctx', 'ecg_log_masrd', 'eeg_beta_max_ctx', 'eeg_theta_max', 'present_mov_acc', 'emg_mav'] ...
+    epoch 1/15 loss 0.4511 (9 s)
+    epoch 2/15 loss 0.4075 (6 s)
+    epoch 3/15 loss 0.3955 (6 s)
+    epoch 4/15 loss 0.3892 (6 s)
+    epoch 5/15 loss 0.3829 (5 s)
+    epoch 6/15 loss 0.3805 (5 s)
+    epoch 7/15 loss 0.3782 (5 s)
+    epoch 8/15 loss 0.3732 (4 s)
+    epoch 9/15 loss 0.3728 (4 s)
+    epoch 10/15 loss 0.3726 (5 s)
+    epoch 11/15 loss 0.3636 (4 s)
+    epoch 12/15 loss 0.3629 (5 s)
+    epoch 13/15 loss 0.3661 (5 s)
+    epoch 14/15 loss 0.3656 (5 s)
+    epoch 15/15 loss 0.3654 (4 s)
+seed 3 best_f1: SzCORE sens 0.229 prec 0.275 F1 0.226 FP/24h 0.2
+seed 3 sens_at_1fah: SzCORE sens 0.438 prec 0.065 F1 0.093 FP/24h 8.7
+seed 4: training on 96 patients
+  training windows: 467456 (42496 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'ecg_log_rr', 'eeg_ch2_theta', 'eeg_theta_max', 'ecg_log_rr_ctx', 'eeg_beta_max_ctx', 'eeg_hf_mean_ctx', 'ecg_log_masrd', 'present_mov_acc', 'emg_mav'] ...
+    epoch 1/15 loss 0.4517 (9 s)
+    epoch 2/15 loss 0.4137 (7 s)
+    epoch 3/15 loss 0.3967 (5 s)
+    epoch 4/15 loss 0.3882 (5 s)
+    epoch 5/15 loss 0.3807 (5 s)
+    epoch 6/15 loss 0.3785 (5 s)
+    epoch 7/15 loss 0.3777 (5 s)
+    epoch 8/15 loss 0.3755 (5 s)
+    epoch 9/15 loss 0.3765 (5 s)
+    epoch 10/15 loss 0.3743 (5 s)
+    epoch 11/15 loss 0.3638 (5 s)
+    epoch 12/15 loss 0.3660 (6 s)
+    epoch 13/15 loss 0.3681 (5 s)
+    epoch 14/15 loss 0.3670 (5 s)
+    epoch 15/15 loss 0.3671 (6 s)
+seed 4 best_f1: SzCORE sens 0.288 prec 0.263 F1 0.226 FP/24h 0.9
+seed 4 sens_at_1fah: SzCORE sens 0.481 prec 0.052 F1 0.083 FP/24h 13.8
+{
+ "best_f1": {
+  "sensitivity": {
+   "mean": 0.27187002497347323,
+   "std": 0.03124636371006659
+  },
+  "precision": {
+   "mean": 0.2817976085217464,
+   "std": 0.04684048964804348
+  },
+  "f1": {
+   "mean": 0.2415507410516485,
+   "std": 0.02988336975103218
+  },
+  "fp_per_24h": {
+   "mean": 0.37704605710405736,
+   "std": 0.28645723866306294
+  }
+ },
+ "sens_at_1fah": {
+  "sensitivity": {
+   "mean": 0.45096077889181335,
+   "std": 0.032807610781400064
+  },
+  "precision": {
+   "mean": 0.0610044330498443,
+   "std": 0.0053012185119517665
+  },
+  "f1": {
+   "mean": 0.09183316005509355,
+   "std": 0.005320352076345765
+  },
+  "fp_per_24h": {
+   "mean": 9.374045551028619,
+   "std": 2.629120788585907
+  }
+ }
+}

@@ -1,0 +1,43 @@
+name: n6_dropout
+seed: 0
+model:
+  type: dwn
+  params:
+    bits: 8
+    layers:
+    - 50
+    n: 6
+    mapping: learnable
+    tau: 3.3333
+    epochs: 15
+    lr: 0.01
+    batch: 2048
+    decay_at: 0.7
+    loss: ce
+    device: cpu
+    threads: 8
+features:
+  rank_by: lgbm
+  top: 40
+train:
+  bg_ratio: 10
+  modality_dropout: 0.2
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+base_config: dwn_L50_b8_lgbm40_e15bg10
+cv_run: 20261108-121150_n6_dropout_s0
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
