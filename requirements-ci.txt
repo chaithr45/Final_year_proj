@@ -9,3 +9,6 @@ pytest==8.4.2
 pyedflib==0.1.42
 numba==0.62.1
 timescoring==0.0.7
+# Tier-2 tests: LightGBM (feature ranking, distillation teacher) and XGBoost (TreeLUT export), CPU builds
+lightgbm==4.6.0
+xgboost-cpu==3.1.1
