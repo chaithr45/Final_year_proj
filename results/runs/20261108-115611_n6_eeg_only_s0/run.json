@@ -1,0 +1,9 @@
+{
+  "name": "n6_eeg_only",
+  "seed": 0,
+  "git": {
+    "commit": "c04ab4decf028d98047086c6937929ab07ca5496",
+    "dirty": false
+  },
+  "created": "20261108-115611"
+}
