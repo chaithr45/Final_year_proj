@@ -3,6 +3,8 @@
 
 Every method is compared with its own baseline: the base run (same features, size, epochs, data
 and seed), with a paired Wilcoxon test on the per-patient inner-fold results (Section 6.6).
+  N1 time          stateful LUT network (16 state bits, as many vote LUTs as the base has LUTs),
+                   the base DWN on the stacked last 5 windows (GRU reference: configs/m4/gru_mi40.yaml)
   N2 encoders      uniform, gaussian, learned thresholds (two comparator penalties)
   N4 teacher       distillation from LightGBM, teacher-guided hard negatives, both
   N5 training      focal, generalized CE, symmetric CE, seizure-level MIL (top-50 %), onset weight x3
@@ -28,6 +30,12 @@ def variants(base: dict) -> dict:
     p = base["model"]["params"]
     L = sum(p["layers"][:1])
     v = {
+        "n1_stateful": {"type": "stateful_dwn", "replace_params": {
+            "bits": p.get("bits", 8), "n_state": 16, "n_vote": L, "n": p.get("n", 6),
+            "mapping": p.get("mapping", "learnable"), "tau": p.get("tau", 3.3333),
+            "seq_len": 60, "pos_per_seizure": 6, "neg_ratio": 5, "burn_in": 10, "epochs": 15, "lr": 0.01,
+            "batch": 64, "threads": p.get("threads", 4)}},
+        "n1_stack5": {"stack": 5, "features": {"mi_top": base["features"]["mi_top"], "mi_on": "base"}},
         "n2_uniform": {"params": {"encoder": "uniform"}},
         "n2_gaussian": {"params": {"encoder": "gaussian"}},
         "n2_learned": {"params": {"encoder": "learned", "comparator_penalty": 1e-4}},
@@ -59,6 +67,10 @@ def variants(base: dict) -> dict:
         c["base_config"] = base["name"]
         if "type" in ch:
             c["model"]["type"] = ch["type"]
+        if "replace_params" in ch:
+            c["model"]["params"] = dict(ch["replace_params"])
+        if "stack" in ch:
+            c["stack"] = ch["stack"]
         for k, val in ch.get("params", {}).items():
             if val is None:
                 c["model"]["params"].pop(k, None)

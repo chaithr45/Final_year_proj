@@ -165,10 +165,13 @@ def test_every_m5_variant_runs(tmp_path):
     r = run("scripts/make_m5_configs.py", "--base", tmp_path / "base.yaml", "--out", tmp_path / "m5")
     assert r.returncode == 0, r.stderr
     cfgs = sorted((tmp_path / "m5").glob("*.yaml"))
-    assert len(cfgs) == 16
+    assert len(cfgs) == 18
     for c in cfgs:
         d = yaml.safe_load(c.read_text())
         assert d["base_config"] == "tiny_base"
+        if d["model"]["type"] == "stateful_dwn":
+            d["model"]["params"].update({"seq_len": 20, "burn_in": 4, "pos_per_seizure": 2, "neg_ratio": 2,
+                                         "epochs": 1, "batch": 16})
         for t in (d.get("train", {}).get("distill") or {}, d.get("train", {}).get("hard_negative") or {}):
             if "teacher" in t:
                 t["teacher"]["params"]["n_estimators"] = 10
