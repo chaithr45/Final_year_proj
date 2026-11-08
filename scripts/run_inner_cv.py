@@ -14,7 +14,6 @@ Output: results/runs/<id>/{config.yaml, run.json, metrics.json, sweep.csv, log.t
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 import sys
 import time
@@ -25,8 +24,8 @@ import yaml
 
 from seizelut.data.featureset import FeatureStore
 from seizelut.data.split import load_folds
-from seizelut.eval.operating import choose, sweep, subject_metrics
-from seizelut.eval.runlog import mark_complete, new_run_dir
+from seizelut.eval.innercv import finalize
+from seizelut.eval.runlog import new_run_dir
 from seizelut.features import spec as S
 from seizelut.models.registry import build
 
@@ -276,41 +275,7 @@ def main() -> int:
         done_f.write_text(json.dumps(fold_info[-1], default=float))
         ckpt.unlink(missing_ok=True)
 
-    post = cfg.get("post", {})
-    rows = sweep(oof, ks=post.get("k", (6, 8, 10)), gates=post.get("gate", ("none", "both", "any")),
-                 n_thresholds=post.get("n_thresholds", 40))
-    ops = choose(rows)
-    # per-fold metrics at the chosen operating points (for paired tests across methods)
-    out_ops = {}
-    for name, op in ops.items():
-        if op is None:
-            out_ops[name] = None
-            continue
-        per_fold = {}
-        for k in fold_ids:
-            subs = {s for s, f in folds.items() if f == k}
-            per_fold[k] = subject_metrics({s: v for s, v in op["per_subject"].items() if s in subs})
-        out_ops[name] = {kk: v for kk, v in op.items() if kk != "per_subject"} | {
-            "per_fold": per_fold, "per_subject": op["per_subject"]}
-    from sklearn.metrics import average_precision_score, roc_auc_score
-    ally = np.concatenate([o["y"] for o in oof])
-    alls = np.concatenate([o["score"] for o in oof])
-    metrics = {"name": cfg["name"], "seed": seed, "folds": fold_ids, "n_features": len(cols),
-               "window_auroc": float(roc_auc_score(ally, alls)), "window_aupr": float(average_precision_score(ally, alls)),
-               "operating_points": out_ops, "fold_info": fold_info,
-               "cost_median": {kk: float(np.median([c[kk] for c in costs])) for kk in costs[0]} if costs and costs[0] else {}}
-    (run / "metrics.json").write_text(json.dumps(metrics, indent=1) + "\n")
-    mark_complete(run)
-    with open(run / "sweep.csv", "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=[kk for kk in rows[0] if kk != "per_subject"])
-        w.writeheader()
-        for r in rows:
-            w.writerow({kk: v for kk, v in r.items() if kk != "per_subject"})
-    b, s = out_ops["best_f1"], out_ops["sens_at_1fah"]
-    log(f"RESULT {cfg['name']}: window AUROC {metrics['window_auroc']:.3f} AUPR {metrics['window_aupr']:.3f} | "
-        f"best-F1 op (gate {b['gate']}, k {b['k']}): F1 {b['f1']:.3f} sens {b['sensitivity']:.3f} "
-        f"prec {b['precision']:.3f} FP/24h {b['fp_per_24h']:.1f}" +
-        (f" | sens@<=1FA/h {s['sensitivity']:.3f} (FP/24h {s['fp_per_24h']:.1f})" if s else ""))
+    finalize(oof, cfg, seed, fold_ids, folds, len(cols), fold_info, costs, run, log)
     log(f"run dir: {run}")
     return 0
 
