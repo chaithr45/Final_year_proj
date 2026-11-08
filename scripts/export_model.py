@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Export package of a final model (Section 8.2): the model of one seed of an M6 final run
 (checkpoints/<final run>/seed_<s>.pkl) with the operating point of its inner-CV run, written as
-export/<config>_s<seed>/ (thresholds, mapping, LUT truth tables, head, manifest; src/hw/export.py).
+export/<config>_s<seed>/: DWN (thresholds, mapping, LUT truth tables, head, manifest; src/hw/export.py),
+or the Phase 2 baselines INT8 MLP and TreeLUT (src/hw/export_baselines.py).
 
 Usage:  python scripts/export_model.py --final-run results/runs/<id>_final_s0 --seed 0 [--op best_f1]
 Then:   python scripts/make_test_vectors.py --export export/<config>_s<seed> --final-test
@@ -18,6 +19,9 @@ from pathlib import Path
 import yaml
 
 from seizelut.hw.export import export_dwn
+from seizelut.hw.export_baselines import export_mlp_int8, export_treelut
+
+EXPORTERS = {"dwn": export_dwn, "mlp_int8": export_mlp_int8, "treelut": export_treelut}
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -39,12 +43,13 @@ def main() -> int:
     with open(root / "checkpoints" / run.name / f"seed_{args.seed}.pkl", "rb") as fh:
         obj = pickle.load(fh)
     model = obj["model"]
-    if getattr(model, "name", "") != "dwn":
-        raise SystemExit(f"export of model type {getattr(model, 'name', type(model).__name__)} is not implemented yet")
+    kind = getattr(model, "name", type(model).__name__)
+    if kind not in EXPORTERS:
+        raise SystemExit(f"export of model type {kind} is not implemented yet (have: {sorted(EXPORTERS)})")
     out = Path(args.export_dir) if args.export_dir else REPO / "export" / f"{cfg['name']}_s{args.seed}"
     meta = {"training_run": run.name, "seed": args.seed, "cv_run": cfg["cv_run"], "operating_point_name": args.op,
             "config_sha256_16": hashlib.sha256(cfg_text.encode()).hexdigest()[:16], "config": cfg}
-    export_dwn(model, obj["features"], op, out, meta)
+    EXPORTERS[kind](model, obj["features"], op, out, meta)
     print(f"exported to {out}")
     return 0
 

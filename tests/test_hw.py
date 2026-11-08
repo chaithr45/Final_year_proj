@@ -75,3 +75,21 @@ def test_test_vectors_match_golden_model(tmp_path, bids_root):
         for rel, info in man["recordings"][key]["files"].items():
             assert hashlib.sha256((d / "vectors" / rel).read_bytes()).hexdigest() == info["sha256"]
         assert (d / "vectors" / key / "sample.csv").read_text().startswith("second,")
+
+
+def test_baseline_exports_reproduce_the_models(tmp_path):
+    """INT8 MLP and TreeLUT packages recompute the trained models' outputs from the JSON alone."""
+    from seizelut.hw.export_baselines import export_mlp_int8, export_treelut, mlp_from_export, treelut_from_export
+    rng = np.random.default_rng(1)
+    X = rng.integers(-200, 200, (1500, 5)).astype(np.int16)
+    y = (X[:, 0] - X[:, 2] > 50).astype(int)
+    op = {"threshold": 0.1, "gate": "none", "k": 4}
+    names = [f"f{i}" for i in range(5)]
+    mlp = build({"type": "mlp_int8", "params": {"hidden": [8, 4], "epochs": 3, "batch": 256, "threads": 1}}).fit(X, y)
+    d = export_mlp_int8(mlp, names, op, tmp_path / "mlp", {"run": "unit-test"})
+    np.testing.assert_allclose(mlp_from_export(d, X), mlp.score(X), rtol=1e-4, atol=1e-4)
+    seq = torch.load(d / "mlp_float.pt", weights_only=False)
+    assert sum(isinstance(m, torch.nn.Linear) for m in seq) == 3
+    tl = build({"type": "treelut", "params": {"n_estimators": 8, "max_depth": 3, "w_tree": 4}}).fit(X, y)
+    d2 = export_treelut(tl, names, op, tmp_path / "tl", {"run": "unit-test"})
+    np.testing.assert_array_equal(treelut_from_export(d2, X[:300]), tl.score_int(X[:300]))
