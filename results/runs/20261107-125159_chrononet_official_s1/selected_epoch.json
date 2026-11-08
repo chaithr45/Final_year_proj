@@ -1,0 +1,5 @@
+{
+  "epoch": 8,
+  "rule": "official_test",
+  "weights": "checkpoints/20261107-125159_chrononet_official_s1.pt"
+}

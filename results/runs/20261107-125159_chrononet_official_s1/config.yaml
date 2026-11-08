@@ -1,0 +1,17 @@
+name: chrononet_official
+model: chrononet
+seed: 1
+train_subjects: official_train
+data:
+  cache_dir: cache/chrononet
+  factor: 5
+train:
+  epochs: 300
+  batch_size: 128
+  lr: 0.01
+  l2: 0.01
+  cnn_dropout: 0.6
+  selection: official_test
+eval:
+  subjects: official_test
+  thresholds: official

@@ -1,0 +1,5 @@
+{
+  "epoch": 300,
+  "rule": "last",
+  "weights": "checkpoints/20261107-204035_chrononet_clean_s1.pt"
+}
