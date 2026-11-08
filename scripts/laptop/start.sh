@@ -4,7 +4,8 @@
 #   scripts/laptop/start.sh feat     feature extraction (streams from S3)
 #   scripts/laptop/start.sh chrono   ChronoNet (official protocol): data, then training on the GPU
 #   scripts/laptop/start.sh night    metadata fetch (resumable, retried once), then the whole chrono job
-#   scripts/laptop/start.sh sweep    DWN sweep on the inner folds (after `feat` + verify)
+#   scripts/laptop/start.sh sweep    the laptop's share of the DWN sweep (>= 500 LUTs, GPU); builds and checks
+#                                    the feature cache first if it is missing
 #   scripts/laptop/start.sh finish   waits for the chrono training, then its test predictions and scores,
 #                                    then the clean variant (last epoch, no selection): train, predict, score
 # Every step resumes: re-running the same command after an interruption (window closed, laptop
@@ -12,14 +13,14 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 mkdir -p logs
-if [[ "${1:-}" == feat || "${1:-}" == chrono ]] && [[ ! -d data/raw/ds005873/sub-125 ]]; then
+if [[ "${1:-}" == feat || "${1:-}" == chrono || "${1:-}" == sweep ]] && [[ ! -d data/raw/ds005873/sub-125 ]]; then
   echo "dataset metadata missing: run  python scripts/fetch_metadata.py  first (a few minutes, ~100 MB)"; exit 1
 fi
 case "${1:-}" in
-  feat)   cmd="python scripts/extract_features.py --workers 6 && python scripts/verify_feature_cache.py" ;;
+  feat)   cmd="python scripts/extract_features.py --workers 3 && python scripts/verify_feature_cache.py" ;;
   chrono) cmd="python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda --resume auto" ;;
   night)  cmd="(python scripts/fetch_metadata.py || python scripts/fetch_metadata.py) && python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_official.yaml --final-test && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_official.yaml --device cuda --resume auto" ;;
-  sweep)  cmd="python scripts/make_dwn_sweep.py && scripts/run_queue.sh configs/m4/sweep/*.yaml" ;;
+  sweep)  cmd="scripts/laptop/sweep_big.sh" ;;
   finish) cmd="scripts/laptop/chrono_eval.sh chrononet_official && python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_clean.yaml && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_clean.yaml --device cuda --resume auto && scripts/laptop/chrono_eval.sh chrononet_clean" ;;
   *) echo "usage: $0 feat|chrono|night|sweep|finish"; exit 2 ;;
 esac

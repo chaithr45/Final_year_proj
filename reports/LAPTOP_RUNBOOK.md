@@ -48,7 +48,7 @@ scripts/download_data.sh && python scripts/verify_data.py
 ```
 
 ```bash
-python scripts/extract_features.py --workers 6
+python scripts/extract_features.py --workers 3
 ```
 
 (The cloud session already built the same feature cache; extraction is deterministic, so the
@@ -105,11 +105,17 @@ git pull && scripts/laptop/push_runs.sh
 
 Pulling while `finish` is running is safe: the running steps have already loaded their code.
 
-## 3. M4: DWN size sweep on the inner folds (about 8-12 h)
+## 3. M4: DWN size sweep on the inner folds (the laptop's share, D32)
 
 ```bash
-python scripts/make_dwn_sweep.py && scripts/run_queue.sh configs/m4/sweep/*.yaml
+scripts/laptop/start.sh sweep
 ```
+
+Builds the feature cache first if it is missing (streams the recordings from S3: hours, depending on the
+connection; runs already cached are skipped), checks it against the M1 audit, then trains the 21 configs with
+>= 500 LUTs on the GPU, most informative first. Three extraction workers, not more: each holds a whole
+recording in memory and WSL has 7.4 GB. The cloud runs the rest of the grid. Send finished runs with
+`scripts/laptop/push_runs.sh` (any time; unfinished runs are skipped).
 
 ## 4. Raw-EEG CNN/TCN and GRU references
 

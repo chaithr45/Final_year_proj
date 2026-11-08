@@ -39,8 +39,8 @@ Format: `D<n> | milestone | decision | why | evidence`.
 ### M2 results (published baseline on the official test patients: reproduction only, every access logged in the run's `TEST_ACCESS.log`)
 
 * **chrononet_official** (run `20261107-125159_chrononet_official_s1`, seed 1, epoch chosen by the val score on blocks
-  around the test patients' seizures, as the released code does; 778 recordings, 29 patients). Numbers transcribed
-  from the laptop's `metrics.md` until the run folder is pushed (`scripts/laptop/push_runs.sh`).
+  around the test patients' seizures, as the released code does; 778 recordings, 29 patients). The rule picked
+  epoch 8 of 300 (val score 94.9; it is 93-95 over the first 13 epochs and 84-86 from epoch 50 on).
 
   | | Sens OVLP (%) | FA/h (any-overlap) | AUROC (pooled) | AUPR (pooled) |
   |---|---|---|---|---|
@@ -63,6 +63,27 @@ Format: `D<n> | milestone | decision | why | evidence`.
   (the paper's seed count is not stated), the Keras-to-PyTorch port (D12), and the dataset version (OpenNeuro
   ds005873 today vs. the paper's copy; we count 886 seizures, 182 in the test split, against the paper's 883 and 181).
   The baseline is reported as measured, with the published numbers beside it and this gap stated.
+* **Per-recording AUROC/AUPR** (the official run re-scored from its saved predictions on 8 Nov, no retraining): mean
+  over the 90 test recordings with a seizure, AUROC 0.680 and AUPR 0.109 as published (0.642 and 0.093 corrected).
+  The per-recording AUPR is within 0.005 of the published 0.1042, which is consistent with Table 2's AUPR being a
+  per-recording mean; AUROC fits neither reading (0.680 per recording, 0.741 pooled, 0.792 published). What remains
+  unexplained: sensitivity (74.5 vs 84.2), AUROC, and the FA/h definition.
+* **chrononet_clean** (run `20261107-204035_chrononet_clean_s1`, same seed and training data, last of 300 epochs; no
+  test-patient information used in training, test access = predictions and scoring only):
+
+  | | Sens OVLP (%) | FA/h (any-overlap) | AUROC (pooled) | AUPR (pooled) |
+  |---|---|---|---|---|
+  | ours, as published | 67.1 | 11.9 | 0.7455 | 0.0048 |
+  | ours, corrected | 62.2 | 8.7 | 0.7051 | 0.0047 |
+
+  Epoch-based FA rate 256.8/h; official score -73.0 (as published), -45.5 (corrected). SzCORE at threshold 0.5: sens
+  0.790, precision 0.015, F1 0.027, 106.3 FP/24 h, sample F1 0.016. (Scored before the per-recording AUC existed; the
+  re-score is pending on the laptop.) Against the official run: 7.4 points less sensitivity for about half the false
+  alarms (11.9 vs 22.6 per hour any-overlap, 257 vs 503 epoch-based) and slightly higher pooled AUROC and AUPR. The
+  official selection score (100 x event sensitivity - 0.4 x false-positive fraction on seizure blocks) rewards
+  over-prediction and chose an early epoch. **Decision: chrononet_clean is the ChronoNet row our models are compared
+  with at M6** (it used no test information); the official run is reported only as the reproduction of the
+  published protocol.
 
 ## M3: integer feature pipeline
 
@@ -89,6 +110,7 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D29 | TreeLUT scores are reported in logit units (integer leaf sum / leaf scale + offset; the hardware compares the integer sum with the matching integer threshold); run `20261106-180609_treelut_s0` is marked invalid and re-run as `treelut_w3/4/5` | Each fold's integer sum had its own scale and offset, so pooled out-of-fold AUROC (0.601) and the shared threshold were meaningless. On a 30/10-patient check the 8-bit-leaf integer score matched float XGBoost (AUROC 0.886 vs 0.885); 3-bit leaves lost 0.04-0.09, 4-5 bits recovered it, so `w_tree` is tuned on the inner folds | `src/models/registry.py` |
 | D30 | Downloads are checked against Content-Length, extraction refuses EDFs whose size disagrees with the header, and `scripts/verify_feature_cache.py` checks every cached run against the M1 audit durations; the first LGBM, LR and partial XGB runs are marked `_invalid` and re-run | The float-twin comparison exposed sub-020 run-01 with ECG cut at 51,855 of 71,835 s. The verifier then found 9 runs (7 training, 2 test) silently truncated by short S3 reads, two of them in EEG (sub-078 run-30 had 12 of 16,363 windows). All 9 were re-extracted; all 2,850 runs now agree with the audit. 51 runs whose only motion sensor is the head (EEG) module have no motion features by design (chest module only) | `src/data/remote.py`, `scripts/extract_features.py`, `scripts/verify_feature_cache.py` |
 | D31 | For stacked (multi-window) inputs, mutual information ranks the base features on the current window and every lag of the top 40 is kept (`features: {mi_top: 40, mi_on: base}`); `n1_stack5` is kept in the log as the failed variant | Ranking the 585 stacked columns directly chose lagged copies of only 11 to 13 distinct features per fold, fewer than the 40 the single-window DWN sees, and `n1_stack5` fell to AUROC 0.750 / F1 0.103 against 0.821 / 0.167. The hardware cost model counts one comparator set per stacked column, an over-estimate when lags share comparators through a delay line | `scripts/run_inner_cv.py`, `configs/m5/n1_stack5_base.yaml`, run `20261107-010416_n1_stack5_s0` |
+| D32 | The Section 6.1 sweep is split: the cloud CPU runs the <= 200-LUT grid plus `dwn_L500_b8_learn` and `dwn_L500_b16_learn`; the laptop GPU runs the other 21 configs (>= 500 LUTs), most informative first | On the 4-core cloud a 200-LUT config takes about 2.1 h and time grows roughly linearly with LUTs, so the 23 configs with >= 500 LUTs would need about a week there (D27 already assigns them to the GPU). The whole grid still runs; nothing is pruned | `scripts/laptop/sweep_big.sh` |
 
 Method results and keep/drop decisions are appended below as runs finish.
 
