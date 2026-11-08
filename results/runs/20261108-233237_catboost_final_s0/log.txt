@@ -1,0 +1,58 @@
+seed 0: training on 96 patients
+  training windows: 892416 (42496 seizure)
+seed 0 best_f1: SzCORE sens 0.329 prec 0.279 F1 0.256 FP/24h 1.1
+seed 0 sens_at_1fah: SzCORE sens 0.472 prec 0.045 F1 0.066 FP/24h 17.7
+seed 1: training on 96 patients
+  training windows: 892416 (42496 seizure)
+seed 1 best_f1: SzCORE sens 0.317 prec 0.273 F1 0.238 FP/24h 1.0
+seed 1 sens_at_1fah: SzCORE sens 0.451 prec 0.044 F1 0.068 FP/24h 16.7
+seed 2: training on 96 patients
+  training windows: 892416 (42496 seizure)
+seed 2 best_f1: SzCORE sens 0.343 prec 0.268 F1 0.252 FP/24h 1.3
+seed 2 sens_at_1fah: SzCORE sens 0.466 prec 0.042 F1 0.062 FP/24h 17.6
+seed 3: training on 96 patients
+  training windows: 892416 (42496 seizure)
+seed 3 best_f1: SzCORE sens 0.334 prec 0.300 F1 0.262 FP/24h 1.2
+seed 3 sens_at_1fah: SzCORE sens 0.454 prec 0.040 F1 0.061 FP/24h 17.1
+seed 4: training on 96 patients
+  training windows: 892416 (42496 seizure)
+seed 4 best_f1: SzCORE sens 0.329 prec 0.286 F1 0.260 FP/24h 1.1
+seed 4 sens_at_1fah: SzCORE sens 0.465 prec 0.041 F1 0.063 FP/24h 17.7
+{
+ "best_f1": {
+  "sensitivity": {
+   "mean": 0.33026571130019405,
+   "std": 0.009452484251752236
+  },
+  "precision": {
+   "mean": 0.28106343444818943,
+   "std": 0.012521857479807537
+  },
+  "f1": {
+   "mean": 0.25351851539301645,
+   "std": 0.009350011262203799
+  },
+  "fp_per_24h": {
+   "mean": 1.1568547457057874,
+   "std": 0.09272520105127183
+  }
+ },
+ "sens_at_1fah": {
+  "sensitivity": {
+   "mean": 0.46181363526191105,
+   "std": 0.008892037821648446
+  },
+  "precision": {
+   "mean": 0.042539249411454906,
+   "std": 0.002218562329053354
+  },
+  "f1": {
+   "mean": 0.06393862669625464,
+   "std": 0.0028604827315000117
+  },
+  "fp_per_24h": {
+   "mean": 17.37046104511022,
+   "std": 0.4259584479297636
+  }
+ }
+}
