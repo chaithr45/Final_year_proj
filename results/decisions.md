@@ -115,6 +115,7 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D33 | Base DWN for M5: 50 LUT6 in one layer, 8-bit thermometer, learnable mapping, MI top-40 features (`configs/m4/sweep/dwn_L50_b8_learn.yaml`, about 880 estimated LUTs). Rule: the smallest size whose per-patient event-F1 is not significantly below the best <= 200-LUT config (paired Wilcoxon, p >= 0.05), at the bits and mapping the sweep favours | Among the five best <= 200-LUT configs (pooled F1 0.135-0.167) no pair differs per patient (p 0.15-0.97); 8 bits beat 4 (F1 p = 0.009 at 50 LUTs; FP/24 h lower at 50 and 100 LUTs, p < 1e-10) and 16 bits add false alarms over 8 without F1 gain (p < 1e-4); learnable mapping has fewer false alarms than random in 7 of 8 pairs (p < 0.01). A 50-LUT run takes about 30 min on the 4-core cloud against about 1.6-2 h at 200 LUTs, which makes the 18 Tier-2 variants feasible. If the >= 500-LUT runs (laptop) beat it per patient, the kept methods are re-run at that size | `results/tables/inner_cv.md`, `results/tables/inner_cv_tests.md` |
 | D34 | Feature selection for the DWN family: top 40 by the gain importance of a LightGBM trained on each training set's windows (`features: {rank_by: lgbm, top: 40}`), replacing single-feature mutual information. The base DWN for M5 becomes dwn_L50_b8_lgbm40 (or its recipe variant, if that wins) | Same size and encoder: event-F1 0.208 vs 0.148, per-patient mean +0.060 [95 % CI +0.001, +0.119], p = 0.047; FP/24 h 2.3 vs 7.0 (median -0.9, p = 8e-07); AUROC 0.839 vs 0.819, AUPR 0.019 vs 0.009, sens 0.537 vs 0.476 at <= 1 FA/h; 963 vs 883 estimated LUTs. MI picked ~34 EEG features and missed the heart-rate and EMG features (N7). No test patient involved; ranking uses the training fold only | runs `dwn_L50_b8_lgbm40`, `dwn_L50_b8_learn` |
 | D35 | The laptop's 21 large-DWN configs on the MI features (D32) are replaced by 9 configs on the D34 features with the base recipe (15 epochs, background ratio 10): 500, 1000 and 2000 LUTs at 8 bits, 1000 LUTs at 16 bits, and the Section 6.1 ablations at 500 LUTs (4- and 5-input LUTs, tau 1 and 10, two layers 500 + 100); laptop job `big`, followed by the raw-EEG CNN and TCN. The cloud drops `dwn_L500_b8_learn` and `dwn_L500_b16_learn` (MI) and runs LGN last | D34 changed the model that goes to M6 (event-F1 0.211 vs 0.148 at the same 50 LUTs), so size and ablation results on the MI features would not transfer to it. The <= 200-LUT MI grid already answers the mapping question (learnable beat random in 7 of the 8 completed size/bit pairs; dwn_L200_b8_rando was interrupted and is re-run after the cloud queue) and 4 bits was the weakest at every size. Roughly a tenth of the GPU time of the old list, so M6 can start about a day earlier. The 21 MI configs stay runnable (`scripts/laptop/start.sh sweep`) if the paper needs the full MI grid | `scripts/laptop/big_lgbm.sh`, `configs/m4/dwn_L*_lgbm40_e15bg10*.yaml` |
+| D36 | N6 modality dropout is adopted: the final DWN is trained with ECG, EMG and motion each dropped independently with probability 0.2 per training window (features and present bits set to 0, `configs/m5/n6_dropout.yaml`). N6 is judged on the missing-sensor test it was built for, at each run's own best-F1 operating point, against the base under the same condition | Per-patient event-F1 against the base (96 training patients, out-of-fold): no ECG 0.172 vs 0.092 (mean +0.080, p = 0.005); no motion 0.192 vs 0.136 (+0.056, p = 0.021); EEG only 0.112 vs 0.074 (+0.037, p = 0.067); no EMG 0.190 vs 0.199 (p = 0.88); intact 0.188 vs 0.211 (-0.023, p = 0.23, not significant). Significantly more robust to the two sensors the base depends on, at no significant cost when all sensors are present; 19 fewer estimated LUTs (median) | runs `n6_dropout`, `dwn_L50_b8_lgbm40_e15bg10` (`breakdown.json`, per-patient F1 per condition) |
 
 Method results and keep/drop decisions are appended below as runs finish.
 
@@ -254,3 +255,19 @@ Method results and keep/drop decisions are appended below as runs finish.
   * **n5_focal** (focal loss): F1 0.154 (-0.057 [-0.106, -0.012], p = 0.038), FP/24 h 1.6 (p = 0.028), AUROC 0.809.
     **Dropped**: significantly worse event-F1.
   * GCE and SCE (noise-robust losses) are running.
+* **N6 on the D34 base** (missing-sensor tests with `m5_breakdown.py --missing`; event-F1 under each condition, same
+  operating point as the intact model):
+
+  | Run | intact | no ECG | no EMG | no motion | EEG only |
+  |---|---|---|---|---|---|
+  | base | 0.211 | 0.092 | 0.199 | 0.136 | 0.074 |
+  | n6_dropout (p 0.2) | 0.188 | 0.172 | 0.190 | 0.192 | 0.112 |
+  | n6_gated (dropout + quality/presence bits always in) | 0.201 | 0.125 | 0.198 | 0.196 | 0.129 |
+  | n6_late (one DWN per modality, summed) | 0.134 | 0.070 | 0.012 | 0.056 | 0.000 |
+  | n6_eeg_only (trained on EEG features only) | 0.166 | - | - | - | 0.166 |
+
+  **n6_dropout adopted (D36).** n6_late is **dropped** (intact F1 -0.077, p = 0.0006, and it collapses when any
+  modality is missing: each modality's sub-network was trained to vote only with the others present). n6_gated is
+  between the base and dropout; its per-patient comparison with the base is pending. n6_eeg_only (F1 0.166 vs 0.211,
+  p = 0.084 intact) is kept as the reference for an EEG-only fallback: on EEG alone it beats both the base (0.074) and
+  dropout (0.112).
