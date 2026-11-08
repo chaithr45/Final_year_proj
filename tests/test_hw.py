@@ -33,3 +33,45 @@ def test_verilog_matches_golden(tmp_path, layers, gate):
     make_testbench(pkg, info, tmp_path / "vectors.hex", n, tmp_path / "tb.v")
     ok, out = simulate(tmp_path, tmp_path / "dut.v", tmp_path / "tb.v")
     assert ok, out
+
+
+def test_test_vectors_match_golden_model(tmp_path, bids_root):
+    """Section 8.4: test vectors from raw fixture recordings: features equal the golden feature model,
+    scores equal the trained DWN, and the manifest's checksums match the files."""
+    import contextlib
+    import hashlib
+    import json
+    import subprocess
+    import sys
+    from pathlib import Path
+    from seizelut.data.bids import discover_runs
+    from seizelut.data.edf import read_edf
+    from seizelut.data.remote import local_edf
+    from seizelut.features import spec as S
+    from seizelut.features.golden import extract
+    repo = Path(__file__).resolve().parents[1]
+    rng = np.random.default_rng(0)
+    fcols = [S.FEATURES.index(n) for n in ("eeg_mav_mean", "eeg_ll_max", "eeg_ch1_mav", "present_ecg")]
+    X = rng.integers(0, 400, (2000, len(fcols))).astype(np.int16)
+    y = (X[:, 0] + X[:, 1] > 400).astype(int)
+    m = build({"type": "dwn", "params": {"bits": 4, "layers": [16], "n": 4, "epochs": 2, "batch": 256}}).fit(X, y)
+    d = export_dwn(m, [S.FEATURES[c] for c in fcols], {"threshold": 0.5, "gate": "any", "k": 3}, tmp_path / "exp",
+                   {"run": "unit-test"})
+    keys = ["sub-001_run-01", "sub-002_run-01"]
+    r = subprocess.run([sys.executable, "scripts/make_test_vectors.py", "--export", str(d), "--runs", *keys,
+                        "--dataset-root", str(bids_root)], cwd=repo, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr[-2000:]
+    man = json.loads((d / "vectors" / "manifest.json").read_text())
+    runs = {x.key: x for x in discover_runs(bids_root, ["sub-001", "sub-002"])}
+    for key in keys:
+        with contextlib.ExitStack() as st:
+            sig = {mm: read_edf(st.enter_context(local_edf(runs[key], mm))) for mm in runs[key].modalities}
+            ref = extract(sig, int(sig["eeg"].duration_s), "int")["X"].astype(np.int16)
+        feats = np.fromfile(d / "vectors" / key / "features.i16", dtype=np.int16).reshape(-1, len(S.FEATURES))
+        np.testing.assert_array_equal(feats, ref)
+        score = np.fromfile(d / "vectors" / key / "score.i32", dtype=np.int32)
+        np.testing.assert_array_equal(score, m.score(ref[:, fcols]).astype(np.int32))
+        assert any(k.startswith(f"{key}/inputs/eeg_") for k in man["recordings"][key]["files"])
+        for rel, info in man["recordings"][key]["files"].items():
+            assert hashlib.sha256((d / "vectors" / rel).read_bytes()).hexdigest() == info["sha256"]
+        assert (d / "vectors" / key / "sample.csv").read_text().startswith("second,")

@@ -192,8 +192,12 @@ def motion_features(ops, axes):
 
 # ----------------------------------------------------------------- run level
 
-def extract(signals: dict, n_seconds: int, mode: str = "int") -> dict:
+def extract(signals: dict, n_seconds: int, mode: str = "int", inputs: dict | None = None) -> dict:
     """signals: {'eeg': EdfData, 'ecg': EdfData|None, 'emg': ..., 'mov': ...}.
+
+    inputs: if a dict is given, the integer input samples the model reads (after the replay
+    software's fixed-gain conversion) are stored in it as '<modality>/<label>' -> int64 array
+    (test vectors, Section 8.4); the outputs do not change.
 
     Returns dict with 'X' (n_win, n_features) int64 (or float64), 'artefact' (n_win, 2) bool,
     'present' (n_win, 4) bool, 'names', 'sat' (saturation counts), 'beats'.
@@ -207,6 +211,8 @@ def extract(signals: dict, n_seconds: int, mode: str = "int") -> dict:
     per, arts, xbps = [], [], []
     for c in ch:
         q = to_fixed(eeg, c, S.LSB_BIO)
+        if inputs is not None:
+            inputs[f"eeg/{c}"] = q
         f, art, xbp = eeg_channel_features(ops, q if mode == "int" else q.astype(np.float64))
         per.append({k: _fit(v, n_win) for k, v in f.items()})
         arts.append(_fit(art, n_win, False))
@@ -230,7 +236,10 @@ def extract(signals: dict, n_seconds: int, mode: str = "int") -> dict:
     # ECG
     ecg = signals.get("ecg")
     if ecg is not None and ecg.labels:
-        f, beats = ecg_features(ops, to_fixed(ecg, ecg.labels[0], S.LSB_BIO), n_win)
+        qe = to_fixed(ecg, ecg.labels[0], S.LSB_BIO)
+        if inputs is not None:
+            inputs[f"ecg/{ecg.labels[0]}"] = qe
+        f, beats = ecg_features(ops, qe, n_win)
         n_ok = min(n_win, len(ecg.digital[ecg.labels[0]]) // S.FS_BIO - 1)
         present[:n_ok, 0] = True
         for k, v in f.items():
@@ -241,6 +250,8 @@ def extract(signals: dict, n_seconds: int, mode: str = "int") -> dict:
     emg = signals.get("emg")
     if emg is not None and emg.labels:
         q = to_fixed(emg, emg.labels[0], S.LSB_BIO)
+        if inputs is not None:
+            inputs[f"emg/{emg.labels[0]}"] = q
         f = emg_features(ops, q if mode == "int" else q.astype(np.float64))
         present[: min(n_win, len(q) // S.FS_BIO - 1), 1] = True
         for k, v in f.items():
@@ -252,6 +263,8 @@ def extract(signals: dict, n_seconds: int, mode: str = "int") -> dict:
     for j, (sensor, labels) in enumerate((("acc", S.MOV_ACC_LABELS), ("gyr", S.MOV_GYR_LABELS))):
         if mov is not None and all(lb in mov.labels for lb in labels):
             axes = [to_fixed(mov, lb, S.LSB_MOV) for lb in labels]
+            if inputs is not None:
+                inputs.update({f"mov/{lb}": a for lb, a in zip(labels, axes)})
             if mode == "float":
                 axes = [a.astype(np.float64) for a in axes]
             f = motion_features(ops, axes)

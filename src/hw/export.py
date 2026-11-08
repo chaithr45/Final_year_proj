@@ -56,8 +56,11 @@ def export_dwn(model, feature_names: list[str], operating_point: dict, out_dir: 
     feat_used = sorted({f for f, _ in pairs})
     thresholds = {feature_names[f]: sorted({t for ff, t in pairs if ff == f}) for f in feat_used}
     (out_dir / "thresholds.json").write_text(json.dumps({
-        "features": [{"name": feature_names[f], "column": int(f), "width_bits": S.FEATURE_BITS.get(feature_names[f], 16),
+        "features": [{"name": feature_names[f], "column": int(f),
+                      **({"spec_index": S.FEATURES.index(feature_names[f])} if feature_names[f] in S.FEATURES else {}),
+                      "width_bits": S.FEATURE_BITS.get(feature_names[f], 16),
                       "thresholds": thresholds[feature_names[f]]} for f in feat_used],
+        "column": "position in the model's input columns; spec_index: position in the 117-feature vector",
         "input_bits": [{"bit": i, "feature": feature_names[f], "threshold": int(t)} for i, (f, t) in enumerate(pairs)],
         "rule": "bit = (feature > threshold), signed integer compare"}, indent=1))
     maps = []
@@ -93,10 +96,12 @@ def load_export(d: Path) -> dict:
     return {k: json.loads((d / f"{k}.json").read_text()) for k in ("thresholds", "mapping", "luts", "head", "manifest")}
 
 
-def golden_from_export(pkg: dict, X: np.ndarray, artefact: np.ndarray | None = None) -> dict:
-    """Bit-exact reference of the exported classifier on feature rows X (columns = original order).
-    Returns every stage: input bits, LUT outputs per layer, score, decision, alarm."""
-    bits = np.stack([(X[:, b["column"]] > b["threshold"]) for b in _bit_columns(pkg)], axis=1).astype(np.uint8)
+def golden_from_export(pkg: dict, X: np.ndarray, artefact: np.ndarray | None = None, full_features: bool = False) -> dict:
+    """Bit-exact reference of the exported classifier on feature rows X: the model's input columns, or with
+    full_features=True all 117 features in spec order. Returns every stage: input bits, LUT outputs per
+    layer, score, decision, alarm."""
+    bits = np.stack([(X[:, b["column"]] > b["threshold"]) for b in _bit_columns(pkg, full_features)],
+                    axis=1).astype(np.uint8)
     h = bits
     lut_out = []
     for layer, tables in zip(pkg["mapping"]["layers"], pkg["luts"]["layers"]):
@@ -122,6 +127,6 @@ def golden_from_export(pkg: dict, X: np.ndarray, artefact: np.ndarray | None = N
             "alarm": alarm.astype(np.uint8), "gate": gate.astype(np.uint8)}
 
 
-def _bit_columns(pkg):
-    col = {f["name"]: f["column"] for f in pkg["thresholds"]["features"]}
+def _bit_columns(pkg, full_features=False):
+    col = {f["name"]: (f["spec_index"] if full_features else f["column"]) for f in pkg["thresholds"]["features"]}
     return [{"column": col[b["feature"]], "threshold": b["threshold"]} for b in pkg["thresholds"]["input_bits"]]

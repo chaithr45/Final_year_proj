@@ -268,3 +268,14 @@ def test_run_final_end_to_end(tmp_path):
     with open(tmp_path / "out" / "checkpoints" / fr.name / "seed_1.pkl", "rb") as fh:
         obj = pickle.load(fh)
     assert len(obj["cols"]) == len(m["seeds"]["1"]["features"])
+    # M7 export of that seed's model: the package reproduces the model's integer scores
+    r = run("scripts/export_model.py", "--final-run", fr, "--seed", "1", "--out", tmp_path / "out",
+            "--export-dir", tmp_path / "exp")
+    assert r.returncode == 0, r.stderr[-1500:]
+    import numpy as np
+    from seizelut.hw.export import golden_from_export, load_export
+    pkg = load_export(tmp_path / "exp")
+    X = np.load(tmp_path / "feat" / "int" / "sub-097_run-01.npz")["X"]
+    np.testing.assert_array_equal(golden_from_export(pkg, X, full_features=True)["score"],
+                                  obj["model"].score(X[:, obj["cols"]]).astype(np.int64))
+    assert pkg["manifest"]["seed"] == 1 and pkg["manifest"]["cv_run"] == cv.name
