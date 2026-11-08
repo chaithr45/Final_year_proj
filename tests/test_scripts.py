@@ -71,8 +71,9 @@ def test_evaluate_predictions_end_to_end(tmp_path):
     assert not (rd / ".gitignore").exists()
 
 
-def _synthetic_feature_cache(root, n_sub=6, n_win=900):
-    """117-feature integer cache: one run per patient, one seizure each, EEG/ECG features informative."""
+def _synthetic_feature_cache(root, n_sub=6, n_win=900, extra=()):
+    """117-feature integer cache: one run per patient, one seizure each, EEG/ECG features informative.
+    `extra` adds more patient numbers (e.g. 97, 98 as stand-ins for test patients)."""
     import numpy as np
     from seizelut.features import spec as S
     d = root / "int"
@@ -80,10 +81,10 @@ def _synthetic_feature_cache(root, n_sub=6, n_win=900):
     rng = np.random.default_rng(0)
     eeg = [i for i, n in enumerate(S.FEATURES) if n.startswith("eeg_")][:6]
     ecg = [i for i, n in enumerate(S.FEATURES) if n.startswith("ecg_log")][:2]
-    for s in range(1, n_sub + 1):
+    for s in list(range(1, n_sub + 1)) + list(extra):
         X = rng.integers(0, 200, size=(n_win, len(S.FEATURES))).astype(np.int16)
         y = np.zeros(n_win, np.int8)
-        a = 200 + 50 * s
+        a = 200 + 50 * (s % 10)
         y[a:a + 60] = 1
         X[a:a + 60][:, eeg + ecg] += 150
         X[:, [S.FEATURES.index(n) for n in S.FEATURES if n.startswith("present_")]] = 1
@@ -230,3 +231,37 @@ def test_run_inner_cv_raw_end_to_end(tmp_path, bids_root):
     assert r2.returncode == 0, r2.stderr[-2000:]
     assert "cnn_t: a finished run exists, skipped" in r2.stdout
     assert len(list((tmp_path / "out" / "results" / "runs").glob("*_cnn_t_s0"))) == 1
+
+
+def test_run_final_end_to_end(tmp_path):
+    """M6 runner on a synthetic cache: inner-CV run first, then 2 seeds trained on the training patients
+    with the CV run's operating point, scored on stand-in test patients, models kept for the export."""
+    import pickle
+    import yaml
+    folds = _synthetic_feature_cache(tmp_path / "feat", n_sub=4, extra=(97, 98))
+    lg = {"type": "lgbm", "params": {"n_estimators": 10, "n_jobs": 1}}
+    cfg = {"name": "t_final", "seed": 0,
+           "model": {"type": "dwn", "params": {"bits": 4, "layers": [16], "n": 4, "mapping": "random", "epochs": 1,
+                                               "batch": 256, "threads": 1, "distill_alpha": 0.5}},
+           "features": {"mi_top": 10, "always": ["present_ecg"]},
+           "train": {"bg_ratio": 3, "modality_dropout": 0.2, "distill": {"teacher": lg}},
+           "post": {"k": [4], "gate": ["none"], "n_thresholds": 5}}
+    (tmp_path / "c.yaml").write_text(yaml.safe_dump(cfg))
+    common = ["--out", tmp_path / "out", "--features-root", tmp_path / "feat"]
+    r = run("scripts/run_inner_cv.py", "--config", tmp_path / "c.yaml", "--folds-file", folds, *common)
+    assert r.returncode == 0, r.stderr[-1500:]
+    cv = next((tmp_path / "out" / "results" / "runs").glob("*_t_final_s0"))
+    args = ["scripts/run_final.py", "--config", tmp_path / "c.yaml", "--cv-run", cv, "--seeds", "0", "1",
+            "--train-subjects", "sub-001", "sub-002", "sub-003", "sub-004", "--test-subjects", "sub-097", "sub-098", *common]
+    r = run(*args)
+    assert r.returncode != 0 and "final-test" in (r.stderr + r.stdout)        # the test guard holds
+    r = run(*args, "--final-test")
+    assert r.returncode == 0, r.stderr[-1500:]
+    fr = next((tmp_path / "out" / "results" / "runs").glob("*_t_final_final_s0"))
+    m = json.loads((fr / "final_metrics.json").read_text())
+    assert set(m["seeds"]) == {"0", "1"} and "summary_mean_std_over_seeds" in m
+    assert "present_ecg" in m["seeds"]["0"]["features"]
+    assert (fr / "TEST_ACCESS.log").exists() and not (fr / ".gitignore").exists()
+    with open(tmp_path / "out" / "checkpoints" / fr.name / "seed_1.pkl", "rb") as fh:
+        obj = pickle.load(fh)
+    assert len(obj["cols"]) == len(m["seeds"]["1"]["features"])

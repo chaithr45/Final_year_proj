@@ -27,59 +27,9 @@ from seizelut.data.split import load_folds
 from seizelut.eval.innercv import finalize
 from seizelut.eval.runlog import new_run_dir
 from seizelut.features import spec as S
-from seizelut.models.registry import build
+from seizelut.models.training import bits_of, feature_names, fit_config, select_features
 
 REPO = Path(__file__).resolve().parents[1]
-
-
-def select_features(spec, names):
-    if spec in (None, "all"):
-        return list(range(len(names)))
-    if isinstance(spec, dict) and "exclude_prefix" in spec:
-        return [i for i, n in enumerate(names) if not n.startswith(tuple(spec["exclude_prefix"]))]
-    if isinstance(spec, dict) and "include_prefix" in spec:
-        return [i for i, n in enumerate(names) if n.startswith(tuple(spec["include_prefix"]))]
-    if isinstance(spec, dict) and "mi_top" in spec:
-        return list(range(len(names)))          # selected per fold inside the CV loop
-    if isinstance(spec, dict) and "ranking" in spec:
-        order = json.loads((REPO / spec["ranking"]).read_text())["order"]
-        return sorted(names.index(n) for n in order[: spec["top"]])
-    return [names.index(n) for n in spec]
-
-
-MODALITY_PREFIX = {"ecg": ("ecg_", "present_ecg"), "emg": ("emg_", "present_emg"),
-                   "mov": ("mov_", "present_mov_acc", "present_mov_gyr")}
-
-
-def modality_dropout(X, p, rng):
-    """N6: for each training row, drop ECG, EMG and motion independently with probability p
-    (features and present bits set to 0, exactly as when the modality is missing)."""
-    X = X.copy()
-    for prefixes in MODALITY_PREFIX.values():
-        cols = [i for i, n in enumerate(S.FEATURES) if n.startswith(prefixes)]
-        rows = rng.random(len(X)) < p
-        X[np.ix_(rows, cols)] = 0
-    return X
-
-
-def mi_select(fspec, X, y, cols, names, stack, seed, log):
-    """Section 5.2: rank by mutual information on the training folds only (200k-row sample)."""
-    from sklearn.feature_selection import mutual_info_classif
-    rs = np.random.default_rng(seed)
-    sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
-    if fspec.get("mi_on") == "base" and stack > 1:
-        # rank the base features on the current window (t-0 block) only, then keep every lag of
-        # the winners: ranking the stacked columns picks lagged copies of a few features (D31)
-        nF = len(S.FEATURES)
-        cur = list(range((stack - 1) * nF, stack * nF))
-        mi = mutual_info_classif(X[sub][:, cur].astype(np.float32), y[sub], random_state=seed)
-        top = sorted(np.argsort(-mi)[: fspec["mi_top"]].tolist(), key=lambda i: -mi[i])
-        fcols = [b * nF + i for i in top for b in range(stack)]
-    else:
-        mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed)
-        fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
-    log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
-    return fcols
 
 
 def _save_model(model, run, fold, cols, out=REPO):
@@ -124,10 +74,8 @@ def main() -> int:
     if missing:
         raise SystemExit(f"feature cache incomplete for {len(missing)} training patients, e.g. {missing[:5]}")
     store.stack = int(cfg.get("stack", 1))
-    names = S.FEATURES if store.stack == 1 else [f"{n}@t-{j}" for j in range(store.stack - 1, -1, -1) for n in S.FEATURES]
+    names = feature_names(store.stack)
     cols = select_features(cfg.get("features", "all"), names)
-    bits_of = lambda i: S.FEATURE_BITS[S.FEATURES[i % len(S.FEATURES)]]
-    feat_bits = [bits_of(i) for i in cols]
     run_cfg = {**cfg, "folds_run": fold_ids, "feature_mode": args.mode,
                "folds_file": str(Path(args.folds_file).name)}
     if args.resume:
@@ -149,7 +97,6 @@ def main() -> int:
 
     oof_dir = out / "cache" / "oof" / run.name
     oof_dir.mkdir(parents=True, exist_ok=True)
-    tc = cfg.get("train", {})
     oof, costs, fold_info = [], [], []
     for k in fold_ids:
         tr = sorted(s for s, f in folds.items() if f != k)
@@ -168,108 +115,30 @@ def main() -> int:
             log(f"fold {k}: reloaded from the interrupted run ({info['val_windows']} val windows)")
             continue
         ckpt = oof_dir / f"_fold_{k}_train.pt"     # per-epoch training state (deleted when the fold is done)
-        spec_model = build(cfg["model"], log=log)
-        spec_model.ckpt_path = ckpt
-        if getattr(spec_model, "needs_store", False):
-            # sequence models (N1): sample their own training sequences from the store
-            log(f"fold {k}: train {len(tr)} patients (sequence model); val {len(va)} patients")
-            scols = cols
-            fspec = cfg.get("features")
-            if isinstance(fspec, dict) and "mi_top" in fspec:
-                # same per-fold selection as the window models (sequence models used every column before)
-                Xm, ym, _, _, _ = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"))
-                scols = mi_select(fspec, Xm, ym, cols, names, store.stack, seed + k, log)
-                del Xm, ym
-            spec_model.fit_store(store, tr, scols, seed + k)
+        log(f"fold {k}: train {len(tr)} patients; val {len(va)} patients")
+        model, fcols, n_train = fit_config(cfg, store, tr, seed + k, log, ckpt=ckpt)
+        n_win = 0
+        if getattr(model, "needs_store", False):
             runs_va, X_va = [], []
             for r in store.iter_runs(va):        # keep only the model's columns of each validation run
-                X_va.append(np.ascontiguousarray(r.X[:, scols]))
+                X_va.append(np.ascontiguousarray(r.X[:, fcols]))
                 r.X = None
                 runs_va.append(r)
-            scores = spec_model.score_runs(X_va)
+            scored = zip(runs_va, model.score_runs(X_va))
             del X_va
-            n_win = 0
-            for r, s in zip(runs_va, scores):
-                np.save(oof_dir / f"{r.subject}_{r.run}.npy", s)
-                oof.append({"subject": r.subject, "fold": k, "score": s, "artefact": r.artefact,
-                            "seizures": r.seizures, "duration_s": r.duration_s, "y": r.y})
-                n_win += len(s)
-            c = spec_model.cost([bits_of(i) for i in scols])
-            costs.append(c)
-            _save_model(spec_model, run, k, scols, out)
-            fold_info.append({"fold": k, "val_windows": n_win, "features": [names[i] for i in scols],
-                              "seconds": round(time.time() - t0, 1), "cost": c})
-            log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
-            done_f.write_text(json.dumps(fold_info[-1], default=float))
-            ckpt.unlink(missing_ok=True)
-            continue
-        X, y, _, _, keys = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"))
-        log(f"fold {k}: train {len(tr)} patients, {len(y)} windows ({int(y.sum())} seizure); val {len(va)} patients")
-        fcols = cols
-        fspec = cfg.get("features")
-        if isinstance(fspec, dict) and "mi_top" in fspec:
-            fcols = mi_select(fspec, X, y, cols, names, store.stack, seed + k, log)
-        if isinstance(fspec, dict) and fspec.get("always"):
-            # N6 gated fusion: quality and presence bits are always inputs, whatever their MI rank
-            fcols = list(fcols) + [names.index(n) for n in fspec["always"] if names.index(n) not in fcols]
-        fold_bits = [bits_of(i) for i in fcols]
-        model = build(cfg["model"], log=log)
-        model.ckpt_path = None if tc.get("hard_negative") else ckpt   # hard-negative retrains a second model
-        dwn_like = cfg["model"]["type"] in ("dwn", "dwn_late")
-        if dwn_like:
-            model.p["seed"] = seed + k
-        if tc.get("modality_dropout"):
-            X = modality_dropout(X, tc["modality_dropout"], np.random.default_rng(seed + 100 + k))
-        fit_kw = {}
-        hn = tc.get("hard_negative")
-        teacher = None
-        if tc.get("distill") or (hn and hn.get("by") == "teacher"):
-            # N4: the teacher (a Tier-1 model) is trained on the same fold's training windows
-            tspec = (tc.get("distill") or hn)["teacher"]
-            teacher = build(tspec, log=log)
-            teacher.fit(X[:, fcols], y)
-            log(f"  teacher {tspec['type']} trained")
-        if dwn_like:
-            fit_kw = {"onset": store.last_onset, "bags": store.last_bags}
-            if tc.get("distill"):
-                fit_kw["soft"] = teacher.score(X[:, fcols])        # in-sample soft targets (probabilities)
-        model.fit(X[:, fcols], y, **fit_kw)
-        if hn:
-            # one round: score all training background, add the highest-scoring false positives
-            # (scored by the model itself, or by the teacher for teacher-guided mining, N4)
-            miner = teacher if hn.get("by") == "teacher" else model
-            cand = []
-            for r in store.iter_runs(tr):
-                bg = np.flatnonzero(r.y == 0)
-                if len(bg):
-                    s = miner.score(r.X[bg][:, fcols])
-                    cand.append((r.subject + "_" + r.run, bg, s))
-            alls = np.concatenate([c[2] for c in cand])
-            cut = np.quantile(alls, 1 - hn.get("top_fraction", 0.001))
-            extra = {key: bg[s >= cut] for key, bg, s in cand if (s >= cut).any()}
-            X, y, _, _, _ = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"),
-                                               extra_bg=extra)
-            log(f"  hard negatives: +{sum(len(v) for v in extra.values())} windows, retraining on {len(y)}")
-            if tc.get("modality_dropout"):
-                X = modality_dropout(X, tc["modality_dropout"], np.random.default_rng(seed + 200 + k))
-            model = build(cfg["model"], log=log)
-            if dwn_like:
-                model.p["seed"] = seed + k
-                fit_kw = {"onset": store.last_onset, "bags": store.last_bags}
-            model.fit(X[:, fcols], y, **fit_kw)
-        del X
-        n_win = 0
-        for r in store.iter_runs(va):
-            s = model.score(r.X[:, fcols]).astype(np.float32)
+        else:
+            scored = ((r, model.score(r.X[:, fcols]).astype(np.float32)) for r in store.iter_runs(va))
+        for r, s in scored:
             np.save(oof_dir / f"{r.subject}_{r.run}.npy", s)
             oof.append({"subject": r.subject, "fold": k, "score": s, "artefact": r.artefact,
                         "seizures": r.seizures, "duration_s": r.duration_s, "y": r.y})
+            r.X = None
             n_win += len(s)
-        c = model.cost(fold_bits)
+        c = model.cost([bits_of(i) for i in fcols])
         costs.append(c)
         _save_model(model, run, k, fcols, out)
-        fold_info.append({"fold": k, "train_windows": int(len(y)), "val_windows": n_win,
-                          "features": [names[i] for i in fcols],
+        fold_info.append({"fold": k, **({"train_windows": n_train} if n_train is not None else {}),
+                          "val_windows": n_win, "features": [names[i] for i in fcols],
                           "seconds": round(time.time() - t0, 1), "cost": c})
         log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
         done_f.write_text(json.dumps(fold_info[-1], default=float))

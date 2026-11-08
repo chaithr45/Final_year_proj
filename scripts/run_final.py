@@ -8,7 +8,11 @@ run of the same config; nothing is tuned on test data. Metrics:
     pooled totals, 95 % patient-bootstrap intervals;
   * dataset-paper metrics on our alarms: any-overlap sensitivity and false alarms per hour
     (mean over recordings), window AUROC / AUPR of the raw score.
-Writes results/runs/<id>/final_metrics.json and per-seed per-subject tables.
+Training is scripts/run_inner_cv.py's fit_config() on all 96 training patients (same feature selection,
+switches and seeds), with every trainable model seeded per seed. Each seed's model is kept in
+checkpoints/<id>/seed_<s>.pkl for the export (M7). Test recordings are scored one at a time.
+Writes results/runs/<id>/final_metrics.json and per-seed per-subject tables; an interrupted run is
+continued with --resume <run dir> (finished seeds are kept).
 
 Usage: python scripts/run_final.py --config configs/m4/lgbm.yaml --cv-run results/runs/<inner-cv run> \
            --seeds 0 1 2 3 4 --final-test
@@ -31,8 +35,7 @@ from seizelut.eval.operating import gate_mask, kth_of_last
 from seizelut.eval.runlog import mark_complete, log_test_access, new_run_dir, require_test_access
 from seizelut.eval.stats import bootstrap_ci
 from seizelut.eval.szcore import aggregate, score_recording
-from seizelut.features import spec as S
-from seizelut.models.registry import build
+from seizelut.models.training import bits_of, feature_names, fit_config
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -45,45 +48,73 @@ def main() -> int:
     ap.add_argument("--op", default="best_f1", choices=["best_f1", "sens_at_1fah"])
     ap.add_argument("--device", default=None)
     ap.add_argument("--final-test", action="store_true")
+    ap.add_argument("--resume", default=None, help="unfinished final run directory to continue")
+    ap.add_argument("--out", default=None, help="write runs/ and checkpoints under this directory (tests)")
+    ap.add_argument("--features-root", default=None, help="feature cache root (tests)")
+    ap.add_argument("--train-subjects", nargs="*", default=None, help="tests only (default: sub-001..096)")
+    ap.add_argument("--test-subjects", nargs="*", default=None, help="tests only (default: sub-097..125)")
     args = ap.parse_args()
-    test = official_test_subjects()
+    out = Path(args.out).resolve() if args.out else REPO
+    train = args.train_subjects or official_train_subjects()
+    test = args.test_subjects or official_test_subjects()
     require_test_access(test, args.final_test)
     cfg = yaml.safe_load(Path(args.config).read_text())
     if args.device:
         cfg["model"].setdefault("params", {})["device"] = args.device
     cv = json.loads((Path(args.cv_run) / "metrics.json").read_text())
     ops = {k: v for k, v in cv["operating_points"].items() if v}
-    store = FeatureStore()
-    missing = store.missing(test + official_train_subjects())
+    store = FeatureStore(root=Path(args.features_root) if args.features_root else None)
+    store.stack = int(cfg.get("stack", 1))
+    names = feature_names(store.stack)
+    missing = store.missing(test + train)
     if missing:
         raise SystemExit(f"feature cache incomplete: {missing[:5]}")
-    run = new_run_dir(cfg["name"] + "_final", {**cfg, "cv_run": Path(args.cv_run).name, "seeds": args.seeds}, args.seeds[0])
+    run_cfg = {**cfg, "cv_run": Path(args.cv_run).name, "seeds": args.seeds}
+    if args.resume:
+        run = Path(args.resume).resolve()
+        results = json.loads((run / "final_metrics.json").read_text()) if (run / "final_metrics.json").exists() else None
+    else:
+        run = new_run_dir(cfg["name"] + "_final", run_cfg, args.seeds[0],
+                          root=(out / "results" / "runs") if args.out else None)
+        results = None
+    results = results or {"config": cfg["name"], "cv_run": Path(args.cv_run).name, "seeds": {}}
     log_test_access(run, f"M6 final evaluation of {cfg['name']} (seeds {args.seeds})")
-    names = S.FEATURES
-    results = {"config": cfg["name"], "cv_run": Path(args.cv_run).name, "seeds": {}}
+    logf = open(run / "log.txt", "a")
+
+    def log(msg):
+        print(msg, flush=True)
+        logf.write(msg + "\n")
+        logf.flush()
+
+    import pickle
+    ck = out / "checkpoints" / run.name
+    ck.mkdir(parents=True, exist_ok=True)
     for seed in args.seeds:
-        X, y, *_ = store.training_set(official_train_subjects(), cfg.get("train", {}).get("bg_ratio", 20), seed=seed)
-        fspec = cfg.get("features", "all")
-        if isinstance(fspec, dict) and "mi_top" in fspec:
-            from sklearn.feature_selection import mutual_info_classif
-            sub = np.random.default_rng(seed).choice(len(y), size=min(len(y), 200_000), replace=False)
-            mi = mutual_info_classif(X[sub].astype(np.float32), y[sub], random_state=seed)
-            cols = list(np.argsort(-mi)[: fspec["mi_top"]])
-        else:
-            cols = list(range(len(names)))
-        model = build(cfg["model"], log=print)
-        if cfg["model"]["type"] in ("dwn", "lgn", "stateful_dwn", "mlp_int8"):
-            model.p["seed"] = seed
+        if str(seed) in results["seeds"]:
+            log(f"seed {seed}: already done")
+            continue
+        log(f"seed {seed}: training on {len(train)} patients")
+        model, cols, _ = fit_config(cfg, store, train, seed, log, seed_all_models=True)
+        lf = getattr(model, "log", None)
+        model.log = None
+        with open(ck / f"seed_{seed}.pkl", "wb") as fh:
+            pickle.dump({"model": model, "cols": cols, "features": [names[i] for i in cols]}, fh)
+        model.log = lf
+        runs, scores = [], []
         if getattr(model, "needs_store", False):
-            model.fit_store(store, official_train_subjects(), cols, seed)
+            X_list = []
+            for r in store.iter_runs(test):
+                X_list.append(np.ascontiguousarray(r.X[:, cols]))
+                r.X = None
+                runs.append(r)
+            scores = model.score_runs(X_list)
+            del X_list
         else:
-            model.fit(X[:, cols], y)
-        del X
-        runs = list(store.iter_runs(test))
-        scores = (model.score_runs([r.X[:, cols] for r in runs]) if getattr(model, "needs_store", False)
-                  else [model.score(r.X[:, cols]) for r in runs])
-        seed_out = {"cost": model.cost([S.FEATURE_BITS[names[i]] for i in cols]),
-                    "features": [names[i] for i in cols]}
+            for r in store.iter_runs(test):
+                scores.append(model.score(r.X[:, cols]).astype(np.float32))
+                r.X = None
+                runs.append(r)
+        seed_out = {"cost": model.cost([bits_of(i) for i in cols]), "features": [names[i] for i in cols]}
         from sklearn.metrics import average_precision_score, roc_auc_score
         ally = np.concatenate([r.y for r in runs])
         alls = np.concatenate(scores)
@@ -113,8 +144,8 @@ def main() -> int:
                                 "paper_metrics": {"sens_ovlp_mean_over_recordings": float(np.nanmean([p["sens"] for p in paper])),
                                                   "fa_per_hour_mean_over_recordings": float(np.mean([p["fa_h"] for p in paper]))}}
             m = agg["mean_over_subjects"]
-            print(f"seed {seed} {opname}: SzCORE sens {m['sensitivity']:.3f} prec {m['precision']:.3f} "
-                  f"F1 {m['f1']:.3f} FP/24h {m['fp_per_24h']:.1f}", flush=True)
+            log(f"seed {seed} {opname}: SzCORE sens {m['sensitivity']:.3f} prec {m['precision']:.3f} "
+                  f"F1 {m['f1']:.3f} FP/24h {m['fp_per_24h']:.1f}")
         results["seeds"][str(seed)] = seed_out
         (run / "final_metrics.json").write_text(json.dumps(results, indent=1, default=float) + "\n")
     summary = {}
@@ -125,7 +156,7 @@ def main() -> int:
                            for m, v in vals.items()}
     results["summary_mean_std_over_seeds"] = summary
     (run / "final_metrics.json").write_text(json.dumps(results, indent=1, default=float) + "\n")
-    print(json.dumps(summary, indent=1))
+    log(json.dumps(summary, indent=1))
     mark_complete(run)
     return 0
 
