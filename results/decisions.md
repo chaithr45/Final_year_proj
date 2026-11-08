@@ -295,5 +295,7 @@ Method results and keep/drop decisions are appended below as runs finish.
   choice between the two for the final model is made on the missing-sensor test (running).
 * **N2 encoders:** **n2_uniform** (uniform thresholds) event-F1 0.158 (-0.053, p = 0.038), 461 fewer estimated LUTs:
   **dropped** (significantly worse), though it is the cheapest encoder. **n2_gaussian** event-F1 0.191 (-0.020, p = 0.26),
-  FP/24 h -0.3 (p = 0.005), 52 fewer LUTs: **not adopted** under D37 (mean event-F1 difference negative). Learned
-  thresholds running.
+  FP/24 h -0.3 (p = 0.005), 52 fewer LUTs: **not adopted** under D37 (mean event-F1 difference negative).
+  **n2_learned** (learned thresholds, comparator penalty 1e-4): event-F1 0.200 (-0.012 [-0.054, +0.033], p = 0.52),
+  FP/24 h 1.0 (-1.4, p = 1e-08), 155 fewer estimated LUTs: **not adopted** under D37 (mean event-F1 difference
+  negative), noted as the cheapest encoder without a significant F1 loss. The stronger penalty (1e-3) is running.
