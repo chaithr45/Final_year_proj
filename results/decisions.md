@@ -270,7 +270,9 @@ Method results and keep/drop decisions are appended below as runs finish.
   | n6_eeg_only (trained on EEG features only) | 0.166 | - | - | - | 0.166 |
 
   **n6_dropout adopted (D36).** n6_late is **dropped** (intact F1 -0.077, p = 0.0006, and it collapses when any
-  modality is missing: each modality's sub-network was trained to vote only with the others present). n6_gated is
-  between the base and dropout; its per-patient comparison with the base is pending. n6_eeg_only (F1 0.166 vs 0.211,
+  modality is missing: each modality's sub-network was trained to vote only with the others present). n6_gated against the
+  base: no motion +0.059 (p = 0.007), EEG only +0.055 (p = 0.003), no ECG +0.033 (p = 0.10), intact p = 0.92; against
+  n6_dropout: no condition differs (no ECG -0.047, p = 0.08; EEG only +0.017, p = 0.17). It is not adopted on top of
+  dropout: no significant gain over the simpler variant, and dropout is the one that fixes the missing-ECG case. n6_eeg_only (F1 0.166 vs 0.211,
   p = 0.084 intact) is kept as the reference for an EEG-only fallback: on EEG alone it beats both the base (0.074) and
   dropout (0.112).
