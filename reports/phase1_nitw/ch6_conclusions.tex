@@ -77,7 +77,8 @@ raw-EEG CNN/TCN running\\
 \small DWN design study & \small Completed up to 200 LUTs & \small 500--2,000 LUTs and further ablations running on the
 GPU\\
 \small Extensions N1, N3, N7 & \small Completed & \small None adopted alone; N7 led to the improved feature selection\\
-\small Extensions N2, N4, N5, N6 & \small In progress & \small 16 variants running; missing-sensor tests to follow\\
+\small Extensions N5, N6 & \small Completed & \small Modality dropout (N6) adopted; no loss variant (N5) adopted\\
+\small Extensions N2, N4 & \small In progress & \small 7 variants running\\
 \small Hardware handoff tools (export, test vectors, reference Verilog) & \small Completed and tested & \small Run on
 the final model in Phase II\\
 \small Final evaluation on the 29 test patients & \small Planned & \small After every design choice is frozen; five
@@ -126,6 +127,8 @@ Phase I established the foundation of the project and its first results:
   models and better than an INT8 network, though still below gradient-boosted trees.
 \item Interpretability of the LUT network led to the largest improvement of the phase, and the thermometer encoder was
   identified as the dominant hardware cost.
+\item Training with random modality dropout makes the network robust to a missing ECG or motion sensor (event-F1
+  0.172 against 0.092 without ECG) at no significant cost when all sensors are present.
 \item No LUT-native seizure detector exists in the literature, and no LUT network fuses modalities or handles missing
   sensors; the project addresses both.
 \end{enumerate}

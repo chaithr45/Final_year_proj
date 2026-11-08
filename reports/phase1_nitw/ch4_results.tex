@@ -135,7 +135,10 @@ alarms in every variant (for example from 6.8 to 10.2--39.5 per day at 1 h). & N
 N1 stateful network (16 state bits) & Event-F1 0.192 against 0.211 ($p = 0.66$); false alarms 1.1 against 2.4 per day
 ($p = 0.013$); AUROC 0.861 against 0.840. & Not adopted alone; kept for the combination\\
 N1 stacked windows (last 5 s) & Event-F1 0.217 against 0.211 ($p = 0.25$), about 480 more LUTs. & Not adopted\\
-N2, N4, N5, N6 & 16 variants running. & Pending\\
+N5 loss functions (MIL, onset weighting, focal, GCE, SCE) & No event-F1 gain; the focal, GCE and SCE losses were significantly worse ($p = 0.038$, $0.005$, $0.003$). & Not adopted\\
+N6 modality dropout & With ECG removed, event-F1 0.172 against 0.092 for the base ($p = 0.005$); with motion removed 0.192 against 0.136 ($p = 0.021$); with all sensors, 0.188 against 0.211 (not significant, $p = 0.23$). & \textbf{Adopted}\\
+N6 late fusion & Event-F1 0.134 ($p = 0.0006$, worse) and collapses when any sensor is missing. & Dropped\\
+N2, N4 & 7 variants running. & Pending\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -185,9 +188,9 @@ EEG only & 0.074 ($p = 2\times10^{-6}$)\\
 \end{minipage}
 \end{table}
 
-The detector catches most tonic-clonic seizures, the dangerous ones, but few focal seizures, and it depends heavily on
-the heart signal and on motion. Robustness to missing sensors (N6) is therefore a central question of the remaining
-extensions.
+The detector catches most tonic-clonic seizures, the dangerous ones, but few focal seizures, and the base network
+depends heavily on the heart signal and on motion. Training with random modality dropout (N6,
+Table~\ref{tab:ext-results}) removes most of this dependence: without ECG its event-F1 is 0.172 instead of 0.092.
 
 \section{Comparison with Published Research}
 

@@ -25,7 +25,8 @@ the next LUT-based models (TreeLUT and a logic-gate network) and better on every
 that needs 9,600 multiplications per decision, but it is still below gradient-boosted trees (event-F1 0.292). It
 detects 88\,\% of tonic-clonic seizures but few focal seizures, and it depends on the ECG signal. An interpretability
 study of the network showed that the first feature selection ignored the heart-rate features; selecting the inputs by
-LightGBM importance instead raised event-F1 from 0.148 to 0.208 at the same size. The literature survey of 79
+LightGBM importance instead raised event-F1 from 0.148 to 0.208 at the same size, and training with random sensor
+dropout keeps the detector working when the ECG is missing (event-F1 0.172 against 0.092). The literature survey of 79
 references found no LUT-native seizure detector and no LUT network that fuses modalities or handles missing sensors.
 
 The 29 test patients have not been used to score any of our models yet. Phase II will complete the extensions of the
