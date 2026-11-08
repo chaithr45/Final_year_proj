@@ -1,0 +1,102 @@
+fold 0: train 76 patients; val 20 patients
+  training windows: 337810 (30710 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'ecg_log_rr', 'eeg_ch2_theta', 'present_mov_acc', 'eeg_theta_max', 'eeg_hf_mean_ctx', 'ecg_log_rr_ctx', 'ecg_log_masrd', 'eeg_beta_mean_ctx', 'emg_mav'] ...
+  teacher lgbm trained
+    epoch 1/15 loss 0.5778 (8 s)
+    epoch 2/15 loss 0.4875 (5 s)
+    epoch 3/15 loss 0.4682 (5 s)
+    epoch 4/15 loss 0.4578 (4 s)
+    epoch 5/15 loss 0.4508 (4 s)
+    epoch 6/15 loss 0.4469 (5 s)
+    epoch 7/15 loss 0.4428 (5 s)
+    epoch 8/15 loss 0.4402 (5 s)
+    epoch 9/15 loss 0.4381 (4 s)
+    epoch 10/15 loss 0.4364 (4 s)
+    epoch 11/15 loss 0.4309 (4 s)
+    epoch 12/15 loss 0.4310 (5 s)
+    epoch 13/15 loss 0.4323 (5 s)
+    epoch 14/15 loss 0.4309 (4 s)
+    epoch 15/15 loss 0.4312 (4 s)
+  fold 0 done in 377 s; estimated cost {'network_luts': 50, 'encoder_comparators': 140, 'encoder_comparator_bits': 1448, 'encoder_luts': 752, 'encoder_comparators_before_pruning': 281, 'popcount_luts': 57, 'postproc_luts': 12, 'total_luts': 871, 'multipliers': 0}
+fold 1: train 77 patients; val 19 patients
+  training windows: 360987 (32817 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean_ctx', 'ecg_log_rr', 'eeg_ch2_theta', 'ecg_log_rr_ctx', 'eeg_theta_mean', 'eeg_beta_mean_ctx', 'eeg_alpha_mean_ctx', 'eeg_hf_mean_ctx', 'ecg_log_masrd', 'eeg_ch2_mav'] ...
+  teacher lgbm trained
+    epoch 1/15 loss 0.5412 (9 s)
+    epoch 2/15 loss 0.4536 (6 s)
+    epoch 3/15 loss 0.4366 (5 s)
+    epoch 4/15 loss 0.4300 (5 s)
+    epoch 5/15 loss 0.4262 (5 s)
+    epoch 6/15 loss 0.4229 (5 s)
+    epoch 7/15 loss 0.4200 (5 s)
+    epoch 8/15 loss 0.4204 (5 s)
+    epoch 9/15 loss 0.4193 (5 s)
+    epoch 10/15 loss 0.4184 (5 s)
+    epoch 11/15 loss 0.4135 (6 s)
+    epoch 12/15 loss 0.4143 (5 s)
+    epoch 13/15 loss 0.4145 (6 s)
+    epoch 14/15 loss 0.4146 (6 s)
+    epoch 15/15 loss 0.4151 (6 s)
+  fold 1 done in 394 s; estimated cost {'network_luts': 50, 'encoder_comparators': 141, 'encoder_comparator_bits': 1455, 'encoder_luts': 754, 'encoder_comparators_before_pruning': 283, 'popcount_luts': 57, 'postproc_luts': 12, 'total_luts': 873, 'multipliers': 0}
+fold 2: train 77 patients; val 19 patients
+  training windows: 399564 (36324 seizure)
+  LightGBM-gain top 40: ['eeg_theta_max', 'ecg_log_rr', 'eeg_ch2_mav', 'eeg_theta_mean', 'eeg_ch2_theta', 'ecg_log_rr_ctx', 'eeg_hf_mean_ctx', 'eeg_theta_mean_ctx', 'ecg_log_masrd', 'present_mov_acc'] ...
+  teacher lgbm trained
+    epoch 1/15 loss 0.5570 (8 s)
+    epoch 2/15 loss 0.4671 (5 s)
+    epoch 3/15 loss 0.4500 (5 s)
+    epoch 4/15 loss 0.4435 (5 s)
+    epoch 5/15 loss 0.4379 (5 s)
+    epoch 6/15 loss 0.4360 (5 s)
+    epoch 7/15 loss 0.4346 (5 s)
+    epoch 8/15 loss 0.4326 (5 s)
+    epoch 9/15 loss 0.4303 (4 s)
+    epoch 10/15 loss 0.4295 (5 s)
+    epoch 11/15 loss 0.4263 (5 s)
+    epoch 12/15 loss 0.4269 (5 s)
+    epoch 13/15 loss 0.4262 (5 s)
+    epoch 14/15 loss 0.4256 (5 s)
+    epoch 15/15 loss 0.4257 (5 s)
+  fold 2 done in 370 s; estimated cost {'network_luts': 50, 'encoder_comparators': 150, 'encoder_comparator_bits': 1548, 'encoder_luts': 802, 'encoder_comparators_before_pruning': 274, 'popcount_luts': 57, 'postproc_luts': 12, 'total_luts': 921, 'multipliers': 0}
+fold 3: train 77 patients; val 19 patients
+  training windows: 384032 (34912 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'eeg_beta_mean_ctx', 'ecg_log_rr_ctx', 'ecg_log_rr', 'eeg_beta_max_ctx', 'eeg_theta_max', 'eeg_ch2_theta', 'ecg_log_masrd', 'eeg_hf_max_ctx', 'emg_mav'] ...
+  teacher lgbm trained
+    epoch 1/15 loss 0.5555 (8 s)
+    epoch 2/15 loss 0.4774 (5 s)
+    epoch 3/15 loss 0.4588 (5 s)
+    epoch 4/15 loss 0.4464 (4 s)
+    epoch 5/15 loss 0.4406 (4 s)
+    epoch 6/15 loss 0.4388 (5 s)
+    epoch 7/15 loss 0.4375 (5 s)
+    epoch 8/15 loss 0.4355 (4 s)
+    epoch 9/15 loss 0.4328 (5 s)
+    epoch 10/15 loss 0.4313 (4 s)
+    epoch 11/15 loss 0.4275 (4 s)
+    epoch 12/15 loss 0.4281 (4 s)
+    epoch 13/15 loss 0.4282 (4 s)
+    epoch 14/15 loss 0.4276 (4 s)
+    epoch 15/15 loss 0.4288 (4 s)
+  fold 3 done in 541 s; estimated cost {'network_luts': 50, 'encoder_comparators': 137, 'encoder_comparator_bits': 1417, 'encoder_luts': 736, 'encoder_comparators_before_pruning': 278, 'popcount_luts': 57, 'postproc_luts': 12, 'total_luts': 855, 'multipliers': 0}
+fold 4: train 77 patients; val 19 patients
+  training windows: 387431 (35221 seizure)
+  LightGBM-gain top 40: ['eeg_theta_mean', 'ecg_log_rr', 'eeg_ch2_theta', 'eeg_theta_max', 'ecg_log_rr_ctx', 'eeg_ch2_mav', 'eeg_ch2_alpha', 'ecg_log_masrd', 'present_mov_acc', 'eeg_beta_max_ctx'] ...
+  teacher lgbm trained
+    epoch 1/15 loss 0.5526 (6 s)
+    epoch 2/15 loss 0.4667 (4 s)
+    epoch 3/15 loss 0.4500 (5 s)
+    epoch 4/15 loss 0.4435 (4 s)
+    epoch 5/15 loss 0.4402 (4 s)
+    epoch 6/15 loss 0.4370 (4 s)
+    epoch 7/15 loss 0.4327 (4 s)
+    epoch 8/15 loss 0.4297 (4 s)
+    epoch 9/15 loss 0.4269 (4 s)
+    epoch 10/15 loss 0.4275 (4 s)
+    epoch 11/15 loss 0.4211 (4 s)
+    epoch 12/15 loss 0.4224 (4 s)
+    epoch 13/15 loss 0.4227 (4 s)
+    epoch 14/15 loss 0.4227 (4 s)
+    epoch 15/15 loss 0.4228 (4 s)
+  fold 4 done in 248 s; estimated cost {'network_luts': 50, 'encoder_comparators': 143, 'encoder_comparator_bits': 1473, 'encoder_luts': 760, 'encoder_comparators_before_pruning': 280, 'popcount_luts': 57, 'postproc_luts': 12, 'total_luts': 879, 'multipliers': 0}
+RESULT n4_distill: window AUROC 0.851 AUPR 0.025 | best-F1 op (gate none, k 10): F1 0.229 sens 0.267 prec 0.303 FP/24h 0.9 | sens@<=1FA/h 0.597 (FP/24h 23.3)
+run dir: /home/user/Final_year_proj/results/runs/20261108-145504_n4_distill_s0
