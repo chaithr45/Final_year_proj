@@ -134,7 +134,8 @@ def main() -> int:
                 intact = f1s
             subs = sorted(f1s)
             test = paired_wilcoxon([f1s[s] for s in subs], [intact[s] for s in subs]) if name != "intact" else None
-            res[name] = {kk: row[kk] for kk in ("f1", "sensitivity", "precision", "fp_per_24h")} | {"vs_intact": test}
+            res[name] = {kk: row[kk] for kk in ("f1", "sensitivity", "precision", "fp_per_24h")} | {"vs_intact": test,
+                         "per_subject_f1": {s: float(f1s[s]) for s in subs}}
         out["missing_modality"] = res
         md += ["\n## Missing modalities at test time (same operating point)\n",
                "| Condition | Event-F1 | Sens | Prec | FP/24h | median dF1 vs intact | p |", "|---|---|---|---|---|---|---|"]
