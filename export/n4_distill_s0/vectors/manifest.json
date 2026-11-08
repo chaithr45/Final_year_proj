@@ -1,0 +1,1293 @@
+{
+ "export": {
+  "model_type": "dwn",
+  "n_input_bits": 146,
+  "luts_per_layer": [
+   50
+  ],
+  "lut_inputs": 6,
+  "git": {
+   "commit": "4a187b3aa3c5a20c5aa12d9dbd8c57af750336c2",
+   "dirty": false
+  },
+  "feature_spec_sha256_16": "f85b162c7d86e3f9",
+  "dataset": "SeizeIT2 ds005873 v1.1.0",
+  "training_run": "20261108-194022_n4_distill_final_s0",
+  "seed": 0,
+  "cv_run": "20261108-145504_n4_distill_s0",
+  "operating_point_name": "best_f1",
+  "config_sha256_16": "8f75a3623be924a4",
+  "config": {
+   "name": "n4_distill",
+   "seed": 0,
+   "model": {
+    "type": "dwn",
+    "params": {
+     "bits": 8,
+     "layers": [
+      50
+     ],
+     "n": 6,
+     "mapping": "learnable",
+     "tau": 3.3333,
+     "epochs": 15,
+     "lr": 0.01,
+     "batch": 2048,
+     "decay_at": 0.7,
+     "loss": "ce",
+     "device": "cpu",
+     "threads": 8,
+     "distill_alpha": 0.5,
+     "distill_T": 2.0
+    }
+   },
+   "features": {
+    "rank_by": "lgbm",
+    "top": 40
+   },
+   "train": {
+    "bg_ratio": 10,
+    "distill": {
+     "teacher": {
+      "type": "lgbm",
+      "params": {
+       "n_estimators": 300,
+       "num_leaves": 31,
+       "learning_rate": 0.05
+      }
+     }
+    }
+   },
+   "post": {
+    "k": [
+     4,
+     6,
+     8,
+     10
+    ],
+    "gate": [
+     "none",
+     "both",
+     "any"
+    ],
+    "n_thresholds": 40
+   },
+   "base_config": "dwn_L50_b8_lgbm40_e15bg10",
+   "cv_run": "20261108-145504_n4_distill_s0",
+   "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ]
+  }
+ },
+ "feature_names": [
+  "eeg_mav_mean",
+  "eeg_mav_max",
+  "eeg_mav_absdiff",
+  "eeg_ll_mean",
+  "eeg_ll_max",
+  "eeg_ll_absdiff",
+  "eeg_mob_mean",
+  "eeg_mob_max",
+  "eeg_mob_absdiff",
+  "eeg_zc_mean",
+  "eeg_zc_max",
+  "eeg_zc_absdiff",
+  "eeg_ext_mean",
+  "eeg_ext_max",
+  "eeg_ext_absdiff",
+  "eeg_delta_mean",
+  "eeg_delta_max",
+  "eeg_delta_absdiff",
+  "eeg_theta_mean",
+  "eeg_theta_max",
+  "eeg_theta_absdiff",
+  "eeg_alpha_mean",
+  "eeg_alpha_max",
+  "eeg_alpha_absdiff",
+  "eeg_beta_mean",
+  "eeg_beta_max",
+  "eeg_beta_absdiff",
+  "eeg_hf_mean",
+  "eeg_hf_max",
+  "eeg_hf_absdiff",
+  "eeg_ch1_mav",
+  "eeg_ch1_ll",
+  "eeg_ch1_mob",
+  "eeg_ch1_zc",
+  "eeg_ch1_ext",
+  "eeg_ch1_delta",
+  "eeg_ch1_theta",
+  "eeg_ch1_alpha",
+  "eeg_ch1_beta",
+  "eeg_ch1_hf",
+  "eeg_ch2_mav",
+  "eeg_ch2_ll",
+  "eeg_ch2_mob",
+  "eeg_ch2_zc",
+  "eeg_ch2_ext",
+  "eeg_ch2_delta",
+  "eeg_ch2_theta",
+  "eeg_ch2_alpha",
+  "eeg_ch2_beta",
+  "eeg_ch2_hf",
+  "eeg_sign_agree",
+  "eeg_art_ch1",
+  "eeg_art_ch2",
+  "ecg_log_rr",
+  "ecg_log_masrd",
+  "ecg_quality_bad",
+  "emg_mav",
+  "emg_ll",
+  "emg_zc",
+  "emg_hl_ratio",
+  "mov_acc_mag",
+  "mov_acc_jerk",
+  "mov_acc_act",
+  "mov_acc_band",
+  "mov_gyr_mag",
+  "mov_gyr_jerk",
+  "mov_gyr_act",
+  "mov_gyr_band",
+  "present_ecg",
+  "present_emg",
+  "present_mov_acc",
+  "present_mov_gyr",
+  "eeg_mav_mean_ctx",
+  "eeg_mav_max_ctx",
+  "eeg_mav_absdiff_ctx",
+  "eeg_ll_mean_ctx",
+  "eeg_ll_max_ctx",
+  "eeg_ll_absdiff_ctx",
+  "eeg_mob_mean_ctx",
+  "eeg_mob_max_ctx",
+  "eeg_mob_absdiff_ctx",
+  "eeg_zc_mean_ctx",
+  "eeg_zc_max_ctx",
+  "eeg_zc_absdiff_ctx",
+  "eeg_ext_mean_ctx",
+  "eeg_ext_max_ctx",
+  "eeg_ext_absdiff_ctx",
+  "eeg_delta_mean_ctx",
+  "eeg_delta_max_ctx",
+  "eeg_delta_absdiff_ctx",
+  "eeg_theta_mean_ctx",
+  "eeg_theta_max_ctx",
+  "eeg_theta_absdiff_ctx",
+  "eeg_alpha_mean_ctx",
+  "eeg_alpha_max_ctx",
+  "eeg_alpha_absdiff_ctx",
+  "eeg_beta_mean_ctx",
+  "eeg_beta_max_ctx",
+  "eeg_beta_absdiff_ctx",
+  "eeg_hf_mean_ctx",
+  "eeg_hf_max_ctx",
+  "eeg_hf_absdiff_ctx",
+  "eeg_sign_agree_ctx",
+  "ecg_log_rr_ctx",
+  "ecg_log_masrd_ctx",
+  "emg_mav_ctx",
+  "emg_ll_ctx",
+  "emg_zc_ctx",
+  "emg_hl_ratio_ctx",
+  "mov_acc_mag_ctx",
+  "mov_acc_jerk_ctx",
+  "mov_acc_act_ctx",
+  "mov_acc_band_ctx",
+  "mov_gyr_mag_ctx",
+  "mov_gyr_jerk_ctx",
+  "mov_gyr_act_ctx",
+  "mov_gyr_band_ctx"
+ ],
+ "used_features": [
+  "eeg_theta_mean",
+  "ecg_log_rr",
+  "eeg_ch2_theta",
+  "eeg_theta_max",
+  "eeg_beta_mean_ctx",
+  "ecg_log_rr_ctx",
+  "eeg_hf_mean_ctx",
+  "ecg_log_masrd",
+  "eeg_mav_absdiff",
+  "eeg_hf_max_ctx",
+  "emg_mav",
+  "mov_acc_jerk",
+  "eeg_sign_agree",
+  "mov_acc_mag",
+  "eeg_theta_max_ctx",
+  "eeg_theta_mean_ctx",
+  "eeg_ll_absdiff",
+  "ecg_quality_bad",
+  "emg_ll",
+  "eeg_delta_mean",
+  "eeg_ch2_hf",
+  "emg_zc",
+  "eeg_ch1_hf",
+  "mov_gyr_mag",
+  "eeg_theta_absdiff",
+  "eeg_ch2_mav",
+  "eeg_alpha_mean_ctx",
+  "mov_acc_jerk_ctx",
+  "eeg_ext_absdiff",
+  "ecg_log_masrd_ctx",
+  "eeg_mob_mean_ctx",
+  "mov_gyr_jerk",
+  "eeg_delta_max",
+  "eeg_delta_absdiff",
+  "mov_gyr_act_ctx",
+  "eeg_ch2_alpha",
+  "eeg_hf_absdiff_ctx",
+  "eeg_ch1_theta"
+ ],
+ "fs": {
+  "eeg": 256,
+  "ecg": 256,
+  "emg": 256,
+  "mov": 25
+ },
+ "lsb": {
+  "bio_uV": 0.25,
+  "mov": 0.000244140625
+ },
+ "window_s": 2,
+ "hop_s": 1,
+ "window_t_covers_seconds": "[t, t + 2)",
+ "recordings": {
+  "sub-097_run-02": {
+   "n_windows": 68636,
+   "seizures_s": [
+    [
+     34494.0,
+     34505.0
+    ]
+   ],
+   "files": {
+    "sub-097_run-02/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      17571072
+     ],
+     "sha256": "76dc550f7ae14894e953a1b16633dd6afa1aa7e8e211fa125748570cadf2fe08"
+    },
+    "sub-097_run-02/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      17571072
+     ],
+     "sha256": "8ec233d0a8b9d62e94875aef627687f197070880d98375a0080a29056a13742d"
+    },
+    "sub-097_run-02/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      68636,
+      117
+     ],
+     "sha256": "261feb532e340b5a94aaa143c28c246eb9e75d6e6351cd35ef6e185c03cbe617"
+    },
+    "sub-097_run-02/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      68636,
+      2
+     ],
+     "sha256": "b01a4d6fbae0afdbe4f5d626b25573f49cb1ca0df531f9880695c4247cad4eb5"
+    },
+    "sub-097_run-02/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      68636,
+      146
+     ],
+     "sha256": "d00cddf3e24ce624abe18c84ed653778ee9e8b12d59da960998ed0ab8db99d16"
+    },
+    "sub-097_run-02/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      68636,
+      50
+     ],
+     "sha256": "3277306dfe9562fb077877486cb2b77e21e1f449fdaa70a8245893d1e0c0e3d1"
+    },
+    "sub-097_run-02/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      68636
+     ],
+     "sha256": "581366d02d7ba9963ae04944c283af18a316d4ccc5377025f1f00b80e996f6c6"
+    },
+    "sub-097_run-02/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      68636
+     ],
+     "sha256": "f28811f35998d04b83140beeaaac84d94dbde3a2d5fb00f3eed11ba0325fee16"
+    },
+    "sub-097_run-02/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      68636
+     ],
+     "sha256": "2ca478396b854abbf90f91fc835bc7465f1402c508d1513b0e5d0f664dc87a44"
+    },
+    "sub-097_run-02/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      68636
+     ],
+     "sha256": "f28811f35998d04b83140beeaaac84d94dbde3a2d5fb00f3eed11ba0325fee16"
+    }
+   }
+  },
+  "sub-097_run-04": {
+   "n_windows": 76312,
+   "seizures_s": [
+    [
+     19132.0,
+     19144.0
+    ],
+    [
+     29228.0,
+     29253.0
+    ],
+    [
+     67819.0,
+     67825.0
+    ]
+   ],
+   "files": {
+    "sub-097_run-04/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19536128
+     ],
+     "sha256": "9bc006826e5180961c7867abd9ac3233d7751884c93ae82749bffc0e36cb61f3"
+    },
+    "sub-097_run-04/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19536128
+     ],
+     "sha256": "7e0c7deed66376f9de1445926e8b175315926824017651a9b9bf020dbd46052e"
+    },
+    "sub-097_run-04/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      76312,
+      117
+     ],
+     "sha256": "6d2981b76c47b7217a33ed7277058a73d99e6a930ab9a6ac62ed94245e8bdad8"
+    },
+    "sub-097_run-04/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76312,
+      2
+     ],
+     "sha256": "05e8bab8fa7ba736313b2a06980339e9d1835aad807fb2f757efe77886ae8cfa"
+    },
+    "sub-097_run-04/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76312,
+      146
+     ],
+     "sha256": "d1be8f66cf3eaf063bbe6b31cc48a008bb3467fd736f12807e95e5122e7b4d47"
+    },
+    "sub-097_run-04/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76312,
+      50
+     ],
+     "sha256": "9834253379dcd35af82a1918d7c0294c60cd2e0533c75149130c17c134d207ff"
+    },
+    "sub-097_run-04/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      76312
+     ],
+     "sha256": "d8fac5a9727a85d8bf7317f2002e50464484ec9d04c943c8411e35d058dcdca3"
+    },
+    "sub-097_run-04/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76312
+     ],
+     "sha256": "c0b82c6b408e7334973616faca2d7a8ffbc14715e224666f04db1ecea8bf04ce"
+    },
+    "sub-097_run-04/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76312
+     ],
+     "sha256": "dd2183c04f76a5cae3d5731f6a010cbb35d6383e78e3c009082f742dd835d843"
+    },
+    "sub-097_run-04/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76312
+     ],
+     "sha256": "c0b82c6b408e7334973616faca2d7a8ffbc14715e224666f04db1ecea8bf04ce"
+    }
+   }
+  },
+  "sub-097_run-05": {
+   "n_windows": 6465,
+   "seizures_s": [
+    [
+     4952.0,
+     4964.0
+    ]
+   ],
+   "files": {
+    "sub-097_run-05/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      1655296
+     ],
+     "sha256": "8d8e1b609bfd0fa925d8698330ca96c842c16b6a2c3994cc53f18af2a80ed9f8"
+    },
+    "sub-097_run-05/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      1655296
+     ],
+     "sha256": "82d9a660f7837d829297a077b2f22ead637a7fd60d3f1d7a947ec1be066fb327"
+    },
+    "sub-097_run-05/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      6465,
+      117
+     ],
+     "sha256": "7720661b517b6c122197ddcb520b28e2b30c9bd7315ff38896605e1534dca461"
+    },
+    "sub-097_run-05/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      6465,
+      2
+     ],
+     "sha256": "d9d595e1d915145a3c52ddd180f8d919bb8ddd565b9f201fd07cd6270fda1c16"
+    },
+    "sub-097_run-05/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      6465,
+      146
+     ],
+     "sha256": "fb9f57b6a09946f753dd8a864b21410eaa26da432d0bbbc531fcf023b88b54e7"
+    },
+    "sub-097_run-05/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      6465,
+      50
+     ],
+     "sha256": "984b898cf13ccdd09a181910a9500e24135df9878756a1acdc40a3b4d12d6fdf"
+    },
+    "sub-097_run-05/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      6465
+     ],
+     "sha256": "926fcee534d03fff26fe2ce866bfe63c238c9a78d4476fca5a9e9ffcd2711f63"
+    },
+    "sub-097_run-05/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      6465
+     ],
+     "sha256": "2a76f2fb7bba4207680e2d7034bf3b767d709b9851ca828d630dad23aa571f15"
+    },
+    "sub-097_run-05/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      6465
+     ],
+     "sha256": "3b9cc5aa00d12a18f4542df7b02f79c10bcbe5dc762ca413af6f5f163a05da5d"
+    },
+    "sub-097_run-05/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      6465
+     ],
+     "sha256": "2a76f2fb7bba4207680e2d7034bf3b767d709b9851ca828d630dad23aa571f15"
+    }
+   }
+  },
+  "sub-097_run-07": {
+   "n_windows": 41797,
+   "seizures_s": [
+    [
+     9923.0,
+     9929.0
+    ],
+    [
+     11418.0,
+     11429.0
+    ],
+    [
+     12623.0,
+     12633.0
+    ],
+    [
+     18903.0,
+     18918.0
+    ],
+    [
+     22126.0,
+     22140.0
+    ],
+    [
+     23885.0,
+     23894.0
+    ]
+   ],
+   "files": {
+    "sub-097_run-07/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      10700288
+     ],
+     "sha256": "3f052a378d8792524fdf0686d7b92651ac87d7f88dc05d5a29c35e4432da8539"
+    },
+    "sub-097_run-07/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      10700288
+     ],
+     "sha256": "058a0e435b37ca76f6115b264f97db556086be1348ccb986dcef65d290d74c9d"
+    },
+    "sub-097_run-07/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      41797,
+      117
+     ],
+     "sha256": "2b5c1d0fdc926c0360322c53a726b00a6465c25d1c3eec8c259a0baec043f137"
+    },
+    "sub-097_run-07/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      41797,
+      2
+     ],
+     "sha256": "412878e6dcfd239e2d655cd092ac7209182d5b7d765cd5ffa2dcdae0cb774f0c"
+    },
+    "sub-097_run-07/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      41797,
+      146
+     ],
+     "sha256": "3620c5f9869f5dd8b5d7da5bc48c2d2fc09039bdcd2b66348af282654d9f85d7"
+    },
+    "sub-097_run-07/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      41797,
+      50
+     ],
+     "sha256": "ec8a8f14f22f844da91f4e9dbfc5609ef292f98b78d4747ee8fdb5c5b8a3a789"
+    },
+    "sub-097_run-07/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      41797
+     ],
+     "sha256": "485f6af2f01ff2ef5f41c31d9268ece4702f10b5f724390a88fbbf87088daa14"
+    },
+    "sub-097_run-07/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      41797
+     ],
+     "sha256": "9de03cd13ea315378b7886dae0af49a7d7a9d13a86f95421ca0e225d56bec442"
+    },
+    "sub-097_run-07/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      41797
+     ],
+     "sha256": "9de03cd13ea315378b7886dae0af49a7d7a9d13a86f95421ca0e225d56bec442"
+    },
+    "sub-097_run-07/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      41797
+     ],
+     "sha256": "9de03cd13ea315378b7886dae0af49a7d7a9d13a86f95421ca0e225d56bec442"
+    }
+   }
+  },
+  "sub-097_run-09": {
+   "n_windows": 77152,
+   "seizures_s": [
+    [
+     70698.0,
+     70713.0
+    ]
+   ],
+   "files": {
+    "sub-097_run-09/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19751168
+     ],
+     "sha256": "565410485907b191cfb93d6b4dd569f21a8c07d39983645824df2b5b5fcc6346"
+    },
+    "sub-097_run-09/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19751168
+     ],
+     "sha256": "69f26c82dcb054f20e9bdf8635bec88016a84705bfab4f6b291209852ddc52ba"
+    },
+    "sub-097_run-09/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      77152,
+      117
+     ],
+     "sha256": "a124cbda00b0cb82148395b68e4fe490f7a5058a8f325ca399cbd9471dab90d5"
+    },
+    "sub-097_run-09/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      77152,
+      2
+     ],
+     "sha256": "604f9ff05dcb2ad7c6dc413d013f2d2a950f3a37f70b623bf8215ae6c2e5ded7"
+    },
+    "sub-097_run-09/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      77152,
+      146
+     ],
+     "sha256": "a88074246d7659c9701b37a2d70e498e8f2fba4e3fb40b0776912e9c0faaf741"
+    },
+    "sub-097_run-09/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      77152,
+      50
+     ],
+     "sha256": "a7c15f68282e80376b2917c2f841cd837e745c81e3e739de17145ecb14bcfc89"
+    },
+    "sub-097_run-09/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      77152
+     ],
+     "sha256": "40938003631c3a5cadd8d40ebb32b0f55daf532088abba45b2a4f3121a3fade5"
+    },
+    "sub-097_run-09/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      77152
+     ],
+     "sha256": "1cbfb5c3cc24b75e69c32991d2909169008de6adae7ad25fb74eb3becb2a0bc9"
+    },
+    "sub-097_run-09/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      77152
+     ],
+     "sha256": "89f03aae2876c7522507e4cb7e729ec4dd679a6863b2d35c31d6728ebe7413ac"
+    },
+    "sub-097_run-09/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      77152
+     ],
+     "sha256": "1cbfb5c3cc24b75e69c32991d2909169008de6adae7ad25fb74eb3becb2a0bc9"
+    }
+   }
+  },
+  "sub-097_run-10": {
+   "n_windows": 424,
+   "seizures_s": [
+    [
+     110.0,
+     124.0
+    ]
+   ],
+   "files": {
+    "sub-097_run-10/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      108800
+     ],
+     "sha256": "f01d37fc319fbb27951cfbb9136e8c624ec9071c8f0eba75b4c427398daf0ef7"
+    },
+    "sub-097_run-10/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      108800
+     ],
+     "sha256": "e0dd10478fae39d7ad13edfc9183ead36abdf28a4e33055ebbb48cfafba2dbdd"
+    },
+    "sub-097_run-10/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      424,
+      117
+     ],
+     "sha256": "ad2f72346d18754ac7e393e1b25ce5e3b44d45129404815a580046d91cd355c6"
+    },
+    "sub-097_run-10/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      424,
+      2
+     ],
+     "sha256": "706783c47065063bfda564ab29c83da03df2f0e482dcacc758e85a1fbc5db269"
+    },
+    "sub-097_run-10/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      424,
+      146
+     ],
+     "sha256": "fd8a38a264f169f95fe38f4d592d0c698b58c1a40a1170b1b26233ce9b93f722"
+    },
+    "sub-097_run-10/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      424,
+      50
+     ],
+     "sha256": "9d13c9b922b6f15b0f21c344cdf6dcc394986cbc9e9f80c171c9275c3d6dbd5e"
+    },
+    "sub-097_run-10/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      424
+     ],
+     "sha256": "d82fe5c7f5fa4d08c9d5f3d8febb39fbf389e06953fd484cb01676ee968d5090"
+    },
+    "sub-097_run-10/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      424
+     ],
+     "sha256": "e6a4dd1cc11fe045554f993bb765eba87d46248a8b85a7c8dbaa5c40594e0214"
+    },
+    "sub-097_run-10/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      424
+     ],
+     "sha256": "e6a4dd1cc11fe045554f993bb765eba87d46248a8b85a7c8dbaa5c40594e0214"
+    },
+    "sub-097_run-10/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      424
+     ],
+     "sha256": "e6a4dd1cc11fe045554f993bb765eba87d46248a8b85a7c8dbaa5c40594e0214"
+    }
+   }
+  },
+  "sub-098_run-03": {
+   "n_windows": 76568,
+   "seizures_s": [
+    [
+     70069.0,
+     70177.0
+    ]
+   ],
+   "files": {
+    "sub-098_run-03/inputs/eeg_BTEright_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19601664
+     ],
+     "sha256": "0c2eb354a46eac37fd4b3ef40c6e16e7c6cdead0b09e14ef2c02fc6e11a9a2a4"
+    },
+    "sub-098_run-03/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19601664
+     ],
+     "sha256": "38ae68978b8a07937ba7e9c8329b99bac35f067b4d77fd53f9f9af9fc8ce224e"
+    },
+    "sub-098_run-03/inputs/ecg_ECG_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19601664
+     ],
+     "sha256": "fdca8cb53c23fce198f31786237e965e6a78bb3091ed005940f803a205cf1fb7"
+    },
+    "sub-098_run-03/inputs/emg_EMG_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19601664
+     ],
+     "sha256": "d8496d13a6b3acee1c23cf75459134f4f0d36b7659293ce1a2bbe7839b473c47"
+    },
+    "sub-098_run-03/inputs/mov_ECGEMG_SD_ACC_X.i16": {
+     "dtype": "int16",
+     "shape": [
+      1914225
+     ],
+     "sha256": "a496899925487ddce78fa06558c1fff8f5bca6a1abe6dd86aa28d4362742892e"
+    },
+    "sub-098_run-03/inputs/mov_ECGEMG_SD_ACC_Y.i16": {
+     "dtype": "int16",
+     "shape": [
+      1914225
+     ],
+     "sha256": "6654d83403287421b15038835884849b51b4c998d113208dbbcca1c7bfd681c9"
+    },
+    "sub-098_run-03/inputs/mov_ECGEMG_SD_ACC_Z.i16": {
+     "dtype": "int16",
+     "shape": [
+      1914225
+     ],
+     "sha256": "f84d30527be8f939a93a91f73fe952d11a4946744dd40e154afc2fee88304459"
+    },
+    "sub-098_run-03/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      76568,
+      117
+     ],
+     "sha256": "24fbeacc966cc3d05ad459405432d22975e1a062628ee33eb7b65dadde1bc6d1"
+    },
+    "sub-098_run-03/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76568,
+      2
+     ],
+     "sha256": "56ee17cf508c7b53ab9f43b9d0a2c68a43a297b33a86fd2358d6aba3cd39eac1"
+    },
+    "sub-098_run-03/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76568,
+      146
+     ],
+     "sha256": "4122e97446098a2bdc5d3d8156bffef99d7eb9e642b72b320b3f88c65bffb6fa"
+    },
+    "sub-098_run-03/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76568,
+      50
+     ],
+     "sha256": "e7e32df5628e9f89041057f848757f32f84bdb91e3d4128f5fdaee0958ab2679"
+    },
+    "sub-098_run-03/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      76568
+     ],
+     "sha256": "473c292413f1809782672fce38bea69f626bc6015013984ae562f955ed58777a"
+    },
+    "sub-098_run-03/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76568
+     ],
+     "sha256": "0f3ef7078603bd03bba0001bed8572d01c6bf8d407a155c02732c9fa61689677"
+    },
+    "sub-098_run-03/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76568
+     ],
+     "sha256": "7c45fd07e9f6012991b1158bafece3665dd309b4fe663fb088ba4d7bd5c5c4f2"
+    },
+    "sub-098_run-03/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      76568
+     ],
+     "sha256": "898098f3c170de7590957783a85d6b019e6c562419ba15d6bb8d6c4be77aa681"
+    }
+   }
+  },
+  "sub-099_run-01": {
+   "n_windows": 75816,
+   "seizures_s": [
+    [
+     50766.0,
+     50903.0
+    ],
+    [
+     71414.0,
+     71529.0
+    ],
+    [
+     75637.0,
+     75752.0
+    ]
+   ],
+   "files": {
+    "sub-099_run-01/inputs/eeg_BTEright_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19409152
+     ],
+     "sha256": "471b793df37d3967800cd505e4cc845ca342ac2efc3e96d9d2575db59cf01c4b"
+    },
+    "sub-099_run-01/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19409152
+     ],
+     "sha256": "56a452300a8d1e195e61da75c01bfb3cd2bb7048cecf108d3b3a5f3af1bbf04f"
+    },
+    "sub-099_run-01/inputs/ecg_ECG_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19409152
+     ],
+     "sha256": "022347c9b36b0fdf6931c876b622a35003c58c20ec58dfd808e70565c7426f24"
+    },
+    "sub-099_run-01/inputs/emg_EMG_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      19409152
+     ],
+     "sha256": "58a1981022d98d885503ab7e8e2aaf276fc0d60f1d4cb1abd36bb70bc6e539d2"
+    },
+    "sub-099_run-01/inputs/mov_ECGEMG_SD_ACC_X.i16": {
+     "dtype": "int16",
+     "shape": [
+      1895425
+     ],
+     "sha256": "b94f30ccbba6978f70752d1add92527ba9655580f68a2dfd34c8c5aae6b7326b"
+    },
+    "sub-099_run-01/inputs/mov_ECGEMG_SD_ACC_Y.i16": {
+     "dtype": "int16",
+     "shape": [
+      1895425
+     ],
+     "sha256": "9ace290522121217b601cdf6eb15b18d870feef9b030ef0ea15270f6ccd55d1b"
+    },
+    "sub-099_run-01/inputs/mov_ECGEMG_SD_ACC_Z.i16": {
+     "dtype": "int16",
+     "shape": [
+      1895425
+     ],
+     "sha256": "169ad337631501008ceb0a5be49f7fd99e8d5657050f47de425b74341c90b6a2"
+    },
+    "sub-099_run-01/inputs/mov_ECGEMG_SD_GYR_A.i16": {
+     "dtype": "int16",
+     "shape": [
+      1895425
+     ],
+     "sha256": "369170e77dbac560e699ce4a46787b171f70ae60dc101eff499260aebaddac5c"
+    },
+    "sub-099_run-01/inputs/mov_ECGEMG_SD_GYR_B.i16": {
+     "dtype": "int16",
+     "shape": [
+      1895425
+     ],
+     "sha256": "ef578bcdb8f0850116c1068e68d7272b3c39c040a0a7b4febe8db3be082a4bbd"
+    },
+    "sub-099_run-01/inputs/mov_ECGEMG_SD_GYR_C.i16": {
+     "dtype": "int16",
+     "shape": [
+      1895425
+     ],
+     "sha256": "3ac15c7d12daa7edaf48583f3adba0cec93239b675f03c548ff47e22145394da"
+    },
+    "sub-099_run-01/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      75816,
+      117
+     ],
+     "sha256": "ca74f45148cc8d6dc611927958919ee5206cf83775eb29385abab86c8ae8b419"
+    },
+    "sub-099_run-01/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      75816,
+      2
+     ],
+     "sha256": "1ad857d9b7717a3db3800df788e54bd2e3891199ebcdcb0e6d013dcdf200d90c"
+    },
+    "sub-099_run-01/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      75816,
+      146
+     ],
+     "sha256": "d437571145e544e1b4e819e4819626c45c90705245c22922da10dc1262d6ccc0"
+    },
+    "sub-099_run-01/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      75816,
+      50
+     ],
+     "sha256": "56c871e61b146538fd1ff004d5a546de8fc942ac2133b6f9124313cd93e30603"
+    },
+    "sub-099_run-01/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      75816
+     ],
+     "sha256": "226dab40db6111cb90eeca48bcdc7e046289fc1b948434c705f9a5c19578f758"
+    },
+    "sub-099_run-01/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      75816
+     ],
+     "sha256": "7403d7171d83d9551428e39de162ec9ae4c86e50c4a5ba2c3d28dabe116bf9f8"
+    },
+    "sub-099_run-01/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      75816
+     ],
+     "sha256": "c1a7dde9aea8da2be762edbd57fa7fa8dd0083a1b7c95e45a7cce34fcb99a563"
+    },
+    "sub-099_run-01/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      75816
+     ],
+     "sha256": "7403d7171d83d9551428e39de162ec9ae4c86e50c4a5ba2c3d28dabe116bf9f8"
+    }
+   }
+  },
+  "sub-099_run-02": {
+   "n_windows": 4936,
+   "seizures_s": [
+    [
+     4616.0,
+     4694.0
+    ]
+   ],
+   "files": {
+    "sub-099_run-02/inputs/eeg_BTEright_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      1263872
+     ],
+     "sha256": "7843548f28bad8990fd8d639e14d3da3b16e2e103cda3aef42df6047dec4027b"
+    },
+    "sub-099_run-02/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      1263872
+     ],
+     "sha256": "4b9458a693a25f4d59280c152c44cd5816bc31b5e74a1d71fe14125f57d2cf2b"
+    },
+    "sub-099_run-02/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      4936,
+      117
+     ],
+     "sha256": "985dccfad9414651d2c5dfc53e1df3e4f5ac939d4d07ef9ca9860a815b396789"
+    },
+    "sub-099_run-02/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      4936,
+      2
+     ],
+     "sha256": "8454b3cddf063e7c87320076b9ce03d2955b92ade6d7db4bfb528c2316473cb7"
+    },
+    "sub-099_run-02/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      4936,
+      146
+     ],
+     "sha256": "e9fe34f7acc9ab10375003c333b9b165f6ca54bdd4f695826c0f6c676a6db407"
+    },
+    "sub-099_run-02/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      4936,
+      50
+     ],
+     "sha256": "ff7a908ac7136421c48c507d4ac8b1172a44bc9a4fc61ec2e90094a0776cd2c8"
+    },
+    "sub-099_run-02/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      4936
+     ],
+     "sha256": "0ad94a197f77d03a3950ba3cc6e3f3ad9030fa36fc1750e6aa37675d819f01ca"
+    },
+    "sub-099_run-02/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      4936
+     ],
+     "sha256": "89a8b9b628fa36c09d6560948037bf8d4e26eeacf45acb3ac77fed7134c9ab9c"
+    },
+    "sub-099_run-02/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      4936
+     ],
+     "sha256": "89a8b9b628fa36c09d6560948037bf8d4e26eeacf45acb3ac77fed7134c9ab9c"
+    },
+    "sub-099_run-02/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      4936
+     ],
+     "sha256": "89a8b9b628fa36c09d6560948037bf8d4e26eeacf45acb3ac77fed7134c9ab9c"
+    }
+   }
+  },
+  "sub-100_run-03": {
+   "n_windows": 3854,
+   "seizures_s": [
+    [
+     2628.0,
+     2800.0
+    ]
+   ],
+   "files": {
+    "sub-100_run-03/inputs/eeg_BTEleft_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      986880
+     ],
+     "sha256": "c765871c36a908e9c03a5e35d01190d12acc1c2a84be1914ed8839b6e5db4a53"
+    },
+    "sub-100_run-03/inputs/eeg_CROSStop_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      986880
+     ],
+     "sha256": "74801ac12f7b200e001b5976ff139cbc2135aa1154bf5d4be16872d119f59293"
+    },
+    "sub-100_run-03/inputs/ecg_ECG_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      986880
+     ],
+     "sha256": "aa41e4e14631da4217aa0aade43eb6b0801d643a004e8d9333e7e60147e755ae"
+    },
+    "sub-100_run-03/inputs/emg_EMG_SD.i16": {
+     "dtype": "int16",
+     "shape": [
+      986880
+     ],
+     "sha256": "3cca129529dc9aacba8f5cf63e85653c004b7b2e564ec8deda362e6845e32940"
+    },
+    "sub-100_run-03/inputs/mov_ECGEMG_SD_ACC_X.i16": {
+     "dtype": "int16",
+     "shape": [
+      96375
+     ],
+     "sha256": "22357f229ce4833c3f6ff3cc4dbfa458a1688c861890d7643df9164a81de4c31"
+    },
+    "sub-100_run-03/inputs/mov_ECGEMG_SD_ACC_Y.i16": {
+     "dtype": "int16",
+     "shape": [
+      96375
+     ],
+     "sha256": "d9710e04e875cc279deda9aed16c25e50a983648ae96403d0504d47aefea7247"
+    },
+    "sub-100_run-03/inputs/mov_ECGEMG_SD_ACC_Z.i16": {
+     "dtype": "int16",
+     "shape": [
+      96375
+     ],
+     "sha256": "32969ba9749d41462656e60afdf4dd90b12adcbb3bb8ec9add9f56f384ac65ef"
+    },
+    "sub-100_run-03/inputs/mov_ECGEMG_SD_GYR_A.i16": {
+     "dtype": "int16",
+     "shape": [
+      96375
+     ],
+     "sha256": "dbce48cc6523751e32f6a9a46d939376bd16129c937f7c14403d246c9df5f96a"
+    },
+    "sub-100_run-03/inputs/mov_ECGEMG_SD_GYR_B.i16": {
+     "dtype": "int16",
+     "shape": [
+      96375
+     ],
+     "sha256": "dcbfe9715977733f9511fc0dfd2256c676dc285d247fa8ba9cf18d58b7a24957"
+    },
+    "sub-100_run-03/inputs/mov_ECGEMG_SD_GYR_C.i16": {
+     "dtype": "int16",
+     "shape": [
+      96375
+     ],
+     "sha256": "ec642d79013961f1ae509c2304928ca3e21cfbdf2ab14b9e94dcf5bdefa3d292"
+    },
+    "sub-100_run-03/features.i16": {
+     "dtype": "int16",
+     "shape": [
+      3854,
+      117
+     ],
+     "sha256": "f42602896eed36414b4c05e452bac9f2850b17c6ecc66f2e7f60c74fe99a50f0"
+    },
+    "sub-100_run-03/artefact.u8": {
+     "dtype": "uint8",
+     "shape": [
+      3854,
+      2
+     ],
+     "sha256": "f212f063b8321fd8478f941ff21e49eb823aa46e1f1d8faa4666ffb61ceac65a"
+    },
+    "sub-100_run-03/bits.u8": {
+     "dtype": "uint8",
+     "shape": [
+      3854,
+      146
+     ],
+     "sha256": "b11d01f9e5a67dce09e06867a8666e100b72f9a79f0ccb3d3830b0641230f0e6"
+    },
+    "sub-100_run-03/lut_l0.u8": {
+     "dtype": "uint8",
+     "shape": [
+      3854,
+      50
+     ],
+     "sha256": "4be54145ea4e617f9339b81c92b4e5c91954807df3e9296c2b465183f5b52769"
+    },
+    "sub-100_run-03/score.i32": {
+     "dtype": "int32",
+     "shape": [
+      3854
+     ],
+     "sha256": "38cdc65589cf15681ac0243526ded2befb0d740e3fd1d93536357e15c413b29a"
+    },
+    "sub-100_run-03/gate.u8": {
+     "dtype": "uint8",
+     "shape": [
+      3854
+     ],
+     "sha256": "3057dc558d7fd832fd17dc1cda2c5686907de9a76c3cc9c05dce4c223c391297"
+    },
+    "sub-100_run-03/decision.u8": {
+     "dtype": "uint8",
+     "shape": [
+      3854
+     ],
+     "sha256": "3057dc558d7fd832fd17dc1cda2c5686907de9a76c3cc9c05dce4c223c391297"
+    },
+    "sub-100_run-03/alarm.u8": {
+     "dtype": "uint8",
+     "shape": [
+      3854
+     ],
+     "sha256": "3057dc558d7fd832fd17dc1cda2c5686907de9a76c3cc9c05dce4c223c391297"
+    }
+   }
+  }
+ }
+}
