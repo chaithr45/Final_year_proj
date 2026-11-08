@@ -653,8 +653,89 @@ def torch_from(a):
     return torch.from_numpy(np.ascontiguousarray(a))
 
 
+class LateFusionDWN(Model):
+    """N6 late fusion: one DWN per modality, integer scores added (Section 6.3).
+
+    Expects every cached feature column in spec order (config `features: all`). Each group takes
+    the columns whose names start with its prefixes, optionally keeps the top `mi_top` of them by
+    mutual information on the training data, and trains its own DWN with the shared parameters and
+    its own `layers`. score = sum of the groups' popcount differences (an integer).
+    """
+    name = "dwn_late"
+    GROUPS = {"eeg": {"prefix": ["eeg_"], "mi_top": 30, "layers": [120]},
+              "ecg": {"prefix": ["ecg_", "present_ecg"], "layers": [20]},
+              "emg": {"prefix": ["emg_", "present_emg"], "layers": [30]},
+              "mov": {"prefix": ["mov_", "present_mov_acc", "present_mov_gyr"], "layers": [30]}}
+
+    def __init__(self, groups=None, log=None, threads=4, **dwn_params):
+        self.groups = groups or self.GROUPS
+        self.dwn_params = dwn_params
+        self.threads = threads
+        self.log = log or (lambda *a: None)
+        self.p = {"seed": dwn_params.get("seed", 0)}       # the CV runner sets p["seed"] per fold
+
+    def _columns(self, n_cols):
+        from ..features import spec as S
+        if n_cols != len(S.FEATURES):
+            raise ValueError(f"dwn_late needs every feature column in spec order (features: all), got {n_cols}")
+        return {g: [i for i, n in enumerate(S.FEATURES) if n.startswith(tuple(c["prefix"]))]
+                for g, c in self.groups.items()}
+
+    def fit(self, X, y, **fit_kw):
+        from sklearn.feature_selection import mutual_info_classif
+        cols = self._columns(X.shape[1])
+        rs = np.random.default_rng(self.p["seed"])
+        self.cols, self.models = {}, {}
+        for g, c in self.groups.items():
+            gc = cols[g]
+            if c.get("mi_top") and c["mi_top"] < len(gc):
+                sub = rs.choice(len(y), size=min(len(y), 200_000), replace=False)
+                mi = mutual_info_classif(X[sub][:, gc].astype(np.float32), y[sub], random_state=self.p["seed"])
+                gc = [gc[i] for i in np.argsort(-mi)[: c["mi_top"]]]
+            params = {**self.dwn_params, "layers": c["layers"], "seed": self.p["seed"]}
+            m = DWNModel(**params, threads=self.threads, log=self.log)
+            m.ckpt_path = f"{self.ckpt_path}.{g}" if self.ckpt_path else None
+            self.log(f"  late fusion: {g} DWN {c['layers']} on {len(gc)} features")
+            m.fit(np.ascontiguousarray(X[:, gc]), y, **fit_kw)
+            self.cols[g], self.models[g] = gc, m
+        if self.ckpt_path:
+            from pathlib import Path
+            for g in self.groups:
+                Path(f"{self.ckpt_path}.{g}").unlink(missing_ok=True)
+        return self
+
+    def __getstate__(self):
+        # the run log is a closure: drop it (and the sub-models' copies) when the model is pickled
+        import copy
+        st = {**self.__dict__, "log": None}
+        if "models" in st:
+            st["models"] = {g: copy.copy(m) for g, m in st["models"].items()}
+            for m in st["models"].values():
+                m.log = None
+        return st
+
+    def score_groups(self, X) -> dict:
+        return {g: m.score(np.ascontiguousarray(X[:, self.cols[g]])) for g, m in self.models.items()}
+
+    def score(self, X):
+        return np.sum(list(self.score_groups(X).values()), axis=0).astype(np.float32)
+
+    def cost(self, feature_bits):
+        fb = list(feature_bits)
+        per = {g: m.cost([fb[i] for i in self.cols[g]]) for g, m in self.models.items()}
+        out = {k: int(sum(c[k] for c in per.values())) for k in next(iter(per.values()))
+               if k not in ("postproc_luts", "total_luts")}
+        # adding the group scores: one adder per extra group, as wide as the largest score
+        width = max(int(np.ceil(np.log2(sum(m.p["layers"][-1] for m in self.models.values()) + 1))) + 1, 2)
+        out["fusion_adder_luts"] = width * (len(self.models) - 1)
+        out["postproc_luts"] = hw.POSTPROC_LUTS
+        out["total_luts"] = int(sum(c["total_luts"] - c["postproc_luts"] for c in per.values())
+                                + out["fusion_adder_luts"] + hw.POSTPROC_LUTS)
+        return out
+
+
 REGISTRY = {c.name: c for c in (LogReg, LightGBM, XGBoost, CatBoost, RandomForest, DWNModel, TreeLUTModel, LGNModel,
-                                Int8MLPModel, StatefulDWNModel)}
+                                Int8MLPModel, StatefulDWNModel, LateFusionDWN)}
 
 
 def build(spec: dict, log=None) -> Model:

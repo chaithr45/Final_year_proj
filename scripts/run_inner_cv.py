@@ -63,10 +63,10 @@ def modality_dropout(X, p, rng):
     return X
 
 
-def _save_model(model, run, fold, cols):
+def _save_model(model, run, fold, cols, out=REPO):
     """Keep each fold's fitted model (checkpoints/, not committed) for post-hoc studies (N3, N7)."""
     import pickle
-    d = REPO / "checkpoints" / run.name
+    d = out / "checkpoints" / run.name
     d.mkdir(parents=True, exist_ok=True)
     log_fn = getattr(model, "log", None)
     if log_fn is not None:
@@ -89,14 +89,18 @@ def main() -> int:
                          "written are reloaded instead of retrained (same config required)")
     ap.add_argument("--folds-file", default=str(REPO / "configs/folds_inner5.json"),
                     help="patient->fold map (default: the fixed inner folds); smaller maps for dry runs")
+    ap.add_argument("--out", default=None, help="write runs/, oof scores and checkpoints under this directory "
+                                                "instead of the repository (tests)")
+    ap.add_argument("--features-root", default=None, help="feature cache root (default cache/features; tests)")
     args = ap.parse_args()
+    out = Path(args.out).resolve() if args.out else REPO
     cfg = yaml.safe_load(Path(args.config).read_text())
     if args.device:
         cfg["model"].setdefault("params", {})["device"] = args.device
     seed = args.seed if args.seed is not None else cfg.get("seed", 0)
     folds = load_folds(args.folds_file)
     fold_ids = args.folds if args.folds is not None else sorted(set(folds.values()))
-    store = FeatureStore(args.mode)
+    store = FeatureStore(args.mode, root=Path(args.features_root) if args.features_root else None)
     missing = store.missing(sorted(folds))
     if missing:
         raise SystemExit(f"feature cache incomplete for {len(missing)} training patients, e.g. {missing[:5]}")
@@ -116,7 +120,7 @@ def main() -> int:
         if json.loads((run / "run.json").read_text())["seed"] != seed:
             raise SystemExit("seed differs from the unfinished run")
     else:
-        run = new_run_dir(cfg["name"], run_cfg, seed)
+        run = new_run_dir(cfg["name"], run_cfg, seed, root=(out / "results" / "runs") if args.out else None)
     logf = open(run / "log.txt", "a")
 
     def log(msg):
@@ -124,7 +128,7 @@ def main() -> int:
         logf.write(msg + "\n")
         logf.flush()
 
-    oof_dir = REPO / "cache" / "oof" / run.name
+    oof_dir = out / "cache" / "oof" / run.name
     oof_dir.mkdir(parents=True, exist_ok=True)
     tc = cfg.get("train", {})
     oof, costs, fold_info = [], [], []
@@ -166,7 +170,7 @@ def main() -> int:
                 n_win += len(s)
             c = spec_model.cost(feat_bits)
             costs.append(c)
-            _save_model(spec_model, run, k, cols)
+            _save_model(spec_model, run, k, cols, out)
             fold_info.append({"fold": k, "val_windows": n_win, "seconds": round(time.time() - t0, 1), "cost": c})
             log(f"  fold {k} done in {time.time() - t0:.0f} s; estimated cost {c}")
             done_f.write_text(json.dumps(fold_info[-1], default=float))
@@ -193,30 +197,40 @@ def main() -> int:
                 mi = mutual_info_classif(X[sub][:, cols].astype(np.float32), y[sub], random_state=seed + k)
                 fcols = [cols[i] for i in np.argsort(-mi)[: fspec["mi_top"]]]
             log(f"  MI top {fspec['mi_top']}: {[names[i] for i in fcols[:10]]} ...")
+        if isinstance(fspec, dict) and fspec.get("always"):
+            # N6 gated fusion: quality and presence bits are always inputs, whatever their MI rank
+            fcols = list(fcols) + [names.index(n) for n in fspec["always"] if names.index(n) not in fcols]
         fold_bits = [bits_of(i) for i in fcols]
         model = build(cfg["model"], log=log)
         model.ckpt_path = None if tc.get("hard_negative") else ckpt   # hard-negative retrains a second model
-        if cfg["model"]["type"] == "dwn":
+        dwn_like = cfg["model"]["type"] in ("dwn", "dwn_late")
+        if dwn_like:
             model.p["seed"] = seed + k
         if tc.get("modality_dropout"):
             X = modality_dropout(X, tc["modality_dropout"], np.random.default_rng(seed + 100 + k))
         fit_kw = {}
-        if cfg["model"]["type"] == "dwn":
+        hn = tc.get("hard_negative")
+        teacher = None
+        if tc.get("distill") or (hn and hn.get("by") == "teacher"):
+            # N4: the teacher (a Tier-1 model) is trained on the same fold's training windows
+            tspec = (tc.get("distill") or hn)["teacher"]
+            teacher = build(tspec, log=log)
+            teacher.fit(X[:, fcols], y)
+            log(f"  teacher {tspec['type']} trained")
+        if dwn_like:
             fit_kw = {"onset": store.last_onset, "bags": store.last_bags}
             if tc.get("distill"):
-                teacher = build(tc["distill"]["teacher"], log=log)
-                teacher.fit(X[:, fcols], y)
                 fit_kw["soft"] = teacher.score(X[:, fcols])        # in-sample soft targets (probabilities)
-                log(f"  teacher {tc['distill']['teacher']['type']} trained for distillation")
         model.fit(X[:, fcols], y, **fit_kw)
-        if tc.get("hard_negative"):
+        if hn:
             # one round: score all training background, add the highest-scoring false positives
-            hn = tc["hard_negative"]
+            # (scored by the model itself, or by the teacher for teacher-guided mining, N4)
+            miner = teacher if hn.get("by") == "teacher" else model
             cand = []
             for r in store.iter_runs(tr):
                 bg = np.flatnonzero(r.y == 0)
                 if len(bg):
-                    s = model.score(r.X[bg][:, fcols])
+                    s = miner.score(r.X[bg][:, fcols])
                     cand.append((r.subject + "_" + r.run, bg, s))
             alls = np.concatenate([c[2] for c in cand])
             cut = np.quantile(alls, 1 - hn.get("top_fraction", 0.001))
@@ -224,8 +238,13 @@ def main() -> int:
             X, y, _, _, _ = store.training_set(tr, tc.get("bg_ratio", 20), seed=seed + k, max_bg=tc.get("max_bg"),
                                                extra_bg=extra)
             log(f"  hard negatives: +{sum(len(v) for v in extra.values())} windows, retraining on {len(y)}")
+            if tc.get("modality_dropout"):
+                X = modality_dropout(X, tc["modality_dropout"], np.random.default_rng(seed + 200 + k))
             model = build(cfg["model"], log=log)
-            model.fit(X[:, fcols], y)
+            if dwn_like:
+                model.p["seed"] = seed + k
+                fit_kw = {"onset": store.last_onset, "bags": store.last_bags}
+            model.fit(X[:, fcols], y, **fit_kw)
         del X
         n_win = 0
         for r in store.iter_runs(va):
@@ -236,7 +255,7 @@ def main() -> int:
             n_win += len(s)
         c = model.cost(fold_bits)
         costs.append(c)
-        _save_model(model, run, k, fcols)
+        _save_model(model, run, k, fcols, out)
         fold_info.append({"fold": k, "train_windows": int(len(y)), "val_windows": n_win,
                           "features": [names[i] for i in fcols],
                           "seconds": round(time.time() - t0, 1), "cost": c})
