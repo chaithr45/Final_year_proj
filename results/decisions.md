@@ -321,3 +321,6 @@ Method results and keep/drop decisions are appended below as runs finish.
   AUROC 0.832, event-F1 0.192, 1.4 FP/24 h; dwn_L1000_b8_lgbm40_e15bg10 AUROC 0.818, event-F1 0.199, 3.2 FP/24 h;
   dwn_L2000_b8_lgbm40_e15bg10 AUROC 0.813, event-F1 0.202, 1.0 FP/24 h; all at or below the 50-LUT base (0.211, 2.4 FP/24 h). Size beyond 50 LUTs does not help on these features either, which
   supports the D33 choice of the smallest network. Remaining sizes and ablations continue on the laptop.
+  More laptop references: dwn_L1000_b16_lgbm40_e15bg10 (16 thresholds) event-F1 0.210, 1.7 FP/24 h (equal to the base);
+  dwn_L500_b8_lgbm40_e15bg10_n4 (4-input LUTs) event-F1 0.135, 23.9 FP/24 h (much worse: 6-input LUTs, one per LUT6,
+  are the right neuron size).
