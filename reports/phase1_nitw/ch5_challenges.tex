@@ -1,162 +1,45 @@
 \chapter{Challenges Faced and How They Were Addressed}\label{ch:challenges}
 
-This chapter describes the main problems met in Phase I and how each was solved. Every decision is recorded with its
-evidence in the project's decision log, including the ideas that did not work.
-
-
-\section{Data}
-
-\begin{xltabular}{\textwidth}{@{}P{32mm}LL@{}}
-\caption{Challenges with the data.}\label{tab:ch-data}\\
+\begin{xltabular}{\textwidth}{@{}P{17mm}P{40mm}LL@{}}
+\caption{The main problems of Phase I and their solutions.}\label{tab:challenges}\\
 \toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
+\textbf{Area} & \textbf{Challenge} & \textbf{What happened} & \textbf{Solution}\\
 \midrule
 \endfirsthead
 \toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
+\textbf{Area} & \textbf{Challenge} & \textbf{What happened} & \textbf{Solution}\\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-\small The data did not match its documentation & \small The paper says 250 Hz and 886 seizures; the files say 256 Hz
-and 883. Centre and age labels, needed for stratified splits, are not in the public release; seizure-visibility labels
-are empty. & \small A full audit of all 11,009 files before any modelling. Every window and filter is defined in
-seconds and designed for 256 Hz; folds are stratified by seizure count; analyses the data cannot support were dropped
-and reported.\\
-\small 126 GB of data on a machine without the disk or a GPU & \small The dataset could not be stored where the code
-runs. & \small The audit and the feature extraction stream each file from the public S3 bucket, process it and delete
-it; only the 3.5 GB of integer features are kept.\\
-\small Silent download truncation & \small Comparing integer and floating-point features exposed one ECG file cut at
-51,855 of 71,835 s. A new verifier then found 9 recordings silently truncated by incomplete network reads (one EEG file
-had 12 of 16,363 windows). & \small Downloads are now checked against the expected size and every cached recording
-against the audit durations. All 9 were re-extracted, and the 3 model runs trained on the bad cache were repeated.\\
-\small A recording with an ECG lead but no detectable heartbeat & \small The feature extractor crashed on an empty list
-of beats (3,250 s of data). & \small The recording is kept, its ECG features are set to 0 and a quality bit is
-raised.\\
-\small The official artefact rule does not suit behind-the-ear EEG & \small The 13\,\textmu V RMS floor flags 69\,\% of
-ordinary windows on one channel, because behind-the-ear amplitudes are close to it. & \small For our models the
-artefact flags are input bits, and whether to gate alarms on them is chosen on the training folds.\\
-\end{xltabular}
-
-\section{Reproducing the Published Baseline}
-
-\begin{xltabular}{\textwidth}{@{}P{32mm}LL@{}}
-\caption{Challenges in reproducing the published baseline.}\label{tab:ch-repro}\\
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-\small ChronoNet did not reproduce & \small Our run detected 74.5\,\% of seizures against 84.2\,\% published, with 22.6
-instead of 100.5 false alarms per hour. & \small We ported the official code literally (identical outputs on 900 random
-test cases) and then checked the metric definitions: the published AUPR matches only when averaged per recording
-(0.109 against 0.104), and the published false-alarm rate matches neither definition in the code. The gap is reported
-as measured.\\
-\small The released code selects its model on the test patients & \small Its training loop keeps the epoch with the
-best score on the same patients it is then evaluated on. & \small We reproduced it as published and also trained a
-clean version (last epoch, no test information), which is the honest reference for the final comparison.\\
-\small Defects in the released evaluation code & \small True positives can be counted more than once, and the artefact
-gate (\texttt{a and b} on two Python lists) silently uses only one channel. & \small Reproduced as written for the
-comparison with the paper; corrected numbers reported in a separate column.\\
-\small The SVM baseline cannot be rebuilt yet & \small The dataset paper defers its 42 features to Vandecasteele et al.\
-\cite{vandecasteele2020bte}, whose full text was not available to us. & \small Still open: we need that paper's feature
-table.\\
-\end{xltabular}
-
-\section{Hardware Arithmetic}
-
-\begin{xltabular}{\textwidth}{@{}P{32mm}LL@{}}
-\caption{Challenges with the integer (hardware) arithmetic.}\label{tab:ch-hw}\\
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-\small Rounding noise in integer filters & \small With plain rounding, the 0.5 Hz high-pass filter had an error of 140
-LSB standard deviation, larger than the signal itself (61 LSB). & \small Second-order error feedback of the discarded
-bits reduced the error to 0.7 LSB.\\
-\small Quantised coefficients moved the filter zeros & \small Rounding each coefficient independently moved the
-low-pass zeros away from the Nyquist frequency (stop-band floor $-55$ dB). & \small Structure-preserving quantisation,
-$b = b_0\,(1, \pm 2, 1)$, with coefficients as sums of powers of two.\\
-\small Heart rate without a divider & \small Heart rate needs $60/\mathrm{RR}$. & \small We use
-$\log_2(\mathrm{RR})$ from integer R-peak timestamps: no division and no multiplication.\\
-\small Proving that the integer pipeline costs nothing & \small Hardware arithmetic could lose accuracy silently. &
-\small A floating-point twin of every feature: median correlation 0.9965 and equal LightGBM AUROC (0.736 against
-0.735).\\
-\small TreeLUT scores were not comparable across folds & \small Each fold's integer score had its own scale, so pooled
-thresholds were meaningless; 3-bit leaves could not represent the model. & \small Scores converted to a common unit;
-leaf width chosen on the folds (5 bits).\\
-\small Verilog disagreed with the software & \small Thresholds outside a feature's bit width (for example 79 on a 2-bit
-presence feature) produced wrong comparator logic. & \small The Verilog generator now emits constant bits for such
-thresholds; the simulation agrees with the software on 100\,\% of the test vectors.\\
-\end{xltabular}
-
-\section{Computing and Infrastructure}
-
-\begin{xltabular}{\textwidth}{@{}P{32mm}LL@{}}
-\caption{Challenges with computing resources.}\label{tab:ch-infra}\\
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-\small Limited GPU resources & \small Our GPU is a laptop RTX 3060 with 6 GB of memory and 7.4 GB of system memory,
-and the reference DWN library runs only on CUDA. & \small We re-implemented the DWN in PyTorch, identical to the
-library's CUDA kernel (unit-tested), so that it also runs on CPUs. CPU jobs run on a 4-core server; large networks and
-raw-EEG models run on the GPU.\\
-\small Long runs interrupted & \small Machine restarts stopped long runs; the logic-gate network lost 3 of its 5
-folds once. & \small Every run resumes at fold and epoch level, and a queue skips finished runs; a resumed run was
-checked to give identical metrics.\\
-\small Out-of-memory failures & \small The stateful network's sequence sampler held 24 million windows in memory
-(13.9 GB of a 15 GB machine). & \small A new sampler reads each recording once and stores bits as bytes: the same
-sequences with a peak of 3.1 GB.\\
-\small Two machines, one code base & \small The CPU server and the GPU laptop must not overwrite each other's work. &
-\small One version-controlled code base, written run instructions for each machine, and automatic tests on every
-change.\\
-\end{xltabular}
-
-\section{Machine Learning}
-
-\begin{xltabular}{\textwidth}{@{}P{32mm}LL@{}}
-\caption{Challenges in the machine-learning design.}\label{tab:ch-ml}\\
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Challenge} & \textbf{What happened} & \textbf{How we addressed it}\\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-\small Seizures are 0.123\,\% of the time & \small Accuracy is meaningless, and training on all windows teaches the
-model never to fire. & \small Event-based scoring (SzCORE) per patient; training on all seizure windows plus a fixed
-ratio of background windows; operating points chosen for a false-alarm budget.\\
-\small Results must hold on unseen patients & \small Mixing a patient's windows between training and validation
-inflates results. & \small Patient-wise five-fold cross-validation; feature selection and thresholds fitted inside each
-training fold only; the test patients locked behind a flag, with every access logged.\\
-\small Early results were weaker than expected & \small The first LUT network, with mutual-information features,
-reached an event-F1 of 0.148 with 7.0 false alarms per day; the interpretability study showed that it ignored the
-heart-rate and muscle features. & \small Feature selection by LightGBM importance: event-F1 0.208 and 2.3 false alarms
-per day at the same size.\\
-\small A confounded comparison & \small The stateful network had received all 117 features instead of the selected 40,
-so its apparent gain mixed two changes. & \small Found by checking the run's records; all models now share one training
-function, and the run was repeated.\\
-\small Stacking past windows picked duplicate features & \small Ranking the 585 stacked columns kept lagged copies of
-only 11--13 distinct features. & \small Rank on the current window, then keep every lag of the selected features.\\
+\small Data & \small Files differ from the documentation & \small 256 Hz not 250 Hz; 883 not 886 seizures; no centre
+or age labels & \small Full audit first; design follows the files\\
+\small Data & \small 126 GB, no local disk or GPU & \small Dataset too large for the server & \small Stream, extract,
+delete: only 3.5 GB of features kept\\
+\small Data & \small Silent download truncation & \small 9 recordings cut short (one EEG file: 12 of 16,363 windows) &
+\small Size checks; re-extracted; 3 runs repeated\\
+\small Data & \small Official artefact rule & \small Flags 69\,\% of normal behind-the-ear windows & \small Flags used
+as input bits; gating chosen on training folds\\
+\small Baseline & \small ChronoNet only partly reproduced & \small 74.5\,\% vs 84.2\,\% detected & \small Literal port
+(identical on 900 test cases); gap reported as measured\\
+\small Baseline & \small Released code tunes on the test patients & \small Best epoch picked on the evaluation
+patients & \small Clean run with no test information as our reference\\
+\small Baseline & \small SVM features unavailable & \small Defined in a paper we could not access & \small Open;
+requested for Phase II\\
+\small Hardware & \small Rounding noise in integer filters & \small Error 140 LSB, larger than the signal (61 LSB) &
+\small Error feedback: 0.7 LSB\\
+\small Hardware & \small Heart rate needs a division & \small $60/\mathrm{RR}$ & \small $\log_2(\mathrm{RR})$: no
+division or multiplication\\
+\small Hardware & \small Verilog disagreed with software & \small Thresholds beyond a feature's bit width & \small
+Generator fixed: 0 mismatches\\
+\small Compute & \small 6 GB laptop GPU; CUDA-only library & \small DWN could not run on the CPU server & \small
+PyTorch re-implementation, unit-tested against the kernel\\
+\small Compute & \small Interrupted runs; out of memory & \small Lost folds; a sampler used 13.9 GB & \small Resumable
+runs; new sampler peaks at 3.1 GB\\
+\small ML & \small Seizures are 0.123\,\% of the time & \small Accuracy is meaningless & \small Event scoring per
+patient; balanced sampling; false-alarm budget\\
+\small ML & \small \textbf{Weak early results} & \small First network: event-F1 0.148, 7.0 false alarms/day & \small
+N7 showed heart rate was ignored; new feature selection: 0.208, 2.3/day\\
+\small ML & \small Bugs in comparisons & \small Wrong feature set; distillation lost on retraining & \small Found in
+run records; shared training code, tests, runs repeated\\
 \end{xltabular}

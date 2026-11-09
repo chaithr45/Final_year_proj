@@ -1,80 +1,58 @@
 \chapter{Introduction}
 
-\section{Background and Motivation}
+\section{Motivation}
 
-Epilepsy is a common neurological disorder: an estimated 45.9 million people had active epilepsy in 2016
-\cite{gbd2019epilepsy}. Seizures are classified by onset; focal seizures start in one part of the brain, may or may
-not impair awareness, and can spread into bilateral tonic-clonic seizures \cite{fisher2017ilae}. Patients are often
-unaware of their own seizures, so seizure diaries undercount them \cite{elger2018underreporting}, and tonic-clonic
-seizures carry a risk of sudden unexpected death in epilepsy \cite{ryvlin2013mortemus}. Reliable, automatic seizure
-detection outside the hospital would give clinicians objective seizure counts and caregivers timely alarms.
-
-In hospital, seizures are diagnosed with video-EEG from a full scalp electrode cap, which cannot be worn at home for
-days. Wearable devices are recommended today only for detecting tonic-clonic seizures \cite{beniczky2021guideline};
-for focal seizures that do not become tonic-clonic (822 of the 883 seizures in SeizeIT2) the problem is open, and
-false alarms are the main obstacle \cite{swinnen2026seizeit2}. Behind-the-ear EEG combined with ECG, EMG and motion
-sensors is a discreet alternative \cite{vandecasteele2020bte,vandecasteele2021ecg}, and the SeizeIT2 dataset
-\cite{bhagubai2025seizeit2} makes it possible to develop and evaluate detectors on 125 patients recorded with such a
-wearable.
-
-A wearable detector has to run for days on a small battery, close to the sensors, and raise an alarm within seconds.
-Sending raw signals to a phone or a server costs radio energy and depends on a connection; running a neural network on
-a microcontroller or an accelerator costs multiplications, which dominate the area and power of digital hardware.
-Field-programmable gate arrays (FPGAs) offer a different trade-off: their basic logic element is a small lookup table
-(LUT), typically with six inputs, that implements any Boolean function of those inputs in one clock cycle.
-
-A family of recent machine-learning models, which we call \emph{LUT-native}, is built from exactly this element:
-weightless neural networks, whose neurons are truth tables \cite{bacellar2024dwn}, logic-gate networks
-\cite{petersen2022dlgn}, and LUT-based networks designed for FPGAs \cite{umuroglu2020logicnets}. They need no
-multipliers at inference time, so a classifier can cost a few hundred to a few thousand LUTs. They have been applied
-to image benchmarks, physics triggers and, very recently, ECG \cite{mommen2026ecg} and EEG \cite{dharia2026eeglgn}
-classification, but, to our knowledge, not to seizure detection on multimodal wearable data.
+\begin{itemize}
+\item Epilepsy affected an estimated 45.9 million people in 2016 \cite{gbd2019epilepsy}. Patients often miss their own
+  seizures, so diaries undercount them \cite{elger2018underreporting}, and tonic-clonic seizures carry a risk of sudden
+  death \cite{ryvlin2013mortemus}.
+\item Wearables are recommended today only for tonic-clonic seizures \cite{beniczky2021guideline}; for focal seizures
+  (822 of the 883 in SeizeIT2) false alarms are the main obstacle \cite{swinnen2026seizeit2}.
+\item Behind-the-ear EEG with ECG, EMG and motion is a discreet alternative \cite{vandecasteele2020bte,vandecasteele2021ecg};
+  SeizeIT2 \cite{bhagubai2025seizeit2} provides 125 patients recorded with such a wearable.
+\item A wearable detector must run for days on a small battery. Multiplications dominate the cost of neural networks
+  in hardware, while an FPGA's basic element is a 6-input lookup table (LUT).
+\item \emph{LUT-native} networks \cite{bacellar2024dwn,petersen2022dlgn,umuroglu2020logicnets} are built from exactly
+  this element and need no multipliers; they have never been used for seizure detection.
+\end{itemize}
 
 \section{Problem Statement and Objectives}
 
 \begin{quote}
-\itshape Can a LUT-native neural network, fed by integer features computed from behind-the-ear EEG, ECG, EMG and
-motion, detect seizures in patients it has never seen as well as the published SeizeIT2 baselines, with no
-multipliers in the classifier and a budget of a few thousand FPGA LUTs?
+\itshape Can a LUT-native neural network, fed by integer features from behind-the-ear EEG, ECG, EMG and motion, detect
+seizures in unseen patients as well as the published SeizeIT2 baselines, with no multipliers and a few thousand LUTs?
 \end{quote}
 
-The objectives of the project are:
-\begin{enumerate}
-\item Audit the SeizeIT2 dataset \cite{bhagubai2025seizeit2} completely and reproduce its published baselines.
-\item Design an integer-only feature pipeline that a hardware front end can compute bit-exactly, and show that it loses
-  no accuracy against floating point.
-\item Compare LUT-native models (DWN, logic-gate networks, TreeLUT, LogicNets-style networks) with software
-  references (gradient-boosted trees) and multiplier-based networks (INT8 MLP, CNN/TCN, GRU) on the same features,
-  splits and metrics, reporting accuracy against estimated hardware cost.
-\item Extend the best LUT-native model with ideas specific to wearable seizure detection (memory across seconds,
-  cheaper input encoders, adaptation to new patients, learning from a stronger model, losses for rare and noisily
-  labelled events, robustness to missing sensors, interpretability), keeping only what is statistically significant.
-\item Evaluate the final models once on the 29 held-out test patients with event-based metrics (SzCORE
-  \cite{dan2024szcore}).
-\item Deliver a hardware handoff package (truth tables, thresholds, test vectors, verified reference Verilog) and
-  implement the detector on an FPGA.
-\end{enumerate}
+\begin{table}[H]
+\centering\small
+\caption{Objectives and their status at the end of Phase I.}\label{tab:objectives}
+\begin{tabularx}{\textwidth}{@{}cLP{30mm}@{}}
+\toprule
+\textbf{\#} & \textbf{Objective} & \textbf{Status}\\
+\midrule
+1 & Audit the SeizeIT2 dataset and reproduce its published baselines & Done\\
+2 & Integer-only, bit-exact feature pipeline with no accuracy loss & Done\\
+3 & Compare LUT-native, tree and multiplier-based models on accuracy and hardware cost & Done\\
+4 & Extend the LUT network for wearables (memory, encoders, distillation, missing sensors) & Done\\
+5 & Evaluate the frozen design once on the 29 held-out test patients & Done\\
+6 & Verified Verilog handoff; FPGA implementation & Handoff done; FPGA in Phase II\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-Objectives 1--5 and the hardware handoff of objective 6 were completed in Phase I and are reported here; the FPGA
-implementation of objective 6 is the work of Phase II.
-
-\section{Expected Contributions}
+\section{Contributions}
 
 \begin{itemize}
 \item The first differentiable LUT-native seizure detector, and the first benchmark of LUT-family models on SeizeIT2.
-\item A bit-exact integer multimodal feature front end with its fixed-point specification.
-\item An independent reproduction of the SeizeIT2 ChronoNet baseline, including a protocol that uses no test
-  information.
-\item Extensions of the DWN for biosignal events (stateful LUT networks, comparator-budgeted encoders, robustness to
-  missing sensors), each judged by per-patient statistics.
-\item A hardware handoff package that lets the FPGA implementation be checked bit for bit against the software.
+\item A bit-exact integer multimodal front end with a fixed-point specification.
+\item Distillation from a tree ensemble into a LUT network (fewer false alarms) and modality dropout (robustness to a
+  missing ECG).
+\item An independent reproduction of the SeizeIT2 ChronoNet baseline, including a protocol with no test information.
+\item A hardware handoff whose Verilog matches the software on 431,960 test windows.
 \end{itemize}
 
 \section{Organisation of the Report}
 
-Chapter~\ref{ch:lit} reviews the literature on wearable seizure detection, detection algorithms and their evaluation,
-LUT-native networks and hardware seizure detectors, and identifies the research gaps. Chapter~\ref{ch:method}
-describes the dataset and our audit of it, the proposed system, the models compared and the evaluation protocol.
-Chapter~\ref{ch:results} presents the experimental results of Phase I. Chapter~\ref{ch:challenges} describes the
-problems we met and how we solved them. Chapter~\ref{ch:concl} discusses the findings, summarises the progress and
-gives the plan for Phase II. Appendix~\ref{app:sources} lists the source file of every reported number.
+Chapter~\ref{ch:lit} reviews the literature, Chapter~\ref{ch:method} the dataset and method, Chapter~\ref{ch:results}
+the results, Chapter~\ref{ch:challenges} the challenges, and Chapter~\ref{ch:concl} the conclusions and the plan for
+Phase II.

@@ -1,10 +1,40 @@
-\chapter{Sources of the Reported Numbers}\label{app:sources}
+\chapter{Full Results and Sources}\label{app:sources}
 
-Every number in this report comes from a saved result file of the project. Table~\ref{tab:sources} lists where each
-group of numbers is stored; the run folders hold the configuration, the code version, the log and the metrics of each
-experiment.
+\section{All Models on the 29 Test Patients}
 
-\begin{xltabular}{\textwidth}{@{}P{55mm}L@{}}
+\begin{table}[htbp]
+\centering\footnotesize
+\caption[Final evaluation of every model on the 29 test patients.]{Final evaluation of every model on the 29 test patients (5 seeds; SzCORE event metrics at the best-F1
+operating point chosen on the training folds; Paper: the base paper's sensitivity and false alarms per hour; $p$: paired
+Wilcoxon on per-patient event-F1).}\label{tab:test-full}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+\textbf{Model} & \textbf{AUROC} & \textbf{Event-F1} & \textbf{Sens} & \textbf{Prec} & \textbf{FA/24\,h} &
+\textbf{Paper} & \textbf{Cost} & \textbf{$p$ vs LGBM}\\
+\midrule
+\textbf{DWN + distillation (final)} & 0.883 & \textbf{0.248} & 0.303 & 0.291 & 0.8 & 25.5\,\% / 0.02 & 895 LUTs & 0.039\\
+DWN + modality dropout & 0.866 & 0.242 & 0.272 & 0.282 & 0.4 & 21.7\,\% / 0.01 & 951 LUTs & 0.035\\
+DWN base & 0.875 & 0.172 & 0.340 & 0.156 & 2.7 & 29.2\,\% / 0.12 & 980 LUTs & 0.004\\
+LightGBM & 0.877 & 0.308 & 0.331 & 0.396 & 0.6 & 26.8\,\% / 0.01 & 30,750 LUTs & --\\
+XGBoost & 0.872 & 0.294 & 0.301 & 0.387 & 0.4 & 25.1\,\% / 0.01 & 48,295 LUTs & 0.29\\
+CatBoost & 0.874 & 0.254 & 0.330 & 0.281 & 1.2 & 25.8\,\% / 0.04 & 27,720 LUTs & 0.026\\
+Random forest & 0.858 & 0.246 & 0.245 & 0.305 & 0.2 & 22.4\,\% / 0.00 & 346,576 LUTs & 0.35\\
+TreeLUT (5-bit leaves) & 0.858 & 0.233 & 0.292 & 0.296 & 1.0 & 25.1\,\% / 0.04 & 6,330 LUTs & 0.005\\
+Logic-gate network & 0.865 & 0.191 & 0.291 & 0.186 & 1.4 & 23.1\,\% / 0.06 & 7,452 LUTs & 0.008\\
+INT8 MLP & 0.788 & 0.155 & 0.249 & 0.163 & 1.7 & 21.8\,\% / 0.10 & 9,600 mult. & 0.005\\
+Logistic regression & 0.814 & 0.123 & 0.255 & 0.096 & 5.1 & 23.0\,\% / 0.27 & 117 mult. & 0.0008\\
+ChronoNet (clean, 1 seed) & -- & 0.027 & 0.790 & 0.015 & 106.3 & 67.1\,\% / 11.9 & CNN + GRU & --\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Sources of the Reported Numbers}
+
+Every number in this report comes from a saved result file; each run folder holds the configuration, code version,
+log and metrics.
+
+\begin{xltabular}{\textwidth}{@{}P{62mm}L@{}}
 \caption{Sources of the reported numbers.}\label{tab:sources}\\
 \toprule
 \textbf{Numbers} & \textbf{Source}\\
@@ -16,19 +46,17 @@ experiment.
 \endhead
 \bottomrule
 \endlastfoot
-\small Dataset inventory, seizure classes, differences from the documentation, signal quality (Chapter 3) &
-\small \texttt{reports/data\_audit.md}, \texttt{reports/data\_audit.json}, \texttt{results/audit/}\\
-\small Fixed-point specification of the features & \small \texttt{spec/fixed\_point.md}\\
-\small Integer against floating-point features & \small \texttt{results/m3/int\_float\_gap.md}\\
-\small ChronoNet reproduction (Table~\ref{tab:chrononet}) & \small runs \texttt{20261107-125159\_chrononet\_official\_s1}
-and \texttt{20261107-204035\_chrononet\_clean\_s1}\\
-\small Comparison of model families (Table~\ref{tab:families}) & \small \texttt{results/tables/inner\_cv.md} and the run
-folders named there\\
-\small Effect of the feature selection (Table~\ref{tab:featsel}) & \small runs \texttt{dwn\_L50\_b8\_learn} and
-\texttt{dwn\_L50\_b8\_lgbm40}\\
-\small Base DWN, training recipe, seizure types and missing sensors & \small run
-\texttt{20261108-082813\_dwn\_L50\_b8\_lgbm40\_e15bg10\_s0} (\texttt{metrics.json}, \texttt{breakdown.md})\\
-\small Extensions (Table~\ref{tab:ext-results}) & \small \texttt{results/tables/m5\_ablation.md};
-\texttt{n7\_interpretability.json} and \texttt{n3\_adaptation.json} in the run folder of \texttt{dwn\_L50\_b8\_learn}\\
+\small Dataset inventory and audit (Chapter~\ref{ch:method}) & \small \texttt{reports/data\_audit.md},
+\texttt{results/audit/}\\
+\small Fixed-point specification & \small \texttt{spec/fixed\_point.md}\\
+\small Integer vs floating point (Table~\ref{tab:intfloat}) & \small \texttt{results/m3/int\_float\_gap.md}\\
+\small ChronoNet reproduction (Figure~\ref{fig:chrononet}) & \small runs \texttt{20261107-125159\_chrononet\_official\_s1},
+\texttt{20261107-204035\_chrononet\_clean\_s1}\\
+\small Model families (Table~\ref{tab:families}) & \small \texttt{results/tables/inner\_cv.md}\\
+\small Extensions, missing sensors (Figures~\ref{fig:ablation},~\ref{fig:missing}) & \small
+\texttt{results/tables/m5\_ablation.md}; \texttt{breakdown.json} in each run folder\\
+\small Final test (Tables~\ref{tab:test},~\ref{tab:test-full}) & \small \texttt{results/tables/final\_test.md}\\
+\small Base-paper comparison (Figure~\ref{fig:sensfa}) & \small \texttt{results/tables/sens\_fa\_test.json}\\
+\small Verilog check (Table~\ref{tab:verilog}) & \small \texttt{export/n4\_distill\_s0/verilog\_check.json}\\
 \small Decisions and their evidence & \small \texttt{results/decisions.md}\\
 \end{xltabular}

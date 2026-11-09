@@ -1,111 +1,72 @@
 \chapter{Discussion, Conclusions and Future Scope}\label{ch:concl}
 
-\section{Discussion and Current Findings}
+\section{Key Findings}
 
-\paragraph{Accuracy per LUT.} The 50-LUT DWN gives the best accuracy per unit of hardware among the models compared:
-an event-F1 of 0.211 with 2.4 false alarms per day at about 960 estimated LUTs and no multipliers, against 0.266 for
-TreeLUT at about 6.4k LUTs and 0.292 for LightGBM, which is not a hardware design. The INT8 MLP, the conventional way
-to put a neural network on a chip, is worse on every metric while needing 9,600 multiplications per decision. Within
-the DWN family, size did not matter between 50 and 200 LUTs, while the choice of input features and the encoder
-resolution did.
+\begin{itemize}
+\item \textbf{Accuracy per LUT}: the 50-neuron network (about 900 LUTs, no multipliers) matches random forest and
+  CatBoost at 30--390$\times$ fewer LUTs and scores above every other hardware model; LightGBM is still more accurate.
+\item \textbf{Far fewer false alarms than the base paper}: 0.02 per hour (paper's metric) against 11--100 per hour
+  for the published baselines; at an equal false-alarm rate it detects more seizures than ChronoNet (Figure~\ref{fig:sensfa}).
+\item \textbf{The encoder is the cost}: 776 of the 895 LUTs are thermometer comparators; the network itself is 50
+  (Figure~\ref{fig:cost}).
+\item \textbf{Looking inside the LUTs paid off}: N7 found the ignored heart signal, the largest single improvement.
+\item \textbf{Focal seizures remain hard}: tonic-clonic seizures are detected, focal seizures rarely
+  (Figure~\ref{fig:types}), as in the literature \cite{beniczky2021guideline}.
+\item \textbf{Honest evaluation matters}: the published baseline tunes on its test patients; ours were sealed until the
+  design freeze.
+\end{itemize}
 
-\paragraph{The encoder dominates the cost.} About 850 of the 960 estimated LUTs are comparators of the thermometer
-encoder; the network itself is 50 LUTs. This agrees with recent measurements of DWN hardware \cite{mecik2025thermo} and
-makes the encoder (extension N2) the main lever for reducing the hardware further.
+\section{Status at the End of Phase I}
 
-\paragraph{False alarms look like seizures to the network.} The interpretability study showed that the network reads
-almost the same inputs during true and false alarms. It also exposed a weakness of the first feature selection, which
-ignored the heart signal; fixing it was the largest single improvement of Phase I. Inspecting the trained LUTs was
-therefore more useful than tuning the network blindly.
+\begin{table}[H]
+\centering\small
+\caption{Status of the project activities.}\label{tab:status}
+\begin{tabularx}{\textwidth}{@{}P{62mm}P{22mm}L@{}}
+\toprule
+\textbf{Activity} & \textbf{Status} & \textbf{Result}\\
+\midrule
+Literature review & Done & 79 references; gaps identified\\
+Dataset audit & Done & 11,009 files measured\\
+ChronoNet reproduction (official and clean) & Done & 74.5\,\% / 67.1\,\% detected\\
+SVM reproduction & Pending & needs the original feature list\\
+Integer feature pipeline & Done & 117 features; no accuracy loss\\
+Model families and DWN design study & Done & 9 families; DWN of 50--2,000 LUTs\\
+Extensions N1--N7 & Done & distillation and modality dropout adopted\\
+Final test (29 patients, 5 seeds) & Done & event-F1 0.248; 0.8 false alarms/day\\
+Verilog handoff & Done & 0 mismatches on 431,960 windows\\
+FPGA implementation & Phase II & synthesis, power, latency\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-\paragraph{Tonic-clonic against focal seizures.} The detector finds 88\,\% of tonic-clonic seizures but 8--17\,\% of
-focal seizures, and loses most of its performance without ECG. This matches the literature, where wearable detection is
-established only for tonic-clonic seizures \cite{beniczky2021guideline}, and it shows where the remaining work lies:
-focal seizures and robustness to missing sensors.
-
-\paragraph{Reproducibility.} The published ChronoNet baseline could only be partly reproduced, and its released code
-selects the model on the test patients. Keeping our own test patients untouched until the design is frozen, and
-reporting a clean version of the baseline, is therefore essential for an honest final comparison.
-
-\section{Current Progress and Future Scope}
-
-Table~\ref{tab:phase1-months} summarises the work carried out in the two months of Phase I, and
-Table~\ref{tab:status} the status of every activity at the end of Phase I.
-
-\begin{table}[htbp]
+\begin{table}[H]
 \centering\small
 \caption{Work carried out during Phase I.}\label{tab:phase1-months}
 \begin{tabularx}{\textwidth}{@{}P{30mm}L@{}}
 \toprule
 \textbf{Period} & \textbf{Activities}\\
 \midrule
-Month 1 (September 2026) & Selection of the topic and definition of the problem with the guide; literature study on
-wearable seizure detection and LUT-based neural networks; study of the SeizeIT2 dataset, its baselines and its
-evaluation; setting up the software tools and data access; first experiments, whose results were weaker than those
-reported here.\\
-Month 2 (October -- November 2026) & Complete audit of the dataset; reproduction of the ChronoNet baseline (official
-and clean); integer feature pipeline and fixed-point specification; cross-validated comparison of nine model families;
-design study of the DWN and the improved feature selection; extensions N1--N7 and the frozen final design; the
-single evaluation on the 29 held-out test patients; hardware handoff with the Verilog check; this report.\\
+Month 1 (September 2026) & Topic and problem definition with the guide; literature study; study of SeizeIT2, its
+baselines and metrics; tools and data access; first experiments (weaker results)\\
+Month 2 (October -- November 2026) & Dataset audit; ChronoNet reproduction; integer pipeline; model comparison; DWN
+design study and extensions; design freeze; final test; Verilog check; this report\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\begin{xltabular}{\textwidth}{@{}P{55mm}P{26mm}L@{}}
-\caption{Status of the project activities at the end of Phase I.}\label{tab:status}\\
-\toprule
-\textbf{Activity} & \textbf{Status} & \textbf{Remarks}\\
-\midrule
-\endfirsthead
-\toprule
-\textbf{Activity} & \textbf{Status} & \textbf{Remarks}\\
-\midrule
-\endhead
-\bottomrule
-\endlastfoot
-\small Literature review & \small Completed & \small 79 references in five areas; research gaps identified\\
-\small Dataset access and audit & \small Completed & \small All 11,009 files measured; differences from the
-documentation recorded\\
-\small Reproduction of ChronoNet & \small Completed & \small Partly reproduced; the clean run is the reference for the
-final comparison\\
-\small Reproduction of the SVM baseline & \small Pending & \small Needs the 42-feature definition of the original
-study\\
-\small Integer feature pipeline and fixed-point specification & \small Completed & \small 117 features; no measurable
-accuracy loss\\
-\small Comparison of model families & \small Completed for nine families & \small LogicNets-style network, GRU and
-raw-EEG CNN/TCN running\\
-\small DWN design study & \small Completed up to 200 LUTs & \small 500--2,000 LUTs and further ablations running on the
-GPU\\
-\small Extensions N1, N3, N7 & \small Completed & \small None adopted alone; N7 led to the improved feature selection\\
-\small Extensions N5, N6 & \small Completed & \small Modality dropout (N6) adopted; no loss variant (N5) adopted\\
-\small Extensions N2, N4 & \small Completed & \small Distillation (N4) adopted for the final network; encoders and
-hard negatives not adopted\\
-\small Final evaluation on the 29 test patients & \small Completed & \small 11 models $\times$ 5 seeds; final network
-event-F1 0.248, 0.8 false alarms per day\\
-\small Hardware handoff (export, test vectors, reference Verilog) & \small Completed & \small Verilog matches the software
-on all 431,960 windows of 10 test recordings\\
-\small FPGA implementation & \small Planned & \small Synthesis, measurements and demonstration in Phase II\\
-\end{xltabular}
+\section{Plan for Phase II}
 
-Phase II will take the verified design to hardware: the final network will be synthesised on a low-power FPGA and
-its LUTs, power and latency measured against the INT8 MLP and TreeLUT on the same device, and the recordings streamed
-through the board. In parallel, the large LUT networks and the raw-EEG references will complete the model comparison,
-and the open questions of Phase I (focal seizures, the dependence on ECG) will be studied on the training patients.
-Table~\ref{tab:plan} gives the month-wise plan.
-
-\begin{table}[htbp]
+\begin{table}[H]
 \centering\small
-\caption{Month-wise plan for the remaining project period.}\label{tab:plan}
-\begin{tabularx}{\textwidth}{@{}P{30mm}LP{42mm}@{}}
+\caption{Month-wise plan for Phase II.}\label{tab:plan}
+\begin{tabularx}{\textwidth}{@{}P{26mm}LP{38mm}@{}}
 \toprule
-\textbf{Month} & \textbf{Work} & \textbf{Expected deliverable}\\
+\textbf{Month} & \textbf{Work} & \textbf{Deliverable}\\
 \midrule
-December 2026 & FPGA tool flow; synthesis and place-and-route of the verified design; large LUT networks and
-raw-EEG references on the training patients & Resource and timing report\\
-January 2027 & Conference paper (EMBC 2027, full papers reportedly due 24 January 2027); power and latency
-measurement & Submitted paper\\
-February 2027 & Measured LUTs, power and latency; INT8 MLP and TreeLUT on the same device & Hardware comparison table\\
-March 2027 & On-board demonstration with recordings streamed through the design; documentation & Demonstration\\
+December 2026 & FPGA tool flow; synthesis and place-and-route of the verified design & Resource and timing report\\
+January 2027 & Conference paper (EMBC 2027, full papers reportedly due 24 January 2027) & Submitted paper\\
+February 2027 & Measured LUTs, power and latency; INT8 MLP and TreeLUT on the same FPGA & Hardware comparison\\
+March 2027 & Recordings streamed through the board; focal-seizure study on training patients & Demonstration\\
 April 2027 & Final report and presentation & Final report\\
 \bottomrule
 \end{tabularx}
@@ -113,28 +74,12 @@ April 2027 & Final report and presentation & Final report\\
 
 \section{Conclusions}
 
-Phase I established the foundation of the project and its first results:
 \begin{enumerate}
-\item The SeizeIT2 dataset was audited completely; its sampling rate, seizure count and labels differ from the
-  documentation, and the design follows the files.
-\item The published ChronoNet baseline was reproduced only partly, and a clean version without test information was
-  trained as the reference for the final comparison.
-\item A bit-exact integer feature pipeline for behind-the-ear EEG, ECG, EMG and motion loses no measurable accuracy
-  against floating point.
-\item A 50-LUT Differentiable Weightless Neural Network reaches an event-F1 of 0.211 with 2.4 false alarms per day on
-  cross-validation, at about 960 estimated LUTs and no multipliers: seven to eight times smaller than the other LUT
-  models and better than an INT8 network, though still below gradient-boosted trees.
-\item Interpretability of the LUT network led to the largest improvement of the phase, and the thermometer encoder was
-  identified as the dominant hardware cost.
-\item Training with random modality dropout makes the network robust to a missing ECG or motion sensor (event-F1
-  0.172 against 0.092 without ECG) at no significant cost when all sensors are present.
-\item Distillation from LightGBM was adopted for the final network. On the 29 held-out test patients, scored once
-  with five seeds, it reaches an event-F1 of 0.248 with 0.8 false alarms per day at about 900 LUTs: significantly
-  better than the clean ChronoNet baseline, above TreeLUT and the INT8 network, level with random forests and below
-  LightGBM.
-\item The generated Verilog of the final network matches the software on all 431,960 windows of 10 test recordings.
-\item No LUT-native seizure detector exists in the literature, and no LUT network fuses modalities or handles missing
-  sensors; the project addresses both.
+\item SeizeIT2 was audited; the design follows the files, not the documentation.
+\item ChronoNet was partly reproduced, and a clean version (no test information) is our reference.
+\item The integer multimodal front end loses no measurable accuracy against floating point.
+\item A LUT-native network with distillation reaches an event-F1 of 0.248 with 0.8 false alarms per day on 29 unseen
+  patients at about 900 LUTs and no multipliers: significantly better than ChronoNet, level with random forest and
+  CatBoost, below LightGBM.
+\item Its Verilog matches the software exactly; Phase II takes it to an FPGA.
 \end{enumerate}
-Phase II will implement and measure the detector on an FPGA and continue the work on focal seizures and on robustness
-to missing sensors.

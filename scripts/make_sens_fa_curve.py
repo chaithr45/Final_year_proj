@@ -8,13 +8,19 @@ seizure; false-alarm events per hour, mean over recordings). Each model's curve 
 false-alarm grid. ChronoNet's curve is the clean reproduction's own threshold sweep (M2); the published SVM and ChronoNet
 points are quoted from the paper. Nothing is trained or tuned; the test access is logged in each final run's folder.
 
-Usage:  python scripts/make_sens_fa_curve.py --final-test
+The sweep uses every distinct score in the top 20 % when there are at most 400 (the LUT network's integer scores),
+otherwise 150 quantiles spaced log-uniformly towards the top score, plus the thresholds of the operating points.
+The DWN's two operating points (mean over seeds, as in the final table) are marked on its curve.
+
+Usage:  python scripts/make_sens_fa_curve.py --final-test        (re-score and plot; ~1 h on 4 CPUs)
+        python scripts/make_sens_fa_curve.py --plot-only         (re-plot from results/tables/sens_fa_test.json)
 Output: results/figures/sens_fa_test.{pdf,png} (copied to paper/figures/), results/tables/sens_fa_test.json
 """
 from __future__ import annotations
 
 import argparse
 import json
+import multiprocessing as mp
 import pickle
 import re
 import shutil
@@ -71,37 +77,88 @@ def on_grid(curve):
     return np.array([se[fa <= g].max() if (fa <= g).any() else 0.0 for g in FA_GRID])
 
 
+def thresholds(alls, extra):
+    top = alls[alls >= np.quantile(alls, 0.8)]
+    uniq = np.unique(top)
+    if len(uniq) <= 400:
+        return np.unique(np.concatenate([uniq, extra]))
+    q = np.quantile(alls, 1 - np.logspace(-5, np.log10(0.2), 150))
+    return np.unique(np.concatenate([q, extra]))
+
+
+_RUNS = []
+
+
+def _curve_job(job):
+    """One (model, seed): score the test runs with the frozen checkpoint and sweep the threshold."""
+    ck, gate, k, extra = job
+    obj = pickle.load(open(ck, "rb"))
+    model, cols = obj["model"], obj["cols"]
+    scores = [model.score(r.X[:, cols]).astype(np.float32) for r in _RUNS]
+    ths = thresholds(np.concatenate(scores), np.asarray(extra, dtype=np.float32))
+    out = paper_curve(_RUNS, scores, gate, k, ths)
+    print(f"{ck.parent.name} {ck.stem}: {len(ths)} thresholds", flush=True)
+    return out
+
+
+def op_points(run):
+    """Mean over seeds of the paper metrics at each final operating point (as in the final table)."""
+    seeds = json.loads((run / "final_metrics.json").read_text())["seeds"].values()
+    out = {}
+    for op in ("best_f1", "sens_at_1fah"):
+        pm = [s[op]["paper_metrics"] for s in seeds if op in s]
+        out[op] = (float(np.mean([p["fa_per_hour_mean_over_recordings"] for p in pm])),
+                   float(np.mean([p["sens_ovlp_mean_over_recordings"] for p in pm])))
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--final-test", action="store_true")
-    ap.add_argument("--n-thresholds", type=int, default=40)
+    ap.add_argument("--plot-only", action="store_true", help="re-plot from results/tables/sens_fa_test.json")
+    ap.add_argument("--workers", type=int, default=3)
     args = ap.parse_args()
+    out_json = REPO / "results/tables/sens_fa_test.json"
+    if args.plot_only:
+        data = json.loads(out_json.read_text())
+    else:
+        data = score_all(args)
+        out_json.write_text(json.dumps(data, default=float))
+    plot(data)
+    return 0
+
+
+def score_all(args):
     test = official_test_subjects()
     require_test_access(test, args.final_test)
     store = FeatureStore("int")
-    runs = list(store.iter_runs(test))
-    data = {}
+    _RUNS.extend(store.iter_runs(test))
+    jobs, meta = [], {}
     for name in MODELS:
         run = final_run(name)
         log_test_access(run, "sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)")
-        cv = json.loads((run / "final_metrics.json").read_text())["seeds"]["0"]["best_f1"]["operating_point"]
-        curves = []
-        for ck in sorted((REPO / "checkpoints" / run.name).glob("seed_*.pkl")):
-            obj = pickle.load(open(ck, "rb"))
-            model, cols = obj["model"], obj["cols"]
-            scores = [model.score(r.X[:, cols]).astype(np.float32) for r in runs]
-            alls = np.concatenate(scores)
-            uniq = np.unique(alls)
-            ths = uniq if len(uniq) <= args.n_thresholds else np.quantile(alls, np.linspace(0.9, 1.0, args.n_thresholds))
-            curves.append(paper_curve(runs, scores, cv["gate"], cv["k"], ths))
-            print(f"{name} {ck.stem}: {len(ths)} thresholds", flush=True)
-        g = np.stack([on_grid(c) for c in curves])
+        seeds = json.loads((run / "final_metrics.json").read_text())["seeds"]
+        cv = seeds["0"]["best_f1"]["operating_point"]
+        extra = sorted({s[op]["operating_point"]["threshold"] for s in seeds.values()
+                        for op in ("best_f1", "sens_at_1fah") if op in s})
+        cks = sorted((REPO / "checkpoints" / run.name).glob("seed_*.pkl"))
+        meta[name] = (run, len(jobs), len(cks))
+        jobs += [(ck, cv["gate"], cv["k"], extra) for ck in cks]
+    with mp.get_context("fork").Pool(args.workers) as pool:
+        curves = pool.map(_curve_job, jobs, chunksize=1)
+    data = {}
+    for name, (run, i0, n) in meta.items():
+        cs = curves[i0:i0 + n]
+        g = np.stack([on_grid(c) for c in cs])
         data[name] = {"run": run.name, "fa_grid": FA_GRID.tolist(), "sens_mean": g.mean(0).tolist(),
-                      "sens_std": g.std(0, ddof=1).tolist(), "per_seed_points": curves}
+                      "sens_std": g.std(0, ddof=1).tolist(), "per_seed_points": cs,
+                      "fa_max": float(min(max(p[0] for p in c) for c in cs)), "operating_points": op_points(run)}
     ch = json.loads(CHRONONET.read_text())["seizeit2_as_published"]["curves"]
     data["chrononet_clean"] = {"fa": ch["fa_ovlp"], "sens": ch["sens_ovlp"]}
-    (REPO / "results/tables/sens_fa_test.json").write_text(json.dumps(data, default=float))
+    return data
 
+
+def plot(data):
     plt.rcParams.update({"font.size": 8, "font.family": "serif", "axes.edgecolor": MUTED, "axes.labelcolor": INK2,
                          "xtick.color": MUTED, "ytick.color": MUTED})
     fig, ax = plt.subplots(figsize=(5.2, 3.6))
@@ -109,12 +166,24 @@ def main() -> int:
     ax.set_axisbelow(True)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
+    grid = np.array(FA_GRID)
     for name, label in MODELS.items():
-        m, sd = np.array(data[name]["sens_mean"]) * 100, np.array(data[name]["sens_std"]) * 100
+        d = data[name]
+        keep = grid <= d.get("fa_max", grid[-1])          # draw only where every seed's sweep reaches
+        m, sd = np.array(d["sens_mean"])[keep] * 100, np.array(d["sens_std"])[keep] * 100
         lw = 2.0 if name == "n4_distill" else 1.2
-        ax.step(FA_GRID, m, where="post", color=COLOR[name], linewidth=lw, label=label, zorder=3 if name == "n4_distill" else 2)
+        ax.step(grid[keep], m, where="post", color=COLOR[name], linewidth=lw, label=label,
+                zorder=3 if name == "n4_distill" else 2)
         if name == "n4_distill":
-            ax.fill_between(FA_GRID, m - sd, m + sd, step="post", color=BLUE, alpha=0.15, linewidth=0)
+            ax.fill_between(grid[keep], m - sd, m + sd, step="post", color=BLUE, alpha=0.15, linewidth=0)
+    ops = data["n4_distill"].get("operating_points", {})
+    if ops:
+        xs = [ops[o][0] for o in ("best_f1", "sens_at_1fah")]; ys = [ops[o][1] * 100 for o in ("best_f1", "sens_at_1fah")]
+        ax.scatter(xs, ys, s=30, color=BLUE, edgecolors="white", linewidths=1.0, zorder=5,
+                   label="Our network, operating points (test)")
+        for x, y in zip(xs, ys):
+            ax.annotate(f"{y:.1f} % @ {x:.2f}/h", (x, y), xytext=(4, -9), textcoords="offset points",
+                        fontsize=6, color=INK2)
     fa = np.array(data["chrononet_clean"]["fa"]); se = np.array(data["chrononet_clean"]["sens"]) * 100
     order = np.argsort(fa)
     ax.plot(fa[order], se[order], color=ORANGE, linewidth=1.4, marker="o", markersize=2.5,
@@ -137,7 +206,6 @@ def main() -> int:
         fig.savefig(out / f"sens_fa_test.{ext}", dpi=300)
     shutil.copy(out / "sens_fa_test.pdf", REPO / "paper/figures/sens_fa_test.pdf")
     print(out / "sens_fa_test.png")
-    return 0
 
 
 if __name__ == "__main__":
