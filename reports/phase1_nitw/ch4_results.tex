@@ -160,7 +160,8 @@ Table~\ref{tab:test-full} (Appendix~\ref{app:sources}).
 \centering
 \includegraphics[width=0.85\textwidth]{figures/sens_fa_test.png}
 \caption{Seizures detected against false alarms per hour on the 29 test patients (the base paper's metrics). Curves:
-threshold sweeps of the frozen models (DWN: mean of 5 seeds, band = std); markers: published values.}\label{fig:sensfa}
+threshold sweeps of the frozen models (mean of 5 seeds; band: std of our network), drawn as far as every seed's sweep
+reaches; dots: our two operating points, chosen on the training folds; open markers: published values.}\label{fig:sensfa}
 \end{figure}
 
 \begin{table}[H]
@@ -183,8 +184,10 @@ ChronoNet at $\approx$1.3 FA/h$^{*}$ & 34.8\,\% & 1.26 & --\\
 \end{table}
 
 \paragraph{Findings.} The paper's baselines run at 11--100 false alarms per hour. At the same false-alarm rate our
-network detects more seizures (43.2\,\% vs 34.8\,\% at $\approx$1.25/h; 25.5\,\% vs 2.2\,\% at $\approx$0.02/h), ranks
-windows better (AUROC 0.883 vs 0.746), and needs no multipliers.
+network detects more seizures than ChronoNet (43.2\,\% vs 34.8\,\% at $\approx$1.25/h; 25.5\,\% vs 2.2\,\% at
+$\approx$0.02/h), ranks windows better (AUROC 0.883 vs 0.746), and needs no multipliers. At the SVM's rate of 11 false
+alarms per hour its curve reaches 69.7\,\% (SVM, published: 71.1\,\%), level with LightGBM (70.5\,\%) at 3\,\% of its
+LUTs; this value is read from the test curve itself and is therefore optimistic.
 
 \section{Hardware Handoff Check}\label{sec:res-hw}
 
