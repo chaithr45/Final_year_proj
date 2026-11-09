@@ -1,0 +1,42 @@
+features:
+  rank_by: lgbm
+  top: 40
+model:
+  params:
+    batch: 2048
+    bits: 8
+    decay_at: 0.7
+    device: cuda
+    epochs: 15
+    layers:
+    - 500
+    loss: ce
+    lr: 0.01
+    mapping: learnable
+    n: 5
+    tau: 3.3333
+    threads: 8
+  type: dwn
+name: dwn_L500_b8_lgbm40_e15bg10_n5
+post:
+  gate:
+  - none
+  - both
+  - any
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  n_thresholds: 40
+seed: 0
+train:
+  bg_ratio: 10
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json
