@@ -332,3 +332,5 @@ Method results and keep/drop decisions are appended below as runs finish.
   (ChronoNet clean); published 0.792 (definition not reproduced). Published operating points: SVM 71.1 % / 11.0 FA/h,
   ChronoNet 84.2 % / 100.5 FA/h.
 
+  dwn_L500_b8_lgbm40_e15bg10_n5 (5-input LUTs): AUROC 0.822, event-F1 0.188, 2.6 FP/24 h;
+  dwn_L500_b8_lgbm40_e15bg10_t1 (GroupSum tau 1): AUROC 0.812, event-F1 0.214, 2.0 FP/24 h.
