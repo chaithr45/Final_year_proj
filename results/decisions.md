@@ -324,3 +324,11 @@ Method results and keep/drop decisions are appended below as runs finish.
   More laptop references: dwn_L1000_b16_lgbm40_e15bg10 (16 thresholds) event-F1 0.210, 1.7 FP/24 h (equal to the base);
   dwn_L500_b8_lgbm40_e15bg10_n4 (4-input LUTs) event-F1 0.135, 23.9 FP/24 h (much worse: 6-input LUTs, one per LUT6,
   are the right neuron size).
+* **Comparison with the base paper at a matched false-alarm rate** (29 test patients, the paper's metrics from its
+  released code; computed after M6, no model changed): final DWN at its <= 1 FA/h operating point (fixed on the
+  training folds) 43.2 % any-overlap sensitivity at 1.24 FA/h; clean ChronoNet 34.8 % at 1.26 FA/h and 30.3 % at 0.96
+  FA/h at thresholds read from its own test curve (favouring ChronoNet); at the best-F1 point the DWN gives 25.5 % at
+  0.02 FA/h against 2.2 % for ChronoNet at 0.02 FA/h. Pooled window AUROC 0.883 (DWN, mean of 5 seeds) vs 0.746
+  (ChronoNet clean); published 0.792 (definition not reproduced). Published operating points: SVM 71.1 % / 11.0 FA/h,
+  ChronoNet 84.2 % / 100.5 FA/h.
+

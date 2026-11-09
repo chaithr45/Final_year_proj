@@ -184,7 +184,10 @@ The final DWN reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per
 seventh of the LUTs and above the INT8 MLP (0.155), level with random forest (0.246) and CatBoost (0.254), and below
 LightGBM (0.308, $p = 0.039$ per patient). Against clean ChronoNet (event-F1 0.027, 106 false alarms per day) it is
 better per patient ($p = 0.027$): ChronoNet detects more seizures (79\,\%) but raises over a hundred times more false
-alarms. The modality-dropout variant reaches 0.242 with 0.4 false alarms per day.
+alarms. With the dataset paper's own metrics at a matched false-alarm rate, the final DWN detects 43.2\,\% of
+seizures at 1.24 false alarms per hour, against 34.8\,\% for ChronoNet at 1.26 per hour (a threshold read from its
+own test curve, which favours it), and its pooled window AUROC is 0.883 against 0.746. The modality-dropout variant
+reaches 0.242 with 0.4 false alarms per day.
 
 \input{tables/final_test}
 
