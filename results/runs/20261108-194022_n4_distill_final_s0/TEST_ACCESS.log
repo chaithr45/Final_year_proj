@@ -1,3 +1,4 @@
 2026-11-08T19:40:22.205542 M6 final evaluation of n4_distill (seeds [0, 1, 2, 3, 4])
 2026-11-09T05:18:50.367812 sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)
 2026-11-09T05:51:35.174827 sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)
+2026-11-09T06:33:01.752661 pre-registered paper-matched detectors, plain and post-ictal cascade (paper_points_test.py)
