@@ -370,3 +370,14 @@ Method results and keep/drop decisions are appended below as runs finish.
   published ChronoNet (84.2 %) at a ninth of its false-alarm rate. These are high-false-alarm operating points: SzCORE
   event-F1 0.027 with 129 false alarms per 24 h (the regime of the paper's baselines; clean ChronoNet 0.027, 106 per
   24 h). The low-false-alarm M6 result (event-F1 0.248, 0.8 per 24 h) stays the primary result.
+* **Late reference runs (inner CV on the 96 training patients; finished after the D39 freeze, so references only, not
+  candidates for the final design; pooled numbers, not tested per patient).** On the D34 features (LightGBM-gain top 40):
+  dwn_L100_b8_lgbm40_e15bg10 AUROC 0.836, event-F1 0.233, 2.4 FP/24 h, 1,405 LUTs; dwn_L200_b8_lgbm40_e15bg10 0.832,
+  0.207, 4.5 FP/24 h, 1,787 LUTs (the 50-LUT base: 0.840, 0.211, 2.4 FP/24 h, 964 LUTs; the final n4_distill: 0.851,
+  0.229, 0.9 FP/24 h, 873 LUTs); GRU (gru_lgbm40) 0.859, 0.204, 1.0 FP/24 h with 6,976 multiplications per window;
+  logic-gate network (lgn_lgbm40) 0.851, 0.186, 2.5 FP/24 h, 7,497 LUTs (0.171 on the MI features); LogicNets-style
+  sparse quantised MLP (logicnet_lgbm40) 0.799, 0.079, 18.2 FP/24 h, 1,129 LUTs, the weakest LUT model. None beats the
+  frozen 873-LUT n4_distill on event-F1 and false alarms together; the GRU, the only recurrent reference, is no better
+  while needing about 7,000 multiplications. The last missing cell of the <= 200-LUT grid, dwn_L200_b8_rando (random
+  mapping, MI features), gives event-F1 0.125 against 0.124 for the learnable mapping, with more false alarms (8.2 vs
+  5.3 FP/24 h) and lower sensitivity at <= 1 FA/h (0.475 vs 0.534): as at the other sizes, random mapping does not help.
