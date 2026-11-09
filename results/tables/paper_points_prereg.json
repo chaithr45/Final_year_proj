@@ -1,0 +1,23 @@
+{
+  "decision": "D40 (9 Nov 2026, after M6): secondary analysis requested by the user - a detector with more seizures detected than the dataset paper's baselines at slightly fewer false alarms per hour, with post-ictal verification. Settings chosen on the 96 training patients only (out-of-fold, inner CV); committed before the single test evaluation by scripts/paper_points_test.py.",
+  "final_run": "20261108-194022_n4_distill_final_s0",
+  "cv_run": "20261108-145504_n4_distill_s0",
+  "metrics": "dataset paper: any-overlap sensitivity (mean over recordings with a seizure), false-alarm events per hour (mean over recordings); time in alarm; SzCORE event metrics",
+  "time_in_alarm_cap": 0.05,
+  "plain": {
+    "k": 10, "threshold": -4.0, "gate": "none",
+    "cv": {"sens": 0.742, "fa_per_hour": 8.54, "time_in_alarm": 0.0272},
+    "note": "best training-fold sensitivity at <= 10 FA/h without verification; the test curve of the same network was already plotted (results/figures/sens_fa_test.png, about 66 % at 8.5 FA/h), so this point is a reference, not a blind test"
+  },
+  "cascade": {
+    "k1": 10, "th1": -7.0, "variant": "d96", "verifier": "dwn", "th2": [-10.0, -5.0],
+    "cv": {
+      "-10": {"sens": 0.819, "fa_per_hour": 9.62, "time_in_alarm": 0.0483, "budget": "<= 10 FA/h (primary)"},
+      "-5": {"sens": 0.723, "fa_per_hour": 4.76, "time_in_alarm": 0.0327, "budget": "<= 5 FA/h (secondary)"}
+    },
+    "selection": "stage-1 threshold from {-4, -7, -10} (LightGBM verifier, 96 s); then verifier {lgbm, dwn} x delay {96 s, 48 s} at th1 = -7. Rule fixed before the last configuration finished: highest training-fold sensitivity at <= 10 FA/h; within 1 point prefer the LUT-native verifier, then the shorter delay. Training-fold results at <= 10 FA/h: lgbm/96 s 82.4 % at 9.59; dwn/96 s 81.9 % at 9.62; lgbm/48 s 82.8 % at 9.99; dwn/48 s 81.6 % at 9.68 -> dwn/96 s.",
+    "verifier_training": "one DWN (50 LUTs, 8 thresholds, 24 inputs with the highest LightGBM gain) trained with seed 0 on all 118,975 training-fold candidates, then frozen and applied to the stage-1 candidates of each of the 5 final seeds",
+    "decision_delay_s": 96
+  },
+  "comparators": {"svm_published": {"sens": 0.711, "fa_per_hour": 11.0}, "chrononet_published": {"sens": 0.842, "fa_per_hour": 100.5}}
+}

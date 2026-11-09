@@ -148,8 +148,16 @@ def fit_score(kind, Xtr, ytr, Xte, seed=0):
         fill = lambda A: np.where(np.isnan(A), med, A)
         m = DWNModel(bits=8, layers=(50,), n=6, epochs=30, lr=1e-2, batch=512, seed=seed, threads=3)
         m.fit(fill(Xtr[:, cols]), ytr)
-        return m.score(fill(Xte[:, cols])).astype(float), (m, cols)
+        return m.score(fill(Xte[:, cols])).astype(float), (m, cols, med)
     raise ValueError(kind)
+
+
+def apply_verifier(kind, fitted, X):
+    """Score new candidates with a verifier returned by fit_score (no refitting)."""
+    if kind == "lgbm":
+        return fitted.score(X)
+    m, cols, med = fitted
+    return m.score(np.where(np.isnan(X[:, cols]), med, X[:, cols])).astype(float)
 
 
 def paper_metrics(recs, th1, accept):
