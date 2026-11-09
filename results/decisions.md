@@ -318,6 +318,6 @@ Method results and keep/drop decisions are appended below as runs finish.
   test-patient scoring (folders kept as `*_final_s0_invalid`, not in git). Fixed: the override now applies only to the
   PyTorch-trained models (`TORCH_TYPES` in `src/models/training.py`), with a test; both runs repeated.
 * **Large DWNs on the D34 features (laptop GPU, D35; after the freeze, so reference only):** dwn_L500_b8_lgbm40_e15bg10
-  AUROC 0.832, event-F1 0.192, 1.4 FP/24 h; dwn_L1000_b8_lgbm40_e15bg10 AUROC 0.818, event-F1 0.199, 3.2 FP/24 h; both at
-  or below the 50-LUT base (0.211, 2.4 FP/24 h). Size beyond 50 LUTs does not help on these features either, which
+  AUROC 0.832, event-F1 0.192, 1.4 FP/24 h; dwn_L1000_b8_lgbm40_e15bg10 AUROC 0.818, event-F1 0.199, 3.2 FP/24 h;
+  dwn_L2000_b8_lgbm40_e15bg10 AUROC 0.813, event-F1 0.202, 1.0 FP/24 h; all at or below the 50-LUT base (0.211, 2.4 FP/24 h). Size beyond 50 LUTs does not help on these features either, which
   supports the D33 choice of the smallest network. Remaining sizes and ablations continue on the laptop.
