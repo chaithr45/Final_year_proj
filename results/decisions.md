@@ -334,3 +334,8 @@ Method results and keep/drop decisions are appended below as runs finish.
 
   dwn_L500_b8_lgbm40_e15bg10_n5 (5-input LUTs): AUROC 0.822, event-F1 0.188, 2.6 FP/24 h;
   dwn_L500_b8_lgbm40_e15bg10_t1 (GroupSum tau 1): AUROC 0.812, event-F1 0.214, 2.0 FP/24 h.
+  dwn_L500_b8_lgbm40_e15bg10_t10 (tau 10): AUROC 0.849, event-F1 0.237, 1.9 FP/24 h;
+  dwn_L500x100_b8_lgbm40_e15bg10 (two layers): AUROC 0.836, event-F1 0.214, 1.0 FP/24 h.
+  **Section 6.1 grid closed on the D34 features:** no size, threshold count, LUT fan-in, tau or depth beats the
+  50-LUT, 8-threshold, 6-input base on event-F1; 4-input LUTs are clearly worse. The laptop continues with the
+  raw-EEG CNN and TCN references.
