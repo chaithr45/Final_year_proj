@@ -1,0 +1,38 @@
+name: gru_lgbm40
+seed: 0
+model:
+  type: gru
+  params:
+    hidden: 32
+    seq_len: 60
+    pos_per_seizure: 6
+    neg_ratio: 5
+    burn_in: 10
+    epochs: 15
+    lr: 0.001
+    batch: 64
+    threads: 4
+features:
+  rank_by: lgbm
+  top: 40
+train:
+  bg_ratio: 20
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json
