@@ -356,3 +356,17 @@ Method results and keep/drop decisions are appended below as runs finish.
   budget, the DWN verifier adds 7.7 points at <= 10 FA/h (81.9 vs 74.2 %) and 8.2 points at <= 5 FA/h (72.3 vs 64.1 %).
   The 48 s variant (after-window 16-48 s) is as good as 96 s, so waiting longer for post-ictal signs adds nothing here.
   Chosen by the rule in the pre-registration file: DWN verifier, 96 s.
+* **N8 test result (D40, pre-registered, one evaluation on the 29 test patients with the user's go-ahead, 9 Nov 06:33
+  UTC; `results/tables/paper_points_test.md`).** The paper's metrics, mean +- std over 5 seeds:
+  cascade at <= 10 FA/h (primary): **73.3 +- 1.4 % at 10.91 +- 0.61 FA/h** (seeds 71.3-75.1 %, all above the published
+  SVM's 71.1 %; false alarms 10.3-11.8 per hour, two of five seeds above the SVM's 11.0), time in alarm 3.5 %, decision
+  delay 96 s; cascade at <= 5 FA/h: 65.6 +- 1.0 % at 5.43 +- 0.23 FA/h; plain lower threshold (reference, its curve
+  was already seen): 66.4 +- 2.0 % at 7.61 +- 0.84 FA/h. Against stage 1 alone read from its own test curve (which
+  favours stage 1), verification adds 3.6 points at 10.9 FA/h (73.3 vs 69.7 %) and 6.5 points at 5.4 FA/h (65.6 vs
+  59.1 %). Training folds overstated the test by 8.6 points (81.9 -> 73.3 %), as for the plain point (74.2 -> 66.4 %).
+  Reading: at the SVM's false-alarm rate (10.9 vs 11.0 per hour) the LUT-native two-stage detector detects 2.2 points
+  more seizures than the published SVM, a small margin against a single published number (no interval available);
+  it detects 6.2 points more than our clean ChronoNet (67.1 % at 11.9 FA/h) at fewer false alarms, and fewer than the
+  published ChronoNet (84.2 %) at a ninth of its false-alarm rate. These are high-false-alarm operating points: SzCORE
+  event-F1 0.027 with 129 false alarms per 24 h (the regime of the paper's baselines; clean ChronoNet 0.027, 106 per
+  24 h). The low-false-alarm M6 result (event-F1 0.248, 0.8 per 24 h) stays the primary result.

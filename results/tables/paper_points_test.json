@@ -1,0 +1,486 @@
+{
+ "prereg": {
+  "decision": "D40 (9 Nov 2026, after M6): secondary analysis requested by the user - a detector with more seizures detected than the dataset paper's baselines at slightly fewer false alarms per hour, with post-ictal verification. Settings chosen on the 96 training patients only (out-of-fold, inner CV); committed before the single test evaluation by scripts/paper_points_test.py.",
+  "final_run": "20261108-194022_n4_distill_final_s0",
+  "cv_run": "20261108-145504_n4_distill_s0",
+  "metrics": "dataset paper: any-overlap sensitivity (mean over recordings with a seizure), false-alarm events per hour (mean over recordings); time in alarm; SzCORE event metrics",
+  "time_in_alarm_cap": 0.05,
+  "plain": {
+   "k": 10,
+   "threshold": -4.0,
+   "gate": "none",
+   "cv": {
+    "sens": 0.742,
+    "fa_per_hour": 8.54,
+    "time_in_alarm": 0.0272
+   },
+   "note": "best training-fold sensitivity at <= 10 FA/h without verification; the test curve of the same network was already plotted (results/figures/sens_fa_test.png, about 66 % at 8.5 FA/h), so this point is a reference, not a blind test"
+  },
+  "cascade": {
+   "k1": 10,
+   "th1": -7.0,
+   "variant": "d96",
+   "verifier": "dwn",
+   "th2": [
+    -10.0,
+    -5.0
+   ],
+   "cv": {
+    "-10": {
+     "sens": 0.819,
+     "fa_per_hour": 9.62,
+     "time_in_alarm": 0.0483,
+     "budget": "<= 10 FA/h (primary)"
+    },
+    "-5": {
+     "sens": 0.723,
+     "fa_per_hour": 4.76,
+     "time_in_alarm": 0.0327,
+     "budget": "<= 5 FA/h (secondary)"
+    }
+   },
+   "selection": "stage-1 threshold from {-4, -7, -10} (LightGBM verifier, 96 s); then verifier {lgbm, dwn} x delay {96 s, 48 s} at th1 = -7. Rule fixed before the last configuration finished: highest training-fold sensitivity at <= 10 FA/h; within 1 point prefer the LUT-native verifier, then the shorter delay. Training-fold results at <= 10 FA/h: lgbm/96 s 82.4 % at 9.59; dwn/96 s 81.9 % at 9.62; lgbm/48 s 82.8 % at 9.99; dwn/48 s 81.6 % at 9.68 -> dwn/96 s.",
+   "verifier_training": "one DWN (50 LUTs, 8 thresholds, 24 inputs with the highest LightGBM gain) trained with seed 0 on all 118,975 training-fold candidates, then frozen and applied to the stage-1 candidates of each of the 5 final seeds",
+   "decision_delay_s": 96
+  },
+  "comparators": {
+   "svm_published": {
+    "sens": 0.711,
+    "fa_per_hour": 11.0
+   },
+   "chrononet_published": {
+    "sens": 0.842,
+    "fa_per_hour": 100.5
+   }
+  }
+ },
+ "seeds": {
+  "0": {
+   "plain": {
+    "paper": {
+     "sens": 0.6844312169312169,
+     "fa_per_hour": 8.885541776863047,
+     "time_in_alarm": 0.021465058358437508
+    },
+    "szcore": {
+     "sensitivity": 0.8470251401285884,
+     "precision": 0.015791731181073042,
+     "f1": 0.02756095847474884,
+     "fp_per_24h": 107.32053149106807,
+     "pooled_sensitivity": 0.7445652173913043,
+     "pooled_precision": 0.011073391529259619,
+     "pooled_f1": 0.021822236381013063,
+     "pooled_fp_per_24h": 100.8548539947616
+    }
+   },
+   "cascade@-10": {
+    "paper": {
+     "sens": 0.7507275132275132,
+     "fa_per_hour": 11.82492481133378,
+     "time_in_alarm": 0.04053332132391268
+    },
+    "szcore": {
+     "sensitivity": 0.908264304816029,
+     "precision": 0.01829834631438505,
+     "f1": 0.03132195096006214,
+     "fp_per_24h": 137.86620726003136,
+     "pooled_sensitivity": 0.8641304347826086,
+     "pooled_precision": 0.010039780261413146,
+     "pooled_f1": 0.019848948255414764,
+     "pooled_fp_per_24h": 129.23599517203698
+    },
+    "n_candidates": 43917
+   },
+   "cascade@-5": {
+    "paper": {
+     "sens": 0.6588624338624338,
+     "fa_per_hour": 5.839775503832214,
+     "time_in_alarm": 0.026243001276350795
+    },
+    "szcore": {
+     "sensitivity": 0.7865902038315832,
+     "precision": 0.01883196589208063,
+     "f1": 0.03140090567214187,
+     "fp_per_24h": 86.7094182693094,
+     "pooled_sensitivity": 0.6793478260869565,
+     "pooled_precision": 0.012521286186517079,
+     "pooled_f1": 0.024589357725976202,
+     "pooled_fp_per_24h": 81.26090320231793
+    },
+    "n_candidates": 43917
+   }
+  },
+  "1": {
+   "plain": {
+    "paper": {
+     "sens": 0.6568783068783068,
+     "fa_per_hour": 7.180250281161646,
+     "time_in_alarm": 0.017704226861263807
+    },
+    "szcore": {
+     "sensitivity": 0.8380421845939088,
+     "precision": 0.024052701913428877,
+     "f1": 0.029554101459418475,
+     "fp_per_24h": 91.14563484853096,
+     "pooled_sensitivity": 0.7065217391304348,
+     "pooled_precision": 0.011947431302270013,
+     "pooled_f1": 0.02349751468594668,
+     "pooled_fp_per_24h": 88.62202985677825
+    }
+   },
+   "cascade@-10": {
+    "paper": {
+     "sens": 0.7296957671957672,
+     "fa_per_hour": 10.588659155256218,
+     "time_in_alarm": 0.03682210501799457
+    },
+    "szcore": {
+     "sensitivity": 0.8740265791989932,
+     "precision": 0.01362245536955797,
+     "f1": 0.023615771300012453,
+     "fp_per_24h": 127.21352072121348,
+     "pooled_sensitivity": 0.7934782608695652,
+     "pooled_precision": 0.00979800013421918,
+     "pooled_f1": 0.01935697712959894,
+     "pooled_fp_per_24h": 121.62757422907293
+    },
+    "n_candidates": 37458
+   },
+   "cascade@-5": {
+    "paper": {
+     "sens": 0.6478571428571429,
+     "fa_per_hour": 5.328292844713667,
+     "time_in_alarm": 0.02216472796897066
+    },
+    "szcore": {
+     "sensitivity": 0.7605187294842467,
+     "precision": 0.013069481841650302,
+     "f1": 0.025013603246080575,
+     "fp_per_24h": 80.01097420758734,
+     "pooled_sensitivity": 0.625,
+     "pooled_precision": 0.012209364051385497,
+     "pooled_f1": 0.02395084869311673,
+     "pooled_fp_per_24h": 76.69420200794949
+    },
+    "n_candidates": 37458
+   }
+  },
+  "2": {
+   "plain": {
+    "paper": {
+     "sens": 0.6422883597883597,
+     "fa_per_hour": 6.991510546968511,
+     "time_in_alarm": 0.01616071734406828
+    },
+    "szcore": {
+     "sensitivity": 0.8109491937078145,
+     "precision": 0.014953403369254535,
+     "f1": 0.02735256280045881,
+     "fp_per_24h": 93.35071162405703,
+     "pooled_sensitivity": 0.6630434782608695,
+     "pooled_precision": 0.011475872448499671,
+     "pooled_f1": 0.022561257512713824,
+     "pooled_fp_per_24h": 86.62718926284836
+    }
+   },
+   "cascade@-10": {
+    "paper": {
+     "sens": 0.7127645502645502,
+     "fa_per_hour": 10.304747992270249,
+     "time_in_alarm": 0.03346725936465267
+    },
+    "szcore": {
+     "sensitivity": 0.8821687321687322,
+     "precision": 0.014625739124215298,
+     "f1": 0.025888755853045682,
+     "fp_per_24h": 125.46129773462292,
+     "pooled_sensitivity": 0.8097826086956522,
+     "pooled_precision": 0.010270903701661267,
+     "pooled_f1": 0.020284527942277582,
+     "pooled_fp_per_24h": 118.35504647787388
+    },
+    "n_candidates": 36098
+   },
+   "cascade@-5": {
+    "paper": {
+     "sens": 0.6606084656084656,
+     "fa_per_hour": 5.303295371012927,
+     "time_in_alarm": 0.021603599238635807
+    },
+    "szcore": {
+     "sensitivity": 0.7989835731215041,
+     "precision": 0.01998075669490836,
+     "f1": 0.034053667526773926,
+     "fp_per_24h": 80.53117053046712,
+     "pooled_sensitivity": 0.6793478260869565,
+     "pooled_precision": 0.013597302295224628,
+     "pooled_f1": 0.026660978991148557,
+     "pooled_fp_per_24h": 74.74882027172032
+    },
+    "n_candidates": 36098
+   }
+  },
+  "3": {
+   "plain": {
+    "paper": {
+     "sens": 0.6526058201058201,
+     "fa_per_hour": 8.069420563470688,
+     "time_in_alarm": 0.017000072800751786
+    },
+    "szcore": {
+     "sensitivity": 0.8450541226403296,
+     "precision": 0.016808590500724335,
+     "f1": 0.029548662095096614,
+     "fp_per_24h": 93.08520655611123,
+     "pooled_sensitivity": 0.7282608695652174,
+     "pooled_precision": 0.012612951807228916,
+     "pooled_f1": 0.024796447076239823,
+     "pooled_fp_per_24h": 86.47056954679601
+    }
+   },
+   "cascade@-10": {
+    "paper": {
+     "sens": 0.7310846560846561,
+     "fa_per_hour": 11.230082989961426,
+     "time_in_alarm": 0.03517268615023423
+    },
+    "szcore": {
+     "sensitivity": 0.8995741599189876,
+     "precision": 0.015352156499647203,
+     "f1": 0.027461668602848637,
+     "fp_per_24h": 129.95496685249105,
+     "pooled_sensitivity": 0.8315217391304348,
+     "pooled_precision": 0.010444398935080893,
+     "pooled_f1": 0.02062967707139486,
+     "pooled_fp_per_24h": 119.49260020499094
+    },
+    "n_candidates": 35756
+   },
+   "cascade@-5": {
+    "paper": {
+     "sens": 0.6437830687830688,
+     "fa_per_hour": 5.381972994295085,
+     "time_in_alarm": 0.021279096805058382
+    },
+    "szcore": {
+     "sensitivity": 0.7780099986996539,
+     "precision": 0.014162763594203076,
+     "f1": 0.026978941077964207,
+     "fp_per_24h": 80.35924864574915,
+     "pooled_sensitivity": 0.6413043478260869,
+     "pooled_precision": 0.012920179568597394,
+     "pooled_f1": 0.025330041858967478,
+     "pooled_fp_per_24h": 74.31193369536378
+    },
+    "n_candidates": 35756
+   }
+  },
+  "4": {
+   "plain": {
+    "paper": {
+     "sens": 0.685515873015873,
+     "fa_per_hour": 6.940121894009353,
+     "time_in_alarm": 0.013851988915584618
+    },
+    "szcore": {
+     "sensitivity": 0.848653552101828,
+     "precision": 0.01877552790068877,
+     "f1": 0.032259334455652204,
+     "fp_per_24h": 86.0443398190515,
+     "pooled_sensitivity": 0.717391304347826,
+     "pooled_precision": 0.013286361348766986,
+     "pooled_f1": 0.026089534538986065,
+     "pooled_fp_per_24h": 80.80753034006113
+    }
+   },
+   "cascade@-10": {
+    "paper": {
+     "sens": 0.7423941798941799,
+     "fa_per_hour": 10.610295832110742,
+     "time_in_alarm": 0.028845795126853164
+    },
+    "szcore": {
+     "sensitivity": 0.8877700119079429,
+     "precision": 0.016677267555240266,
+     "f1": 0.029113763478537894,
+     "fp_per_24h": 123.354605305049,
+     "pooled_sensitivity": 0.8206521739130435,
+     "pooled_precision": 0.010829807071648856,
+     "pooled_f1": 0.021377504070220144,
+     "pooled_fp_per_24h": 113.68942756810397
+    },
+    "n_candidates": 35576
+   },
+   "cascade@-5": {
+    "paper": {
+     "sens": 0.6686507936507937,
+     "fa_per_hour": 5.319589456703301,
+     "time_in_alarm": 0.018661895466326028
+    },
+    "szcore": {
+     "sensitivity": 0.7809412550791861,
+     "precision": 0.020617544076432046,
+     "f1": 0.03384696476578596,
+     "fp_per_24h": 78.5136302739056,
+     "pooled_sensitivity": 0.657608695652174,
+     "pooled_precision": 0.013633802816901408,
+     "pooled_f1": 0.02671376531626007,
+     "pooled_fp_per_24h": 72.16047338538154
+    },
+    "n_candidates": 35576
+   }
+  }
+ },
+ "summary": {
+  "plain": {
+   "paper": {
+    "sens": {
+     "mean": 0.6643439153439152,
+     "std": 0.019568579388696904
+    },
+    "fa_per_hour": {
+     "mean": 7.6133690124946485,
+     "std": 0.844684560749628
+    },
+    "time_in_alarm": {
+     "mean": 0.017236412856021198,
+     "std": 0.0027734272837667603
+    }
+   },
+   "szcore": {
+    "sensitivity": {
+     "mean": 0.8379448386344939,
+     "std": 0.015624057248902387
+    },
+    "precision": {
+     "mean": 0.01807639097303391,
+     "std": 0.0036326686084697415
+    },
+    "f1": {
+     "mean": 0.02925512385707499,
+     "std": 0.0019805787374724804
+    },
+    "fp_per_24h": {
+     "mean": 94.18928486776376,
+     "std": 7.904994737055194
+    },
+    "pooled_sensitivity": {
+     "mean": 0.7119565217391305,
+     "std": 0.030743773095067296
+    },
+    "pooled_precision": {
+     "mean": 0.01207920168720504,
+     "std": 0.0008853173608340644
+    },
+    "pooled_f1": {
+     "mean": 0.02375339803897989,
+     "std": 0.0017147555011368684
+    },
+    "pooled_fp_per_24h": {
+     "mean": 88.67643460024908,
+     "std": 7.404420304244939
+    }
+   }
+  },
+  "cascade@-10": {
+   "paper": {
+    "sens": {
+     "mean": 0.7333333333333333,
+     "std": 0.014370279296997334
+    },
+    "fa_per_hour": {
+     "mean": 10.911742156186483,
+     "std": 0.6121555919306061
+    },
+    "time_in_alarm": {
+     "mean": 0.03496823339672946,
+     "std": 0.004306565277783531
+    }
+   },
+   "szcore": {
+    "sensitivity": {
+     "mean": 0.8903607576021371,
+     "std": 0.013656961715105932
+    },
+    "precision": {
+     "mean": 0.015715192972609156,
+     "std": 0.0018232199903863806
+    },
+    "f1": {
+     "mean": 0.027480382038901362,
+     "std": 0.0029535752476745614
+    },
+    "fp_per_24h": {
+     "mean": 128.7701195746816,
+     "std": 5.631202602814204
+    },
+    "pooled_sensitivity": {
+     "mean": 0.8239130434782609,
+     "std": 0.026513719386196656
+    },
+    "pooled_precision": {
+     "mean": 0.010276578020804669,
+     "std": 0.00039349981329274067
+    },
+    "pooled_f1": {
+     "mean": 0.02029952689378126,
+     "std": 0.000768550595042383
+    },
+    "pooled_fp_per_24h": {
+     "mean": 120.48012873041573,
+     "std": 5.691806342460981
+    }
+   }
+  },
+  "cascade@-5": {
+   "paper": {
+    "sens": {
+     "mean": 0.6559523809523811,
+     "std": 0.010062582370046808
+    },
+    "fa_per_hour": {
+     "mean": 5.434585234111439,
+     "std": 0.22842194042654007
+    },
+    "time_in_alarm": {
+     "mean": 0.021990464151068333,
+     "std": 0.0027317355898138873
+    }
+   },
+   "szcore": {
+    "sensitivity": {
+     "mean": 0.7810087520432348,
+     "std": 0.013991827067837564
+    },
+    "precision": {
+     "mean": 0.01733250241985488,
+     "std": 0.0034739649094502147
+    },
+    "f1": {
+     "mean": 0.03025881645774931,
+     "std": 0.0040880898605877075
+    },
+    "fp_per_24h": {
+     "mean": 81.22488838540373,
+     "std": 3.1676155403887565
+    },
+    "pooled_sensitivity": {
+     "mean": 0.6565217391304348,
+     "std": 0.023814024239355063
+    },
+    "pooled_precision": {
+     "mean": 0.012976386983725201,
+     "std": 0.0006356751508504586
+    },
+    "pooled_f1": {
+     "mean": 0.025448998517093806,
+     "std": 0.0012314744817810562
+    },
+    "pooled_fp_per_24h": {
+     "mean": 75.83526651254661,
+     "std": 3.434396472024857
+    }
+   }
+  }
+ }
+}
