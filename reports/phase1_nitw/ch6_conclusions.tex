@@ -7,6 +7,8 @@
   CatBoost at 30--390$\times$ fewer LUTs and scores above every other hardware model; LightGBM is still more accurate.
 \item \textbf{Far fewer false alarms than the base paper}: 0.02 per hour (paper's metric) against 11--100 per hour
   for the published baselines; at an equal false-alarm rate it detects more seizures than ChronoNet (Figure~\ref{fig:sensfa}).
+\item \textbf{Above the base paper's SVM at its false-alarm rate}: with post-ictal verification, 73.3\,\% of seizures
+  at 10.9 false alarms per hour against 71.1\,\% at 11.0 (pre-registered, test patients; Section~\ref{sec:res-n8}).
 \item \textbf{The encoder is the cost}: 776 of the 895 LUTs are thermometer comparators; the network itself is 50
   (Figure~\ref{fig:cost}).
 \item \textbf{Looking inside the LUTs paid off}: N7 found the ignored heart signal, the largest single improvement.

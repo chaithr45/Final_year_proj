@@ -16,7 +16,8 @@ Scored once on the 29 held-out test patients (5 seeds), the final network reache
 alarms per day at about 900 LUTs and no multipliers: significantly better than a clean ChronoNet (0.027; $p = 0.027$),
 above TreeLUT (0.233) and an INT8 network (0.155), level with random forests (0.246) and below LightGBM (0.308).
 At the base paper's own metric it detects 43.2\,\% of seizures at 1.24 false alarms per hour, against 34.8\,\% for
-ChronoNet at the same rate. Its Verilog matches the software on all 431,960 windows of 10 test recordings. Phase II
+ChronoNet at the same rate; with a pre-registered post-ictal verification stage (a second LUT network) it detects
+73.3\,\% at 10.9 false alarms per hour, above the published SVM (71.1\,\% at 11.0). Its Verilog matches the software on all 431,960 windows of 10 test recordings. Phase II
 will implement and measure it on an FPGA.
 
 \vspace{4mm}

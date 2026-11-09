@@ -161,7 +161,7 @@ def score_all(args):
 def plot(data):
     plt.rcParams.update({"font.size": 8, "font.family": "serif", "axes.edgecolor": MUTED, "axes.labelcolor": INK2,
                          "xtick.color": MUTED, "ytick.color": MUTED})
-    fig, ax = plt.subplots(figsize=(5.2, 3.6))
+    fig, ax = plt.subplots(figsize=(5.4, 4.4))
     ax.grid(True, color=GRID, linewidth=0.5, which="major")
     ax.set_axisbelow(True)
     for s in ("top", "right"):
@@ -182,8 +182,18 @@ def plot(data):
         ax.scatter(xs, ys, s=30, color=BLUE, edgecolors="white", linewidths=1.0, zorder=5,
                    label="Our network, operating points (test)")
         for x, y in zip(xs, ys):
-            ax.annotate(f"{y:.1f} % @ {x:.2f}/h", (x, y), xytext=(4, -9), textcoords="offset points",
+            ax.annotate(f"{y:.1f} % @ {x:.2f}/h", (x, y), xytext=(6, -13), textcoords="offset points",
                         fontsize=6, color=INK2)
+    casc = REPO / "results/tables/paper_points_test.json"      # D40: pre-registered two-stage detector, if run
+    if casc.exists():
+        summ = json.loads(casc.read_text())["summary"]
+        pts = [(summ[k]["paper"]["fa_per_hour"]["mean"], summ[k]["paper"]["sens"]["mean"] * 100)
+               for k in sorted(summ) if k.startswith("cascade@")]
+        ax.scatter([p[0] for p in pts], [p[1] for p in pts], marker="*", s=90, color=BLUE, edgecolors=INK,
+                   linewidths=0.6, zorder=6, label="Our network + post-ictal check (test, pre-registered)")
+        x, y = max(pts)
+        ax.annotate(f"{y:.1f} % @ {x:.1f}/h", (x, y), xytext=(-58, 9), textcoords="offset points", fontsize=6,
+                    color=INK2)
     fa = np.array(data["chrononet_clean"]["fa"]); se = np.array(data["chrononet_clean"]["sens"]) * 100
     order = np.argsort(fa)
     ax.plot(fa[order], se[order], color=ORANGE, linewidth=1.4, marker="o", markersize=2.5,
@@ -193,13 +203,13 @@ def plot(data):
     ax.scatter([100.5], [84.2], marker="D", s=36, color="white", edgecolors=ORANGE, linewidths=1.2, zorder=4,
                label="ChronoNet, published")
     ax.axvline(1.0, color=MUTED, linewidth=0.8, linestyle=(0, (4, 2)), zorder=1)
-    ax.text(1.08, 3, "1 false alarm\nper hour", color=MUTED, fontsize=6.5)
+    ax.text(0.92, 88, "1 false alarm\nper hour", color=MUTED, fontsize=6.5, ha="right")
     ax.set_xscale("log")
     ax.set_xlim(FA_GRID[0], FA_GRID[-1])
     ax.set_ylim(0, 100)
     ax.set_xlabel("False alarms per hour (log scale)")
     ax.set_ylabel("Seizures detected (%)")
-    ax.legend(frameon=False, fontsize=6.5, loc="upper left", labelcolor=INK2)
+    ax.legend(frameon=False, fontsize=6.3, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=2, labelcolor=INK2)
     fig.tight_layout()
     out = REPO / "results/figures"
     for ext in ("pdf", "png"):

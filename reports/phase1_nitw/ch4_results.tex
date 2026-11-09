@@ -161,7 +161,8 @@ Table~\ref{tab:test-full} (Appendix~\ref{app:sources}).
 \includegraphics[width=0.85\textwidth]{figures/sens_fa_test.png}
 \caption{Seizures detected against false alarms per hour on the 29 test patients (the base paper's metrics). Curves:
 threshold sweeps of the frozen models (mean of 5 seeds; band: std of our network), drawn as far as every seed's sweep
-reaches; dots: our two operating points, chosen on the training folds; open markers: published values.}\label{fig:sensfa}
+reaches; dots: our two operating points, chosen on the training folds; stars: the two-stage detector
+(Section~\ref{sec:res-n8}); open markers: published values.}\label{fig:sensfa}
 \end{figure}
 
 \begin{table}[H]
@@ -177,9 +178,12 @@ ChronoNet, our clean reproduction & 67.1\,\% & 11.9 & 0.746\\
 ChronoNet at $\approx$1.3 FA/h$^{*}$ & 34.8\,\% & 1.26 & --\\
 \textbf{Our DWN, $\le$1 FA/h operating point} & \textbf{43.2\,\%} & \textbf{1.24} & \textbf{0.883}\\
 \textbf{Our DWN, best-F1 operating point} & \textbf{25.5\,\%} & \textbf{0.02} & \\
+\textbf{Our DWN + post-ictal check (pre-registered)$^{\dagger}$} & \textbf{73.3\,\%} & \textbf{10.9} & \\
+\textbf{Same, stricter verification$^{\dagger}$} & \textbf{65.6\,\%} & \textbf{5.4} & \\
 \bottomrule
 \multicolumn{4}{@{}p{\textwidth}@{}}{\footnotesize $^{*}$ threshold read from ChronoNet's own test curve (favours it); at
-0.02 FA/h ChronoNet detects 2.2\,\%. AUROC pooled over test windows; the published 0.792 uses an unreproduced definition.}
+0.02 FA/h ChronoNet detects 2.2\,\%. AUROC pooled over test windows; the published 0.792 uses an unreproduced definition.
+$^{\dagger}$ Secondary analysis after the final test (Section~\ref{sec:res-n8}); 96\,s decision delay.}
 \end{tabularx}
 \end{table}
 
@@ -188,6 +192,35 @@ network detects more seizures than ChronoNet (43.2\,\% vs 34.8\,\% at $\approx$1
 $\approx$0.02/h), ranks windows better (AUROC 0.883 vs 0.746), and needs no multipliers. At the SVM's rate of 11 false
 alarms per hour its curve reaches 69.7\,\% (SVM, published: 71.1\,\%), level with LightGBM (70.5\,\%) at 3\,\% of its
 LUTs; this value is read from the test curve itself and is therefore optimistic.
+
+\section{Post-Ictal Verification (Secondary Analysis)}\label{sec:res-n8}
+
+Requested after the final test: detect more seizures than the base paper at slightly fewer false alarms. A two-stage
+detector (N8) runs the final network at a sensitive threshold and confirms each alarm 96\,s later with a second LUT
+network (50 LUTs) that compares the alarm with the minutes before and after it (EEG, heart rate, EMG, motion). All
+settings were chosen on the training patients and committed before one evaluation on the test patients.
+
+\begin{table}[H]
+\centering\small
+\caption[Two-stage detector with post-ictal verification.]{Two-stage detector: training patients (cross-validation) and test patients (5 seeds, paper's metrics).}\label{tab:n8}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Detector} & \multicolumn{2}{c}{\textbf{Training (CV)}} & \multicolumn{2}{c}{\textbf{Test}}\\
+ & Detected & FA/h & Detected & FA/h\\
+\midrule
+Final network, lower threshold & 74.2\,\% & 8.5 & 66.4 $\pm$ 2.0\,\% & 7.6\\
+\textbf{+ post-ictal check ($\le$10 FA/h)} & 81.9\,\% & 9.6 & \textbf{73.3 $\pm$ 1.4\,\%} & \textbf{10.9}\\
++ post-ictal check ($\le$5 FA/h) & 72.3\,\% & 4.8 & 65.6 $\pm$ 1.0\,\% & 5.4\\
+SVM, published \cite{bhagubai2025seizeit2} & -- & -- & 71.1\,\% & 11.0\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Findings.} At the SVM's false-alarm rate (10.9 vs 11.0 per hour) the LUT-native two-stage detector detects
+2.2 points more seizures (all 5 seeds above 71.1\,\%; a small margin against a single published value). Verification
+adds 3.6--6.5 points over the network alone at the same false-alarm rate. Costs: a 96\,s decision delay (seizure
+logging, not instant alarms) and many false alarms per day, as for the paper's baselines; the low-false-alarm result of
+Section~\ref{sec:res-test} remains the primary one.
 
 \section{Hardware Handoff Check}\label{sec:res-hw}
 
