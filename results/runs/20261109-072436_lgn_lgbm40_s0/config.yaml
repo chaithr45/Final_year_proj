@@ -1,0 +1,39 @@
+name: lgn_lgbm40
+seed: 0
+model:
+  type: lgn
+  params:
+    bits: 8
+    layers:
+    - 2000
+    - 2000
+    tau: 20.0
+    epochs: 15
+    lr: 0.01
+    batch: 2048
+    threads: 4
+    device: cpu
+features:
+  rank_by: lgbm
+  top: 40
+train:
+  bg_ratio: 10
+post:
+  k:
+  - 4
+  - 6
+  - 8
+  - 10
+  gate:
+  - none
+  - both
+  - any
+  n_thresholds: 40
+folds_run:
+- 0
+- 1
+- 2
+- 3
+- 4
+feature_mode: int
+folds_file: folds_inner5.json
