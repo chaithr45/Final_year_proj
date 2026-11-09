@@ -1,1 +1,3 @@
 2026-11-08T20:30:53.254079 M6 final evaluation of lgbm (seeds [0, 1, 2, 3, 4])
+2026-11-09T05:22:53.786623 sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)
+2026-11-09T05:51:35.177178 sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)

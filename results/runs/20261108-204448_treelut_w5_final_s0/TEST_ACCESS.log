@@ -1,1 +1,3 @@
 2026-11-08T20:44:48.448867 M6 final evaluation of treelut_w5 (seeds [0, 1, 2, 3, 4])
+2026-11-09T05:29:11.017962 sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)
+2026-11-09T05:51:35.179503 sensitivity vs false-alarm curve of the frozen final models (make_sens_fa_curve.py)
