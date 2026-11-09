@@ -25,8 +25,10 @@ cross-validation over the 96 training patients the DWN reaches an event-F1 of 0.
 about 960 estimated LUTs and no multipliers, seven to eight times fewer LUTs than TreeLUT and a logic-gate network,
 and better than an INT8 network that needs 9,600 multiplications per decision, though below gradient-boosted trees
 (0.292). Training with random sensor dropout keeps the detector working when the ECG is missing (event-F1 0.172
-against 0.092, $p = 0.005$). On the 29 held-out test patients, \RESULT{SzCORE event metrics, mean $\pm$ std over 5
-seeds, against clean ChronoNet and LightGBM}. We also report an independent reproduction of the published
+against 0.092, $p = 0.005$), and distillation from LightGBM cuts false alarms from 2.4 to 0.9 per day
+($p = 3\times10^{-7}$). On the 29 held-out test patients, scored once with 5 seeds, the final DWN reaches an event-F1
+of $0.248 \pm 0.016$ with 0.8 false alarms per day at about 900 LUTs, against 0.027 and 106 false alarms per day for
+the clean ChronoNet baseline ($p = 0.027$), 0.233 for TreeLUT (6.3k LUTs) and 0.308 for LightGBM. We also report an independent reproduction of the published
 ChronoNet baseline, whose released code selects its model on the test patients.
 \end{abstract}
 
@@ -49,8 +51,8 @@ seizure time), patient-to-patient variability, missing sensors and event-level c
 models (DWN, logic-gate network, TreeLUT) against standard machine learning on the official SeizeIT2 split with
 SzCORE event scoring \cite{dan2024szcore}. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG
 and motion, with a fixed-point specification and a reference Verilog classifier that matches the software on all test
-vectors. (iii)~Modality dropout for a LUT network, which makes it robust to missing ECG and motion, selected among
-seven families of extensions by per-patient tests. (iv)~An independent reproduction of the SeizeIT2 ChronoNet
+vectors. (iii)~Distillation from a tree ensemble into a LUT network, which cuts false alarms, and modality dropout, which makes
+it robust to a missing ECG, selected among seven families of extensions by per-patient tests. (iv)~An independent reproduction of the SeizeIT2 ChronoNet
 baseline, with a protocol that uses no test information.
 
 \section{Related Work}
@@ -103,8 +105,9 @@ $p = 0.047$). Estimated cost: about 850 LUTs of comparators, 50 network LUTs, 57
 We tested seven families of extensions against this base: a stateful network with 16 state bits fed back each second
 and stacked windows (N1), encoder designs (N2), label-free per-patient threshold adaptation (N3), distillation from
 LightGBM and teacher-guided hard negatives (N4), focal, noise-robust and multiple-instance losses and onset weighting
-(N5), modality dropout, reliability-gated and late fusion (N6), and alarm interpretation (N7). The one adopted is
-\emph{modality dropout}: during training, ECG, EMG and motion are each removed independently with probability 0.2 per
+(N5), modality dropout, reliability-gated and late fusion (N6), and alarm interpretation (N7). Two were adopted.
+\emph{Distillation}: a LightGBM teacher trained on the same windows provides soft targets (weight 0.5, temperature 2).
+\emph{Modality dropout}: during training, ECG, EMG and motion are each removed independently with probability 0.2 per
 window, exactly as when the sensor is absent (features and presence bits set to zero).
 
 \section{Results}
@@ -131,6 +134,7 @@ CatBoost & 0.863 & 0.286 & 0.337 & 3.0 & $\approx$27.7k LUTs \\
 XGBoost & 0.867 & 0.277 & 0.286 & 3.4 & $\approx$47.9k LUTs \\
 TreeLUT (5-bit leaves) & 0.857 & 0.266 & 0.329 & 4.2 & $\approx$6.4k LUTs \\
 \textbf{DWN, 50 LUT6} & 0.840 & 0.211 & 0.315 & 2.4 & $\approx$960 LUTs \\
+DWN + distillation (final) & 0.851 & 0.229 & 0.267 & 0.9 & $\approx$870 LUTs \\
 DWN + modality dropout & 0.849 & 0.188 & 0.275 & 1.9 & $\approx$945 LUTs \\
 Random forest & 0.852 & 0.198 & 0.216 & 0.5 & $\approx$323k LUTs \\
 Logic-gate network & 0.843 & 0.171 & 0.330 & 4.9 & $\approx$7.5k LUTs \\
@@ -145,13 +149,17 @@ Logistic regression & 0.806 & 0.105 & 0.216 & 8.8 & 117 mult. \\
 \end{figure}
 
 \subsection{Extensions and missing sensors}
-None of the N1, N3 and N5 extensions improved event-F1 (Table~\ref{tab:abl}); the stateful network and onset
+None of the N1, N3 and N5 extensions improved event-F1 (Table~\ref{tab:ablation}); the stateful network and onset
 weighting cut false alarms ($p = 0.013$, $p = 0.014$) at lower sensitivity, and the focal and noise-robust losses were
 significantly worse. The base loses most of its accuracy without ECG or motion (Table~\ref{tab:missing}). Modality
 dropout keeps it working: without ECG its event-F1 is 0.172 against 0.092 for the base ($p = 0.005$), without motion
 0.192 against 0.136 ($p = 0.021$), at no significant cost when every sensor is present ($p = 0.23$). Late fusion, one
 small DWN per modality, collapsed whenever a modality was missing.
-\RESULT{N2 encoder and N4 distillation results, still running at the time of writing.}
+Distillation from LightGBM cut false alarms from 2.4 to 0.9 per day ($p = 3\times10^{-7}$) with a slightly higher
+event-F1 (0.229, $p = 0.26$) and became the final model; teacher-guided hard negatives and the encoder variants
+(uniform, Gaussian and learned thresholds) were not better. Combining distillation with modality dropout was
+significantly worse with all sensors present than distillation alone ($p = 0.030$), so the two are evaluated as
+separate models.
 
 \input{tables/m5_ablation}
 
@@ -170,14 +178,20 @@ Out of fold, the base detects 29 of 33 focal to bilateral tonic-clonic seizures 
 awareness, 9\,\% of focal aware and 8\,\% of focal seizures with unknown awareness.
 
 \subsection{Held-out test patients}
-\RESULT{Table: SzCORE and paper metrics on the 29 test patients for the final DWN (modality dropout), LightGBM, TreeLUT,
-INT8 MLP, logistic regression and clean ChronoNet, mean $\pm$ std over 5 seeds, with per-patient tests against
-ChronoNet and LightGBM; results by seizure type and with sensors removed.}
+The design was frozen before any of our models was scored on a test patient. Table~\ref{tab:test} gives the result.
+The final DWN reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per day, above its cross-validation value
+(0.229): the improvement from distillation holds on unseen patients (base DWN 0.172). It is above TreeLUT (0.233) at a
+seventh of the LUTs and above the INT8 MLP (0.155), level with random forest (0.246) and CatBoost (0.254), and below
+LightGBM (0.308, $p = 0.039$ per patient). Against clean ChronoNet (event-F1 0.027, 106 false alarms per day) it is
+better per patient ($p = 0.027$): ChronoNet detects more seizures (79\,\%) but raises over a hundred times more false
+alarms. The modality-dropout variant reaches 0.242 with 0.4 false alarms per day.
+
+\input{tables/final_test}
 
 \section{Hardware}
 The final DWN is exported as thresholds, input mapping, truth tables and popcount head, with test vectors for every
-stage from raw samples to alarms; a generated reference Verilog classifier matches the software on all test vectors in
-Icarus Verilog. \PHASETWO{post-synthesis LUT, flip-flop and timing results and power on a low-power FPGA, with the INT8
+stage from raw samples to alarms. A generated reference Verilog classifier, simulated in Icarus Verilog, matches the
+software on all 431,960 one-second windows of 10 test recordings. \PHASETWO{post-synthesis LUT, flip-flop and timing results and power on a low-power FPGA, with the INT8
 MLP and TreeLUT through the same flow.} Until then, costs are analytical estimates.
 
 \section{Discussion and Limitations}
@@ -188,8 +202,9 @@ or age labels, so no centre or age breakdown is possible; and hardware costs are
 
 \section{Conclusion}
 A 50-LUT weightless network on integer multimodal features detects seizures across patients with no multipliers and
-about 960 estimated LUTs, and modality dropout makes it robust to missing ECG and motion. \RESULT{one sentence on the
-test-patient result.}
+about 900 estimated LUTs. On 29 held-out patients it reaches an event-F1 of 0.248 with 0.8 false alarms per day,
+above a published deep-learning baseline and TreeLUT and level with random forests; distillation and modality dropout
+address false alarms and missing sensors.
 
 \section*{Reproducibility}
 Code, configurations, decision log, export packages and the Verilog generator are released with the paper. Dataset:
