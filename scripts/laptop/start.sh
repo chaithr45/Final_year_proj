@@ -30,13 +30,15 @@ case "${1:-}" in
   finish) cmd="scripts/laptop/chrono_eval.sh chrononet_official && python scripts/baselines/chrononet_data.py --config configs/baselines/chrononet_clean.yaml && python scripts/baselines/chrononet_train.py --config configs/baselines/chrononet_clean.yaml --device cuda --resume auto && scripts/laptop/chrono_eval.sh chrononet_clean" ;;
   *) echo "usage: $0 feat|chrono|night|sweep|big|finish|raw"; exit 2 ;;
 esac
-# A session of the same name whose job has ended (only its shell is left) is replaced; a running one is kept.
+# A session of the same name whose job has ended (only its idle shell is left) is replaced; a running one is
+# kept. The test is whether the window's shell still has child processes: the window's current command is
+# `bash` for script jobs (big, sweep) even while they run, so it cannot tell the two apart.
 if tmux has-session -t "$1" 2>/dev/null; then
-  if [[ "$(tmux list-panes -t "$1" -F '#{pane_current_command}' | head -1)" == bash ]]; then
-    tmux kill-session -t "$1"
-  else
+  pane_pid="$(tmux list-panes -t "$1" -F '#{pane_pid}' | head -1)"
+  if [[ -n "$pane_pid" ]] && pgrep -P "$pane_pid" >/dev/null; then
     echo "'$1' is still running: watch with  tmux attach -t $1   or  tail -n 3 logs/$1.log"; exit 0
   fi
+  tmux kill-session -t "$1"
 fi
 # The job is retried (every step resumes) up to 10 times if it stops with an error.
 cat > "logs/$1.sh" <<INNER
