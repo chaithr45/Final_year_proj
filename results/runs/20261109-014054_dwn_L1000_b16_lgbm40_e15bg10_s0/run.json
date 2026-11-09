@@ -1,0 +1,9 @@
+{
+  "name": "dwn_L1000_b16_lgbm40_e15bg10",
+  "seed": 0,
+  "git": {
+    "commit": "1decc2a5fbe246197385c74999dc8b0948d21fc7",
+    "dirty": false
+  },
+  "created": "20261109-014054"
+}
