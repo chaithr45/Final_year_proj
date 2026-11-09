@@ -29,8 +29,12 @@ LightGBM importance instead raised event-F1 from 0.148 to 0.208 at the same size
 dropout keeps the detector working when the ECG is missing (event-F1 0.172 against 0.092). The literature survey of 79
 references found no LUT-native seizure detector and no LUT network that fuses modalities or handles missing sensors.
 
-The 29 test patients have not been used to score any of our models yet. Phase II will complete the extensions of the
-network, evaluate the final models once on the held-out patients, and implement the detector on an FPGA.
+Distillation from LightGBM was adopted as the final network design. With the design frozen, the models were evaluated
+once on the 29 held-out test patients with five seeds: the final network reached an event-F1 of 0.248 with 0.8 false
+alarms per day at about 900 LUTs, above the clean ChronoNet baseline (0.027 with 106 false alarms per day; per-patient
+p = 0.027) and TreeLUT (0.233), level with random forests (0.246) and below LightGBM (0.308). Its generated Verilog
+matches the software on all 431,960 windows of 10 test recordings. Phase II will implement and measure the detector on
+an FPGA.
 
 \vspace{4mm}
 \noindent\textbf{Index Terms:} epilepsy, seizure detection, wearable EEG, behind-the-ear EEG, multimodal fusion,

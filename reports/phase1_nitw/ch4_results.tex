@@ -1,9 +1,10 @@
 \chapter{Experimental Results and Comparisons}\label{ch:results}
 
-All results of our own models in this chapter come from five-fold patient-wise cross-validation on the 96 training
-patients. \textbf{No model of ours has been scored on the 29 test patients yet}: they are kept for the single final
-evaluation in Phase II. The only use of the test patients so far is the reproduction of the published ChronoNet
-baseline (Section~\ref{sec:res-chrononet}), which the SeizeIT2 paper itself reports on them.
+Sections~\ref{sec:res-chrononet} to~\ref{sec:res-published} report the development results: five-fold patient-wise
+cross-validation on the 96 training patients, on which every design choice was made. Only after the design was frozen
+were the models scored, once, on the 29 held-out test patients (Section~\ref{sec:res-test}); the only earlier use of
+the test patients was the reproduction of the published ChronoNet baseline (Section~\ref{sec:res-chrononet}), which the
+SeizeIT2 paper itself reports on them.
 
 \section{Reproduction of the Published Baseline}\label{sec:res-chrononet}
 
@@ -138,7 +139,14 @@ N1 stacked windows (last 5 s) & Event-F1 0.217 against 0.211 ($p = 0.25$), about
 N5 loss functions (MIL, onset weighting, focal, GCE, SCE) & No event-F1 gain; the focal, GCE and SCE losses were significantly worse ($p = 0.038$, $0.005$, $0.003$). & Not adopted\\
 N6 modality dropout & With ECG removed, event-F1 0.172 against 0.092 for the base ($p = 0.005$); with motion removed 0.192 against 0.136 ($p = 0.021$); with all sensors, 0.188 against 0.211 (not significant, $p = 0.23$). & \textbf{Adopted}\\
 N6 late fusion & Event-F1 0.134 ($p = 0.0006$, worse) and collapses when any sensor is missing. & Dropped\\
-N2, N4 & 7 variants running. & Pending\\
+N4 distillation from LightGBM & False alarms 0.9 against 2.4 per day ($p = 3\times10^{-7}$); event-F1 0.229 against
+0.211 (not significant); 91 fewer estimated LUTs. & \textbf{Adopted (final network)}\\
+N4 hard negatives & Teacher-guided hard negatives: event-F1 0.133 ($p = 0.0006$, worse); with distillation 0.215 (no
+gain). & Not adopted\\
+N2 encoders & Uniform, Gaussian and learned thresholds: no event-F1 gain; uniform and strongly penalised learned
+thresholds significantly worse, although up to 759 LUTs cheaper. & Not adopted\\
+N4 + N6 combined & Significantly worse than distillation alone with all sensors ($p = 0.030$), better without ECG
+($p = 0.004$). & Not chosen; dropout kept as a variant\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -192,7 +200,7 @@ The detector catches most tonic-clonic seizures, the dangerous ones, but few foc
 depends heavily on the heart signal and on motion. Training with random modality dropout (N6,
 Table~\ref{tab:ext-results}) removes most of this dependence: without ECG its event-F1 is 0.172 instead of 0.092.
 
-\section{Comparison with Published Research}
+\section{Comparison with Published Research}\label{sec:res-published}
 
 Table~\ref{tab:published} places our current results next to published results on behind-the-ear EEG. The comparison
 is indicative only: the published numbers are on other patient sets or use other metrics, and our models have not yet
@@ -213,6 +221,52 @@ Our DWN, 50 LUTs & SeizeIT2 training (96), cross-validation & SzCORE: sens.\ 0.3
 \end{tabularx}
 \end{table}
 
-If the cross-validation result holds on the test patients, the DWN detects fewer seizures than ChronoNet at the
-paper's operating point but with far fewer false alarms, in under a thousand LUTs. The final evaluation in Phase II
-will answer this on the same 29 patients.
+Section~\ref{sec:res-test} gives the comparison on the same 29 test patients.
+
+\section{Final Evaluation on the Held-Out Test Patients}\label{sec:res-test}
+
+The design was frozen on the training patients (final network: the 50-LUT DWN with distillation from LightGBM).
+Every model was then retrained on all 96 training patients with five seeds and scored once on the 29 test patients,
+at the operating point chosen on the training folds; nothing was tuned on the test patients. Table~\ref{tab:test}
+gives the result.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Final evaluation on the 29 held-out test patients (SzCORE event metrics, mean over patients, mean $\pm$ std
+over 5 seeds; $p$: paired Wilcoxon on per-patient event-F1).}\label{tab:test}
+\begin{tabularx}{\textwidth}{@{}P{30mm}@{\hspace{4pt}}c@{\hspace{4pt}}c@{\hspace{4pt}}c@{\hspace{4pt}}c@{\hspace{4pt}}c@{\hspace{4pt}}L@{}}
+\toprule
+\textbf{Model} & \textbf{Event-F1} & \textbf{Sens.} & \textbf{FA/24\,h} & \textbf{$p$ vs Chrono.} & \textbf{$p$ vs LGBM} & \textbf{Estimated cost}\\
+\midrule
+\textbf{DWN + distillation (final)} & \textbf{0.248 $\pm$ 0.016} & 0.303 & \textbf{0.8} & 0.027 & 0.039 & \textbf{$\approx$900 LUTs, 0 mult.}\\
+DWN + modality dropout & 0.242 $\pm$ 0.030 & 0.272 & 0.4 & 0.035 & 0.035 & $\approx$950 LUTs\\
+DWN base & 0.172 $\pm$ 0.044 & 0.340 & 2.7 & 0.011 & 0.004 & $\approx$980 LUTs\\
+LightGBM & 0.308 $\pm$ 0.013 & 0.331 & 0.6 & 0.027 & -- & $\approx$30.8k LUTs\\
+XGBoost & 0.294 $\pm$ 0.014 & 0.301 & 0.4 & 0.062 & 0.29 & $\approx$48.3k LUTs\\
+CatBoost & 0.254 $\pm$ 0.009 & 0.330 & 1.2 & 0.031 & 0.026 & $\approx$27.7k LUTs\\
+Random forest & 0.246 $\pm$ 0.003 & 0.245 & 0.2 & 0.27 & 0.35 & $\approx$347k LUTs\\
+TreeLUT & 0.233 $\pm$ 0.044 & 0.292 & 1.0 & 0.016 & 0.005 & $\approx$6.3k LUTs\\
+INT8 MLP & 0.155 $\pm$ 0.008 & 0.249 & 1.7 & 0.017 & 0.005 & 9,600 multiplications\\
+Logistic regression & 0.123 $\pm$ 0.002 & 0.255 & 5.1 & 0.62 & 0.0008 & 117 multiplications\\
+ChronoNet, clean (1 seed) & 0.027 & 0.790 & 106.3 & -- & -- & CNN + GRU\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{itemize}
+\item The result held on unseen patients: the final network's event-F1 on the test patients (0.248) is above its
+  cross-validation value (0.229), and the gain from distillation over the base network (0.172) is confirmed.
+\item It is significantly better than the clean ChronoNet baseline per patient ($p = 0.027$): ChronoNet detects more
+  seizures (79\,\%) but raises over a hundred times more false alarms (106 against 0.8 per day).
+\item It is above TreeLUT at a seventh of the LUTs, above the INT8 network, level with random forests and close to
+  CatBoost, and still below LightGBM ($p = 0.039$).
+\item At its other operating point (at most one false alarm per hour) it detects 54\,\% of the test seizures.
+\end{itemize}
+
+\section{Hardware Handoff Check}
+
+The final network was exported as its thresholds, input mapping, 50 truth tables and popcount head, and test vectors
+were generated for every stage, from the raw integer samples through features, thermometer bits, LUT outputs and score
+to the alarms, on 10 test recordings. The generated reference Verilog, simulated in Icarus Verilog, produced exactly the
+same outputs as the software on \textbf{all 431,960 one-second windows} of these recordings. The FPGA implementation in
+Phase II therefore starts from a verified, bit-exact description.

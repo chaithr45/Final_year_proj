@@ -45,8 +45,8 @@ evaluation; setting up the software tools and data access; first experiments, wh
 reported here.\\
 Month 2 (October -- November 2026) & Complete audit of the dataset; reproduction of the ChronoNet baseline (official
 and clean); integer feature pipeline and fixed-point specification; cross-validated comparison of nine model families;
-design study of the DWN and the improved feature selection; first extensions (N1, N3, N7); hardware handoff tools;
-this report.\\
+design study of the DWN and the improved feature selection; extensions N1--N7 and the frozen final design; the
+single evaluation on the 29 held-out test patients; hardware handoff with the Verilog check; this report.\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -78,18 +78,19 @@ raw-EEG CNN/TCN running\\
 GPU\\
 \small Extensions N1, N3, N7 & \small Completed & \small None adopted alone; N7 led to the improved feature selection\\
 \small Extensions N5, N6 & \small Completed & \small Modality dropout (N6) adopted; no loss variant (N5) adopted\\
-\small Extensions N2, N4 & \small In progress & \small 7 variants running\\
-\small Hardware handoff tools (export, test vectors, reference Verilog) & \small Completed and tested & \small Run on
-the final model in Phase II\\
-\small Final evaluation on the 29 test patients & \small Planned & \small After every design choice is frozen; five
-seeds per model\\
+\small Extensions N2, N4 & \small Completed & \small Distillation (N4) adopted for the final network; encoders and
+hard negatives not adopted\\
+\small Final evaluation on the 29 test patients & \small Completed & \small 10 models $\times$ 5 seeds; final network
+event-F1 0.248, 0.8 false alarms per day; the logic-gate network's run finishes separately\\
+\small Hardware handoff (export, test vectors, reference Verilog) & \small Completed & \small Verilog matches the software
+on all 431,960 windows of 10 test recordings\\
 \small FPGA implementation & \small Planned & \small Synthesis, measurements and demonstration in Phase II\\
 \end{xltabular}
 
-The remaining months will concentrate on the open questions of Phase I. The extensions will be completed and the
-winners combined; the large LUT networks and the raw-EEG references will close the model comparison; the design will
-then be frozen and evaluated once on the 29 test patients. The final DWN will be exported as truth tables with test
-vectors, implemented on a low-power FPGA and measured against the INT8 MLP and TreeLUT on the same device.
+Phase II will take the verified design to hardware: the final network will be synthesised on a low-power FPGA and
+its LUTs, power and latency measured against the INT8 MLP and TreeLUT on the same device, and the recordings streamed
+through the board. In parallel, the large LUT networks and the raw-EEG references will complete the model comparison,
+and the open questions of Phase I (focal seizures, the dependence on ECG) will be studied on the training patients.
 Table~\ref{tab:plan} gives the month-wise plan.
 
 \begin{table}[htbp]
@@ -99,12 +100,10 @@ Table~\ref{tab:plan} gives the month-wise plan.
 \toprule
 \textbf{Month} & \textbf{Work} & \textbf{Expected deliverable}\\
 \midrule
-November -- December 2026 & Remaining extensions (N2, N4, N5, N6) and their combination; large DWNs, GRU and raw-EEG
-references; design frozen & Ablation table; final DWN design\\
-December 2026 & Final evaluation on the 29 test patients with five seeds; hardware handoff package & Test-set results;
-handoff package with verified reference Verilog\\
-January 2027 & FPGA synthesis and place-and-route; conference paper draft (EMBC 2027, full papers reportedly due 24
-January 2027) & Resource and timing report; paper draft\\
+December 2026 & FPGA tool flow; synthesis and place-and-route of the verified design; large LUT networks and
+raw-EEG references on the training patients & Resource and timing report\\
+January 2027 & Conference paper (EMBC 2027, full papers reportedly due 24 January 2027); power and latency
+measurement & Submitted paper\\
 February 2027 & Measured LUTs, power and latency; INT8 MLP and TreeLUT on the same device & Hardware comparison table\\
 March 2027 & On-board demonstration with recordings streamed through the design; documentation & Demonstration\\
 April 2027 & Final report and presentation & Final report\\
@@ -129,8 +128,13 @@ Phase I established the foundation of the project and its first results:
   identified as the dominant hardware cost.
 \item Training with random modality dropout makes the network robust to a missing ECG or motion sensor (event-F1
   0.172 against 0.092 without ECG) at no significant cost when all sensors are present.
+\item Distillation from LightGBM was adopted for the final network. On the 29 held-out test patients, scored once
+  with five seeds, it reaches an event-F1 of 0.248 with 0.8 false alarms per day at about 900 LUTs: significantly
+  better than the clean ChronoNet baseline, above TreeLUT and the INT8 network, level with random forests and below
+  LightGBM.
+\item The generated Verilog of the final network matches the software on all 431,960 windows of 10 test recordings.
 \item No LUT-native seizure detector exists in the literature, and no LUT network fuses modalities or handles missing
   sensors; the project addresses both.
 \end{enumerate}
-Phase II will complete the extensions, evaluate the frozen design once on the 29 held-out patients, and implement and
-measure the detector on an FPGA.
+Phase II will implement and measure the detector on an FPGA and continue the work on focal seizures and on robustness
+to missing sensors.
