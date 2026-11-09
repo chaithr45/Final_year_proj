@@ -181,7 +181,7 @@ awareness, 9\,\% of focal aware and 8\,\% of focal seizures with unknown awarene
 The design was frozen before any of our models was scored on a test patient. Table~\ref{tab:test} gives the result.
 The final DWN reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per day, above its cross-validation value
 (0.229): the improvement from distillation holds on unseen patients (base DWN 0.172). It is above TreeLUT (0.233) at a
-seventh of the LUTs and above the INT8 MLP (0.155), level with random forest (0.246) and CatBoost (0.254), and below
+seventh of the LUTs, above the logic-gate network (0.191) and the INT8 MLP (0.155), level with random forest (0.246) and CatBoost (0.254), and below
 LightGBM (0.308, $p = 0.039$ per patient). Against clean ChronoNet (event-F1 0.027, 106 false alarms per day) it is
 better per patient ($p = 0.027$): ChronoNet detects more seizures (79\,\%) but raises over a hundred times more false
 alarms. With the dataset paper's own metrics at a matched false-alarm rate, the final DWN detects 43.2\,\% of

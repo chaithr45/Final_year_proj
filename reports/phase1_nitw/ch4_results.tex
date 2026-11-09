@@ -223,6 +223,7 @@ XGBoost & 0.294 $\pm$ 0.014 & 0.301 & 0.4 & 0.062 & 0.29 & $\approx$48.3k LUTs\\
 CatBoost & 0.254 $\pm$ 0.009 & 0.330 & 1.2 & 0.031 & 0.026 & $\approx$27.7k LUTs\\
 Random forest & 0.246 $\pm$ 0.003 & 0.245 & 0.2 & 0.27 & 0.35 & $\approx$347k LUTs\\
 TreeLUT & 0.233 $\pm$ 0.044 & 0.292 & 1.0 & 0.016 & 0.005 & $\approx$6.3k LUTs\\
+Logic-gate network & 0.191 $\pm$ 0.021 & 0.291 & 1.4 & 0.034 & 0.008 & $\approx$7.5k LUTs\\
 INT8 MLP & 0.155 $\pm$ 0.008 & 0.249 & 1.7 & 0.017 & 0.005 & 9,600 multiplications\\
 Logistic regression & 0.123 $\pm$ 0.002 & 0.255 & 5.1 & 0.62 & 0.0008 & 117 multiplications\\
 ChronoNet, clean (1 seed) & 0.027 & 0.790 & 106.3 & -- & -- & CNN + GRU\\
@@ -235,8 +236,8 @@ ChronoNet, clean (1 seed) & 0.027 & 0.790 & 106.3 & -- & -- & CNN + GRU\\
   cross-validation value (0.229), and the gain from distillation over the base network (0.172) is confirmed.
 \item It is significantly better than the clean ChronoNet baseline per patient ($p = 0.027$): ChronoNet detects more
   seizures (79\,\%) but raises over a hundred times more false alarms (106 against 0.8 per day).
-\item It is above TreeLUT at a seventh of the LUTs, above the INT8 network, level with random forests and close to
-  CatBoost, and still below LightGBM ($p = 0.039$).
+\item It is above TreeLUT at a seventh of the LUTs and above the logic-gate network (0.191) at an eighth, above the
+  INT8 network, level with random forests and close to CatBoost, and still below LightGBM ($p = 0.039$).
 \item At its other operating point (at most one false alarm per hour) it detects 54\,\% of the test seizures.
 \end{itemize}
 
