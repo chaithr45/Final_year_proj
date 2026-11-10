@@ -1,0 +1,11 @@
+build/
+out/
+dist/
+board/results/
+board/libfastio.so
+board/seizelut.bit
+board/seizelut.hwh
+__pycache__/
+sim/vectors/*
+!sim/vectors/sub-097_run-10.hex
+!board/vectors/*.npz

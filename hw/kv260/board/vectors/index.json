@@ -1,0 +1,115 @@
+{
+ "export": "20261108-194022_n4_distill_final_s0",
+ "features": [
+  "eeg_theta_mean",
+  "ecg_log_rr",
+  "eeg_ch2_theta",
+  "eeg_theta_max",
+  "eeg_beta_mean_ctx",
+  "ecg_log_rr_ctx",
+  "eeg_hf_mean_ctx",
+  "ecg_log_masrd",
+  "eeg_mav_absdiff",
+  "eeg_hf_max_ctx",
+  "emg_mav",
+  "mov_acc_jerk",
+  "eeg_sign_agree",
+  "mov_acc_mag",
+  "eeg_theta_max_ctx",
+  "eeg_theta_mean_ctx",
+  "eeg_ll_absdiff",
+  "ecg_quality_bad",
+  "emg_ll",
+  "eeg_delta_mean",
+  "eeg_ch2_hf",
+  "emg_zc",
+  "eeg_ch1_hf",
+  "mov_gyr_mag",
+  "eeg_theta_absdiff",
+  "eeg_ch2_mav",
+  "eeg_alpha_mean_ctx",
+  "mov_acc_jerk_ctx",
+  "eeg_ext_absdiff",
+  "ecg_log_masrd_ctx",
+  "eeg_mob_mean_ctx",
+  "mov_gyr_jerk",
+  "eeg_delta_max",
+  "eeg_delta_absdiff",
+  "mov_gyr_act_ctx",
+  "eeg_ch2_alpha",
+  "eeg_hf_absdiff_ctx",
+  "eeg_ch1_theta"
+ ],
+ "recordings": {
+  "sub-097_run-02": {
+   "windows": 68636,
+   "seizures": 1,
+   "alarm_windows": 0,
+   "decision_windows": 7,
+   "sha256": "af05c2284d3ed0c66b92bbdd8c07363ea92b083ade57c8d0f37e40e59398085c"
+  },
+  "sub-097_run-04": {
+   "windows": 76312,
+   "seizures": 3,
+   "alarm_windows": 0,
+   "decision_windows": 9,
+   "sha256": "82305148d106cd7ec2c9490636c2ccf2e62d88dbc6fcd3fdee6bc4310ee329c5"
+  },
+  "sub-097_run-05": {
+   "windows": 6465,
+   "seizures": 1,
+   "alarm_windows": 0,
+   "decision_windows": 1,
+   "sha256": "17dc6b2dde64222e02a385528b17c0514111579e6b262fcbc9355444551e1db4"
+  },
+  "sub-097_run-07": {
+   "windows": 41797,
+   "seizures": 6,
+   "alarm_windows": 0,
+   "decision_windows": 0,
+   "sha256": "281a56a0c34a8a743e8728b3597da818049b1cfa4afc654a43d06fd88ddf719e"
+  },
+  "sub-097_run-09": {
+   "windows": 77152,
+   "seizures": 1,
+   "alarm_windows": 0,
+   "decision_windows": 8,
+   "sha256": "ce90578f9cf1923f8fc6b732f7886cbbd33e2d21cf02e77e50f956cab170cf72"
+  },
+  "sub-097_run-10": {
+   "windows": 424,
+   "seizures": 1,
+   "alarm_windows": 0,
+   "decision_windows": 0,
+   "sha256": "d71593bc34773304fe0c6f4940310ce34836f6141da484c9c8ed22f5b40cc91e"
+  },
+  "sub-098_run-03": {
+   "windows": 76568,
+   "seizures": 1,
+   "alarm_windows": 26,
+   "decision_windows": 214,
+   "sha256": "a8b882d52c1f00971489143a1fa9832a752b038d597ec065a1c83fd8b5f86285"
+  },
+  "sub-099_run-01": {
+   "windows": 75816,
+   "seizures": 3,
+   "alarm_windows": 0,
+   "decision_windows": 29,
+   "sha256": "94c746e96e65dc287cff39b9daee1d27e53f3a93f5b2c0c878ffc4737faa345f"
+  },
+  "sub-099_run-02": {
+   "windows": 4936,
+   "seizures": 1,
+   "alarm_windows": 0,
+   "decision_windows": 0,
+   "sha256": "2f3bab614ecb1dcacbc973a438762c8bde2cfc804f4c716e49bfa960fa323df1"
+  },
+  "sub-100_run-03": {
+   "windows": 3854,
+   "seizures": 1,
+   "alarm_windows": 0,
+   "decision_windows": 0,
+   "sha256": "a9e3f93a33b7512a830fed84a7090b58ba59e14f4ff615739448e7b25d76f4fc"
+  }
+ }
+}

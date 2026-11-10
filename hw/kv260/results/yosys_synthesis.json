@@ -1,0 +1,48 @@
+{
+ "tool": "Yosys 0.70 (yowasp-yosys), synth_xilinx -family xcup -abc9 (UltraScale+ primitives)",
+ "classifier": {
+  "cells": {
+   "BUFG": 1,
+   "CARRY4": 3,
+   "FDRE": 454,
+   "IBUF": 392,
+   "INV": 1,
+   "LUT2": 40,
+   "LUT3": 68,
+   "LUT4": 68,
+   "LUT5": 133,
+   "LUT6": 96,
+   "MUXF7": 2,
+   "MUXF8": 1,
+   "OBUF": 9
+  },
+  "luts": 405,
+  "ffs": 454,
+  "dsp": 0,
+  "bram": 0
+ },
+ "note": "open-source synthesis estimate; the Vivado implementation numbers come from out/build_results.json",
+ "core_with_axi_and_bist": {
+  "cells": {
+   "BUFG": 1,
+   "CARRY4": 98,
+   "FDRE": 2029,
+   "FDSE": 34,
+   "IBUF": 73,
+   "INV": 14,
+   "LUT2": 283,
+   "LUT3": 453,
+   "LUT4": 200,
+   "LUT5": 728,
+   "LUT6": 459,
+   "MUXF7": 2,
+   "MUXF8": 1,
+   "OBUF": 41,
+   "RAMB18E2": 17,
+   "SRL16E": 8
+  },
+  "luts": 2123,
+  "ffs": 2063,
+  "ramb18": 17
+ }
+}

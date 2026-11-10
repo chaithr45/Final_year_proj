@@ -1,0 +1,440 @@
+{
+ "simulator": "Verilator 5.020 (testbench sim/tb_seizelut_axi.v; same TB also runs on Icarus Verilog 12)",
+ "rtl": "rtl/seizelut_axi.v + rtl/lutnet_classifier.v + rtl/seizelut_bist_rom.v",
+ "recordings": 10,
+ "windows_per_pass": 431960,
+ "operating_points_programmable": [
+  "thr 2, k 10",
+  "thr -7, k 10",
+  "thr 5, k 6"
+ ],
+ "window_checks": 1295880,
+ "all_pass": true,
+ "checks": "per window: score, decision, alarm (frozen) and decision2, alarm2 (programmable) via AXI4-Lite; per run: NWIN/NDEC/NALARM/NDEC2/NALARM2 counters, latency register (3 cycles), ID/INFO/SCRATCH/OP registers, one BIST pass (1024/1024 in 1028 cycles)",
+ "negative_tests": [
+  "missing vector file -> FAIL",
+  "one flipped expected score -> FAIL at that window"
+ ],
+ "runs": {
+  "sub-097_run-02|2|10": {
+   "windows": 68636,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 2694 alarms 8",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 68636 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-02|-7|10": {
+   "windows": 68636,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 20965 alarms 2755",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 68636 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-02|5|6": {
+   "windows": 68636,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 490 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 68636 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-04|2|10": {
+   "windows": 76312,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 2767 alarms 6",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 76312 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-04|-7|10": {
+   "windows": 76312,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 49771 alarms 16525",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 76312 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-04|5|6": {
+   "windows": 76312,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 509 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 76312 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-05|2|10": {
+   "windows": 6465,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 398 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 6465 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-05|-7|10": {
+   "windows": 6465,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 3479 alarms 629",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 6465 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-05|5|6": {
+   "windows": 6465,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 59 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 6465 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-07|2|10": {
+   "windows": 41797,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 1035 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 41797 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-07|-7|10": {
+   "windows": 41797,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 30780 alarms 6976",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 41797 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-07|5|6": {
+   "windows": 41797,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 65 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 41797 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-09|2|10": {
+   "windows": 77152,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 1761 alarms 3",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 77152 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-09|-7|10": {
+   "windows": 77152,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 63270 alarms 27123",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 77152 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-09|5|6": {
+   "windows": 77152,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 267 alarms 7",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 77152 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-10|2|10": {
+   "windows": 424,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 15 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 424 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-10|-7|10": {
+   "windows": 424,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 242 alarms 49",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 424 windows, 0 mismatches"
+   ]
+  },
+  "sub-097_run-10|5|6": {
+   "windows": 424,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 0 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 424 windows, 0 mismatches"
+   ]
+  },
+  "sub-098_run-03|2|10": {
+   "windows": 76568,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 1399 alarms 154",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 76568 windows, 0 mismatches"
+   ]
+  },
+  "sub-098_run-03|-7|10": {
+   "windows": 76568,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 8403 alarms 1412",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 76568 windows, 0 mismatches"
+   ]
+  },
+  "sub-098_run-03|5|6": {
+   "windows": 76568,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 697 alarms 365",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 76568 windows, 0 mismatches"
+   ]
+  },
+  "sub-099_run-01|2|10": {
+   "windows": 75816,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 729 alarms 4",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 75816 windows, 0 mismatches"
+   ]
+  },
+  "sub-099_run-01|-7|10": {
+   "windows": 75816,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 6381 alarms 780",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 75816 windows, 0 mismatches"
+   ]
+  },
+  "sub-099_run-01|5|6": {
+   "windows": 75816,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 253 alarms 29",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 75816 windows, 0 mismatches"
+   ]
+  },
+  "sub-099_run-02|2|10": {
+   "windows": 4936,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 74 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 4936 windows, 0 mismatches"
+   ]
+  },
+  "sub-099_run-02|-7|10": {
+   "windows": 4936,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 1261 alarms 122",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 4936 windows, 0 mismatches"
+   ]
+  },
+  "sub-099_run-02|5|6": {
+   "windows": 4936,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 23 alarms 4",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 4936 windows, 0 mismatches"
+   ]
+  },
+  "sub-100_run-03|2|10": {
+   "windows": 3854,
+   "pass": true,
+   "output": [
+    "OP2 thr=2 k=10: decisions 23 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 3854 windows, 0 mismatches"
+   ]
+  },
+  "sub-100_run-03|-7|10": {
+   "windows": 3854,
+   "pass": true,
+   "output": [
+    "OP2 thr=-7 k=10: decisions 336 alarms 52",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 3854 windows, 0 mismatches"
+   ]
+  },
+  "sub-100_run-03|5|6": {
+   "windows": 3854,
+   "pass": true,
+   "output": [
+    "OP2 thr=5 k=6: decisions 2 alarms 0",
+    "LATENCY 3 cycles",
+    "BIST status 1101",
+    "BIST_OK 1024",
+    "BIST_ERR 0",
+    "BIST_CYC 1028",
+    "BIST_FIRSTERR ffffffff",
+    "PASS 3854 windows, 0 mismatches"
+   ]
+  }
+ }
+}

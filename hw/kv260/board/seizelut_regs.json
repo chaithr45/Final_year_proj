@@ -1,0 +1,239 @@
+{
+ "id": 1397511508,
+ "version": 1,
+ "info": 53618177,
+ "registers": {
+  "ID": 0,
+  "INFO": 4,
+  "CTRL": 8,
+  "STATUS": 12,
+  "COMMIT": 16,
+  "RESULT": 20,
+  "NWIN": 24,
+  "NDEC": 28,
+  "NALARM": 32,
+  "LATENCY": 36,
+  "CYCLES": 40,
+  "SCRATCH": 44,
+  "BIST_N": 48,
+  "BIST_OK": 52,
+  "BIST_ERR": 56,
+  "BIST_CYC": 60,
+  "BIST_RUNS": 64,
+  "BIST_FIRSTERR": 68,
+  "OP_THR": 72,
+  "OP_K": 76,
+  "NDEC2": 80,
+  "NALARM2": 84,
+  "FEAT0": 256
+ },
+ "n_features": 38,
+ "n_feature_words": 19,
+ "features": [
+  {
+   "name": "eeg_theta_mean",
+   "width_bits": 10,
+   "spec_index": 18
+  },
+  {
+   "name": "ecg_log_rr",
+   "width_bits": 10,
+   "spec_index": 53
+  },
+  {
+   "name": "eeg_ch2_theta",
+   "width_bits": 10,
+   "spec_index": 46
+  },
+  {
+   "name": "eeg_theta_max",
+   "width_bits": 10,
+   "spec_index": 19
+  },
+  {
+   "name": "eeg_beta_mean_ctx",
+   "width_bits": 11,
+   "spec_index": 96
+  },
+  {
+   "name": "ecg_log_rr_ctx",
+   "width_bits": 11,
+   "spec_index": 103
+  },
+  {
+   "name": "eeg_hf_mean_ctx",
+   "width_bits": 11,
+   "spec_index": 99
+  },
+  {
+   "name": "ecg_log_masrd",
+   "width_bits": 10,
+   "spec_index": 54
+  },
+  {
+   "name": "eeg_mav_absdiff",
+   "width_bits": 10,
+   "spec_index": 2
+  },
+  {
+   "name": "eeg_hf_max_ctx",
+   "width_bits": 11,
+   "spec_index": 100
+  },
+  {
+   "name": "emg_mav",
+   "width_bits": 10,
+   "spec_index": 56
+  },
+  {
+   "name": "mov_acc_jerk",
+   "width_bits": 10,
+   "spec_index": 61
+  },
+  {
+   "name": "eeg_sign_agree",
+   "width_bits": 11,
+   "spec_index": 50
+  },
+  {
+   "name": "mov_acc_mag",
+   "width_bits": 10,
+   "spec_index": 60
+  },
+  {
+   "name": "eeg_theta_max_ctx",
+   "width_bits": 11,
+   "spec_index": 91
+  },
+  {
+   "name": "eeg_theta_mean_ctx",
+   "width_bits": 11,
+   "spec_index": 90
+  },
+  {
+   "name": "eeg_ll_absdiff",
+   "width_bits": 10,
+   "spec_index": 5
+  },
+  {
+   "name": "ecg_quality_bad",
+   "width_bits": 2,
+   "spec_index": 55
+  },
+  {
+   "name": "emg_ll",
+   "width_bits": 10,
+   "spec_index": 57
+  },
+  {
+   "name": "eeg_delta_mean",
+   "width_bits": 10,
+   "spec_index": 15
+  },
+  {
+   "name": "eeg_ch2_hf",
+   "width_bits": 10,
+   "spec_index": 49
+  },
+  {
+   "name": "emg_zc",
+   "width_bits": 11,
+   "spec_index": 58
+  },
+  {
+   "name": "eeg_ch1_hf",
+   "width_bits": 10,
+   "spec_index": 39
+  },
+  {
+   "name": "mov_gyr_mag",
+   "width_bits": 10,
+   "spec_index": 64
+  },
+  {
+   "name": "eeg_theta_absdiff",
+   "width_bits": 10,
+   "spec_index": 20
+  },
+  {
+   "name": "eeg_ch2_mav",
+   "width_bits": 10,
+   "spec_index": 40
+  },
+  {
+   "name": "eeg_alpha_mean_ctx",
+   "width_bits": 11,
+   "spec_index": 93
+  },
+  {
+   "name": "mov_acc_jerk_ctx",
+   "width_bits": 11,
+   "spec_index": 110
+  },
+  {
+   "name": "eeg_ext_absdiff",
+   "width_bits": 11,
+   "spec_index": 14
+  },
+  {
+   "name": "ecg_log_masrd_ctx",
+   "width_bits": 11,
+   "spec_index": 104
+  },
+  {
+   "name": "eeg_mob_mean_ctx",
+   "width_bits": 11,
+   "spec_index": 78
+  },
+  {
+   "name": "mov_gyr_jerk",
+   "width_bits": 10,
+   "spec_index": 65
+  },
+  {
+   "name": "eeg_delta_max",
+   "width_bits": 10,
+   "spec_index": 16
+  },
+  {
+   "name": "eeg_delta_absdiff",
+   "width_bits": 10,
+   "spec_index": 17
+  },
+  {
+   "name": "mov_gyr_act_ctx",
+   "width_bits": 11,
+   "spec_index": 115
+  },
+  {
+   "name": "eeg_ch2_alpha",
+   "width_bits": 10,
+   "spec_index": 47
+  },
+  {
+   "name": "eeg_hf_absdiff_ctx",
+   "width_bits": 11,
+   "spec_index": 101
+  },
+  {
+   "name": "eeg_ch1_theta",
+   "width_bits": 10,
+   "spec_index": 36
+  }
+ ],
+ "score_bits": 6,
+ "latency_cycles": 3,
+ "n_luts": 50,
+ "k": 10,
+ "n": 10,
+ "decision_threshold": 9,
+ "artefact_gate": "none",
+ "bist": {
+  "recording": "sub-098_run-03",
+  "start_window": 69571,
+  "n": 1024,
+  "decisions": 77,
+  "alarms": 26
+ },
+ "export": "export/n4_distill_s0"
+}
