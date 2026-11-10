@@ -1,0 +1,98 @@
+{
+ "treelut": {
+  "run": "20261108-204448_treelut_w5_final_s0",
+  "operating_point": {
+   "gate": "none",
+   "k": 10,
+   "threshold": 3.766040563583374
+  },
+  "simulator": "verilator",
+  "module": "treelut_classifier",
+  "score_bits": 11,
+  "threshold_int": 132,
+  "latency_cycles": 3,
+  "comparators": 1060,
+  "constant_comparators": 0,
+  "trees": 100,
+  "feature_bus_bits": 1180,
+  "checks": {
+   "sub-100_run-03": {
+    "windows": 3854,
+    "pass": true,
+    "decisions": 1,
+    "alarms": 0,
+    "output": [
+     "PASS 3854"
+    ]
+   },
+   "sub-099_run-02": {
+    "windows": 4936,
+    "pass": true,
+    "decisions": 0,
+    "alarms": 0,
+    "output": [
+     "PASS 4936"
+    ]
+   },
+   "sub-097_run-10": {
+    "windows": 424,
+    "pass": true,
+    "decisions": 13,
+    "alarms": 0,
+    "output": [
+     "PASS 424"
+    ]
+   }
+  },
+  "all_pass": true
+ },
+ "lgn": {
+  "run": "20261108-215255_lgn_mi40_final_s0",
+  "operating_point": {
+   "gate": "both",
+   "k": 10,
+   "threshold": 78.0
+  },
+  "simulator": "verilator",
+  "module": "lgn_classifier",
+  "score_bits": 11,
+  "threshold_int": 78,
+  "latency_cycles": 3,
+  "thermometer_bits": 320,
+  "gates": [
+   2000,
+   2000
+  ],
+  "feature_bus_bits": 372,
+  "checks": {
+   "sub-100_run-03": {
+    "windows": 3854,
+    "pass": true,
+    "decisions": 18,
+    "alarms": 0,
+    "output": [
+     "PASS 3854"
+    ]
+   },
+   "sub-099_run-02": {
+    "windows": 4936,
+    "pass": true,
+    "decisions": 25,
+    "alarms": 0,
+    "output": [
+     "PASS 4936"
+    ]
+   },
+   "sub-097_run-10": {
+    "windows": 424,
+    "pass": true,
+    "decisions": 3,
+    "alarms": 0,
+    "output": [
+     "PASS 424"
+    ]
+   }
+  },
+  "all_pass": true
+ }
+}

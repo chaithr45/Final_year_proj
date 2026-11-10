@@ -381,3 +381,19 @@ Method results and keep/drop decisions are appended below as runs finish.
   while needing about 7,000 multiplications. The last missing cell of the <= 200-LUT grid, dwn_L200_b8_rando (random
   mapping, MI features), gives event-F1 0.125 against 0.124 for the learnable mapping, with more false alarms (8.2 vs
   5.3 FP/24 h) and lower sensitivity at <= 1 FA/h (0.475 vs 0.534): as at the other sizes, random mapping does not help.
+* **M7/M8 hardware (10 Nov): KV260 kit and synthesised costs.** `hw/kv260/` holds a complete Kria KV260 build:
+  the classifier behind an AXI4-Lite core (feature/commit/result registers, counters, latency counter, a
+  programmable operating point next to the frozen one, and a BIST streaming 1,024 golden vectors from block RAM at one
+  window per clock), a one-step Vivado script (PS M_AXI_HPM0_LPD at 100 MHz as the official Kria-PYNQ overlay; board
+  files optional; out-of-context runs of the three classifiers), a PYNQ test campaign and a guide. Verified here:
+  the core through its registers on 431,960 windows at three operating points (Verilator, 0 mismatches; corrupted
+  vectors are caught), the build script end to end with stand-ins for Vivado's commands, the board software against a
+  register emulator, and the C helper against a fake device. The integer front end was ported to streaming C
+  (`hw/kv260/board/frontend/seizelut_fe.c`) and reproduces all 117 features and both artefact flags of all 431,960
+  windows exactly; on the board it feeds the fabric classifier from raw samples (step 7). Synthesis (Yosys 0.70,
+  `synth_xilinx -family xcup`, same script for all; each classifier from its frozen final model and checked bit-exact
+  against it on 9,214 windows): DWN (n4_distill) 405 LUTs, 454 FFs; TreeLUT (w5) 2,721 LUTs, 1,455 FFs; logic-gate
+  network 5,758 LUTs, 2,200 FFs; no DSP or block RAM in any. The DWN needs 6.7 times fewer LUTs than TreeLUT and 14.2
+  times fewer than the logic-gate network; the analytical estimates (895, 6,330, 7,452) were conservative for all three,
+  so the ranking of the cost tables holds. Vivado implementation, timing, power and board measurements are pending
+  the user's build (`hw/kv260/README.md`).

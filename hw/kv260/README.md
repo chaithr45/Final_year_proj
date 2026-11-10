@@ -158,12 +158,12 @@ mismatches on the 3 raw recordings.
 
 | Path | Content |
 |---|---|
-| `rtl/` | `seizelut_axi.v` (AXI4-Lite core, BIST, programmable operating point), `lutnet_classifier.v` (the classifier, generated from the trained model), `seizelut_bist_rom.v` (self-test vectors), `seizelut_regs.json` (register map) |
+| `rtl/` | `seizelut_axi.v` (AXI4-Lite core, BIST, programmable operating point), `lutnet_classifier.v` (the classifier, generated from the trained model), `seizelut_bist_rom.v` (self-test vectors), `seizelut_regs.json` (register map), `baselines/` (TreeLUT and logic-gate-network classifiers for the cost comparison; synthesised out of context by the build) |
 | `vivado/` | `build_kv260.tcl` (one-step build), `build.bat`, `build.sh` |
 | `board/` | `run_tests.py` (test campaign), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (features of 10 recordings), `raw/` (raw samples of 3 recordings), `frontend/` (integer front end in C, `seizelut_fe.c`, bit-exact with the golden model) |
 | `sim/` | `tb_seizelut_axi.v` and `run_sim.sh` (Icarus Verilog), one bundled recording |
 | `tools/` | `parse_reports.py` (Vivado reports to JSON), `make_board_vectors.py` and `make_frontend_header.py` (regenerate vectors and the front end's constants, need the repository) |
-| `results/` | verification already done: `simulation_verification.json`, `yosys_synthesis.json`, `board_campaign_emulated.json` |
+| `results/` | verification already done: `simulation_verification.json`, `frontend_c_verification.json`, `yosys_synthesis.json`, `hw_synthesis_yosys.json` (all three classifiers), `board_campaign_emulated.json` |
 
 ## Register map (base address from the `.hwh`, normally 0x8000_0000)
 

@@ -95,11 +95,17 @@ def main() -> int:
            "seizelut_core_in_design": utilization(o / "utilization_seizelut_core.rpt"),
            "whole_design": utilization(o / "utilization.rpt"),
            "classifier_out_of_context": utilization(o / "ooc_classifier_utilization.rpt"),
+           "classifier_fmax_mhz": summ.get("ooc_classifier_fmax_mhz"),
            "timing_design": timing(o / "timing_summary.rpt"),
            "timing_classifier_ooc": timing(o / "ooc_classifier_timing.rpt"),
            "power_design": power(o / "power.rpt"),
            "power_classifier_ooc": power(o / "ooc_classifier_power.rpt"),
            "power_u_cls_dynamic_w": power_of_cell(o / "power_hier.rpt", "u_cls"),
+           "baselines_out_of_context": {t: {"utilization": utilization(o / f"ooc_{t}_utilization.rpt"),
+                                            "timing": timing(o / f"ooc_{t}_timing.rpt"),
+                                            "power": power(o / f"ooc_{t}_power.rpt"),
+                                            "fmax_mhz": summ.get(f"ooc_{t}_fmax_mhz")}
+                                        for t in ("treelut", "lgn")},
            "bitstream": (o / "seizelut.bit").exists(), "hwh": (o / "seizelut.hwh").exists()}
     (o / "build_results.json").write_text(json.dumps(res, indent=1))
     print(json.dumps({k: res[k] for k in ("classifier_in_design", "classifier_out_of_context", "timing_design",

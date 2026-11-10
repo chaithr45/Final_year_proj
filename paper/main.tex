@@ -20,7 +20,8 @@ Wearable seizure detection has to run for days on a small battery, which favours
 We study LUT-native neural networks, whose neurons are FPGA lookup tables, for patient-independent seizure detection
 from two-channel behind-the-ear EEG, ECG, EMG and motion in the SeizeIT2 dataset (125 patients, 11,626 hours, 883
 seizures). A bit-exact integer front end computes 117 features without multipliers; a thermometer encoder and a
-Differentiable Weightless Neural Network (DWN) of 50 six-input LUTs turn them into a popcount score. On five-fold
+Differentiable Weightless Neural Network (DWN) of 50 six-input LUTs turn them into a popcount score; synthesised for
+the Zynq UltraScale+ fabric, the whole classifier takes 405 LUTs and 454 flip-flops, with no DSP or block RAM. On five-fold
 cross-validation over the 96 training patients the DWN reaches an event-F1 of 0.211 with 2.4 false alarms per day at
 about 960 estimated LUTs and no multipliers, seven to eight times fewer LUTs than TreeLUT and a logic-gate network,
 and better than an INT8 network that needs 9,600 multiplications per decision, though below gradient-boosted trees
@@ -28,8 +29,12 @@ and better than an INT8 network that needs 9,600 multiplications per decision, t
 against 0.092, $p = 0.005$), and distillation from LightGBM cuts false alarms from 2.4 to 0.9 per day
 ($p = 3\times10^{-7}$). On the 29 held-out test patients, scored once with 5 seeds, the final DWN reaches an event-F1
 of $0.248 \pm 0.016$ with 0.8 false alarms per day at about 900 LUTs, against 0.027 and 106 false alarms per day for
-the clean ChronoNet baseline ($p = 0.027$), 0.233 for TreeLUT (6.3k LUTs) and 0.308 for LightGBM. We also report an independent reproduction of the published
-ChronoNet baseline, whose released code selects its model on the test patients.
+the clean ChronoNet baseline ($p = 0.027$), 0.233 for TreeLUT (6.3k LUTs) and 0.308 for LightGBM. With the dataset
+paper's metrics, a pre-registered two-stage variant that confirms each alarm with a second 50-LUT network detects
+73.3\,\% of seizures at 10.9 false alarms per hour, against 71.1\,\% at 11.0 for the published SVM. The design runs on a
+Kria KV260: the integer front end in C on the Arm cores reproduces all 117 features bit for bit, and the classifier in
+the fabric reproduces the software on all 431,960 test windows in simulation. We also report an independent
+reproduction of the published ChronoNet baseline, whose released code selects its model on the test patients.
 \end{abstract}
 
 \section{Introduction}
@@ -53,7 +58,8 @@ SzCORE event scoring \cite{dan2024szcore}. (ii)~A bit-exact, multiplier-free int
 and motion, with a fixed-point specification and a reference Verilog classifier that matches the software on all test
 vectors. (iii)~Distillation from a tree ensemble into a LUT network, which cuts false alarms, and modality dropout, which makes
 it robust to a missing ECG, selected among seven families of extensions by per-patient tests. (iv)~An independent reproduction of the SeizeIT2 ChronoNet
-baseline, with a protocol that uses no test information.
+baseline, with a protocol that uses no test information. (v)~A verified implementation on a Kria KV260 with the
+synthesised cost of all three LUT-native models under one flow.
 
 \section{Related Work}
 \textit{Wearable bte-EEG.} Two bte channels capture many focal seizures \cite{vandecasteele2020bte}; ECG raises
@@ -165,6 +171,7 @@ separate models.
 
 \begin{table}[t]\centering
 \caption{Event-F1 with sensors removed at test time (training folds, each model at its own operating point).}\label{tab:missing}
+\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{lrrrrr}\toprule
 Model & intact & no ECG & no EMG & no motion & EEG only \\ \midrule
 DWN base & 0.211 & 0.092 & 0.199 & 0.136 & 0.074 \\
@@ -191,21 +198,72 @@ reaches 0.242 with 0.4 false alarms per day.
 
 \input{tables/final_test}
 
+\subsection{Comparison with the dataset paper}
+Fig.~\ref{fig:sensfa} places the frozen models on the dataset paper's sensitivity--false-alarm plane. Between 0.02 and
+10 false alarms per hour the final DWN detects more seizures than ChronoNet at every rate and stays level with
+LightGBM and TreeLUT; at the SVM's 11 false alarms per hour its curve reaches 69.7\,\% (published SVM: 71.1\,\%;
+read from the test curve, hence optimistic). As a secondary analysis decided after the final test, we added a
+post-ictal verification stage: the DWN runs at a sensitive threshold, and 96\,s after each candidate alarm a second
+50-LUT DWN compares 16-s ictal and 64-s post-ictal windows of 45 features with the preceding 128\,s and confirms or
+rejects it. All its settings were chosen on the training folds (81.9\,\% at 9.6 false alarms per hour out of fold) and
+committed before a single test evaluation, which gave $73.3 \pm 1.4$\,\% at $10.9 \pm 0.6$ false alarms per hour
+over five seeds (all seeds above 71.1\,\%; two of five above 11.0 false alarms per hour). Verification adds 3.6--6.5
+points over the DWN alone at the same rate; it suits seizure logging rather than instant alarms, and like the paper's
+baselines this is a high-false-alarm regime (event-F1 0.027).
+
+\begin{figure}[t]\centering
+\includegraphics[width=\columnwidth]{figures/sens_fa_test.pdf}
+\caption{Seizures detected against false alarms per hour on the 29 test patients (the dataset paper's metrics).
+Curves: threshold sweeps of the frozen models (mean of 5 seeds); dots: operating points chosen on the training folds;
+stars: two-stage detector with post-ictal verification (pre-registered); open markers: published values.}\label{fig:sensfa}
+\end{figure}
+
 \section{Hardware}
-The final DWN is exported as thresholds, input mapping, truth tables and popcount head, with test vectors for every
-stage from raw samples to alarms. A generated reference Verilog classifier, simulated in Icarus Verilog, matches the
-software on all 431,960 one-second windows of 10 test recordings. \PHASETWO{post-synthesis LUT, flip-flop and timing results and power on a low-power FPGA, with the INT8
-MLP and TreeLUT through the same flow.} Until then, costs are analytical estimates.
+\textit{Partitioning.} On a Kria KV260 (Zynq UltraScale+ XCK26), the integer front end runs in C on the Arm Cortex-A53
+cores and the classifier runs in the fabric behind an AXI4-Lite interface at 100\,MHz (Fig.~\ref{fig:hw}): feature
+registers, a commit register, the frozen operating point and a second, programmable one, counters, and a built-in
+self-test that streams 1,024 golden vectors from block RAM at one window per clock and checks every output in hardware.
+\textit{Verification.} The C front end reproduces all 117 integer features and both artefact flags of all
+431,960 windows of the 10 exported test recordings exactly. The classifier, driven through its AXI4-Lite registers
+exactly as the board software drives it, reproduces score, decision and alarm on all 431,960 windows at three
+operating points (Verilator; deliberately corrupted vectors are caught); latency is 3 cycles and the self-test runs
+1,024 windows in 1,028 cycles. \textit{Cost.} Table~\ref{tab:hw} gives synthesis results for the three LUT-native
+models, each generated from its frozen final model, checked bit-exact against it in simulation, and synthesised by
+the same flow. The DWN needs 405 LUTs, 6.7 times fewer than TreeLUT and 14.2 times fewer than the
+logic-gate network; the analytical estimates used in Table~\ref{tab:cv} were conservative for all three
+(895, 6,330 and 7,452 LUTs), so the ranking holds. \PHASETWO{Vivado post-implementation utilisation, maximum frequency and power of the three
+models and of the KV260 design; on-board bit-exact replay, latency and the SOM power measured with the INA260 monitor;
+front-end time per hour of signal on the Cortex-A53.}
+
+\begin{table}[t]\centering
+\caption{Synthesised cost of the LUT-native classifiers (Zynq UltraScale+; Yosys \texttt{synth\_xilinx}, the same
+script for all three; each includes input registers, comparators, model logic, score, decision and the 10-s alarm).}\label{tab:hw}
+\begin{tabular}{lrrrr}\toprule
+Model & LUTs & FFs & DSP & Event-F1 (test) \\ \midrule
+\textbf{DWN + distillation (ours)} & \textbf{405} & 454 & 0 & 0.248 \\
+TreeLUT (5-bit leaves) & 2,721 & 1,455 & 0 & 0.233 \\
+Logic-gate network & 5,758 & 2,200 & 0 & 0.191 \\
+\bottomrule\end{tabular}
+\end{table}
+
+\begin{figure}[t]\centering
+\fbox{\parbox{0.95\columnwidth}{\centering\small
+Sensors $\rightarrow$ int16 samples $\rightarrow$ \textbf{Arm A53}: integer front end (C, 117 features)
+$\rightarrow$ AXI4-Lite $\rightarrow$ \textbf{fabric}: 146 comparators $\rightarrow$ 50 LUT6 $\rightarrow$ popcount
+$\rightarrow$ score, decision, $k$-of-10 alarm (+ programmable operating point, BIST)}}
+\caption{SeizeLUT on the Kria KV260.}\label{fig:hw}
+\end{figure}
 
 \section{Discussion and Limitations}
 Accuracy per LUT favours the DWN by a wide margin, and the thermometer encoder, not the network, dominates its cost,
 as also measured by \cite{mecik2025thermo}. Focal seizures remain mostly undetected, consistent with the clinical evidence that wearable detection is
-established only for tonic-clonic seizures \cite{beniczky2021guideline}. Results come from retrospective recordings of one dataset; the public release has no centre
-or age labels, so no centre or age breakdown is possible; and hardware costs are estimates until synthesis.
+established only for tonic-clonic seizures \cite{beniczky2021guideline}. Results come from retrospective recordings of one dataset, and the public release has no centre or age labels, so
+no centre or age breakdown is possible. The post-ictal analysis was added after the final test; it was pre-registered
+on the training folds, but it is a second look at the same test patients.
 
 \section{Conclusion}
-A 50-LUT weightless network on integer multimodal features detects seizures across patients with no multipliers and
-about 900 estimated LUTs. On 29 held-out patients it reaches an event-F1 of 0.248 with 0.8 false alarms per day,
+A 50-LUT weightless network on integer multimodal features detects seizures across patients with no multipliers in
+405 synthesised LUTs. On 29 held-out patients it reaches an event-F1 of 0.248 with 0.8 false alarms per day,
 above a published deep-learning baseline and TreeLUT and level with random forests; distillation and modality dropout
 address false alarms and missing sensors.
 

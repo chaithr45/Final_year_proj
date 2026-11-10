@@ -1,10 +1,11 @@
 # SeizeLUT on the Kria KV260: block design, bitstream, PYNQ hardware handoff and reports, in one batch run.
 #
 #   vivado -mode batch -source vivado/build_kv260.tcl                (from the kit folder)
-#   vivado -mode batch -source vivado/build_kv260.tcl -tclargs -jobs 8 -noboard -nooc
+#   vivado -mode batch -source vivado/build_kv260.tcl -tclargs -jobs 8 -noboard -nooc -nobaselines
 #
 # Options: -jobs N (parallel jobs, default 4), -noboard (use the bare XCK26 part, no KV260 board files),
-#          -nooc (skip the out-of-context timing run of the classifier alone).
+#          -nooc (skip the out-of-context runs), -nobaselines (out-of-context run of our classifier only,
+#          not of the TreeLUT and logic-gate-network baselines in rtl/baselines/).
 # Outputs in out/: seizelut.bit + seizelut.hwh (PYNQ overlay, same base name), seizelut.xsa,
 #   utilization*.rpt, timing_summary.rpt, power*.rpt, ooc_classifier_*.rpt, build_summary.txt, build.log copy.
 # Tested design choices follow the official Kria-PYNQ KV260 base overlay: Zynq UltraScale+ PS with
@@ -21,11 +22,13 @@ set part xck26-sfvc784-2LV-c
 set jobs 4
 set use_board 1
 set run_ooc 1
+set run_baselines 1
 for {set i 0} {$i < [llength $argv]} {incr i} {
     set a [lindex $argv $i]
     if {$a eq "-jobs"} { incr i; set jobs [lindex $argv $i] }
     if {$a eq "-noboard"} { set use_board 0 }
     if {$a eq "-nooc"} { set run_ooc 0 }
+    if {$a eq "-nobaselines"} { set run_baselines 0 }
 }
 file mkdir $out_dir
 set summary [open [file join $out_dir build_summary.txt] w]
@@ -200,25 +203,37 @@ note "bitstream=out/seizelut.bit"
 note "hwh=out/seizelut.hwh"
 close_project
 
-# ---------------------------------------------------------------- classifier alone, out of context: utilisation and Fmax
+# ---------------------------------------------------------------- classifiers alone, out of context: utilisation and Fmax
+# Same flow for our DWN classifier and, unless -nobaselines, the TreeLUT and logic-gate-network baselines
+# (rtl/baselines/, generated from their frozen final models and checked bit-exact against them in simulation).
+proc ooc_run {tag file top period} {
+    global part out_dir
+    create_project -in_memory -part $part
+    read_verilog $file
+    synth_design -top $top -part $part -mode out_of_context
+    create_clock -period $period -name clk [get_ports clk]
+    opt_design
+    place_design
+    phys_opt_design
+    route_design
+    report_utilization -file [file join $out_dir ooc_${tag}_utilization.rpt]
+    report_timing_summary -file [file join $out_dir ooc_${tag}_timing.rpt]
+    report_power -file [file join $out_dir ooc_${tag}_power.rpt]
+    set w [get_property SLACK [get_timing_paths -max_paths 1 -nworst 1 -setup]]
+    note "ooc_${tag}_period_ns=$period"
+    note "ooc_${tag}_wns_ns=$w"
+    note "ooc_${tag}_fmax_mhz=[format %.1f [expr {1000.0 / ($period - $w)}]]"
+    close_project
+}
 if {$run_ooc} {
-    foreach period {2.5} {
-        create_project -in_memory -part $part
-        read_verilog [file join $rtl_dir lutnet_classifier.v]
-        synth_design -top lutnet_classifier -part $part -mode out_of_context
-        create_clock -period $period -name clk [get_ports clk]
-        opt_design
-        place_design
-        phys_opt_design
-        route_design
-        report_utilization -file [file join $out_dir ooc_classifier_utilization.rpt]
-        report_timing_summary -file [file join $out_dir ooc_classifier_timing.rpt]
-        report_power -file [file join $out_dir ooc_classifier_power.rpt]
-        set w [get_property SLACK [get_timing_paths -max_paths 1 -nworst 1 -setup]]
-        note "ooc_period_ns=$period"
-        note "ooc_wns_ns=$w"
-        note "ooc_fmax_mhz=[format %.1f [expr {1000.0 / ($period - $w)}]]"
-        close_project
+    ooc_run classifier [file join $rtl_dir lutnet_classifier.v] lutnet_classifier 2.5
+    if {$run_baselines} {
+        foreach {tag top} {treelut treelut_classifier lgn lgn_classifier} {
+            set f [file join $rtl_dir baselines ${top}.v]
+            if {[file exists $f]} {
+                if {[catch {ooc_run $tag $f $top 2.5} err]} { note "WARNING out-of-context run of $tag failed: $err"; catch {close_project} }
+            } else { note "baseline $f not found, skipped" }
+        }
     }
 }
 note "done=1"

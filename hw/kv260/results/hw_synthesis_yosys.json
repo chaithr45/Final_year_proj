@@ -1,0 +1,96 @@
+{
+ "tool": "Yosys 0.70 (yowasp-yosys), read_verilog; synth_xilinx -family xcup -top <model> -flatten -abc9; stat",
+ "scope": "classifier only: input feature register, comparators, model logic, score, decision, k-of-10 alarm",
+ "models": {
+  "dwn_n4_distill": {
+   "luts": 405,
+   "ffs": 454,
+   "carry4": 3,
+   "muxf7": 2,
+   "muxf8": 1,
+   "dsp": 0,
+   "bram": 0,
+   "cells": {
+    "BUFG": 1,
+    "CARRY4": 3,
+    "FDRE": 454,
+    "IBUF": 392,
+    "INV": 1,
+    "LUT2": 40,
+    "LUT3": 68,
+    "LUT4": 68,
+    "LUT5": 133,
+    "LUT6": 96,
+    "MUXF7": 2,
+    "MUXF8": 1,
+    "OBUF": 9
+   },
+   "estimate_luts": 895
+  },
+  "treelut_w5": {
+   "luts": 2721,
+   "ffs": 1455,
+   "carry4": 4,
+   "muxf7": 5,
+   "muxf8": 2,
+   "dsp": 0,
+   "bram": 0,
+   "cells": {
+    "BUFG": 1,
+    "CARRY4": 4,
+    "FDRE": 1455,
+    "IBUF": 1183,
+    "LUT2": 376,
+    "LUT3": 482,
+    "LUT4": 578,
+    "LUT5": 901,
+    "LUT6": 384,
+    "MUXF7": 5,
+    "MUXF8": 2,
+    "OBUF": 14
+   },
+   "estimate_luts": 6330
+  },
+  "lgn_mi40": {
+   "luts": 5758,
+   "ffs": 2200,
+   "carry4": 4,
+   "muxf7": 31,
+   "muxf8": 13,
+   "dsp": 0,
+   "bram": 0,
+   "cells": {
+    "BUFG": 1,
+    "CARRY4": 4,
+    "FDRE": 2200,
+    "IBUF": 375,
+    "INV": 3,
+    "LUT2": 1794,
+    "LUT3": 878,
+    "LUT4": 918,
+    "LUT5": 951,
+    "LUT6": 1217,
+    "MUXF7": 31,
+    "MUXF8": 13,
+    "OBUF": 14
+   },
+   "estimate_luts": 7452
+  }
+ },
+ "rtl_check": {
+  "treelut": {
+   "all_pass": true,
+   "simulator": "verilator",
+   "windows": 9214
+  },
+  "lgn": {
+   "all_pass": true,
+   "simulator": "verilator",
+   "windows": 9214
+  }
+ },
+ "ratios": {
+  "treelut_over_dwn": 6.7,
+  "lgn_over_dwn": 14.2
+ }
+}
