@@ -6,9 +6,9 @@ result as the software for every one-second window of 10 recordings (431,960 win
 hardware cost, the latency, the throughput, the seizures the FPGA itself detects, and the measured power.
 
 Everything in the kit was verified before shipping (see `results/`): the register interface and the classifier
-were simulated window by window on all 431,960 windows at three operating points with zero mismatches, the build
-script was executed end to end with stand-ins for the Vivado commands, and the board test software was run
-against an emulated core. What cannot be run without your PC and board is Vivado itself and the board; this
+were simulated window by window on all 431,960 windows at three operating points with zero mismatches, the C front
+end reproduced all 117 golden features of all 10 recordings exactly, the build script was executed end to end with
+stand-ins for the Vivado commands, and the board test software was run against an emulated core. What cannot be run without your PC and board is Vivado itself and the board; this
 guide covers those two parts.
 
 ## Quick start (if you already have Vivado and PYNQ on the board)
@@ -131,10 +131,12 @@ to `hw/kv260/measured/`; `tools/` there turns them into the paper's hardware tab
 | 4 replay | all 431,960 windows written over AXI; score, decision and alarm compared with the golden vectors and with the software model, at the frozen operating point and at the programmable one | 0 mismatches, counters agree |
 | 5 detection | seizures detected and false alarms from the FPGA's own alarms (the dataset paper's definitions) | reported (no pass/fail) |
 | 6 power | SOM power from the on-board INA260 monitor: overlay idle vs. the classifier running continuously | reported |
+| 7 end to end | raw EEG/ECG/EMG/motion samples of 3 recordings -> integer front end in C on the ARM (all 117 features compared with the golden model) -> classifier in the fabric -> alarms compared with the golden model | 0 feature and 0 output mismatches; reports the front end's speed (x real time) |
 
 Numbers the board must reproduce (they come from the simulation of the same RTL): BIST 1,024/1,024 in 1,028
 cycles; latency 3 cycles; 0 mismatches on 431,960 windows; frozen operating point: 1 of 19 seizures, 0 false
-alarms in 120 hours; programmable point (threshold 2, k 10): 3 of 19 seizures, 25 false alarms.
+alarms in 120 hours; programmable point (threshold 2, k 10): 3 of 19 seizures, 25 false alarms; end to end: 0
+mismatches on the 3 raw recordings.
 
 ## Troubleshooting
 
@@ -148,6 +150,7 @@ alarms in 120 hours; programmable point (threshold 2, k 10): 3 of 19 seizures, 2
 | Board: overlay fails to load / PL busy | `sudo xmutil unloadapp`, then run again |
 | Board: `no seizelut IP in the overlay` | the `.hwh` is missing or has another base name than the `.bit` |
 | Board: `fast C path unavailable` | harmless; the Python path is used (slower). `sudo apt install gcc` enables the fast path |
+| Board: step 7 fails with `FileNotFoundError: gcc` | `sudo apt install gcc`, then run again (the front end is compiled on the board) |
 | Board: `no hwmon power sensor found` | read the power by hand with `sudo xmutil platformstats -p` while the test runs |
 | Anything else | send the full console output and the results JSON |
 
@@ -157,9 +160,9 @@ alarms in 120 hours; programmable point (threshold 2, k 10): 3 of 19 seizures, 2
 |---|---|
 | `rtl/` | `seizelut_axi.v` (AXI4-Lite core, BIST, programmable operating point), `lutnet_classifier.v` (the classifier, generated from the trained model), `seizelut_bist_rom.v` (self-test vectors), `seizelut_regs.json` (register map) |
 | `vivado/` | `build_kv260.tcl` (one-step build), `build.bat`, `build.sh` |
-| `board/` | `run_tests.py` (test campaign), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (10 recordings) |
+| `board/` | `run_tests.py` (test campaign), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (features of 10 recordings), `raw/` (raw samples of 3 recordings), `frontend/` (integer front end in C, `seizelut_fe.c`, bit-exact with the golden model) |
 | `sim/` | `tb_seizelut_axi.v` and `run_sim.sh` (Icarus Verilog), one bundled recording |
-| `tools/` | `parse_reports.py` (Vivado reports to JSON), `make_board_vectors.py` (regenerates vectors, needs the repository) |
+| `tools/` | `parse_reports.py` (Vivado reports to JSON), `make_board_vectors.py` and `make_frontend_header.py` (regenerate vectors and the front end's constants, need the repository) |
 | `results/` | verification already done: `simulation_verification.json`, `yosys_synthesis.json`, `board_campaign_emulated.json` |
 
 ## Register map (base address from the `.hwh`, normally 0x8000_0000)

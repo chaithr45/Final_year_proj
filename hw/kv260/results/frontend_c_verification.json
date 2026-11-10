@@ -1,0 +1,10 @@
+{
+ "implementation": "board/frontend/seizelut_fe.c (gcc -O2), streaming, int64 with floor shifts",
+ "reference": "src/features/golden.py mode int (export vectors features.i16, artefact.u8)",
+ "recordings": 10,
+ "windows": 431960,
+ "features_per_window": 117,
+ "artefact_flags_per_window": 2,
+ "mismatches": 0,
+ "note": "x86-64 check in the cloud; the board repeats it on the Cortex-A53 for 3 raw recordings (step 7)"
+}

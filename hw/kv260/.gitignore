@@ -9,3 +9,5 @@ __pycache__/
 sim/vectors/*
 !sim/vectors/sub-097_run-10.hex
 !board/vectors/*.npz
+board/frontend/libseizelut_fe.so
+!board/raw/*.npz

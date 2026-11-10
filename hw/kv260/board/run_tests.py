@@ -13,7 +13,10 @@ Steps (each reported as PASS/FAIL, all numbers saved to results/kv260_results_<t
     decision and alarm compared with the software model (bit-exact) and with the golden vectors
   5 seizure-detection metrics computed from the FPGA's own alarms (the dataset paper's definitions)
   6 power of the SOM (INA260 monitor): overlay idle versus the classifier running continuously (BIST loop)
-Options: --quick (3 short recordings), --backend emu (no board: emulated registers), --no-power, --power-seconds N
+  7 end to end from raw samples: the integer front end in C on the ARM (all 117 features, compared with the golden
+    model) feeding the classifier in the fabric; time per hour of signal
+Options: --quick (3 short recordings), --backend emu (no board: emulated registers), --no-power, --power-seconds N,
+         --no-e2e
 """
 from __future__ import annotations
 
@@ -119,6 +122,7 @@ def main() -> int:
                     help="programmable operating point: decision threshold (2 = the final model's <= 1 FA/h point, "
                          "chosen on the training patients)")
     ap.add_argument("--op2-k", type=int, default=10, help="programmable operating point: k of the last 10 decisions")
+    ap.add_argument("--no-e2e", action="store_true", help="skip the end-to-end test from raw samples")
     args = ap.parse_args()
 
     out = {"started": dt.datetime.now().isoformat(timespec="seconds"), "backend": args.backend,
@@ -237,6 +241,37 @@ def main() -> int:
                  bist_passes_during_measurement=runs, bist_errors_during_measurement=errs,
                  note="running = classifier + self-test streaming one window per clock (100 MHz), "
                       "an upper bound on the activity of real-time use (one window per second)")
+    # 7 end to end: raw samples -> C front end (ARM) -> classifier (fabric)
+    if not args.no_e2e:
+        try:
+            sys.path.insert(0, str(HERE / "frontend"))
+            from frontend import extract
+            spec_idx = [f["spec_index"] for f in core.cfg["features"]]
+            e2e, ok7 = {}, True
+            for p in sorted((HERE / "raw").glob("*.npz")):
+                rec = p.stem
+                z = np.load(p)
+                raw = {k: z[k] for k in z.files if k not in ("golden_features", "golden_art", "n_win")}
+                n_win = int(z["n_win"])
+                t0 = time.perf_counter()
+                X, art = extract(raw, n_win)
+                t_fe = time.perf_counter() - t0
+                feat_bad = int((X.astype(np.int16) != z["golden_features"]).sum() + (art != z["golden_art"]).sum())
+                hw = core.run_recording(X[:, spec_idx].astype(np.int16), art, use_fast=not args.python_path)
+                v = np.load(vec_dir / f"{rec}.npz")
+                out_bad = int(np.sum((hw["score"] != v["score"]) | (hw["decision"] != v["decision"])
+                                     | (hw["alarm"] != v["alarm"])))
+                tp, fp, fn = paper_counts(v["y"].astype(np.int64), hw["alarm"])
+                ok7 &= feat_bad == 0 and out_bad == 0
+                e2e[rec] = {"windows": n_win, "sensors": sorted(raw), "feature_mismatches": feat_bad,
+                            "output_mismatches": out_bad, "frontend_arm_s": round(t_fe, 3),
+                            "frontend_realtime_factor": round(n_win / t_fe, 1) if t_fe > 0 else None,
+                            "classifier_fabric_s": round(hw["seconds"], 3), "tp": tp, "fp": fp, "fn": fn}
+                print(f"    {rec}: {n_win} windows from {len(raw)} raw signals, feature mismatches {feat_bad}, "
+                      f"output mismatches {out_bad}, front end {t_fe:.2f} s ({n_win / max(t_fe, 1e-9):.0f}x real time)")
+            step("7_end_to_end_raw", ok7, recordings=e2e)
+        except Exception as e:   # report, do not hide, a failure of the optional end-to-end step
+            step("7_end_to_end_raw", False, error=f"{type(e).__name__}: {e}")
     out["finished"] = dt.datetime.now().isoformat(timespec="seconds")
     out["all_pass"] = bool(ok_all)
     res_dir = HERE / "results"

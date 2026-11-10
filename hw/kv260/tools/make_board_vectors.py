@@ -29,6 +29,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--export", default=str(REPO / "export/n4_distill_s0"))
     ap.add_argument("--tb", action="store_true", help="also write testbench hex vectors")
+    ap.add_argument("--raw", nargs="*", default=["sub-100_run-03", "sub-099_run-02", "sub-097_run-10"],
+                    help="recordings whose raw integer samples go to board/raw/ (end-to-end test)")
     args = ap.parse_args()
     import sys
     sys.path.insert(0, str(REPO / "src"))
@@ -80,6 +82,24 @@ def main() -> int:
             (tb / f"{rec}.hex").write_text("\n".join(lines) + "\n")
         print(rec, len(F), "windows")
     (out / "index.json").write_text(json.dumps(index, indent=1))
+    # raw integer samples for the end-to-end test (front end on the ARM, classifier in the fabric)
+    raw_dir = KIT / "board" / "raw"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    keymap = {"ecg_ECG_SD": "ecg", "emg_EMG_SD": "emg", "mov_ECGEMG_SD_ACC_X": "acc_x", "mov_ECGEMG_SD_ACC_Y": "acc_y",
+              "mov_ECGEMG_SD_ACC_Z": "acc_z", "mov_ECGEMG_SD_GYR_A": "gyr_x", "mov_ECGEMG_SD_GYR_B": "gyr_y",
+              "mov_ECGEMG_SD_GYR_C": "gyr_z", "eeg_CROSStop_SD": "eeg2"}
+    for rec in args.raw:
+        files = {p.stem: p for p in (vd / rec / "inputs").glob("*.i16")}
+        raw = {}
+        for stem, p in files.items():
+            key = "eeg1" if stem.startswith("eeg_BTE") else keymap.get(stem)
+            if key:
+                raw[key] = np.fromfile(p, dtype=np.int16)
+        X = np.fromfile(vd / rec / "features.i16", dtype=np.int16).reshape(-1, ns)
+        art = np.fromfile(vd / rec / "artefact.u8", dtype=np.uint8).reshape(-1, 2)
+        np.savez_compressed(raw_dir / f"{rec}.npz", golden_features=X, golden_art=art,
+                            n_win=np.int64(man["recordings"][rec]["n_windows"]), **raw)
+        print("raw", rec, sorted(raw))
     return 0
 
 
