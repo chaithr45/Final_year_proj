@@ -10,7 +10,9 @@ module lutnet_classifier (
     output reg  signed [5:0] score,
     output reg  decision,
     output reg  alarm,
-    output reg  out_valid
+    output reg  out_valid,
+    output wire [145:0] dbg_bits,
+    output wire [49:0] dbg_luts
 );
     reg [386:0] f_r;
     reg [1:0] art_r;
@@ -313,6 +315,10 @@ module lutnet_classifier (
         if (rst) begin v1 <= 1'b0; h0 <= 0; art0 <= 2'b00; end
         else begin v1 <= v0; h0 <= y0; art0 <= art_r; end
     end
+    reg [145:0] b_r;   // debug: comparator bits of the window now in h0
+    always @(posedge clk) begin if (rst) b_r <= 0; else b_r <= b; end
+    assign dbg_bits = b_r;
+    assign dbg_luts = h0;
     // popcount per class (behavioural adder tree, synthesises to LUTs + carry chains)
     function [4:0] popcount_bg; input [24:0] v; integer i; begin
         popcount_bg = 0; for (i = 0; i < 25; i = i + 1) popcount_bg = popcount_bg + v[i]; end endfunction

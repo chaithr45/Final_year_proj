@@ -397,3 +397,15 @@ Method results and keep/drop decisions are appended below as runs finish.
   times fewer than the logic-gate network; the analytical estimates (895, 6,330, 7,452) were conservative for all three,
   so the ranking of the cost tables holds. Vivado implementation, timing, power and board measurements are pending
   the user's build (`hw/kv260/README.md`).
+* **KV260 live demo, kit v4 (12 Nov), at the user's request.** For showing the detector to the guide: recorded
+  segments of four held-out test recordings (`hw/kv260/demo/segments/`, cut from the board kit's existing vectors;
+  nothing re-scored or tuned) stream second by second through the integer front end on the ARM and the classifier in
+  the fabric, with a browser dashboard on the laptop (`hw/kv260/demo/DEMO.md`). Demo 1 uses the board's own LEDs
+  (DS35/DS36, K26 device tree); Demo 2 adds PMOD LEDs, a buzzer and a button driven by the fabric. The core gained
+  read-back of the 146 comparator bits and 50 LUT outputs, the PMOD outputs and a debounced button input; the v4 core
+  was re-verified on all 431,960 windows at two programmable operating points (863,920 window checks, the debug taps
+  included, 0 mismatches). A second-by-second version of the C front end (`seizelut_fe_stream.c`) reproduces all
+  431,960 windows of the batch front end and the golden features exactly; its ARM build gives the same output as the
+  x86 build under QEMU. Each demo segment starts 10 min before the watched part, and from that cold start its alarm
+  timing equals the full-recording result at all three operating points (strict: Patient 1 detected 16 s after onset;
+  sensitive: four of four seizures detected, 10-60 s after onset; no alarm in the 6.5-min movement segment).

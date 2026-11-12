@@ -77,6 +77,7 @@ set_property target_language Verilog [current_project]
 add_files -norecurse [list [file join $rtl_dir seizelut_axi.v] [file join $rtl_dir lutnet_classifier.v] \
                            [file join $rtl_dir seizelut_bist_rom.v]]
 set_property top seizelut_axi [current_fileset]
+add_files -fileset constrs_1 -norecurse [file join $script_dir kv260_pmod.xdc]
 update_compile_order -fileset sources_1
 
 # ---------------------------------------------------------------- block design
@@ -111,6 +112,11 @@ if {[catch {
 }
 note "interconnect=$ic_name"
 set core [create_bd_cell -type module -reference seizelut_axi seizelut_0]
+# live-demo I/O on the PMOD connector (LEDs, buzzer, push button); pins in vivado/kv260_pmod.xdc
+create_bd_port -dir O -from 6 -to 0 pmod_out
+create_bd_port -dir I pmod_btn
+connect_bd_net [get_bd_ports pmod_out] [get_bd_pins $core/pmod_out]
+connect_bd_net [get_bd_ports pmod_btn] [get_bd_pins $core/pmod_btn]
 
 # clocks and resets
 set clk_pins [list [get_bd_pins $ps/pl_clk0] [get_bd_pins $ps/maxihpm0_lpd_aclk] \

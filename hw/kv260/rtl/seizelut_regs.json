@@ -25,6 +25,12 @@
   "OP_K": 76,
   "NDEC2": 80,
   "NALARM2": 84,
+  "IO_CTRL": 88,
+  "IO_MANUAL": 92,
+  "BTN": 96,
+  "IO_STATE": 100,
+  "DBG_BITS0": 112,
+  "DBG_LUTS0": 132,
   "FEAT0": 256
  },
  "n_features": 38,
@@ -228,6 +234,20 @@
  "n": 10,
  "decision_threshold": 9,
  "artefact_gate": "none",
+ "n_bits": 146,
+ "n_last_luts": 50,
+ "pmod": {
+  "outputs": [
+   "A1 score bar low",
+   "A2 score bar mid",
+   "A3 score bar high",
+   "A4 decision",
+   "B1 ALARM",
+   "B2 buzzer",
+   "B3 heartbeat"
+  ],
+  "input": "B4 button to GND"
+ },
  "bist": {
   "recording": "sub-098_run-03",
   "start_window": 69571,

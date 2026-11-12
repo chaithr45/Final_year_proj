@@ -29,7 +29,7 @@ def main() -> int:
             rel = p.relative_to(KIT)
             if p.is_dir() or set(rel.parts) & SKIP_DIRS or p.name in SKIP_FILES:
                 continue
-            if rel.parts[:2] == ("board", "results"):
+            if rel.parts[:2] == ("board", "results") or rel.as_posix() == "board/frontend/libseizelut_fe.so":
                 continue
             if rel.parts[:2] == ("sim", "vectors") and p.name != "sub-097_run-10.hex":
                 continue

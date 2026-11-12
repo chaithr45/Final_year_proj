@@ -1,11 +1,13 @@
 // AXI4-Lite testbench of seizelut_axi: drives the registers exactly as the board software does
 // (soft reset, 19 feature words + COMMIT per window, poll RESULT), compares score/decision/alarm with
 // the golden model for every window of one recording, then checks the counters, the latency register,
-// the ID/INFO/SCRATCH registers and one BIST pass. Plusargs: +vec=<hex file> +n=<windows> [+bist=1]
-// Vector line: {alarm, decision, score[7:0], artefact[1:0], feature37[15:0] ... feature0[15:0]}.
+// the ID/INFO/SCRATCH registers and one BIST pass, the demo I/O (debug taps of the comparator bits and LUT outputs,
+// automatic LEDs, heartbeat, debounced button, manual mode).
+// Plusargs: +vec=<hex file> +n=<windows> [+bist=1] [+thr2=2 +k2=10] [+dbg=1]
+// Vector line: {luts[49:0], bits[145:0], alarm, decision, score[7:0], artefact[1:0], feature37[15:0] ... feature0[15:0]}.
 `timescale 1ns/1ps
 module tb_seizelut_axi;
-    localparam integer NF = 38, NW = 19, LW = 1 + 1 + 8 + 2 + 16 * NF;
+    localparam integer NF = 38, NW = 19, NB = 146, NL = 50, LW0 = 1 + 1 + 8 + 2 + 16 * NF, LW = LW0 + NB + NL;
     reg clk = 0, rstn = 0;
     always #5 clk = ~clk;
 
@@ -16,7 +18,9 @@ module tb_seizelut_axi;
     wire [1:0]  bresp, rresp;
     wire [31:0] rdata;
 
-    seizelut_axi dut (.s_axi_aclk(clk), .s_axi_aresetn(rstn),
+    reg btn = 1'b1;                                  // released (the board pulls the pin up)
+    wire [6:0] pmod_out;
+    seizelut_axi #(.DEBOUNCE_TICKS(4)) dut (.s_axi_aclk(clk), .s_axi_aresetn(rstn), .pmod_out(pmod_out), .pmod_btn(btn),
         .s_axi_awaddr(awaddr), .s_axi_awprot(3'b000), .s_axi_awvalid(awvalid), .s_axi_awready(awready),
         .s_axi_wdata(wdata), .s_axi_wstrb(4'hF), .s_axi_wvalid(wvalid), .s_axi_wready(wready),
         .s_axi_bresp(bresp), .s_axi_bvalid(bvalid), .s_axi_bready(bready),
@@ -61,6 +65,11 @@ module tb_seizelut_axi;
     integer thr2, k2, exp_dec2_sum, exp_alarm2_sum, q, ones;
     reg [9:0] hist2;
     reg exp_dec2, exp_alarm2;
+    integer dbg, w;
+    reg [159:0] got_bits;
+    reg [63:0] got_luts;
+    reg hb_prev;
+    reg [6:0] exp_led;
 
     initial begin
         if (!$value$plusargs("vec=%s", vecfile)) vecfile = "vectors.hex";
@@ -68,6 +77,7 @@ module tb_seizelut_axi;
         if (!$value$plusargs("bist=%d", bist)) bist = 1;
         if (!$value$plusargs("thr2=%d", thr2)) thr2 = 2;
         if (!$value$plusargs("k2=%d", k2)) k2 = 10;
+        if (!$value$plusargs("dbg=%d", dbg)) dbg = 1;
         exp_dec2_sum = 0; exp_alarm2_sum = 0; hist2 = 0;
         if (n > 0) $readmemh(vecfile, mem, 0, n - 1);
         errors = 0; exp_dec_sum = 0; exp_alarm_sum = 0;
@@ -100,7 +110,26 @@ module tb_seizelut_axi;
                 axi_read(12'h014, res); polls = polls + 1;
             end
             seq_prev = res[31:16];
-            exp_score = line[16 * NF + 2 +: 8]; exp_dec = line[LW - 2]; exp_alarm = line[LW - 1];
+            exp_score = line[16 * NF + 2 +: 8]; exp_dec = line[LW0 - 2]; exp_alarm = line[LW0 - 1];
+            if (dbg) begin   // the FPGA's own comparator bits and LUT outputs, against the golden model
+                for (w = 0; w < 5; w = w + 1) begin axi_read(12'h070 + 4 * w, r); got_bits[32 * w +: 32] = r; end
+                for (w = 0; w < 2; w = w + 1) begin axi_read(12'h084 + 4 * w, r); got_luts[32 * w +: 32] = r; end
+                if (got_bits[NB-1:0] !== line[LW0 +: NB] || got_luts[NL-1:0] !== line[LW0 + NB +: NL]
+                    || got_bits[159:NB] !== 0 || got_luts[63:NL] !== 0) begin
+                    errors = errors + 1;
+                    if (errors < 10) $display("DEBUG TAP MISMATCH t=%0d", t);
+                end
+            end
+            // automatic LEDs (frozen path, threshold 9): bars at score >= 0, 3, 6; decision; alarm; buzzer only
+            // while alarmed; heartbeat toggles once per result
+            axi_read(12'h064, r);
+            exp_led[0] = ($signed(exp_score) >= 0); exp_led[1] = ($signed(exp_score) >= 3);
+            exp_led[2] = ($signed(exp_score) >= 6); exp_led[3] = exp_dec; exp_led[4] = exp_alarm;
+            if (r[4:0] !== exp_led[4:0] || (r[5] && !exp_alarm) || (t > 0 && r[6] === hb_prev)) begin
+                errors = errors + 1;
+                if (errors < 10) $display("LED MISMATCH t=%0d leds %b exp %b hb %b prev %b", t, r[6:0], exp_led[4:0], r[6], hb_prev);
+            end
+            hb_prev = r[6];
             exp_dec_sum = exp_dec_sum + exp_dec; exp_alarm_sum = exp_alarm_sum + exp_alarm;
             exp_dec2 = ($signed(exp_score) >= thr2);
             hist2 = {hist2[8:0], exp_dec2};
@@ -128,6 +157,21 @@ module tb_seizelut_axi;
             axi_read(12'h024, r); $display("LATENCY %0d cycles", r);
             if (r != 3) begin errors = errors + 1; end
         end
+
+        // ---------------- demo I/O: manual LED mode and the debounced push button
+        axi_write(12'h058, 32'h0); axi_write(12'h05C, 32'h55);
+        repeat (3) @(posedge clk); axi_read(12'h064, r);
+        if (r[6:0] !== 7'h55) begin errors = errors + 1; $display("MANUAL LEDS %h", r); end
+        axi_write(12'h058, 32'h5);
+        axi_read(12'h060, r); if (r !== 32'd0) begin errors = errors + 1; $display("BTN idle %h", r); end
+        btn = 1'b0; repeat (60) @(posedge clk);
+        axi_read(12'h060, r); if (r !== {16'd1, 16'd1}) begin errors = errors + 1; $display("BTN press %h", r); end
+        btn = 1'b1; repeat (60) @(posedge clk);
+        axi_read(12'h060, r); if (r !== {16'd1, 16'd0}) begin errors = errors + 1; $display("BTN release %h", r); end
+        btn = 1'b0; repeat (3) @(posedge clk); btn = 1'b1; repeat (60) @(posedge clk);   // a glitch is ignored
+        axi_read(12'h060, r); if (r[31:16] !== 16'd1) begin errors = errors + 1; $display("BTN glitch counted %h", r); end
+        btn = 1'b0; repeat (60) @(posedge clk); btn = 1'b1; repeat (60) @(posedge clk);
+        axi_read(12'h060, r); if (r[31:16] !== 16'd2) begin errors = errors + 1; $display("BTN second press %h", r); end
 
         // ---------------- built-in self-test (one pass), result must match the golden model
         if (bist) begin

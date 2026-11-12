@@ -87,6 +87,29 @@ class _EmuBackend:
         self.hist2 = deque(maxlen=cfg["n"])
         self.bist_runs = self.bist_ok = 0
         self.cycles0 = time.perf_counter()
+        # demo I/O and debug taps (same behaviour as the RTL; the button is pressed with press_button())
+        self.io_ctrl, self.io_manual = 0b0101, 0
+        self.bits = np.zeros(cfg.get("n_bits", 146), dtype=np.uint8)
+        self.luts = np.zeros(cfg.get("n_last_luts", 50), dtype=np.uint8)
+        self.res_seen, self.heartbeat = 0, 0
+        self.btn_pressed, self.btn_count = 0, 0
+
+    def press_button(self, down: bool = True) -> None:
+        if down and not self.btn_pressed:
+            self.btn_count = (self.btn_count + 1) & 0xFFFF
+        self.btn_pressed = int(down)
+
+    def _io_state(self) -> int:
+        if not self.io_ctrl & 1:
+            return self.io_manual & 0x7F
+        s, d, a, d2, a2 = self.res
+        prog = self.io_ctrl & 2
+        thr = self.op_thr if prog else self.cfg["decision_threshold"]
+        dec, alarm = (d2, a2) if prog else (d, a)
+        buzz = alarm & (self.io_ctrl >> 2) & ((self.read(self.r["CYCLES"]) >> 24) & 1)
+        bar = [self.res_seen and s >= thr - 9, self.res_seen and s >= thr - 6, self.res_seen and s >= thr - 3]
+        v = int(bar[0]) | int(bar[1]) << 1 | int(bar[2]) << 2 | dec << 3 | alarm << 4
+        return v | (buzz ^ ((self.io_ctrl >> 3) & 1)) << 5 | self.heartbeat << 6
 
     def _feats(self) -> np.ndarray:
         f = []
@@ -110,7 +133,10 @@ class _EmuBackend:
                 self.bist_runs, self.bist_ok = 1, self.cfg["bist"]["n"]
         elif off == r["COMMIT"]:
             hd = self.model.head
-            s = int(self.model.score(self._feats())[0])
+            bits, luts, sc = self.model.forward(self._feats())
+            s = int(sc[0])
+            self.bits, self.luts = bits[0], luts[0]
+            self.res_seen, self.heartbeat = 1, self.heartbeat ^ 1
             gate = False
             if hd["artefact_gate"] == "both":
                 gate = (v & 3) == 3
@@ -132,6 +158,10 @@ class _EmuBackend:
             self.op_thr = b - 256 if b & 0x80 else b
         elif off == r["OP_K"]:
             self.op_k = v & 0xF
+        elif off == r.get("IO_CTRL"):
+            self.io_ctrl = v & 0xF
+        elif off == r.get("IO_MANUAL"):
+            self.io_manual = v & 0x7F
 
     def read(self, off: int) -> int:
         r = self.r
@@ -145,6 +175,20 @@ class _EmuBackend:
         if off == r["STATUS"]:
             done = 1 if self.bist_runs else 0
             return (done << 3) | (done << 2) | self.valid
+        if "DBG_BITS0" in r and r["DBG_BITS0"] <= off < r["DBG_BITS0"] + 20:
+            k = (off - r["DBG_BITS0"]) >> 2
+            return int(sum(int(b) << j for j, b in enumerate(self.bits[32 * k: 32 * k + 32])))
+        if "DBG_LUTS0" in r and r["DBG_LUTS0"] <= off < r["DBG_LUTS0"] + 8:
+            k = (off - r["DBG_LUTS0"]) >> 2
+            return int(sum(int(b) << j for j, b in enumerate(self.luts[32 * k: 32 * k + 32])))
+        if off == r.get("IO_CTRL"):
+            return self.io_ctrl
+        if off == r.get("IO_MANUAL"):
+            return self.io_manual
+        if off == r.get("BTN"):
+            return (self.btn_count << 16) | self.btn_pressed
+        if off == r.get("IO_STATE"):
+            return self._io_state()
         if off == r["RESULT"]:
             s, d, a, d2, a2 = self.res
             return ((self.seq << 16) | (self.valid << 15) | (a2 << 11) | (d2 << 10) | (a << 9) | (d << 8)
@@ -223,6 +267,35 @@ class SeizeLUT:
         b = self.read("OP_THR") & 0xFF
         if (b - 256 if b & 0x80 else b) != int(threshold) or self.read("OP_K") != int(k):
             raise RuntimeError("operating point registers did not take the new values")
+
+    # ---- live demo: debug taps, LEDs, button
+    def debug_taps(self) -> tuple[np.ndarray, np.ndarray]:
+        """Comparator bits and last-layer LUT outputs of the latest window, read back from the core."""
+        nb, nl = self.cfg.get("n_bits", 146), self.cfg.get("n_last_luts", 50)
+        wb = [self.read(self.R["DBG_BITS0"] + 4 * k) for k in range((nb + 31) // 32)]
+        wl = [self.read(self.R["DBG_LUTS0"] + 4 * k) for k in range((nl + 31) // 32)]
+        bits = np.array([(wb[j >> 5] >> (j & 31)) & 1 for j in range(nb)], dtype=np.uint8)
+        luts = np.array([(wl[j >> 5] >> (j & 31)) & 1 for j in range(nl)], dtype=np.uint8)
+        return bits, luts
+
+    def set_io(self, auto: bool = True, follow_programmable: bool = False, buzzer: bool = True,
+               buzzer_active_low: bool = False) -> None:
+        """PMOD outputs: auto (driven by the result in hardware) or manual (IO_MANUAL); which result path the
+        LEDs follow; buzzer on/off and polarity."""
+        self.write("IO_CTRL", int(auto) | int(follow_programmable) << 1 | int(buzzer) << 2
+                   | int(buzzer_active_low) << 3)
+
+    def set_leds_manual(self, mask: int) -> None:
+        self.write("IO_MANUAL", int(mask) & 0x7F)
+
+    def io_state(self) -> int:
+        """The seven PMOD output pins as the fabric drives them (A1..A4, B1..B3 = bits 0..6)."""
+        return self.read("IO_STATE") & 0x7F
+
+    def button(self) -> tuple[int, int]:
+        """(pressed now, number of presses since reset) of the PMOD push button."""
+        v = self.read("BTN")
+        return v & 1, (v >> 16) & 0xFFFF
 
     def counters(self) -> dict:
         return {k.lower(): self.read(k) for k in ("NWIN", "NDEC", "NALARM", "NDEC2", "NALARM2", "LATENCY")}

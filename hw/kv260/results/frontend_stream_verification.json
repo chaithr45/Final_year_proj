@@ -1,0 +1,160 @@
+{
+ "what": "streaming front end (board/frontend/seizelut_fe_stream.c, one second per push, as the live demo uses it) against the batch C front end (seizelut_fe.c) and the golden features of the exported test vectors",
+ "windows_compared": 431960,
+ "all_bit_exact": true,
+ "compared": "all 117 features and the 2 artefact flags of every window, whole recordings from their first sample; the last window comes from fes_flush()",
+ "latency": "window [w, w+2) is emitted after second w+2 has been pushed (1 s look-ahead for R-peak confirmation)",
+ "recordings": {
+  "sub-097_run-02": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 68637,
+   "batch_windows": 68636,
+   "stream_windows": 68636,
+   "compared": 68636,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-097_run-04": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 76313,
+   "batch_windows": 76312,
+   "stream_windows": 76312,
+   "compared": 76312,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-097_run-05": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 6466,
+   "batch_windows": 6465,
+   "stream_windows": 6465,
+   "compared": 6465,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-097_run-07": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 41798,
+   "batch_windows": 41797,
+   "stream_windows": 41797,
+   "compared": 41797,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-097_run-09": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 77153,
+   "batch_windows": 77152,
+   "stream_windows": 77152,
+   "compared": 77152,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-097_run-10": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 425,
+   "batch_windows": 424,
+   "stream_windows": 424,
+   "compared": 424,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-098_run-03": {
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg"
+   ],
+   "seconds": 76569,
+   "batch_windows": 76568,
+   "stream_windows": 76568,
+   "compared": 76568,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-099_run-01": {
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+   ],
+   "seconds": 75817,
+   "batch_windows": 75816,
+   "stream_windows": 75816,
+   "compared": 75816,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-099_run-02": {
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seconds": 4937,
+   "batch_windows": 4936,
+   "stream_windows": 4936,
+   "compared": 4936,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  },
+  "sub-100_run-03": {
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+   ],
+   "seconds": 3855,
+   "batch_windows": 3854,
+   "stream_windows": 3854,
+   "compared": 3854,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "golden_mismatch": 0
+  }
+ }
+}

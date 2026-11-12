@@ -22,7 +22,9 @@ def _w(n: int) -> int:
     return max(1, math.ceil(math.log2(n + 1)))
 
 
-def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier") -> dict:
+def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug: bool = False) -> dict:
+    """debug=True adds two outputs for the live demo: dbg_bits (the comparator bits, registered together with the
+    first LUT layer) and dbg_luts (the last LUT layer's outputs); score/decision/alarm are unchanged."""
     feats = pkg["thresholds"]["features"]
     bits = pkg["thresholds"]["input_bits"]
     layers = pkg["mapping"]["layers"]
@@ -52,7 +54,12 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier") -> di
     w(f"    output reg  signed [{sw - 1}:0] score,")
     w("    output reg  decision,")
     w("    output reg  alarm,")
-    w("    output reg  out_valid")
+    if debug:
+        w("    output reg  out_valid,")
+        w(f"    output wire [{len(bits) - 1}:0] dbg_bits,")
+        w(f"    output wire [{layers[-1]['n_luts'] - 1}:0] dbg_luts")
+    else:
+        w("    output reg  out_valid")
     w(");")
     w(f"    reg [{total_w - 1}:0] f_r;")
     w("    reg [1:0] art_r;")
@@ -96,7 +103,13 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier") -> di
         w("    end")
         prev, prev_w = f"h{li}", n
         art_pipe.append(f"art{li}")
+        if debug and li == 0:
+            w(f"    reg [{len(bits) - 1}:0] b_r;   // debug: comparator bits of the window now in h0")
+            w("    always @(posedge clk) begin if (rst) b_r <= 0; else b_r <= b; end")
+            w("    assign dbg_bits = b_r;")
     nl = len(layers)
+    if debug:
+        w(f"    assign dbg_luts = {prev};")
     w("    // popcount per class (behavioural adder tree, synthesises to LUTs + carry chains)")
     w(f"    function [{pw - 1}:0] popcount_bg; input [{a1 - a0 - 1}:0] v; integer i; begin")
     w(f"        popcount_bg = 0; for (i = 0; i < {a1 - a0}; i = i + 1) popcount_bg = popcount_bg + v[i]; end endfunction")

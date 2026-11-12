@@ -29,9 +29,11 @@ class SeizeLUTModel:
             tt = np.array([[(int(t, 16) >> a) & 1 for a in range(1 << mp.shape[1])] for t in tables], dtype=np.uint8)
             self.layers.append((mp, tt))
 
-    def score(self, feats: np.ndarray) -> np.ndarray:
-        """(n, n_features) integer features in model order -> (n,) integer scores."""
-        h = (feats.astype(np.int64)[:, self.bit_col] > self.bit_thr).astype(np.uint8)
+    def forward(self, feats: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """(n, n_features) integer features in register order -> comparator bits (n, n_bits), outputs of the last
+        LUT layer (n, n_luts) and scores (n,); the bits and LUT outputs are what the core's debug taps show."""
+        bits = (feats.astype(np.int64)[:, self.bit_col] > self.bit_thr).astype(np.uint8)
+        h = bits
         for mp, tt in self.layers:
             addr = np.zeros((len(h), mp.shape[0]), dtype=np.int64)
             for lb in range(mp.shape[1]):
@@ -39,7 +41,11 @@ class SeizeLUTModel:
             h = tt[np.arange(mp.shape[0])[None, :], addr]
         a0, a1 = self.head["groups"]["background"]
         b0, b1 = self.head["groups"]["seizure"]
-        return h[:, b0:b1].sum(1).astype(np.int64) - h[:, a0:a1].sum(1).astype(np.int64)
+        return bits, h, h[:, b0:b1].sum(1).astype(np.int64) - h[:, a0:a1].sum(1).astype(np.int64)
+
+    def score(self, feats: np.ndarray) -> np.ndarray:
+        """(n, n_features) integer features in register order -> (n,) integer scores."""
+        return self.forward(feats)[2]
 
     def run(self, feats: np.ndarray, art: np.ndarray | None = None, threshold: int | None = None,
             k: int | None = None) -> dict:

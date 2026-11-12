@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SeizeLUT Live</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="6" class="logo-chip"/><path d="M7 17 h5 l2-6 3 11 2-7 2 2 h4" class="logo-wave"/></svg>
+      <div><div class="brand-name">SeizeLUT <span class="live-dot"></span><span class="live-word">LIVE</span></div>
+      <div class="brand-sub">Wearable seizure detector · LUT network on a Kria KV260</div></div>
+    </div>
+    <div class="patient" id="patient">
+      <div class="patient-title" id="segTitle">Connecting…</div>
+      <div class="patient-sub" id="segSub"></div>
+    </div>
+    <div class="chips" id="chips">
+      <span class="chip" id="chipBoard"><i></i><b>Board</b><span>…</span></span>
+      <span class="chip" id="chipCore"><i></i><b>Classifier</b><span>…</span></span>
+      <span class="chip" id="chipCheck"><i></i><b>FPGA = software</b><span>–</span></span>
+    </div>
+    <div class="clock"><div id="recClock">--:--:--</div><div class="clock-sub" id="recClockSub">time in recording</div></div>
+  </header>
+
+  <section class="ribbon panel" aria-label="Data path">
+    <canvas id="pipe"></canvas>
+  </section>
+
+  <main class="grid">
+    <section class="panel signals">
+      <div class="panel-head"><h2>Sensors <small>raw input → filtered by the integer front end</small></h2>
+        <div class="legend"><span class="lg raw"></span>raw <span class="lg filt"></span>filtered <span class="lg sz"></span>seizure (neurologist annotation, not seen by the detector)</div></div>
+      <canvas id="sig"></canvas>
+    </section>
+
+    <section class="panel fpga">
+      <div class="panel-head"><h2>Inside the FPGA <small id="winLabel">waiting for the first window</small></h2></div>
+      <div class="fpga-body">
+        <div class="feat-wrap">
+          <div class="sub-h">38 features → <b id="bitCount">0</b> of 146 comparator bits = 1 <span class="hint">(each tick is one comparator)</span></div>
+          <div class="feats" id="feats"></div>
+        </div>
+        <div class="lut-wrap">
+          <div class="sub-h">50 six-input LUTs</div>
+          <div class="lutrow"><span class="lut-lab sz">seizure evidence</span><div class="luts" id="lutSz"></div><b id="nSz" class="cnt sz">0</b></div>
+          <div class="lutrow"><span class="lut-lab bg">background evidence</span><div class="luts" id="lutBg"></div><b id="nBg" class="cnt bg">0</b></div>
+        </div>
+        <div class="row2">
+          <div class="score-wrap">
+            <div class="score-num"><span class="sub-h">score</span><b id="scoreNum">–</b></div>
+            <div class="gauge" id="gauge"><div class="g-zero"></div><div class="g-fill" id="gFill"></div><div class="g-thr" id="gThr"><span id="gThrLab">≥ 9</span></div></div>
+            <div class="gauge-ax"><span>−25</span><span>0</span><span>+25</span></div>
+          </div>
+          <div class="hist-wrap">
+            <div class="sub-h">last 10 decisions <span class="hint" id="kHint">alarm when 10 of 10</span></div>
+            <div class="hist" id="hist"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel timeline">
+      <div class="panel-head"><h2>Score over time <small id="tlSub">every bar is one 2-second window</small></h2>
+        <div class="legend"><span class="lg score"></span>score <span class="lg thr"></span>threshold <span class="lg alarm"></span>alarm <span class="lg sz"></span>seizure</div></div>
+      <canvas id="tl"></canvas>
+    </section>
+
+    <section class="panel board">
+      <div class="panel-head"><h2>The device <small id="boardSub"></small></h2></div>
+      <div class="board-body">
+        <div class="svg-box"><svg id="boardSvg" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet" aria-label="KV260 board"></svg></div>
+        <div class="stats">
+          <div class="stat"><span>windows through the core</span><b id="stWin">0</b></div>
+          <div class="stat"><span>core latency</span><b id="stLat">3 cycles · 30 ns</b></div>
+          <div class="stat"><span>ARM ↔ core round trip</span><b id="stRtt">–</b></div>
+          <div class="stat"><span>alarms</span><b id="stAlarm">0</b></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="controls">
+    <button class="btn" id="bChoose" title="Choose a recording (I)">☰ <span class="long">Choose input</span><span class="short">Input</span></button>
+    <button class="btn primary" id="bPlay" title="Play / pause (space)">▶ Play</button>
+    <div class="seg-ctl" id="speeds" role="group" aria-label="Speed"></div>
+    <button class="btn" id="bSkip" title="Skip to 30 s before the seizure (S)">⏭ <span class="long">Skip to seizure</span><span class="short">Seizure</span></button>
+    <button class="btn" id="bRestart" title="Restart this recording">↺</button>
+    <div class="sep"></div>
+    <span class="ctl-lab">Operating point</span>
+    <div class="seg-ctl" id="ops" role="group" aria-label="Operating point"></div>
+    <div class="sep"></div>
+    <button class="btn" id="bButton" title="Patient / caregiver button (B)">● <span class="long">Patient button</span><span class="short">Button</span></button>
+    <button class="btn" id="bLed" title="LED walk test (L)">💡 <span class="long">LED test</span><span class="short">LEDs</span></button>
+    <button class="btn" id="bSound" title="Alarm sound on the laptop">🔊 Sound on</button>
+  </footer>
+</div>
+
+<div class="alarm-frame" id="alarmFrame"></div>
+<div class="alarm-banner" id="alarmBanner"><div class="ab-icon">⚠</div><div><div class="ab-title">SEIZURE ALARM</div><div class="ab-sub" id="alarmSub">raised by the FPGA</div></div></div>
+<div class="toasts" id="toasts"></div>
+
+<div class="overlay" id="chooser">
+  <div class="sheet">
+    <div class="sheet-head"><h1>Choose a patient recording</h1>
+      <p>Real recordings from the SeizeIT2 wearable dataset, from patients the model never saw during training. Each one streams second by second through the integer front end and the FPGA classifier, as a wearable would see it.</p></div>
+    <div class="cards" id="cards"></div>
+    <div class="sheet-foot"><button class="btn" id="bCloseChooser">Close</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="warm">
+  <div class="warm-box">
+    <div class="chip-anim"><div class="core"></div><div class="pins"></div></div>
+    <h2>Calibrating to <span id="warmWho">the patient</span></h2>
+    <p>Streaming the 10 minutes before this point through the front end and the classifier, so the filters and the patient's baseline settle.</p>
+    <div class="bar"><div id="warmBar"></div></div>
+    <div class="warm-n" id="warmN"></div>
+  </div>
+</div>
+
+<div class="overlay" id="endBox">
+  <div class="sheet small">
+    <h1 id="endTitle">Recording finished</h1>
+    <div id="endBody"></div>
+    <div class="sheet-foot"><button class="btn primary" id="bReplay">↺ Play again</button><button class="btn" id="bOther">☰ Another recording</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="lost"><div class="warm-box"><h2>Reconnecting to the board…</h2><p>Check the Ethernet cable and that the demo is still running on the board.</p></div></div>
+
+<script src="app.js"></script>
+</body>
+</html>

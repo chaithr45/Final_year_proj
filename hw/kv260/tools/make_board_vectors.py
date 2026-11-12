@@ -63,6 +63,10 @@ def main() -> int:
                                     "decision_windows": int(dec.sum()),
                                     "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
         if args.tb:
+            nb = len(pkg["thresholds"]["input_bits"])
+            nl = pkg["mapping"]["layers"][-1]["n_luts"]
+            bits = np.fromfile(vd / rec / "bits.u8", dtype=np.uint8).reshape(-1, nb)
+            luts = np.fromfile(vd / rec / f"lut_l{len(pkg['mapping']['layers']) - 1}.u8", dtype=np.uint8).reshape(-1, nl)
             tb = KIT / "sim" / "vectors"
             tb.mkdir(parents=True, exist_ok=True)
             lines = []
@@ -78,7 +82,14 @@ def main() -> int:
                 v |= int(dec[t]) << pos
                 pos += 1
                 v |= int(alarm[t]) << pos
-                lines.append(f"{v:0{(pos + 4) // 4}x}")
+                pos += 1
+                for j in range(bits.shape[1]):          # golden comparator bits, then LUT outputs (debug taps)
+                    v |= int(bits[t, j]) << (pos + j)
+                pos += bits.shape[1]
+                for j in range(luts.shape[1]):
+                    v |= int(luts[t, j]) << (pos + j)
+                pos += luts.shape[1]
+                lines.append(f"{v:0{(pos + 3) // 4}x}")
             (tb / f"{rec}.hex").write_text("\n".join(lines) + "\n")
         print(rec, len(F), "windows")
     (out / "index.json").write_text(json.dumps(index, indent=1))

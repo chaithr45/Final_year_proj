@@ -1,0 +1,290 @@
+{
+ "source": "exported test vectors of the final model (held-out test patients)",
+ "operating_points": {
+  "strict": {
+   "threshold": 9,
+   "k": 10
+  },
+  "balanced": {
+   "threshold": 2,
+   "k": 10
+  },
+  "sensitive": {
+   "threshold": -7,
+   "k": 10
+  }
+ },
+ "segments": [
+  {
+   "id": "seizure_all_sensors",
+   "title": "Patient 1: seizure, all sensors",
+   "story": "Behind-the-ear EEG, ECG, EMG and a 3-axis accelerometer. A 108-second seizure; the alarm is raised at every operating point, including the strict one frozen in the chip.",
+   "recording": "sub-098_run-03",
+   "record_start_s": 69379,
+   "seconds": 948,
+   "watch_from_s": 600,
+   "seizures_s": [
+    [
+     690.0,
+     798.0
+    ]
+   ],
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg"
+   ],
+   "seizure_duration_s": 108.0,
+   "expected": {
+    "strict": {
+     "threshold": 9,
+     "k": 10,
+     "alarm_windows": 26,
+     "first_alarm_s": 706,
+     "full_recording_first_alarm_s": 706,
+     "full_recording_alarm_windows": 26,
+     "after_onset_s": 16.0
+    },
+    "balanced": {
+     "threshold": 2,
+     "k": 10,
+     "alarm_windows": 90,
+     "first_alarm_s": 702,
+     "full_recording_first_alarm_s": 702,
+     "full_recording_alarm_windows": 90,
+     "after_onset_s": 12.0
+    },
+    "sensitive": {
+     "threshold": -7,
+     "k": 10,
+     "alarm_windows": 101,
+     "first_alarm_s": 700,
+     "full_recording_first_alarm_s": 700,
+     "full_recording_alarm_windows": 101,
+     "after_onset_s": 10.0
+    }
+   },
+   "score_diff_vs_full_recording": 21,
+   "windows_watched": 347
+  },
+  {
+   "id": "seizure_sensitive",
+   "title": "Patient 2: seizure, needs the sensitive setting",
+   "story": "All sensors including the gyroscope. The strict setting stays silent; Balanced and Sensitive raise the alarm. Switch the operating point live to see the difference.",
+   "recording": "sub-099_run-01",
+   "record_start_s": 50076,
+   "seconds": 977,
+   "watch_from_s": 600,
+   "seizures_s": [
+    [
+     690.0,
+     827.0
+    ]
+   ],
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+   ],
+   "seizure_duration_s": 137.0,
+   "expected": {
+    "strict": {
+     "threshold": 9,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "balanced": {
+     "threshold": 2,
+     "k": 10,
+     "alarm_windows": 2,
+     "first_alarm_s": 751,
+     "full_recording_first_alarm_s": 751,
+     "full_recording_alarm_windows": 2,
+     "after_onset_s": 61.0
+    },
+    "sensitive": {
+     "threshold": -7,
+     "k": 10,
+     "alarm_windows": 71,
+     "first_alarm_s": 702,
+     "full_recording_first_alarm_s": 702,
+     "full_recording_alarm_windows": 71,
+     "after_onset_s": 12.0
+    }
+   },
+   "score_diff_vs_full_recording": 0,
+   "windows_watched": 376
+  },
+  {
+   "id": "seizure_eeg_only",
+   "title": "Patient 2: seizure, EEG only",
+   "story": "Only the two behind-the-ear EEG channels were recorded (the other sensors are missing). Detected at the Sensitive setting.",
+   "recording": "sub-099_run-02",
+   "record_start_s": 3926,
+   "seconds": 918,
+   "watch_from_s": 600,
+   "seizures_s": [
+    [
+     690.0,
+     768.0
+    ]
+   ],
+   "sensors": [
+    "eeg1",
+    "eeg2"
+   ],
+   "seizure_duration_s": 78.0,
+   "expected": {
+    "strict": {
+     "threshold": 9,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "balanced": {
+     "threshold": 2,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "sensitive": {
+     "threshold": -7,
+     "k": 10,
+     "alarm_windows": 92,
+     "first_alarm_s": 717,
+     "full_recording_first_alarm_s": 717,
+     "full_recording_alarm_windows": 92,
+     "after_onset_s": 27.0
+    }
+   },
+   "score_diff_vs_full_recording": 0,
+   "windows_watched": 317
+  },
+  {
+   "id": "seizure_long",
+   "title": "Patient 3: long seizure",
+   "story": "All sensors. A 172-second seizure, detected at the Sensitive setting about a minute after the annotated onset.",
+   "recording": "sub-100_run-03",
+   "record_start_s": 1938,
+   "seconds": 982,
+   "watch_from_s": 600,
+   "seizures_s": [
+    [
+     690.0,
+     862.0
+    ]
+   ],
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+   ],
+   "seizure_duration_s": 172.0,
+   "expected": {
+    "strict": {
+     "threshold": 9,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "balanced": {
+     "threshold": 2,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "sensitive": {
+     "threshold": -7,
+     "k": 10,
+     "alarm_windows": 48,
+     "first_alarm_s": 750,
+     "full_recording_first_alarm_s": 750,
+     "full_recording_alarm_windows": 48,
+     "after_onset_s": 60.0
+    }
+   },
+   "score_diff_vs_full_recording": 3,
+   "windows_watched": 381
+  },
+  {
+   "id": "normal_moving",
+   "title": "Patient 2: normal activity, moving",
+   "story": "Six and a half minutes without a seizure while the patient moves about (accelerometer activity above the recording's median). No alarm at any setting.",
+   "recording": "sub-099_run-01",
+   "record_start_s": 33460,
+   "seconds": 990,
+   "watch_from_s": 600,
+   "seizures_s": [],
+   "sensors": [
+    "acc_x",
+    "acc_y",
+    "acc_z",
+    "ecg",
+    "eeg1",
+    "eeg2",
+    "emg",
+    "gyr_x",
+    "gyr_y",
+    "gyr_z"
+   ],
+   "seizure_duration_s": null,
+   "expected": {
+    "strict": {
+     "threshold": 9,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "balanced": {
+     "threshold": 2,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    },
+    "sensitive": {
+     "threshold": -7,
+     "k": 10,
+     "alarm_windows": 0,
+     "first_alarm_s": null,
+     "full_recording_first_alarm_s": null,
+     "full_recording_alarm_windows": 0
+    }
+   },
+   "score_diff_vs_full_recording": 0,
+   "windows_watched": 389
+  }
+ ]
+}

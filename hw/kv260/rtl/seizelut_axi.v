@@ -2,7 +2,8 @@
 // with a built-in self-test. Register map: see the module docstring of src/hw/kv260.py and seizelut_regs.json.
 `timescale 1ns/1ps
 module seizelut_axi #(
-    parameter integer C_S_AXI_ADDR_WIDTH = 12
+    parameter integer C_S_AXI_ADDR_WIDTH = 12,
+    parameter integer DEBOUNCE_TICKS = 100000     // button sampled every 1 ms at 100 MHz
 ) (
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 s_axi_aclk CLK" *)
     (* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF s_axi, ASSOCIATED_RESET s_axi_aresetn" *)
@@ -28,7 +29,9 @@ module seizelut_axi #(
     output reg  [31:0]                   s_axi_rdata,
     output reg  [1:0]                    s_axi_rresp,
     output reg                           s_axi_rvalid,
-    input  wire                          s_axi_rready
+    input  wire                          s_axi_rready,
+    output wire [6:0]                    pmod_out,   // KV260 PMOD A1-A4, B1-B3: LEDs and buzzer
+    input  wire                          pmod_btn    // KV260 PMOD B4: push button to GND (pull-up)
 );
     localparam integer NF   = 38;        // model features
     localparam integer NW   = 19;        // feature words (two int16 per word)
@@ -74,6 +77,8 @@ module seizelut_axi #(
     reg [31:0] scratch;
     reg signed [7:0] op_thr;
     reg [3:0]  op_k;
+    reg [3:0]  io_ctrl;
+    reg [6:0]  io_manual;
     reg        bist_loop;
     reg        soft_rst, clr_cnt, bist_start, commit;
     reg [1:0]  commit_art;
@@ -83,6 +88,7 @@ module seizelut_axi #(
         if (!rstn) begin
             for (i = 0; i < NW; i = i + 1) featw[i] <= 32'd0;
             scratch <= 32'd0; bist_loop <= 1'b0; commit_art <= 2'b00; op_thr <= OP_THR0; op_k <= OP_K0;
+            io_ctrl <= 4'b0101; io_manual <= 7'd0;
         end else if (wr_en) begin
             if (waddr[C_S_AXI_ADDR_WIDTH-1:8] != 0) begin
                 if (waddr[7:2] < NW) featw[waddr[7:2]] <= s_axi_wdata;
@@ -94,6 +100,8 @@ module seizelut_axi #(
                     8'h2C: scratch <= s_axi_wdata;
                     8'h48: op_thr <= s_axi_wdata[7:0];
                     8'h4C: op_k <= s_axi_wdata[3:0];
+                    8'h58: io_ctrl <= s_axi_wdata[3:0];
+                    8'h5C: io_manual <= s_axi_wdata[6:0];
                     default: ;
                 endcase
             end
@@ -162,7 +170,10 @@ module seizelut_axi #(
     wire signed [SW-1:0] score;
     wire decision, alarm, out_valid;
     (* keep_hierarchy = "yes" *)
+    wire [146-1:0] dbg_bits;
+    wire [50-1:0]  dbg_luts;
     lutnet_classifier u_cls (.clk(clk), .rst(cls_rst), .valid_in(cls_valid), .features(cls_feat),
+                             .dbg_bits(dbg_bits), .dbg_luts(dbg_luts),
                              .artefact(cls_art), .score(score), .decision(decision), .alarm(alarm),
                              .out_valid(out_valid));
 
@@ -234,7 +245,7 @@ module seizelut_axi #(
     always @(posedge clk) begin
         if (!rstn || soft_rst) begin
             res_score <= 0; res_dec <= 1'b0; res_alarm <= 1'b0; res_valid <= 1'b0; lat_run <= 1'b0; lat_cnt <= 0;
-            res_dec2 <= 1'b0; res_alarm2 <= 1'b0; hist2 <= 0;
+            res_dec2 <= 1'b0; res_alarm2 <= 1'b0; hist2 <= 0; res_seen <= 1'b0;
             if (!rstn) begin res_seq <= 0; nwin <= 0; ndec <= 0; nalarm <= 0; latency <= 0; ndec2 <= 0; nalarm2 <= 0; end
         end else begin
             if (clr_cnt) begin res_seq <= 0; nwin <= 0; ndec <= 0; nalarm <= 0; ndec2 <= 0; nalarm2 <= 0; end
@@ -247,10 +258,49 @@ module seizelut_axi #(
                 if (decision) ndec <= ndec + 32'd1;
                 if (alarm) nalarm <= nalarm + 32'd1;
                 res_dec2 <= dec2_c; res_alarm2 <= alarm2_c; hist2 <= hist2_next;
+                res_bits <= dbg_bits; res_luts <= dbg_luts; res_seen <= 1'b1; heartbeat <= ~heartbeat;
                 if (dec2_c) ndec2 <= ndec2 + 32'd1;
                 if (alarm2_c) nalarm2 <= nalarm2 + 32'd1;
             end
         end
+    end
+
+    // ------------------------------------------------------------------ demo I/O: LEDs, buzzer, button
+    reg [146-1:0] res_bits;
+    reg [50-1:0]  res_luts;
+    reg               res_seen, heartbeat;
+    wire [159:0] res_bits_pad = {{(160-146){1'b0}}, res_bits};
+    wire [63:0]  res_luts_pad = {{(64-50){1'b0}}, res_luts};
+    initial begin res_bits = 0; res_luts = 0; heartbeat = 1'b0; end
+    wire signed [8:0] thr_sel = io_ctrl[1] ? {op_thr[7], op_thr} : {OP_THR0[7], OP_THR0};
+    wire signed [8:0] s9 = {res_score[7], res_score};
+    wire dec_sel = io_ctrl[1] ? res_dec2 : res_dec;
+    wire alarm_sel = io_ctrl[1] ? res_alarm2 : res_alarm;
+    wire buzz_on = alarm_sel & io_ctrl[2] & cycles[24];          // pulsed ~3 Hz while the alarm is on
+    wire [6:0] auto_out = {heartbeat, buzz_on ^ io_ctrl[3], alarm_sel, dec_sel,
+                           res_seen & (s9 >= thr_sel - 9'sd3), res_seen & (s9 >= thr_sel - 9'sd6),
+                           res_seen & (s9 >= thr_sel - 9'sd9)};
+    reg [6:0] pmod_q;
+    always @(posedge clk) begin
+        if (!rstn) pmod_q <= {1'b0, io_ctrl[3], 5'd0};
+        else pmod_q <= io_ctrl[0] ? auto_out : io_manual;
+    end
+    assign pmod_out = pmod_q;
+    // button: two-flop synchroniser, sampled every DEBOUNCE_TICKS, pressed after 4 equal samples
+    reg [1:0]  btn_sync;
+    reg [31:0] btn_tick;
+    reg [3:0]  btn_hist;
+    reg        btn_pressed;
+    reg [15:0] btn_count;
+    always @(posedge clk) begin
+        btn_sync <= {btn_sync[0], ~pmod_btn};          // 1 = pressed (pin pulled low)
+        if (!rstn) begin btn_tick <= 0; btn_hist <= 0; btn_pressed <= 1'b0; btn_count <= 0; end
+        else if (btn_tick >= DEBOUNCE_TICKS - 1) begin
+            btn_tick <= 0;
+            btn_hist <= {btn_hist[2:0], btn_sync[1]};
+            if (&{btn_hist[2:0], btn_sync[1]} && !btn_pressed) begin btn_pressed <= 1'b1; btn_count <= btn_count + 16'd1; end
+            else if (~|{btn_hist[2:0], btn_sync[1]}) btn_pressed <= 1'b0;
+        end else btn_tick <= btn_tick + 32'd1;
     end
 
     // ------------------------------------------------------------------ AXI read
@@ -282,6 +332,17 @@ module seizelut_axi #(
                 8'h4C: rdata_c = {28'd0, op_k};
                 8'h50: rdata_c = ndec2;
                 8'h54: rdata_c = nalarm2;
+                8'h58: rdata_c = {28'd0, io_ctrl};
+                8'h5C: rdata_c = {25'd0, io_manual};
+                8'h60: rdata_c = {btn_count, 15'd0, btn_pressed};
+                8'h64: rdata_c = {25'd0, pmod_out};
+                8'h70: rdata_c = res_bits_pad[31:0];
+                8'h74: rdata_c = res_bits_pad[63:32];
+                8'h78: rdata_c = res_bits_pad[95:64];
+                8'h7C: rdata_c = res_bits_pad[127:96];
+                8'h80: rdata_c = res_bits_pad[159:128];
+                8'h84: rdata_c = res_luts_pad[31:0];
+                8'h88: rdata_c = res_luts_pad[63:32];
                 default: rdata_c = 32'hDEADBEEF;
             endcase
         end
