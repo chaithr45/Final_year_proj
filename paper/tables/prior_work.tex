@@ -1,7 +1,21 @@
+% Numbers as reported by each work (sources and quotes: results/tables/prior_work_sources.md). Definitions differ
+% (event- vs. epoch- or sample-based; whole chip vs. classifier core), so the rows are not directly comparable.
 \begin{table*}[t]\centering
-\caption{Hardware seizure detectors (numbers as reported by each work; pending verification).}\label{tab:prior}
-\small\begin{tabular}{llllll}\toprule
-Work & Platform & Data & Signals & Evaluation & Cost \\ \midrule
-\textbf{This work} & KV260 FPGA & SeizeIT2, 125 pat. & bte-EEG, ECG, EMG, motion & patient-indep., held-out & 405 LUTs \\
+\caption{Hardware seizure detectors as reported by each work. PS: patient-specific training or calibration; PI:
+patient-independent, scored on held-out patients. Detection metrics differ between works (event-, epoch- or
+sample-based) and are not directly comparable. $^\ddagger$From the comparison table of \cite{shin2022neuraltree};
+n.r.: not reported; Faults: share of decision-relevant single faults detected by the self-test.}\label{tab:prior}
+\setlength{\tabcolsep}{2.0pt}\scriptsize
+\begin{tabular}{lllllllc}\toprule
+Work & Platform & Data (patients), eval. & Inputs & Detection (as reported) & Cost & Energy/inf. & Faults \\ \midrule
+Altaf'15 \cite{altaf2015jssc} & ASIC 180\,nm & CHB-MIT (14)$^\ddagger$, PS & EEG, 16 ch & sens 95.7\,\%, spec 98\,\%$^\ddagger$ & 1.56\,mm$^2$/ch$^\ddagger$ & 2.73\,\textmu J$^\ddagger$ & n.r. \\
+Shoaran'18 \cite{shoaran2018jetcas} & ASIC 65\,nm & iEEG (26), PS & iEEG & F1 87.9\,\% (block split) & 1.0\,mm$^2$ & 41.2\,nJ & n.r. \\
+NeuralTree'22 \cite{shin2022neuraltree} & ASIC 65\,nm & CHB-MIT (24)+iEEG (6), PS & EEG/iEEG, $\le$64 ch & sens 95.6\,\%, spec 96.8\,\% & 3.48\,mm$^2$ & 0.227\,\textmu J & n.r. \\
+Vittimberga'25 \cite{vittimberga2025sensors} & Artix-7 (synth.) & CHB-MIT (5), PS & EEG, 4 ch & sens $>$98\,\% (samples) & 192 LUT, 3 DSP & n.r. & n.r. \\
+Busia'25 \cite{busia2025fpga} & iCE40UP5K & CHB-MIT (9), PS & EEG, 4 ch & 100\,\% events, 0.3 FA/h & 3.3k LC, 2 DSP, 14 BRAM & 4.55\,nJ (core) & n.r. \\
+EEGformer'24 \cite{busia2024eegformer} & GAP9 MCU & CHB-MIT (8), PS & EEG, 4 ch & 73\,\% events, 0.15 FA/h & 150\,kB, 14.7 MOPS & 0.31\,mJ & n.r. \\
+BrainFuseNet'24 \cite{ingolfsson2024brainfusenet} & GAP9 MCU & PEDESITE (6), PS & EEG 4 ch, PPG, ACC & 95\,\% events, 0.58 FA/day & 2.29 M MAC & 0.11\,mJ & n.r. \\
+SeizeIT2 \cite{bhagubai2025seizeit2} & software & SeizeIT2 (29 test), PI & bte-EEG, 2 ch & SVM 71.1\,\% at 11.0 FA/h & -- & -- & -- \\ \midrule
+\textbf{SeizeLUT (ours)} & XCK26 (KV260) & SeizeIT2 (29 test), PI & \begin{tabular}[t]{@{}l@{}}bte-EEG 2 ch, ECG,\\EMG, ACC, GYR\end{tabular} & \begin{tabular}[t]{@{}l@{}}event-F1 0.248, 0.8 FA/day;\\two-stage 73.3\,\% at 10.9 FA/h\end{tabular} & \begin{tabular}[t]{@{}l@{}}405 LUT, 0 DSP/BRAM\\(two-stage 1,204 LUT)\end{tabular} & \PHASETWO{} & \textbf{100\,\%} \\
 \bottomrule\end{tabular}
 \end{table*}

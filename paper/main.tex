@@ -5,7 +5,7 @@
 \usepackage{amsmath,amssymb,graphicx,booktabs,xcolor,cite,multirow,tikz}
 \usetikzlibrary{positioning,fit}
 \usepackage[hidelinks]{hyperref}
-\newcommand{\PHASETWO}[1]{\textcolor{red}{[board: #1]}}
+\newcommand{\PHASETWO}[1]{\textcolor{red}{[board\ifx\relax#1\relax\else: #1\fi]}}
 
 \begin{document}
 \title{SeizeLUT: A Self-Testing, Multiplier-Free LUT Network for Multimodal Wearable Seizure Detection on an FPGA}
