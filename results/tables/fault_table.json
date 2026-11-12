@@ -1,0 +1,38 @@
+{
+ "truth-table bit flipped": {
+  "faults": 3200,
+  "observable": 2750,
+  "decision_relevant": 2498,
+  "alarm_relevant": 1674,
+  "detected_consecutive": 1088,
+  "detected_random": 1983,
+  "detected_selected": 2498
+ },
+ "comparator output stuck at 0/1": {
+  "faults": 292,
+  "observable": 292,
+  "decision_relevant": 292,
+  "alarm_relevant": 289,
+  "detected_consecutive": 276,
+  "detected_random": 292,
+  "detected_selected": 292
+ },
+ "LUT output stuck at 0/1": {
+  "faults": 100,
+  "observable": 100,
+  "decision_relevant": 100,
+  "alarm_relevant": 100,
+  "detected_consecutive": 100,
+  "detected_random": 100,
+  "detected_selected": 100
+ },
+ "all": {
+  "faults": 3592,
+  "observable": 3142,
+  "decision_relevant": 2890,
+  "alarm_relevant": 2063,
+  "detected_consecutive": 1464,
+  "detected_random": 2375,
+  "detected_selected": 2890
+ }
+}

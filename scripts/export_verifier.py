@@ -101,11 +101,11 @@ def main() -> int:
     v = OUT_DIR / "verifier_classifier.v"
     info = generate(pkg, v, module="verifier_classifier")
     # Yosys, the same script as the three stage-1 classifiers
-    ys = f"read_verilog {v}; synth_xilinx -family xcup -top verifier_classifier -flatten -abc9; stat"
-    r = subprocess.run(["yowasp-yosys", "-q", "-p", ys], capture_output=True, text=True, timeout=3000)
-    txt = r.stdout + r.stderr
+    ys = f"read_verilog {v.name}; synth_xilinx -family xcup -top verifier_classifier -flatten -abc9; tee -o yosys_stat.txt stat"
+    subprocess.run(["yowasp-yosys", "-q", "-p", ys], capture_output=True, text=True, timeout=3000, cwd=OUT_DIR)
+    txt = (OUT_DIR / "yosys_stat.txt").read_text()
     cells = {k: int(n) for n, k in re.findall(r"^\s+(\d+)\s+(\S+)$", txt, re.M) if not k.startswith("$")}
-    luts = sum(n for k, n in cells.items() if k.startswith("LUT"))
+    luts = sum(n for k, n in cells.items() if k.startswith("LUT"))   # as for the stage-1 models (INV not counted)
     ffs = sum(n for k, n in cells.items() if k.startswith("FD"))
     res = {"what": "post-ictal verifier (stage 2, pre-registered D40 cascade) as a LUT-native classifier",
            "training_candidates": int(len(Xtr)), "inputs": fnames, "comparators": len(ipairs),

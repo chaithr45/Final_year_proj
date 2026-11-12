@@ -1,143 +1,158 @@
-% LUT-native multimodal seizure detection on SeizeIT2.
+% SeizeLUT: self-testing, multiplier-free LUT-native seizure detection on SeizeIT2, implemented on a Kria KV260.
 % Every number in this file comes from a file in results/ produced by a committed script.
-% \RESULT{...} marks numbers that come from the final evaluation on the 29 test patients (M6), filled in once it has
-% run; \PHASETWO{...} marks measured hardware results of Phase 2.
+% \PHASETWO{...} marks hardware results measured on the user's Vivado build and KV260 board (pending).
 \documentclass[conference]{IEEEtran}
-\usepackage{amsmath,amssymb,graphicx,booktabs,xcolor,cite}
+\usepackage{amsmath,amssymb,graphicx,booktabs,xcolor,cite,multirow,tikz}
+\usetikzlibrary{positioning,fit}
 \usepackage[hidelinks]{hyperref}
-\newcommand{\PHASETWO}[1]{\textcolor{red}{[Phase 2: #1]}}
-\newcommand{\RESULT}[1]{\textcolor{teal}{[test result: #1]}}
+\newcommand{\PHASETWO}[1]{\textcolor{red}{[board: #1]}}
 
 \begin{document}
-\title{Multiplier-Free Seizure Detection with a LUT-Native Neural Network on Behind-the-Ear EEG, ECG, EMG and
-Motion}
+\title{SeizeLUT: A Self-Testing, Multiplier-Free LUT Network for Multimodal Wearable Seizure Detection on an FPGA}
 \author{\IEEEauthorblockN{[Authors]}\IEEEauthorblockA{Department of Electronics and Communication Engineering,
 National Institute of Technology Warangal, India}}
 \maketitle
 
 \begin{abstract}
-Wearable seizure detection has to run for days on a small battery, which favours classifiers without multipliers.
-We study LUT-native neural networks, whose neurons are FPGA lookup tables, for patient-independent seizure detection
-from two-channel behind-the-ear EEG, ECG, EMG and motion in the SeizeIT2 dataset (125 patients, 11,626 hours, 883
-seizures). A bit-exact integer front end computes 117 features without multipliers; a thermometer encoder and a
-Differentiable Weightless Neural Network (DWN) of 50 six-input LUTs turn them into a popcount score; synthesised for
-the Zynq UltraScale+ fabric, the whole classifier takes 405 LUTs and 454 flip-flops, with no DSP or block RAM. On five-fold
-cross-validation over the 96 training patients the DWN reaches an event-F1 of 0.211 with 2.4 false alarms per day at
-about 960 estimated LUTs and no multipliers, seven to eight times fewer LUTs than TreeLUT and a logic-gate network,
-and better than an INT8 network that needs 9,600 multiplications per decision, though below gradient-boosted trees
-(0.292). Training with random sensor dropout keeps the detector working when the ECG is missing (event-F1 0.172
-against 0.092, $p = 0.005$), and distillation from LightGBM cuts false alarms from 2.4 to 0.9 per day
-($p = 3\times10^{-7}$). On the 29 held-out test patients, scored once with 5 seeds, the final DWN reaches an event-F1
-of $0.248 \pm 0.016$ with 0.8 false alarms per day at about 900 LUTs, against 0.027 and 106 false alarms per day for
-the clean ChronoNet baseline ($p = 0.027$), 0.233 for TreeLUT (6.3k LUTs) and 0.308 for LightGBM. With the dataset
-paper's metrics, a pre-registered two-stage variant that confirms each alarm with a second 50-LUT network detects
-73.3\,\% of seizures at 10.9 false alarms per hour, against 71.1\,\% at 11.0 for the published SVM. The design runs on a
-Kria KV260: the integer front end in C on the Arm cores reproduces all 117 features bit for bit, and the classifier in
-the fabric reproduces the software on all 431,960 test windows in simulation. We also report an independent
-reproduction of the published ChronoNet baseline, whose released code selects its model on the test patients.
+Wearable seizure detectors must run for days on a small battery and, being medical devices, must not fail
+silently. We present SeizeLUT, a seizure detector whose classifier is a Differentiable Weightless Neural Network
+(DWN) of 50 six-input lookup tables (LUTs) that map one-to-one onto FPGA LUTs, fed by a bit-exact, multiplier-free
+integer front end for behind-the-ear EEG, ECG, EMG and motion. On the official split of the SeizeIT2 dataset (125
+patients, 11,626 hours), the final network reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per day
+on 29 held-out patients, above a TreeLUT model that needs 6.7 times more LUTs, a logic-gate network and the
+ChronoNet baseline, in 405 synthesised LUTs with no DSP or block RAM. A pre-registered two-stage variant that
+confirms each alarm against the post-ictal period with a second LUT network detects 73.3\,\% of seizures at 10.9
+false alarms per hour (published SVM: 71.1\,\% at 11.0), and the whole cascade fits in 1,204 LUTs. Because the
+classifier is a set of truth tables, every single hardware fault can be enumerated: of 3,592 single faults, 2,890
+change at least one clinical decision on 8,714 hours of training data, a built-in self-test fed with 1,024
+consecutive recorded windows detects only 50.7\,\% of them, and 255 test vectors selected for coverage detect all of
+them; the on-chip self-test takes 10.3\,\textmu s. On a Kria KV260 the classifier runs in the fabric behind an AXI4-Lite interface with fault
+injection, and the integer front end runs on the Arm cores; the design is verified bit-exact on 431,960 windows at
+two operating points and on every injected fault.
 \end{abstract}
 
 \section{Introduction}
-Patients are often unaware of their own seizures, so diaries undercount them \cite{elger2018underreporting}, and
+Patients are often unaware of their seizures, so diaries undercount them \cite{elger2018underreporting}, and
 wearable detection is clinically recommended today only for tonic-clonic seizures \cite{beniczky2021guideline}.
-Focal seizures that do not become tonic-clonic (822 of the 883 in SeizeIT2) remain the open problem, with false alarms the main obstacle
-\cite{swinnen2026seizeit2}. Behind-the-ear (bte) EEG is discreet but sees only two channels; adding ECG, EMG and motion
-helps \cite{vandecasteele2021ecg,zhang2024tcs}, but the detectors that fuse them are floating-point software or
-multiply-accumulate networks on microcontrollers \cite{ingolfsson2024brainfusenet}.
+Behind-the-ear (bte) EEG is discreet but sees two channels; adding ECG, EMG and motion helps
+\cite{vandecasteele2021ecg,zhang2024tcs}, but the detectors that fuse them are floating-point software or
+multiply-accumulate networks on microcontrollers \cite{ingolfsson2024brainfusenet}. Two requirements of a wearable
+medical device are rarely addressed together: a classifier cheap enough for a tiny always-on fabric, and a way to
+know that the hardware still computes what was validated, since a silent fault turns into missed seizures or false
+alarms. Soft errors in FPGA configuration memory are a known risk for neural-network accelerators
+\cite{libano2019selective,li2017sc,reagen2018ares}, and generic scrubbing \cite{amd2025pg187} says nothing about
+whether a fault matters clinically.
 
 LUT-native networks replace weighted sums by lookup tables: each neuron is a Boolean function of a few input bits that
-maps one-to-one onto an FPGA LUT. DWNs \cite{bacellar2024dwn}, logic-gate networks \cite{petersen2022dlgn} and LUT
-networks \cite{umuroglu2020logicnets} train such networks by gradient descent, and tree ensembles can be mapped to LUTs
-in the same spirit \cite{khataei2025treelut}. They have been applied to ECG arrhythmia \cite{mommen2026ecg} and EEG
-classification \cite{dharia2026eeglgn}, but not to seizure detection, which brings extreme class imbalance (0.12\,\%
-seizure time), patient-to-patient variability, missing sensors and event-level clinical scoring.
+maps onto one FPGA LUT. DWNs \cite{bacellar2024dwn}, logic-gate networks \cite{petersen2022dlgn} and LUT networks
+\cite{umuroglu2020logicnets} train such networks by gradient descent, and tree ensembles map to LUTs in the same spirit
+\cite{khataei2025treelut}. They have been applied to ECG arrhythmia \cite{mommen2026ecg} and EEG classification
+\cite{dharia2026eeglgn}, but not to seizure detection, with its extreme class imbalance (0.12\,\% seizure time),
+patient variability, missing sensors and event-level clinical scoring. Their small, explicit truth tables also make a
+property possible that weighted networks lack: the complete set of single hardware faults can be enumerated and
+judged by its clinical effect.
 
-\textbf{Contributions.} (i)~The first differentiable LUT-native seizure detector and the first benchmark of LUT-native
-models (DWN, logic-gate network, TreeLUT) against standard machine learning on the official SeizeIT2 split with
-SzCORE event scoring \cite{dan2024szcore}. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG
-and motion, with a fixed-point specification and a reference Verilog classifier that matches the software on all test
-vectors. (iii)~Distillation from a tree ensemble into a LUT network, which cuts false alarms, and modality dropout, which makes
-it robust to a missing ECG, selected among seven families of extensions by per-patient tests. (iv)~An independent reproduction of the SeizeIT2 ChronoNet
-baseline, with a protocol that uses no test information. (v)~A verified implementation on a Kria KV260 with the
-synthesised cost of all three LUT-native models under one flow.
+\textbf{Contributions.} (i)~The first LUT-native seizure detector and the first benchmark of LUT-native models (DWN,
+logic-gate network, TreeLUT) against standard machine learning on the official SeizeIT2 split with SzCORE event
+scoring \cite{dan2024szcore}, with distillation from a tree ensemble to cut false alarms and modality dropout for
+missing sensors. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG and motion. (iii)~A fully
+LUT-native post-ictal verification cascade that detects more seizures than the dataset paper's SVM at a slightly lower
+false-alarm rate, in 1,204 LUTs. (iv)~\emph{Self-testing}: an exhaustive single-fault analysis of the deployed
+classifier on 8,714 hours of data, a coverage-driven choice of on-chip test vectors that detects every
+decision-relevant fault with 255 vectors, and fault-injection hardware that checks this on the device. (v)~A
+verified Kria KV260 implementation, and an independent reproduction of the published ChronoNet baseline, whose
+released code selects its model on the test patients.
 
 \section{Related Work}
-\textit{Wearable bte-EEG.} Two bte channels capture many focal seizures \cite{vandecasteele2020bte}; ECG raises
-sensitivity by 8--11\,\% \cite{vandecasteele2021ecg}. Tree ensembles won the ICASSP 2023 wearable-EEG challenge
-\cite{bhagubai2024challenge,alhussaini2023seizft}. The SeizeIT2 paper reports SVM and ChronoNet \cite{roy2019chrononet}
-baselines \cite{bhagubai2025seizeit2}. \textit{Hardware detectors.} ASICs reach nJ--\textmu J per classification with
-SVMs and trees \cite{altaf2015jssc,shoaran2018jetcas,shin2022neuraltree}; an SNN on a small iCE40 FPGA detects
-seizures on four scalp channels \cite{busia2025fpga}; transformers and fusion networks run on microcontrollers
-\cite{busia2024eegformer,ingolfsson2024brainfusenet}. Almost all use EEG only, patient-specific training and
-epoch-level metrics. \textit{LUT-native networks.} Beyond the works above, the thermometer encoder can dominate the
-cost of small DWNs \cite{mecik2025thermo}, and a recurrent logic-gate network exists for language
-\cite{buhrer2025rdlgn}. The only weightless seizure work is a WiSARD study on four patients \cite{deaguiar2015wisard}.
+Table~\ref{tab:prior} compares hardware seizure detectors. ASICs reach nJ--\textmu J per classification with
+patient-specific SVMs and tree ensembles on implanted or scalp EEG \cite{altaf2015jssc,shoaran2018jetcas,shin2022neuraltree};
+an SNN on a small iCE40 FPGA detects seizures on four scalp channels \cite{busia2025fpga}; transformers and fusion
+networks run on microcontrollers \cite{busia2024eegformer,ingolfsson2024brainfusenet}. Most use EEG only and
+epoch-level metrics; to our knowledge none reports what a hardware fault does to its decisions. On SeizeIT2, the dataset paper reports
+SVM and ChronoNet \cite{roy2019chrononet} baselines \cite{bhagubai2025seizeit2}; tree ensembles won the ICASSP 2023
+wearable-EEG challenge \cite{bhagubai2024challenge,alhussaini2023seizft}. The only weightless seizure work is a WiSARD
+study on four patients \cite{deaguiar2015wisard}; for DWNs the thermometer encoder can dominate the cost
+\cite{mecik2025thermo}. Resilience studies of neural accelerators inject faults statistically
+\cite{reagen2018ares,li2017sc} or harden the most vulnerable layers \cite{libano2019selective}; with LUT networks the
+fault space is small enough to enumerate completely.
+
+\input{tables/prior_work}
 
 \section{Dataset and Protocol}
 \textit{Data.} SeizeIT2 (OpenNeuro ds005873 v1.1.0) \cite{bhagubai2025seizeit2}: 125 patients with focal epilepsy from
 five European monitoring units, 2,850 recordings, 11,626 hours of two-channel bte-EEG, single-lead ECG and EMG at
-256\,Hz and accelerometer and gyroscope at 25\,Hz; ECG/EMG are missing in 3.1\,\% and motion in 3.9\,\% of the time.
-Our audit found 883 seizures (702 in the 96 training patients, 181 in the 29 test patients; the paper states 886), and
-256\,Hz rather than the documented 250\,Hz. Seizures were annotated on video and full-scalp EEG.
-\textit{Split and tuning.} Official split: training sub-001--096, test sub-097--125. Every choice (features,
-hyperparameters, thresholds, post-processing, extensions) is made by five-fold patient-wise cross-validation inside
-the training patients; each final model is then trained on all 96 and scored once per seed on the test patients.
-\textit{Scoring.} SzCORE event scoring \cite{dan2024szcore} (any overlap, 30\,s pre- and 60\,s post-ictal tolerance,
-events closer than 90\,s merged), averaged over patients, with false alarms per 24\,h. A decision is made every second;
-an alarm is raised when at least $k$ of the last 10 decisions are positive; the threshold, $k$ and an artefact gate are
-chosen on pooled out-of-fold predictions. Per-patient paired Wilcoxon tests and patient-bootstrap 95\,\% intervals;
-an extension is kept only if $p < 0.05$ in its favour.
+256\,Hz and accelerometer and gyroscope at 25\,Hz. Our audit found 883 seizures (702 in the 96 training patients, 181
+in the 29 test patients). \textit{Split and tuning.} Official split: training sub-001--096, test sub-097--125. Every
+choice is made by five-fold patient-wise cross-validation inside the training patients; each final model is trained
+on all 96 and scored once per seed on the test patients. \textit{Scoring.} SzCORE event scoring \cite{dan2024szcore}
+(any overlap, 30\,s pre- and 60\,s post-ictal tolerance, events closer than 90\,s merged), averaged over patients,
+with false alarms per 24\,h. A decision is made every second; an alarm is raised when at least $k$ of the last 10
+decisions are positive. Per-patient paired Wilcoxon tests; an extension is kept only if $p < 0.05$ in its favour.
 
 \section{Method}
 \subsection{Integer multimodal front end}
-Samples arrive as int16 (0.25\,\textmu V per count). Every filter is a second-order section with coefficients rounded to
-at most five signed powers of two and second-order error feedback; without it the rounding error of the 0.5\,Hz
-high-pass exceeds the EEG itself. Every second, 2-s windows give per-channel and cross-channel EEG magnitude, line
-length, mobility, zero crossings, extrema and four band magnitudes; ECG heart rate and RR variability in the log
-domain (no division); EMG magnitude, line length, zero crossings and a band ratio; accelerometer and gyroscope
-magnitude, jerk, activity and band magnitude; per-modality presence bits; and, for most features, the difference from a
-causal 64-s moving average. On 10 training patients the integer features match a floating-point twin (median
-correlation 0.9965; LightGBM AUROC 0.736 against 0.735).
+Samples arrive as int16. Every filter is a second-order section with coefficients rounded to at most five signed
+powers of two and second-order error feedback. Every second, 2-s windows give per-channel and cross-channel EEG
+magnitude, line length, mobility, zero crossings, extrema and band magnitudes; ECG heart rate and RR variability in
+the log domain; EMG magnitude, line length, zero crossings and a band ratio; accelerometer and gyroscope magnitude,
+jerk, activity and band magnitude; presence bits; and, for most features, the difference from a causal 64-s average:
+117 features without a multiplier or divider.
 
 \subsection{Thermometer encoding and DWN}
-Each of the 40 selected features is compared against 8 thresholds at training quantiles, $b_{f,i} = [x_f > t_{f,i}]$.
-A layer of 50 LUT6 neurons reads these bits through a learnable mapping and is trained with extended finite differences
-\cite{bacellar2024dwn}; the score is the popcount of the seizure group minus that of the background group. Features are
-ranked inside each training set by the gain of a LightGBM model; this replaced mutual information after an
-interpretability study showed that mutual information ignored the heart-rate features (event-F1 0.148 $\to$ 0.208,
-$p = 0.047$). Estimated cost: about 850 LUTs of comparators, 50 network LUTs, 57 popcount and 12 post-processing LUTs.
+Each of the 40 selected features (gain ranking of a LightGBM model inside each training set) is compared with 8
+thresholds at training quantiles, $b_{f,i} = [x_f > t_{f,i}]$. A layer of 50 LUT6 neurons reads these bits through a
+learnable mapping and is trained with extended finite differences \cite{bacellar2024dwn}; the score is the popcount of
+the seizure group minus that of the background group. Of seven families of extensions tested on the training folds
+(stateful networks, encoders, label-free adaptation, distillation, robust losses, modality handling, interpretation),
+two were adopted: \emph{distillation} from a LightGBM teacher (soft targets, weight 0.5, temperature 2), and
+\emph{modality dropout}, which removes ECG, EMG and motion independently with probability 0.2 per training window.
 
-\subsection{Extensions and modality dropout}
-We tested seven families of extensions against this base: a stateful network with 16 state bits fed back each second
-and stacked windows (N1), encoder designs (N2), label-free per-patient threshold adaptation (N3), distillation from
-LightGBM and teacher-guided hard negatives (N4), focal, noise-robust and multiple-instance losses and onset weighting
-(N5), modality dropout, reliability-gated and late fusion (N6), and alarm interpretation (N7). Two were adopted.
-\emph{Distillation}: a LightGBM teacher trained on the same windows provides soft targets (weight 0.5, temperature 2).
-\emph{Modality dropout}: during training, ECG, EMG and motion are each removed independently with probability 0.2 per
-window, exactly as when the sensor is absent (features and presence bits set to zero).
+\subsection{Post-ictal verification}
+Stage 1 is the final DWN at a sensitive threshold ($-7$, $k = 10$). Every candidate alarm is checked 96\,s later by a
+second 50-LUT DWN on the 24 most informative of 101 statistics: 16-s ictal and 64-s post-ictal means of 45 features,
+their changes from the preceding 128\,s, the stage-1 score and the candidate's duration. All windows are powers of two,
+so every mean is a sum and a shift. The settings were chosen on the training folds and pre-registered before a single
+test evaluation.
+
+\subsection{Self-testing}\label{sec:selftest}
+\textit{Fault model.} The fabric classifier is 146 comparators, 50 LUT6 and an adder tree. We enumerate every single
+fault in the part that the network adds: each of the $50 \times 64 = 3{,}200$ truth-table bits flipped (an upset in
+configuration memory), and each comparator output and LUT output stuck at 0 or 1 ($292 + 100$), 3,592 faults in all.
+\textit{Relevance.} Each fault is applied to all 31.4 million windows (8,714\,h) of the 96 training patients. A
+truth-table flip at LUT $j$, entry $a$ changes the score by $\pm 1$ exactly on the windows that address $(j, a)$, so its
+effect is computed in one pass; stuck-at faults are recomputed per window. A fault is \emph{decision-relevant} if it
+changes at least one decision at the operating threshold, and \emph{alarm-relevant} if it changes an alarm.
+\textit{Vector selection.} A test vector detects a fault when the faulty score differs from the golden one. Since every
+window addresses exactly one entry per LUT, at least 64 vectors are needed when a LUT uses all its entries; we cover the
+addressed entries rarest first, each time taking, among the training windows that address the entry, the one that
+covers most uncovered entries, then add windows for stuck-at faults still undetected. \textit{Hardware.} The built-in
+self-test (BIST) streams the vectors from block RAM at one per clock and compares score, decision and alarm in the
+fabric; fault-injection registers force any comparator or LUT output or flip any truth-table entry, so the coverage can
+be measured on the device.
 
 \section{Results}
 \subsection{Baseline reproduction}
-On the 29 test patients, our PyTorch port of ChronoNet with the released protocol detects 74.5\,\% of seizures at 22.6
-false alarms per hour (published: 84.2\,\% at 100.5) with AUROC 0.741 (0.792); the per-recording AUPR (0.109)
-matches the published 0.104. The released code selects the training epoch on the test patients; a clean run (last
-epoch) gives 67.1\,\% at 11.9 false alarms per hour, and under SzCORE an event-F1 of 0.027 at 106 false alarms per day.
-The clean run is our ChronoNet reference.
+On the 29 test patients our port of ChronoNet with the released protocol detects 74.5\,\% of seizures at 22.6 false
+alarms per hour (published: 84.2\,\% at 100.5) and matches the published per-recording AUPR (0.109 against 0.104). The
+released code selects the training epoch on the test patients; a clean run (last epoch) gives 67.1\,\% at 11.9 false
+alarms per hour, and an event-F1 of 0.027 at 106 false alarms per day. The clean run is our ChronoNet reference.
 
-\subsection{Model comparison (training patients)}
-Table~\ref{tab:cv} compares the model families on cross-validation. The DWN is the most compact model, with one of the
-lowest false-alarm rates, and beats the INT8 MLP on every metric; it remains below gradient-boosted trees (per-patient
-event-F1 against LightGBM, $p = 0.004$). Between 50 and 200 LUTs, size did not change event-F1 significantly; four
-thresholds per feature were worst at every size.
+\subsection{Model comparison and missing sensors}
+Table~\ref{tab:cv} compares the model families on cross-validation. The DWN is the most compact model, with one of
+the lowest false-alarm rates, and beats the INT8 MLP on every metric; it remains below gradient-boosted trees
+($p = 0.004$ against LightGBM). Distillation cut false alarms from 2.4 to 0.9 per day ($p = 3\times10^{-7}$) at a
+slightly higher event-F1 (0.229, $p = 0.26$) and became the final model. The base loses most of its accuracy without
+ECG (event-F1 0.092); modality dropout keeps it working (0.172, $p = 0.005$; without motion 0.192 against 0.136,
+$p = 0.021$). Out of fold, the base detects 88\,\% of focal to bilateral tonic-clonic seizures but 17\,\% of focal
+impaired-awareness ones.
 
 \begin{table}[t]\centering
 \caption{Five-fold cross-validation on the 96 training patients (SzCORE, mean over patients; best-F1 operating point;
-hardware cost estimated).}\label{tab:cv}
+estimated hardware cost).}\label{tab:cv}
 \resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrr}\toprule
 Model & AUROC & F1 & Sens & FA/24h & Cost \\ \midrule
 LightGBM & 0.870 & 0.292 & 0.327 & 3.6 & $\approx$30.6k LUTs \\
 CatBoost & 0.863 & 0.286 & 0.337 & 3.0 & $\approx$27.7k LUTs \\
-XGBoost & 0.867 & 0.277 & 0.286 & 3.4 & $\approx$47.9k LUTs \\
 TreeLUT (5-bit leaves) & 0.857 & 0.266 & 0.329 & 4.2 & $\approx$6.4k LUTs \\
 \textbf{DWN, 50 LUT6} & 0.840 & 0.211 & 0.315 & 2.4 & $\approx$960 LUTs \\
 DWN + distillation (final) & 0.851 & 0.229 & 0.267 & 0.9 & $\approx$870 LUTs \\
@@ -145,131 +160,120 @@ DWN + modality dropout & 0.849 & 0.188 & 0.275 & 1.9 & $\approx$945 LUTs \\
 Random forest & 0.852 & 0.198 & 0.216 & 0.5 & $\approx$323k LUTs \\
 Logic-gate network & 0.843 & 0.171 & 0.330 & 4.9 & $\approx$7.5k LUTs \\
 INT8 MLP & 0.830 & 0.147 & 0.225 & 7.8 & 9,600 mult. \\
-Logistic regression & 0.806 & 0.105 & 0.216 & 8.8 & 117 mult. \\
 \bottomrule\end{tabular}}
 \end{table}
 
-\begin{figure}[t]\centering
-\includegraphics[width=\columnwidth]{figures/pareto_inner_cv.pdf}
-\caption{Event-F1 against estimated LUTs on the training folds, with the Pareto front.}\label{fig:pareto}
-\end{figure}
-
-\subsection{Extensions and missing sensors}
-None of the N1, N3 and N5 extensions improved event-F1 (Table~\ref{tab:ablation}); the stateful network and onset
-weighting cut false alarms ($p = 0.013$, $p = 0.014$) at lower sensitivity, and the focal and noise-robust losses were
-significantly worse. The base loses most of its accuracy without ECG or motion (Table~\ref{tab:missing}). Modality
-dropout keeps it working: without ECG its event-F1 is 0.172 against 0.092 for the base ($p = 0.005$), without motion
-0.192 against 0.136 ($p = 0.021$), at no significant cost when every sensor is present ($p = 0.23$). Late fusion, one
-small DWN per modality, collapsed whenever a modality was missing.
-Distillation from LightGBM cut false alarms from 2.4 to 0.9 per day ($p = 3\times10^{-7}$) with a slightly higher
-event-F1 (0.229, $p = 0.26$) and became the final model; teacher-guided hard negatives and the encoder variants
-(uniform, Gaussian and learned thresholds) were not better. Combining distillation with modality dropout was
-significantly worse with all sensors present than distillation alone ($p = 0.030$), so the two are evaluated as
-separate models.
-
-\input{tables/m5_ablation}
-
-\begin{table}[t]\centering
-\caption{Event-F1 with sensors removed at test time (training folds, each model at its own operating point).}\label{tab:missing}
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{lrrrrr}\toprule
-Model & intact & no ECG & no EMG & no motion & EEG only \\ \midrule
-DWN base & 0.211 & 0.092 & 0.199 & 0.136 & 0.074 \\
-+ modality dropout & 0.188 & 0.172 & 0.190 & 0.192 & 0.112 \\
-late fusion & 0.134 & 0.070 & 0.012 & 0.056 & 0.000 \\
-\bottomrule\end{tabular}
-\end{table}
-
-\subsection{Seizure types}
-Out of fold, the base detects 29 of 33 focal to bilateral tonic-clonic seizures (88\,\%), but 17\,\% of focal impaired
-awareness, 9\,\% of focal aware and 8\,\% of focal seizures with unknown awareness.
-
 \subsection{Held-out test patients}
-The design was frozen before any of our models was scored on a test patient. Table~\ref{tab:test} gives the result.
-The final DWN reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per day, above its cross-validation value
-(0.229): the improvement from distillation holds on unseen patients (base DWN 0.172). It is above TreeLUT (0.233) at a
-seventh of the LUTs, above the logic-gate network (0.191) and the INT8 MLP (0.155), level with random forest (0.246) and CatBoost (0.254), and below
-LightGBM (0.308, $p = 0.039$ per patient). Against clean ChronoNet (event-F1 0.027, 106 false alarms per day) it is
-better per patient ($p = 0.027$): ChronoNet detects more seizures (79\,\%) but raises over a hundred times more false
-alarms. With the dataset paper's own metrics at a matched false-alarm rate, the final DWN detects 43.2\,\% of
-seizures at 1.24 false alarms per hour, against 34.8\,\% for ChronoNet at 1.26 per hour (a threshold read from its
-own test curve, which favours it), and its pooled window AUROC is 0.883 against 0.746. The modality-dropout variant
-reaches 0.242 with 0.4 false alarms per day.
+The design was frozen before any of our models was scored on a test patient (Table~\ref{tab:test}). The final DWN
+reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per day, above its cross-validation value: the gain
+from distillation holds on unseen patients (base 0.172). It is above TreeLUT (0.233) at a seventh of the LUTs, above
+the logic-gate network (0.191) and the INT8 MLP (0.155), level with random forest and CatBoost, and below LightGBM
+(0.308, $p = 0.039$). Against clean ChronoNet it is better per patient ($p = 0.027$): ChronoNet detects more seizures
+(79\,\%) but raises over a hundred times more false alarms.
 
 \input{tables/final_test}
 
 \subsection{Comparison with the dataset paper}
-Fig.~\ref{fig:sensfa} places the frozen models on the dataset paper's sensitivity--false-alarm plane. Between 0.02 and
-10 false alarms per hour the final DWN detects more seizures than ChronoNet at every rate and stays level with
-LightGBM and TreeLUT; at the SVM's 11 false alarms per hour its curve reaches 69.7\,\% (published SVM: 71.1\,\%;
-read from the test curve, hence optimistic). As a secondary analysis decided after the final test, we added a
-post-ictal verification stage: the DWN runs at a sensitive threshold, and 96\,s after each candidate alarm a second
-50-LUT DWN compares 16-s ictal and 64-s post-ictal windows of 45 features with the preceding 128\,s and confirms or
-rejects it. All its settings were chosen on the training folds (81.9\,\% at 9.6 false alarms per hour out of fold) and
-committed before a single test evaluation, which gave $73.3 \pm 1.4$\,\% at $10.9 \pm 0.6$ false alarms per hour
-over five seeds (all seeds above 71.1\,\%; two of five above 11.0 false alarms per hour). Verification adds 3.6--6.5
-points over the DWN alone at the same rate; it suits seizure logging rather than instant alarms, and like the paper's
-baselines this is a high-false-alarm regime (event-F1 0.027).
+Fig.~\ref{fig:sensfa} uses the dataset paper's metrics (any-overlap sensitivity and false alarms per hour). At a
+matched 1.2 false alarms per hour the final DWN detects 43.2\,\% of seizures against 34.8\,\% for ChronoNet, and its
+window AUROC is 0.883 against 0.746. The pre-registered two-stage detector reaches $73.3 \pm 1.4$\,\% at
+$10.9 \pm 0.6$ false alarms per hour over five seeds (training folds: 81.9\,\% at 9.6), against 71.1\,\% at 11.0 for
+the published SVM; verification adds 3.6--6.5 points over the DWN alone at the same rate. This analysis was added
+after the final test and is a second look at the same patients; it suits seizure logging (96-s decision delay)
+rather than instant alarms.
 
 \begin{figure}[t]\centering
 \includegraphics[width=\columnwidth]{figures/sens_fa_test.pdf}
-\caption{Seizures detected against false alarms per hour on the 29 test patients (the dataset paper's metrics).
-Curves: threshold sweeps of the frozen models (mean of 5 seeds); dots: operating points chosen on the training folds;
-stars: two-stage detector with post-ictal verification (pre-registered); open markers: published values.}\label{fig:sensfa}
+\caption{Seizures detected against false alarms per hour on the 29 test patients (dataset paper's metrics). Curves:
+threshold sweeps of the frozen models (mean of 5 seeds); dots: operating points chosen on the training folds; stars:
+two-stage detector with post-ictal verification (pre-registered); open markers: published values.}\label{fig:sensfa}
 \end{figure}
 
-\section{Hardware}
-\textit{Partitioning.} On a Kria KV260 (Zynq UltraScale+ XCK26), the integer front end runs in C on the Arm Cortex-A53
-cores and the classifier runs in the fabric behind an AXI4-Lite interface at 100\,MHz (Fig.~\ref{fig:hw}): feature
-registers, a commit register, the frozen operating point and a second, programmable one, counters, and a built-in
-self-test that streams 1,024 golden vectors from block RAM at one window per clock and checks every output in hardware.
-\textit{Verification.} The C front end reproduces all 117 integer features and both artefact flags of all
-431,960 windows of the 10 exported test recordings exactly. The classifier, driven through its AXI4-Lite registers
-exactly as the board software drives it, reproduces score, decision and alarm on all 431,960 windows at three
-operating points (Verilator; deliberately corrupted vectors are caught); latency is 3 cycles and the self-test runs
-1,024 windows in 1,028 cycles. \textit{Cost.} Table~\ref{tab:hw} gives synthesis results for the three LUT-native
-models, each generated from its frozen final model, checked bit-exact against it in simulation, and synthesised by
-the same flow. The DWN needs 405 LUTs, 6.7 times fewer than TreeLUT and 14.2 times fewer than the
-logic-gate network; the analytical estimates used in Table~\ref{tab:cv} were conservative for all three
-(895, 6,330 and 7,452 LUTs), so the ranking holds. \PHASETWO{Vivado post-implementation utilisation, maximum frequency and power of the three
-models and of the KV260 design; on-board bit-exact replay, latency and the SOM power measured with the INA260 monitor;
-front-end time per hour of signal on the Cortex-A53.}
+\subsection{Hardware cost}
+Table~\ref{tab:hw} gives synthesis results (Zynq UltraScale+, Yosys \texttt{synth\_xilinx}, the same script for all,
+each model generated from its frozen final model and checked bit-exact against it in simulation). The DWN needs 405
+LUTs, 6.7 times fewer than TreeLUT and 14.2 times fewer than the logic-gate network, with no DSP or block RAM. The
+post-ictal verifier, with 24-bit comparators on window sums, needs 799 LUTs; integer and floating-point verifiers agree
+on 99.998\,\% of the 118,975 training candidates. The complete two-stage detector thus costs 1,204 LUTs and
+no multiplier. The fault-injection and debug logic, present only in
+test builds, adds 298 LUTs. \PHASETWO{Vivado post-implementation utilisation, timing and power of the KV260 design.}
 
 \begin{table}[t]\centering
-\caption{Synthesised cost of the LUT-native classifiers (Zynq UltraScale+; Yosys \texttt{synth\_xilinx}, the same
-script for all three; each includes input registers, comparators, model logic, score, decision and the 10-s alarm).}\label{tab:hw}
+\caption{Synthesised cost of the LUT-native classifiers (Yosys, Zynq UltraScale+; input registers, comparators,
+network, score, decision and alarm logic).}\label{tab:hw}
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lrrrr}\toprule
-Model & LUTs & FFs & DSP & Event-F1 (test) \\ \midrule
+Model & LUTs & FFs & DSP & Test F1 \\ \midrule
 \textbf{DWN + distillation (ours)} & \textbf{405} & 454 & 0 & 0.248 \\
 TreeLUT (5-bit leaves) & 2,721 & 1,455 & 0 & 0.233 \\
-Logic-gate network & 5,758 & 2,200 & 0 & 0.191 \\
+Logic-gate network & 5,758 & 2,200 & 0 & 0.191 \\ \midrule
+Post-ictal verifier (stage 2) & 799 & 637 & 0 & -- \\
+\textbf{Two-stage detector} & \textbf{1,204} & 1,091 & 0 & -- \\
 \bottomrule\end{tabular}
 \end{table}
 
+\subsection{Faults and self-test}
+Of the 3,592 single faults, 3,142 change at least one score on the training data; 450 truth-table entries (14\,\%)
+are never addressed in 8,714 hours, so a flip there is harmless on such data. At the frozen threshold 2,890 faults are
+decision-relevant and 2,063 alarm-relevant (3,101 decision-relevant at the sensitive threshold). Single faults are
+mostly mild but not negligible: the worst truth-table flip changes 0.12\,\% of all decisions at the frozen threshold
+and the worst stuck-at fault 0.69\,\%; at the sensitive threshold a single stuck-at fault changes 16.3\,\%.
+
+\input{tables/fault}
+
+Table~\ref{tab:fault} and Fig.~\ref{fig:fault} show how many decision-relevant faults a BIST detects. Stuck-at faults on
+wires are easy: almost any data exercises them. The hard faults are flips of truth-table entries that the data rarely
+address, exactly the configuration-memory upsets of an FPGA. 1,024
+consecutive windows of one recording around a seizure, the natural choice of a golden test, detect 50.7\,\% (58.9\,\%
+of the alarm-relevant ones, and 43.6\,\% of the decision-relevant truth-table flips): consecutive windows revisit the
+same entries. 1,024 random training windows
+reach 82.2\,\%. The 255 coverage-selected windows detect all observable faults, decision- and alarm-relevant at every
+operating point. They now open the BIST ROM, which runs 1,024 vectors in 1,028 cycles (10.3\,\textmu s at 100\,MHz),
+so the device can test itself after every one-second window at a duty cycle of 0.001\,\%. In simulation, each of the
+3,592 faults injected through the fault registers gives exactly the BIST error count and first failing vector that
+the software model predicts. \PHASETWO{the same campaign on the KV260: faults injected, detected, hardware/software
+mismatches, time per fault.}
+
 \begin{figure}[t]\centering
-\fbox{\parbox{0.95\columnwidth}{\centering\small
-Sensors $\rightarrow$ int16 samples $\rightarrow$ \textbf{Arm A53}: integer front end (C, 117 features)
-$\rightarrow$ AXI4-Lite $\rightarrow$ \textbf{fabric}: 146 comparators $\rightarrow$ 50 LUT6 $\rightarrow$ popcount
-$\rightarrow$ score, decision, $k$-of-10 alarm (+ programmable operating point, BIST)}}
-\caption{SeizeLUT on the Kria KV260.}\label{fig:hw}
+\includegraphics[width=\columnwidth]{figures/fault_coverage.pdf}
+\caption{Decision-relevant single faults (frozen threshold, training data) detected by the first $m$ BIST vectors.}
+\label{fig:fault}
 \end{figure}
+
+\subsection{KV260 implementation}
+\begin{figure}[t]\centering
+\resizebox{\columnwidth}{!}{\input{figures/arch.tex}}
+\caption{SeizeLUT on the Kria KV260. The fault-injection registers and the self-test let the device check that the
+fabric still computes the validated classifier.}\label{fig:arch}
+\end{figure}
+On a Kria KV260 (Zynq UltraScale+ XCK26, Fig.~\ref{fig:arch}) the integer front end runs in C on the Arm Cortex-A53 cores and the
+classifier runs in the fabric behind an AXI4-Lite interface at 100\,MHz, with a frozen and a programmable operating
+point, read-back of the 146 comparator bits and 50 LUT outputs, the BIST and fault injection. Verification before the
+board: the C front end, batch and second by second, reproduces all 117 features and both artefact flags of all
+431,960 windows of the 10 exported test recordings exactly; the core, driven through its registers as the board
+software drives it, reproduces score, decision, alarm, comparator bits and LUT outputs on all 431,960 windows at two
+operating points (863,920 window checks, Verilator), with a latency of 3 cycles. \PHASETWO{on-board replay of the
+431,960 windows, measured latency and throughput, front-end time per hour of signal on the A53, SOM power from the
+INA260 monitor.}
 
 \section{Discussion and Limitations}
 Accuracy per LUT favours the DWN by a wide margin, and the thermometer encoder, not the network, dominates its cost,
-as also measured by \cite{mecik2025thermo}. Focal seizures remain mostly undetected, consistent with the clinical evidence that wearable detection is
-established only for tonic-clonic seizures \cite{beniczky2021guideline}. Results come from retrospective recordings of one dataset, and the public release has no centre or age labels, so
-no centre or age breakdown is possible. The post-ictal analysis was added after the final test; it was pre-registered
-on the training folds, but it is a second look at the same test patients.
+as also measured by \cite{mecik2025thermo}; it also dominates the verifier's cost through its wide comparators.
+Self-testing is cheap for LUT networks because their fault space is small and their behaviour is exactly computable,
+which a weighted network with thousands of multipliers does not offer. The analysis covers single faults in the
+network part (comparator outputs, truth tables, LUT outputs), not the adder tree, the AXI logic or the comparator
+constants, and relevance is measured on training data. Focal seizures remain mostly undetected, consistent with the
+clinical evidence \cite{beniczky2021guideline}. Results come from retrospective recordings of one dataset.
 
 \section{Conclusion}
-A 50-LUT weightless network on integer multimodal features detects seizures across patients with no multipliers in
-405 synthesised LUTs. On 29 held-out patients it reaches an event-F1 of 0.248 with 0.8 false alarms per day,
-above a published deep-learning baseline and TreeLUT and level with random forests; distillation and modality dropout
-address false alarms and missing sensors.
+A 50-LUT weightless network on integer multimodal features detects seizures across patients without multipliers in
+405 LUTs, reaching an event-F1 of 0.248 with 0.8 false alarms per day on 29 held-out patients, and a two-stage
+version in 1,204 LUTs detects more seizures than the dataset paper's SVM. Its truth tables make complete fault
+analysis possible: 255 selected self-test vectors detect every single fault that changes a decision, and the device can run them after every window.
 
 \section*{Reproducibility}
-Code, configurations, decision log, export packages and the Verilog generator are released with the paper. Dataset:
-SeizeIT2, DOI 10.18112/openneuro.ds005873.v1.1.0.
+Code, configurations, decision log, export packages, the Verilog generator, the KV260 kit and the fault list are
+released with the paper. Dataset: SeizeIT2, DOI 10.18112/openneuro.ds005873.v1.1.0.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}

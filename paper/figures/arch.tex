@@ -1,0 +1,30 @@
+% SeizeLUT on the KV260: processing system (Arm) and programmable logic (fabric)
+\begin{tikzpicture}[font=\scriptsize, >=stealth,
+  blk/.style={draw, rounded corners=1.5pt, align=center, minimum height=5.2mm, inner sep=1.6pt, fill=white},
+  grp/.style={draw, dashed, rounded corners=3pt, inner sep=3pt}]
+  % Arm side
+  \node[blk] (sens) at (0,0) {bte-EEG$\times$2, ECG,\\EMG, ACC, GYR};
+  \node[blk, right=3mm of sens] (fe) {integer front end (C)\\SPT biquads, R-peaks,\\117 features / s};
+  \node[blk, right=3mm of fe] (drv) {driver\\38 features\\$\to$ AXI4-Lite};
+  \node[grp, fit=(fe)(drv), label={[font=\scriptsize\bfseries]above:Arm Cortex-A53 (PS)}] (ps) {};
+  % fabric
+  \node[blk, below=7mm of fe.south west, anchor=north west, xshift=-12mm] (cmp) {146\\comparators};
+  \node[blk, right=2.5mm of cmp] (lut) {50 LUT6\\(DWN)};
+  \node[blk, right=2.5mm of lut] (pop) {popcount\\score};
+  \node[blk, right=2.5mm of pop] (alm) {decision,\\$k$-of-10 alarm};
+  \node[blk, below=3.5mm of cmp] (rom) {BIST ROM\\255 + 769 vectors};
+  \node[blk, below=3.5mm of lut, xshift=5mm] (fi) {fault injection\\(stuck-at, TT flip)};
+  \node[blk, below=3.5mm of alm] (chk) {BIST check: score,\\decision, alarm};
+  \node[blk, right=2.5mm of alm] (io) {PMOD LEDs,\\buzzer, button};
+  \node[grp, fit=(cmp)(alm)(rom)(io), label={[font=\scriptsize\bfseries]below:programmable logic, 100 MHz, 3-cycle latency}] (pl) {};
+  \draw[->] (sens) -- (fe);
+  \draw[->] (fe) -- (drv);
+  \draw[->] (drv.south) |- ++(0,-2.2mm) -| (cmp.north);
+  \draw[->] (cmp) -- (lut);
+  \draw[->] (lut) -- (pop);
+  \draw[->] (pop) -- (alm);
+  \draw[->] (rom.north) -- (cmp.south);
+  \draw[->] (fi.north -| lut.south) -- (lut.south);
+  \draw[->] (alm.south) -- (chk.north);
+  \draw[->] (alm.east) -- (io.west);
+\end{tikzpicture}

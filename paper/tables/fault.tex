@@ -1,0 +1,10 @@
+\begin{table}[t]\centering
+\caption{Single faults of the fabric classifier on the 96 training patients (8,714\,h; frozen threshold) and the decision-relevant faults detected (\%) by three BIST vector sets: 1,024 consecutive windows of one recording, 1,024 random training windows and the 255 coverage-selected windows.}\label{tab:fault}
+\setlength{\tabcolsep}{2.6pt}\resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrrrr}\toprule
+Fault & All & Obs. & Dec. & Alarm & Consec. & Random & \textbf{Selected} \\ \midrule
+truth-table bit flipped & 3,200 & 2,750 & 2,498 & 1,674 & 43.6 & 79.4 & \textbf{100.0} \\
+comparator output stuck at 0/1 & 292 & 292 & 292 & 289 & 94.5 & 100.0 & \textbf{100.0} \\
+LUT output stuck at 0/1 & 100 & 100 & 100 & 100 & 100.0 & 100.0 & \textbf{100.0} \\
+\midrule
+\textbf{all} & 3,592 & 3,142 & 2,890 & 2,063 & 50.7 & 82.2 & \textbf{100.0} \\
+\bottomrule\end{tabular}}\end{table}

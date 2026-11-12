@@ -1,0 +1,20 @@
+{
+ "tool": "Yosys (yowasp-yosys), read_verilog; synth_xilinx -family xcup -flatten -abc9; stat",
+ "plain_classifier": {
+  "module": "lutnet_classifier_plain",
+  "luts": 405,
+  "ffs": 454,
+  "carry4": 3
+ },
+ "with_fault_injection_and_debug_taps": {
+  "module": "lutnet_classifier (kit v5)",
+  "luts": 703,
+  "ffs": 600,
+  "carry4": 3
+ },
+ "overhead": {
+  "luts": 298,
+  "ffs": 146
+ },
+ "note": "fault-injection masks are module inputs here (registers in the AXI wrapper); test builds only"
+}
