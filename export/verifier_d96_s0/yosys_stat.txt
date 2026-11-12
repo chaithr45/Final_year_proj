@@ -1,0 +1,26 @@
+
+3. Printing statistics.
+
+=== verifier_classifier ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2315 wires
+     4156 wire bits
+       15 public wires
+     1221 public wire bits
+        9 ports
+      590 port bits
+     2180 cells
+        1   BUFG
+      128   CARRY4
+      637   FDRE
+      581   IBUF
+       25   INV
+      215   LUT2
+       77   LUT3
+      134   LUT4
+      203   LUT5
+      170   LUT6
+        9   OBUF
+

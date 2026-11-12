@@ -1,0 +1,16 @@
+{
+ "groups": {
+  "background": [
+   0,
+   25
+  ],
+  "seizure": [
+   25,
+   50
+  ]
+ },
+ "decision_threshold": -10,
+ "artefact_gate": "none",
+ "k": 1,
+ "n": 2
+}

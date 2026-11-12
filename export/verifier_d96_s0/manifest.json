@@ -1,0 +1,32 @@
+{
+ "model_type": "dwn verifier",
+ "variant": "d96",
+ "th2": -10.0,
+ "inputs": [
+  "v0_s1_during_mean",
+  "v1_eeg_delta_max:during",
+  "v2_eeg_delta_mean:after-before",
+  "v3_s1_after_mean",
+  "v4_dur_capped",
+  "v5_n_prev_10min",
+  "v6_ecg_log_rr:during-before",
+  "v7_eeg_sign_agree:during",
+  "v8_eeg_mob_absdiff:after-before",
+  "v9_eeg_sign_agree:after",
+  "v10_eeg_delta_absdiff:after",
+  "v11_mov_gyr_jerk:after",
+  "v12_s1_during_max",
+  "v13_mov_acc_jerk:after-before",
+  "v14_eeg_theta_max:during-before",
+  "v15_eeg_hf_max:during",
+  "v16_emg_ll:during-before",
+  "v17_ecg_log_masrd:during-before",
+  "v18_eeg_beta_max:during-before",
+  "v19_ecg_log_rr:after-before",
+  "v20_eeg_hf_mean:after-before",
+  "v21_emg_hl_ratio:after-before",
+  "v22_eeg_sign_agree:during-before",
+  "v23_eeg_mav_absdiff:after"
+ ],
+ "scale": 128
+}

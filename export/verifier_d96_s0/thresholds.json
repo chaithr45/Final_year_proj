@@ -1,0 +1,931 @@
+{
+ "features": [
+  {
+   "name": "v0_s1_during_mean",
+   "column": 0,
+   "width_bits": 24,
+   "thresholds": [
+    -912,
+    -600,
+    -464,
+    -320,
+    104
+   ]
+  },
+  {
+   "name": "v1_eeg_delta_max:during",
+   "column": 1,
+   "width_bits": 24,
+   "thresholds": [
+    14288,
+    14584,
+    14840,
+    15136,
+    15504,
+    16800
+   ]
+  },
+  {
+   "name": "v2_eeg_delta_mean:after-before",
+   "column": 2,
+   "width_bits": 24,
+   "thresholds": [
+    -288,
+    59,
+    176,
+    790
+   ]
+  },
+  {
+   "name": "v3_s1_after_mean",
+   "column": 3,
+   "width_bits": 24,
+   "thresholds": [
+    -1806,
+    -1438,
+    -958,
+    -782,
+    -620,
+    -450,
+    -224
+   ]
+  },
+  {
+   "name": "v4_dur_capped",
+   "column": 4,
+   "width_bits": 24,
+   "thresholds": [
+    128,
+    896,
+    1408,
+    2048,
+    3456
+   ]
+  },
+  {
+   "name": "v5_n_prev_10min",
+   "column": 5,
+   "width_bits": 24,
+   "thresholds": [
+    128,
+    384,
+    512,
+    768,
+    1024,
+    1280,
+    1792
+   ]
+  },
+  {
+   "name": "v6_ecg_log_rr:during-before",
+   "column": 6,
+   "width_bits": 24,
+   "thresholds": [
+    -264,
+    -135,
+    -55,
+    -2,
+    0,
+    50
+   ]
+  },
+  {
+   "name": "v7_eeg_sign_agree:during",
+   "column": 7,
+   "width_bits": 24,
+   "thresholds": [
+    34952,
+    38848
+   ]
+  },
+  {
+   "name": "v8_eeg_mob_absdiff:after-before",
+   "column": 8,
+   "width_bits": 24,
+   "thresholds": [
+    -55,
+    -18,
+    53,
+    112
+   ]
+  },
+  {
+   "name": "v9_eeg_sign_agree:after",
+   "column": 9,
+   "width_bits": 24,
+   "thresholds": [
+    33466,
+    35202,
+    36944,
+    38746,
+    42734,
+    46586
+   ]
+  },
+  {
+   "name": "v10_eeg_delta_absdiff:after",
+   "column": 10,
+   "width_bits": 24,
+   "thresholds": [
+    394,
+    536,
+    658,
+    780,
+    1342,
+    2046
+   ]
+  },
+  {
+   "name": "v11_mov_gyr_jerk:after",
+   "column": 11,
+   "width_bits": 24,
+   "thresholds": [
+    5064,
+    7678,
+    8540,
+    9192,
+    9764,
+    10348,
+    11010,
+    11842
+   ]
+  },
+  {
+   "name": "v12_s1_during_max",
+   "column": 12,
+   "width_bits": 24,
+   "thresholds": [
+    512,
+    640,
+    896,
+    1152
+   ]
+  },
+  {
+   "name": "v13_mov_acc_jerk:after-before",
+   "column": 13,
+   "width_bits": 24,
+   "thresholds": [
+    -183,
+    54,
+    266,
+    573,
+    1178
+   ]
+  },
+  {
+   "name": "v14_eeg_theta_max:during-before",
+   "column": 14,
+   "width_bits": 24,
+   "thresholds": [
+    214,
+    376,
+    628
+   ]
+  },
+  {
+   "name": "v15_eeg_hf_max:during",
+   "column": 15,
+   "width_bits": 24,
+   "thresholds": [
+    13224,
+    13664,
+    14056,
+    14384,
+    14664,
+    14992,
+    15416,
+    16296
+   ]
+  },
+  {
+   "name": "v16_emg_ll:during-before",
+   "column": 16,
+   "width_bits": 24,
+   "thresholds": [
+    -317,
+    -5,
+    90,
+    291,
+    1426
+   ]
+  },
+  {
+   "name": "v17_ecg_log_masrd:during-before",
+   "column": 17,
+   "width_bits": 24,
+   "thresholds": [
+    -341,
+    0,
+    296,
+    594,
+    1196
+   ]
+  },
+  {
+   "name": "v18_eeg_beta_max:during-before",
+   "column": 18,
+   "width_bits": 24,
+   "thresholds": [
+    -109,
+    10,
+    282,
+    489,
+    1228
+   ]
+  },
+  {
+   "name": "v19_ecg_log_rr:after-before",
+   "column": 19,
+   "width_bits": 24,
+   "thresholds": [
+    -349,
+    -126,
+    0,
+    86
+   ]
+  },
+  {
+   "name": "v20_eeg_hf_mean:after-before",
+   "column": 20,
+   "width_bits": 24,
+   "thresholds": [
+    -599,
+    -113,
+    95,
+    242
+   ]
+  },
+  {
+   "name": "v21_emg_hl_ratio:after-before",
+   "column": 21,
+   "width_bits": 24,
+   "thresholds": [
+    -103,
+    41,
+    94,
+    188
+   ]
+  },
+  {
+   "name": "v22_eeg_sign_agree:during-before",
+   "column": 22,
+   "width_bits": 24,
+   "thresholds": [
+    -4418,
+    -2441,
+    -1276,
+    -361,
+    453,
+    2544
+   ]
+  },
+  {
+   "name": "v23_eeg_mav_absdiff:after",
+   "column": 23,
+   "width_bits": 24,
+   "thresholds": [
+    332,
+    476,
+    602,
+    724,
+    1022,
+    1258,
+    1868
+   ]
+  }
+ ],
+ "input_bits": [
+  {
+   "bit": 0,
+   "feature": "v0_s1_during_mean",
+   "threshold": -912
+  },
+  {
+   "bit": 1,
+   "feature": "v0_s1_during_mean",
+   "threshold": -600
+  },
+  {
+   "bit": 2,
+   "feature": "v0_s1_during_mean",
+   "threshold": -464
+  },
+  {
+   "bit": 3,
+   "feature": "v0_s1_during_mean",
+   "threshold": -320
+  },
+  {
+   "bit": 4,
+   "feature": "v0_s1_during_mean",
+   "threshold": 104
+  },
+  {
+   "bit": 5,
+   "feature": "v1_eeg_delta_max:during",
+   "threshold": 14288
+  },
+  {
+   "bit": 6,
+   "feature": "v1_eeg_delta_max:during",
+   "threshold": 14584
+  },
+  {
+   "bit": 7,
+   "feature": "v1_eeg_delta_max:during",
+   "threshold": 14840
+  },
+  {
+   "bit": 8,
+   "feature": "v1_eeg_delta_max:during",
+   "threshold": 15136
+  },
+  {
+   "bit": 9,
+   "feature": "v1_eeg_delta_max:during",
+   "threshold": 15504
+  },
+  {
+   "bit": 10,
+   "feature": "v1_eeg_delta_max:during",
+   "threshold": 16800
+  },
+  {
+   "bit": 11,
+   "feature": "v2_eeg_delta_mean:after-before",
+   "threshold": -288
+  },
+  {
+   "bit": 12,
+   "feature": "v2_eeg_delta_mean:after-before",
+   "threshold": 59
+  },
+  {
+   "bit": 13,
+   "feature": "v2_eeg_delta_mean:after-before",
+   "threshold": 176
+  },
+  {
+   "bit": 14,
+   "feature": "v2_eeg_delta_mean:after-before",
+   "threshold": 790
+  },
+  {
+   "bit": 15,
+   "feature": "v3_s1_after_mean",
+   "threshold": -1806
+  },
+  {
+   "bit": 16,
+   "feature": "v3_s1_after_mean",
+   "threshold": -1438
+  },
+  {
+   "bit": 17,
+   "feature": "v3_s1_after_mean",
+   "threshold": -958
+  },
+  {
+   "bit": 18,
+   "feature": "v3_s1_after_mean",
+   "threshold": -782
+  },
+  {
+   "bit": 19,
+   "feature": "v3_s1_after_mean",
+   "threshold": -620
+  },
+  {
+   "bit": 20,
+   "feature": "v3_s1_after_mean",
+   "threshold": -450
+  },
+  {
+   "bit": 21,
+   "feature": "v3_s1_after_mean",
+   "threshold": -224
+  },
+  {
+   "bit": 22,
+   "feature": "v4_dur_capped",
+   "threshold": 128
+  },
+  {
+   "bit": 23,
+   "feature": "v4_dur_capped",
+   "threshold": 896
+  },
+  {
+   "bit": 24,
+   "feature": "v4_dur_capped",
+   "threshold": 1408
+  },
+  {
+   "bit": 25,
+   "feature": "v4_dur_capped",
+   "threshold": 2048
+  },
+  {
+   "bit": 26,
+   "feature": "v4_dur_capped",
+   "threshold": 3456
+  },
+  {
+   "bit": 27,
+   "feature": "v5_n_prev_10min",
+   "threshold": 128
+  },
+  {
+   "bit": 28,
+   "feature": "v5_n_prev_10min",
+   "threshold": 384
+  },
+  {
+   "bit": 29,
+   "feature": "v5_n_prev_10min",
+   "threshold": 512
+  },
+  {
+   "bit": 30,
+   "feature": "v5_n_prev_10min",
+   "threshold": 768
+  },
+  {
+   "bit": 31,
+   "feature": "v5_n_prev_10min",
+   "threshold": 1024
+  },
+  {
+   "bit": 32,
+   "feature": "v5_n_prev_10min",
+   "threshold": 1280
+  },
+  {
+   "bit": 33,
+   "feature": "v5_n_prev_10min",
+   "threshold": 1792
+  },
+  {
+   "bit": 34,
+   "feature": "v6_ecg_log_rr:during-before",
+   "threshold": -264
+  },
+  {
+   "bit": 35,
+   "feature": "v6_ecg_log_rr:during-before",
+   "threshold": -135
+  },
+  {
+   "bit": 36,
+   "feature": "v6_ecg_log_rr:during-before",
+   "threshold": -55
+  },
+  {
+   "bit": 37,
+   "feature": "v6_ecg_log_rr:during-before",
+   "threshold": -2
+  },
+  {
+   "bit": 38,
+   "feature": "v6_ecg_log_rr:during-before",
+   "threshold": 0
+  },
+  {
+   "bit": 39,
+   "feature": "v6_ecg_log_rr:during-before",
+   "threshold": 50
+  },
+  {
+   "bit": 40,
+   "feature": "v7_eeg_sign_agree:during",
+   "threshold": 34952
+  },
+  {
+   "bit": 41,
+   "feature": "v7_eeg_sign_agree:during",
+   "threshold": 38848
+  },
+  {
+   "bit": 42,
+   "feature": "v8_eeg_mob_absdiff:after-before",
+   "threshold": -55
+  },
+  {
+   "bit": 43,
+   "feature": "v8_eeg_mob_absdiff:after-before",
+   "threshold": -18
+  },
+  {
+   "bit": 44,
+   "feature": "v8_eeg_mob_absdiff:after-before",
+   "threshold": 53
+  },
+  {
+   "bit": 45,
+   "feature": "v8_eeg_mob_absdiff:after-before",
+   "threshold": 112
+  },
+  {
+   "bit": 46,
+   "feature": "v9_eeg_sign_agree:after",
+   "threshold": 33466
+  },
+  {
+   "bit": 47,
+   "feature": "v9_eeg_sign_agree:after",
+   "threshold": 35202
+  },
+  {
+   "bit": 48,
+   "feature": "v9_eeg_sign_agree:after",
+   "threshold": 36944
+  },
+  {
+   "bit": 49,
+   "feature": "v9_eeg_sign_agree:after",
+   "threshold": 38746
+  },
+  {
+   "bit": 50,
+   "feature": "v9_eeg_sign_agree:after",
+   "threshold": 42734
+  },
+  {
+   "bit": 51,
+   "feature": "v9_eeg_sign_agree:after",
+   "threshold": 46586
+  },
+  {
+   "bit": 52,
+   "feature": "v10_eeg_delta_absdiff:after",
+   "threshold": 394
+  },
+  {
+   "bit": 53,
+   "feature": "v10_eeg_delta_absdiff:after",
+   "threshold": 536
+  },
+  {
+   "bit": 54,
+   "feature": "v10_eeg_delta_absdiff:after",
+   "threshold": 658
+  },
+  {
+   "bit": 55,
+   "feature": "v10_eeg_delta_absdiff:after",
+   "threshold": 780
+  },
+  {
+   "bit": 56,
+   "feature": "v10_eeg_delta_absdiff:after",
+   "threshold": 1342
+  },
+  {
+   "bit": 57,
+   "feature": "v10_eeg_delta_absdiff:after",
+   "threshold": 2046
+  },
+  {
+   "bit": 58,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 5064
+  },
+  {
+   "bit": 59,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 7678
+  },
+  {
+   "bit": 60,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 8540
+  },
+  {
+   "bit": 61,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 9192
+  },
+  {
+   "bit": 62,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 9764
+  },
+  {
+   "bit": 63,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 10348
+  },
+  {
+   "bit": 64,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 11010
+  },
+  {
+   "bit": 65,
+   "feature": "v11_mov_gyr_jerk:after",
+   "threshold": 11842
+  },
+  {
+   "bit": 66,
+   "feature": "v12_s1_during_max",
+   "threshold": 512
+  },
+  {
+   "bit": 67,
+   "feature": "v12_s1_during_max",
+   "threshold": 640
+  },
+  {
+   "bit": 68,
+   "feature": "v12_s1_during_max",
+   "threshold": 896
+  },
+  {
+   "bit": 69,
+   "feature": "v12_s1_during_max",
+   "threshold": 1152
+  },
+  {
+   "bit": 70,
+   "feature": "v13_mov_acc_jerk:after-before",
+   "threshold": -183
+  },
+  {
+   "bit": 71,
+   "feature": "v13_mov_acc_jerk:after-before",
+   "threshold": 54
+  },
+  {
+   "bit": 72,
+   "feature": "v13_mov_acc_jerk:after-before",
+   "threshold": 266
+  },
+  {
+   "bit": 73,
+   "feature": "v13_mov_acc_jerk:after-before",
+   "threshold": 573
+  },
+  {
+   "bit": 74,
+   "feature": "v13_mov_acc_jerk:after-before",
+   "threshold": 1178
+  },
+  {
+   "bit": 75,
+   "feature": "v14_eeg_theta_max:during-before",
+   "threshold": 214
+  },
+  {
+   "bit": 76,
+   "feature": "v14_eeg_theta_max:during-before",
+   "threshold": 376
+  },
+  {
+   "bit": 77,
+   "feature": "v14_eeg_theta_max:during-before",
+   "threshold": 628
+  },
+  {
+   "bit": 78,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 13224
+  },
+  {
+   "bit": 79,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 13664
+  },
+  {
+   "bit": 80,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 14056
+  },
+  {
+   "bit": 81,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 14384
+  },
+  {
+   "bit": 82,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 14664
+  },
+  {
+   "bit": 83,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 14992
+  },
+  {
+   "bit": 84,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 15416
+  },
+  {
+   "bit": 85,
+   "feature": "v15_eeg_hf_max:during",
+   "threshold": 16296
+  },
+  {
+   "bit": 86,
+   "feature": "v16_emg_ll:during-before",
+   "threshold": -317
+  },
+  {
+   "bit": 87,
+   "feature": "v16_emg_ll:during-before",
+   "threshold": -5
+  },
+  {
+   "bit": 88,
+   "feature": "v16_emg_ll:during-before",
+   "threshold": 90
+  },
+  {
+   "bit": 89,
+   "feature": "v16_emg_ll:during-before",
+   "threshold": 291
+  },
+  {
+   "bit": 90,
+   "feature": "v16_emg_ll:during-before",
+   "threshold": 1426
+  },
+  {
+   "bit": 91,
+   "feature": "v17_ecg_log_masrd:during-before",
+   "threshold": -341
+  },
+  {
+   "bit": 92,
+   "feature": "v17_ecg_log_masrd:during-before",
+   "threshold": 0
+  },
+  {
+   "bit": 93,
+   "feature": "v17_ecg_log_masrd:during-before",
+   "threshold": 296
+  },
+  {
+   "bit": 94,
+   "feature": "v17_ecg_log_masrd:during-before",
+   "threshold": 594
+  },
+  {
+   "bit": 95,
+   "feature": "v17_ecg_log_masrd:during-before",
+   "threshold": 1196
+  },
+  {
+   "bit": 96,
+   "feature": "v18_eeg_beta_max:during-before",
+   "threshold": -109
+  },
+  {
+   "bit": 97,
+   "feature": "v18_eeg_beta_max:during-before",
+   "threshold": 10
+  },
+  {
+   "bit": 98,
+   "feature": "v18_eeg_beta_max:during-before",
+   "threshold": 282
+  },
+  {
+   "bit": 99,
+   "feature": "v18_eeg_beta_max:during-before",
+   "threshold": 489
+  },
+  {
+   "bit": 100,
+   "feature": "v18_eeg_beta_max:during-before",
+   "threshold": 1228
+  },
+  {
+   "bit": 101,
+   "feature": "v19_ecg_log_rr:after-before",
+   "threshold": -349
+  },
+  {
+   "bit": 102,
+   "feature": "v19_ecg_log_rr:after-before",
+   "threshold": -126
+  },
+  {
+   "bit": 103,
+   "feature": "v19_ecg_log_rr:after-before",
+   "threshold": 0
+  },
+  {
+   "bit": 104,
+   "feature": "v19_ecg_log_rr:after-before",
+   "threshold": 86
+  },
+  {
+   "bit": 105,
+   "feature": "v20_eeg_hf_mean:after-before",
+   "threshold": -599
+  },
+  {
+   "bit": 106,
+   "feature": "v20_eeg_hf_mean:after-before",
+   "threshold": -113
+  },
+  {
+   "bit": 107,
+   "feature": "v20_eeg_hf_mean:after-before",
+   "threshold": 95
+  },
+  {
+   "bit": 108,
+   "feature": "v20_eeg_hf_mean:after-before",
+   "threshold": 242
+  },
+  {
+   "bit": 109,
+   "feature": "v21_emg_hl_ratio:after-before",
+   "threshold": -103
+  },
+  {
+   "bit": 110,
+   "feature": "v21_emg_hl_ratio:after-before",
+   "threshold": 41
+  },
+  {
+   "bit": 111,
+   "feature": "v21_emg_hl_ratio:after-before",
+   "threshold": 94
+  },
+  {
+   "bit": 112,
+   "feature": "v21_emg_hl_ratio:after-before",
+   "threshold": 188
+  },
+  {
+   "bit": 113,
+   "feature": "v22_eeg_sign_agree:during-before",
+   "threshold": -4418
+  },
+  {
+   "bit": 114,
+   "feature": "v22_eeg_sign_agree:during-before",
+   "threshold": -2441
+  },
+  {
+   "bit": 115,
+   "feature": "v22_eeg_sign_agree:during-before",
+   "threshold": -1276
+  },
+  {
+   "bit": 116,
+   "feature": "v22_eeg_sign_agree:during-before",
+   "threshold": -361
+  },
+  {
+   "bit": 117,
+   "feature": "v22_eeg_sign_agree:during-before",
+   "threshold": 453
+  },
+  {
+   "bit": 118,
+   "feature": "v22_eeg_sign_agree:during-before",
+   "threshold": 2544
+  },
+  {
+   "bit": 119,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 332
+  },
+  {
+   "bit": 120,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 476
+  },
+  {
+   "bit": 121,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 602
+  },
+  {
+   "bit": 122,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 724
+  },
+  {
+   "bit": 123,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 1022
+  },
+  {
+   "bit": 124,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 1258
+  },
+  {
+   "bit": 125,
+   "feature": "v23_eeg_mav_absdiff:after",
+   "threshold": 1868
+  }
+ ],
+ "rule": "bit = (round(128 x input) > threshold), signed 24-bit compare"
+}
