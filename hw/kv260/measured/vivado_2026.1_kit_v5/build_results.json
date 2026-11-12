@@ -1,0 +1,185 @@
+{
+ "summary": {
+  "vivado_version": "2026.1",
+  "part": "xck26-sfvc784-2LV-c jobs=4",
+  "board_part": "xilinx.com:kv260_som:part0:2.0",
+  "zynq_ultra_ps_e": "xilinx.com:ip:zynq_ultra_ps_e:3.5",
+  "interconnect": "smartconnect",
+  "wns_ns": "3.325",
+  "whs_ns": "0.025",
+  "timing_met": "1",
+  "classifier_lut_cells": "0",
+  "classifier_ff_cells": "0",
+  "classifier_carry_cells": "0",
+  "classifier_dsp_cells": "0",
+  "classifier_bram_cells": "0",
+  "bitstream": "out/seizelut.bit",
+  "hwh": "out/seizelut.hwh",
+  "ooc_classifier_period_ns": "2.5",
+  "ooc_classifier_wns_ns": "0.362",
+  "ooc_classifier_fmax_mhz": "467.7",
+  "ooc_treelut_period_ns": "2.5",
+  "ooc_treelut_wns_ns": "-0.906",
+  "ooc_treelut_fmax_mhz": "293.6",
+  "ooc_lgn_period_ns": "2.5",
+  "ooc_lgn_wns_ns": "-3.990",
+  "ooc_lgn_fmax_mhz": "154.1",
+  "done": "1"
+ },
+ "classifier_in_design": {
+  "lut": 805,
+  "lut_available": 117120,
+  "lut_as_logic": 805,
+  "lut_as_logic_available": 117120,
+  "lut_as_memory": 0,
+  "lut_as_memory_available": 57600,
+  "ff": 602,
+  "ff_available": 234240,
+  "carry8": 5,
+  "carry8_available": 14640,
+  "bram_tile": 0,
+  "bram_tile_available": 144,
+  "dsp": 0,
+  "dsp_available": 1248
+ },
+ "seizelut_core_in_design": {
+  "lut": 1908,
+  "lut_available": 117120,
+  "lut_as_logic": 1908,
+  "lut_as_logic_available": 117120,
+  "lut_as_memory": 0,
+  "lut_as_memory_available": 57600,
+  "ff": 2687,
+  "ff_available": 234240,
+  "carry8": 67,
+  "carry8_available": 14640,
+  "bram_tile": 9,
+  "bram_tile_available": 144,
+  "dsp": 0,
+  "dsp_available": 1248
+ },
+ "whole_design": {
+  "lut": 2345,
+  "lut_available": 117120,
+  "lut_as_logic": 2344,
+  "lut_as_logic_available": 117120,
+  "lut_as_memory": 1,
+  "lut_as_memory_available": 57600,
+  "ff": 3149,
+  "ff_available": 234240,
+  "carry8": 77,
+  "carry8_available": 14640,
+  "bram_tile": 9,
+  "bram_tile_available": 144,
+  "dsp": 0,
+  "dsp_available": 1248
+ },
+ "classifier_out_of_context": {
+  "lut": 398,
+  "lut_available": 117120,
+  "lut_as_logic": 398,
+  "lut_as_logic_available": 117120,
+  "lut_as_memory": 0,
+  "lut_as_memory_available": 57600,
+  "ff": 454,
+  "ff_available": 234240,
+  "carry8": 0,
+  "carry8_available": 14640,
+  "bram_tile": 0,
+  "bram_tile_available": 144,
+  "dsp": 0,
+  "dsp_available": 1248
+ },
+ "classifier_fmax_mhz": "467.7",
+ "timing_design": {
+  "wns_ns": 3.325,
+  "tns_ns": 0.0,
+  "whs_ns": 0.025,
+  "ths_ns": 0.0
+ },
+ "timing_classifier_ooc": {
+  "wns_ns": 0.362,
+  "tns_ns": 0.0,
+  "whs_ns": 0.067,
+  "ths_ns": 0.0
+ },
+ "power_design": {
+  "total_w": 2.767,
+  "dynamic_w": 2.443,
+  "static_w": 0.323,
+  "confidence": "Low"
+ },
+ "power_classifier_ooc": {
+  "total_w": 0.306,
+  "dynamic_w": 0.017,
+  "static_w": 0.288,
+  "confidence": "Medium"
+ },
+ "power_u_cls_dynamic_w": 0.009,
+ "baselines_out_of_context": {
+  "treelut": {
+   "utilization": {
+    "lut": 2677,
+    "lut_available": 117120,
+    "lut_as_logic": 2677,
+    "lut_as_logic_available": 117120,
+    "lut_as_memory": 0,
+    "lut_as_memory_available": 57600,
+    "ff": 1461,
+    "ff_available": 234240,
+    "carry8": 60,
+    "carry8_available": 14640,
+    "bram_tile": 0,
+    "bram_tile_available": 144,
+    "dsp": 0,
+    "dsp_available": 1248
+   },
+   "timing": {
+    "wns_ns": -0.906,
+    "tns_ns": -5.136,
+    "whs_ns": 0.067,
+    "ths_ns": 0.0
+   },
+   "power": {
+    "total_w": 0.376,
+    "dynamic_w": 0.088,
+    "static_w": 0.289,
+    "confidence": "Medium"
+   },
+   "fmax_mhz": "293.6"
+  },
+  "lgn": {
+   "utilization": {
+    "lut": 5249,
+    "lut_available": 117120,
+    "lut_as_logic": 5249,
+    "lut_as_logic_available": 117120,
+    "lut_as_memory": 0,
+    "lut_as_memory_available": 57600,
+    "ff": 2208,
+    "ff_available": 234240,
+    "carry8": 6,
+    "carry8_available": 14640,
+    "bram_tile": 0,
+    "bram_tile_available": 144,
+    "dsp": 0,
+    "dsp_available": 1248
+   },
+   "timing": {
+    "wns_ns": -3.99,
+    "tns_ns": -1038.46,
+    "whs_ns": 0.113,
+    "ths_ns": 0.0
+   },
+   "power": {
+    "total_w": 0.814,
+    "dynamic_w": 0.523,
+    "static_w": 0.291,
+    "confidence": "Medium"
+   },
+   "fmax_mhz": "154.1"
+  }
+ },
+ "bitstream": true,
+ "hwh": true
+}

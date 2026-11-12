@@ -20,9 +20,10 @@ silently. We present SeizeLUT, a seizure detector whose classifier is a Differen
 integer front end for behind-the-ear EEG, ECG, EMG and motion. On the official split of the SeizeIT2 dataset (125
 patients, 11,626 hours), the final network reaches an event-F1 of $0.248 \pm 0.016$ with 0.8 false alarms per day
 on 29 held-out patients, above a TreeLUT model that needs 6.7 times more LUTs, a logic-gate network and the
-ChronoNet baseline, in 405 synthesised LUTs with no DSP or block RAM. A pre-registered two-stage variant that
+ChronoNet baseline, in 398 LUTs and no DSP or block RAM after Vivado implementation (6.7 and 13.2 times fewer LUTs
+than TreeLUT and a logic-gate network, and the fastest of the three at 468\,MHz). A pre-registered two-stage variant that
 confirms each alarm against the post-ictal period with a second LUT network detects 73.3\,\% of seizures at 10.9
-false alarms per hour (published SVM: 71.1\,\% at 11.0), and the whole cascade fits in 1,204 LUTs. Because the
+false alarms per hour (published SVM: 71.1\,\% at 11.0), and the whole cascade fits in about 1,200 LUTs. Because the
 classifier is a set of truth tables, every single hardware fault can be enumerated: of 3,592 single faults, 2,890
 change at least one clinical decision on 8,714 hours of training data, a built-in self-test fed with 1,024
 consecutive recorded windows detects only 50.7\,\% of them, and 255 test vectors selected for coverage detect all of
@@ -57,7 +58,7 @@ logic-gate network, TreeLUT) against standard machine learning on the official S
 scoring \cite{dan2024szcore}, with distillation from a tree ensemble to cut false alarms and modality dropout for
 missing sensors. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG and motion. (iii)~A fully
 LUT-native post-ictal verification cascade that detects more seizures than the dataset paper's SVM at a slightly lower
-false-alarm rate, in 1,204 LUTs. (iv)~\emph{Self-testing}: an exhaustive single-fault analysis of the deployed
+false-alarm rate, in about 1,200 LUTs. (iv)~\emph{Self-testing}: an exhaustive single-fault analysis of the deployed
 classifier on 8,714 hours of data, a coverage-driven choice of on-chip test vectors that detects every
 decision-relevant fault with 255 vectors, and fault-injection hardware that checks this on the device. (v)~A
 verified Kria KV260 implementation, and an independent reproduction of the published ChronoNet baseline, whose
@@ -190,26 +191,30 @@ two-stage detector with post-ictal verification (pre-registered); open markers: 
 \end{figure}
 
 \subsection{Hardware cost}
-Table~\ref{tab:hw} gives synthesis results (Zynq UltraScale+, Yosys \texttt{synth\_xilinx}, the same script for all,
-each model generated from its frozen final model and checked bit-exact against it in simulation). The DWN needs 405
-LUTs, 6.7 times fewer than TreeLUT and 14.2 times fewer than the logic-gate network, with no DSP or block RAM. The
-post-ictal verifier, with 24-bit comparators on window sums, needs 799 LUTs; integer and floating-point verifiers agree
-on 99.998\,\% of the 118,975 training candidates. The complete two-stage detector thus costs 1,204 LUTs and
-no multiplier. The fault-injection and debug logic, present only in
-test builds, adds 298 LUTs. \PHASETWO{Vivado post-implementation utilisation, timing and power of the KV260 design.}
+Table~\ref{tab:hw} gives the cost of the three LUT-native classifiers, each generated from its frozen final model and
+checked bit-exact against it in simulation, implemented out of context by Vivado 2026.1 on the XCK26 under the same
+2.5-ns clock constraint, and synthesised by Yosys (\texttt{synth\_xilinx}) as a second, open flow. The DWN needs 398
+LUTs and 454 flip-flops with no DSP or block RAM, 6.7 times fewer LUTs than TreeLUT and 13.2 times fewer than the
+logic-gate network, and it is also the fastest: 468\,MHz against 294 and 154\,MHz. With default switching activity
+Vivado estimates 17\,mW of dynamic power at 400\,MHz for it, against 88 and 523\,mW. The post-ictal verifier, with
+24-bit comparators on window sums, needs 799 LUTs (Yosys); integer and floating-point verifiers agree on 99.998\,\% of
+the 118,975 training candidates, so the complete two-stage detector costs about 1,200 LUTs and no multiplier. In the
+KV260 design the whole core (AXI4-Lite interface, BIST with its vector ROM in 9 block RAMs, fault injection, debug
+taps, demo I/O) uses 1,908 LUTs and the full design 2,345 LUTs, 2.0\,\% of the device; timing closes at 100\,MHz
+with 3.3\,ns of setup slack. The fault-injection and debug logic, needed only in test builds, adds 298 LUTs (Yosys).
 
 \begin{table}[t]\centering
-\caption{Synthesised cost of the LUT-native classifiers (Yosys, Zynq UltraScale+; input registers, comparators,
-network, score, decision and alarm logic).}\label{tab:hw}
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrr}\toprule
-Model & LUTs & FFs & DSP & Test F1 \\ \midrule
-\textbf{DWN + distillation (ours)} & \textbf{405} & 454 & 0 & 0.248 \\
-TreeLUT (5-bit leaves) & 2,721 & 1,455 & 0 & 0.233 \\
-Logic-gate network & 5,758 & 2,200 & 0 & 0.191 \\ \midrule
-Post-ictal verifier (stage 2) & 799 & 637 & 0 & -- \\
-\textbf{Two-stage detector} & \textbf{1,204} & 1,091 & 0 & -- \\
-\bottomrule\end{tabular}
+\caption{Cost of the LUT-native classifiers (XCK26; input registers, comparators, network, score, decision and alarm
+logic). Vivado 2026.1 out of context, 2.5-ns constraint, vectorless power at 400\,MHz; Yosys \texttt{synth\_xilinx}.}\label{tab:hw}
+\setlength{\tabcolsep}{2.6pt}
+\resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrrrr}\toprule
+& \multicolumn{4}{c}{Vivado} & Yosys & & \\ \cmidrule(lr){2-5}
+Model & LUTs & FFs & Fmax & Dyn. P & LUTs & DSP & Test F1 \\ \midrule
+\textbf{DWN + distillation (ours)} & \textbf{398} & 454 & \textbf{468\,MHz} & \textbf{17\,mW} & 405 & 0 & 0.248 \\
+TreeLUT (5-bit leaves) & 2,677 & 1,461 & 294\,MHz & 88\,mW & 2,721 & 0 & 0.233 \\
+Logic-gate network & 5,249 & 2,208 & 154\,MHz & 523\,mW & 5,758 & 0 & 0.191 \\ \midrule
+Post-ictal verifier (stage 2) & -- & -- & -- & -- & 799 & 0 & -- \\
+\bottomrule\end{tabular}}
 \end{table}
 
 \subsection{Faults and self-test}
@@ -267,8 +272,8 @@ clinical evidence \cite{beniczky2021guideline}. Results come from retrospective 
 
 \section{Conclusion}
 A 50-LUT weightless network on integer multimodal features detects seizures across patients without multipliers in
-405 LUTs, reaching an event-F1 of 0.248 with 0.8 false alarms per day on 29 held-out patients, and a two-stage
-version in 1,204 LUTs detects more seizures than the dataset paper's SVM. Its truth tables make complete fault
+398 LUTs, reaching an event-F1 of 0.248 with 0.8 false alarms per day on 29 held-out patients, and a two-stage
+version in about 1,200 LUTs detects more seizures than the dataset paper's SVM. Its truth tables make complete fault
 analysis possible: 255 selected self-test vectors detect every single fault that changes a decision, and the device can run them after every window.
 
 \section*{Reproducibility}

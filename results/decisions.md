@@ -424,3 +424,10 @@ Method results and keep/drop decisions are appended below as runs finish.
   synthesises to 799 LUTs and 637 FFs (126 comparators on 24-bit window sums; integer and float verifiers agree on
   99.998 % of decisions), so the two-stage detector costs 1,204 LUTs. Board measurement of the campaign is pending
   the user's Vivado build.
+* **Vivado 2026.1 build of kit v5 (13 Nov, user's PC).** `hw/kv260/measured/vivado_2026.1_kit_v5/`. Timing met at
+  100 MHz (WNS +3.325 ns, WHS +0.025 ns). Out of context, 2.5-ns constraint: DWN 398 LUTs, 454 FFs, 0 DSP/BRAM,
+  Fmax 467.7 MHz, 17 mW dynamic (vectorless, 400 MHz); TreeLUT 2,677 LUTs, 1,461 FFs, 293.6 MHz, 88 mW; logic-gate
+  network 5,249 LUTs, 2,208 FFs, 154.1 MHz, 523 mW (6.7x and 13.2x the DWN's LUTs; Yosys gave 6.7x and 14.2x). In
+  the KV260 design: classifier with fault injection and debug taps 805 LUTs, 602 FFs; whole core 1,908 LUTs, 2,687
+  FFs, 9 BRAM tiles (BIST ROM); full design 2,345 LUTs (2.0 %), 3,149 FFs, 0 DSP. The build summary's hierarchical
+  classifier count (0) is a lookup miss in the script; the per-cell reports have the numbers.

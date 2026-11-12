@@ -4,7 +4,7 @@
 \caption{Hardware seizure detectors as reported by each work. PS: patient-specific training or calibration; PI:
 patient-independent, scored on held-out patients. Detection metrics differ between works (event-, epoch- or
 sample-based) and are not directly comparable. $^\ddagger$From the comparison table of \cite{shin2022neuraltree};
-n.r.: not reported; Faults: share of decision-relevant single faults detected by the self-test.}\label{tab:prior}
+n.r.: not reported; $^\ast$Vivado vectorless estimate (17\,mW dynamic at 400\,MHz, one window per clock); Faults: share of decision-relevant single faults detected by the self-test.}\label{tab:prior}
 \setlength{\tabcolsep}{2.0pt}\scriptsize
 \begin{tabular}{lllllllc}\toprule
 Work & Platform & Data (patients), eval. & Inputs & Detection (as reported) & Cost & Energy/inf. & Faults \\ \midrule
@@ -16,6 +16,6 @@ Busia'25 \cite{busia2025fpga} & iCE40UP5K & CHB-MIT (9), PS & EEG, 4 ch & 100\,\
 EEGformer'24 \cite{busia2024eegformer} & GAP9 MCU & CHB-MIT (8), PS & EEG, 4 ch & 73\,\% events, 0.15 FA/h & 150\,kB, 14.7 MOPS & 0.31\,mJ & n.r. \\
 BrainFuseNet'24 \cite{ingolfsson2024brainfusenet} & GAP9 MCU & PEDESITE (6), PS & EEG 4 ch, PPG, ACC & 95\,\% events, 0.58 FA/day & 2.29 M MAC & 0.11\,mJ & n.r. \\
 SeizeIT2 \cite{bhagubai2025seizeit2} & software & SeizeIT2 (29 test), PI & bte-EEG, 2 ch & SVM 71.1\,\% at 11.0 FA/h & -- & -- & -- \\ \midrule
-\textbf{SeizeLUT (ours)} & XCK26 (KV260) & SeizeIT2 (29 test), PI & \begin{tabular}[t]{@{}l@{}}bte-EEG 2 ch, ECG,\\EMG, ACC, GYR\end{tabular} & \begin{tabular}[t]{@{}l@{}}event-F1 0.248, 0.8 FA/day;\\two-stage 73.3\,\% at 10.9 FA/h\end{tabular} & \begin{tabular}[t]{@{}l@{}}405 LUT, 0 DSP/BRAM\\(two-stage 1,204 LUT)\end{tabular} & \PHASETWO{} & \textbf{100\,\%} \\
+\textbf{SeizeLUT (ours)} & XCK26 (KV260) & SeizeIT2 (29 test), PI & \begin{tabular}[t]{@{}l@{}}bte-EEG 2 ch, ECG,\\EMG, ACC, GYR\end{tabular} & \begin{tabular}[t]{@{}l@{}}event-F1 0.248, 0.8 FA/day;\\two-stage 73.3\,\% at 10.9 FA/h\end{tabular} & \begin{tabular}[t]{@{}l@{}}398 LUT, 0 DSP/BRAM\\(two-stage $\approx$1,200 LUT)\end{tabular} & $\approx$43\,pJ$^\ast$ & \textbf{100\,\%} \\
 \bottomrule\end{tabular}
 \end{table*}

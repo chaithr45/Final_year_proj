@@ -1,0 +1,1382 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date              : Fri Nov 13 00:54:22 2026
+| Host              : Chaithr running 64-bit major release  (build 9200)
+| Command           : report_timing_summary -max_paths 10 -file C:/Users/chait/Bisp/seizelut_kv260_v5/out/timing_summary.rpt
+| Design            : seizelut_bd_wrapper
+| Device            : xck26-sfvc784
+| Speed File        : -2LV  PRODUCTION 1.31 12-08-2025
+| Design State      : Routed
+| Temperature Grade : C
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Summary Report
+
+------------------------------------------------------------------------------------------------
+| Timer Settings
+| --------------
+------------------------------------------------------------------------------------------------
+
+  Enable Multi Corner Analysis               :  Yes
+  Enable Pessimism Removal                   :  Yes
+  Pessimism Removal Resolution               :  Nearest Common Node
+  Enable Input Delay Default Clock           :  No
+  Enable Preset / Clear Arcs                 :  No
+  Disable Flight Delays                      :  No
+  Ignore I/O Paths                           :  No
+  Timing Early Launch at Borrowing Latches   :  No
+  Borrow Time for Max Delay Exceptions       :  Yes
+  Merge Timing Exceptions                    :  Yes
+  Inter-SLR Compensation                     :  Conservative
+
+  Corner  Analyze    Analyze    
+  Name    Max Paths  Min Paths  
+  ------  ---------  ---------  
+  Slow    Yes        Yes        
+  Fast    Yes        Yes        
+
+
+------------------------------------------------------------------------------------------------
+| Report Methodology
+| ------------------
+------------------------------------------------------------------------------------------------
+
+No report available as report_methodology has not been run prior. Run report_methodology on the current design for the summary of methodology violations.
+
+
+
+check_timing report
+
+Table of Contents
+-----------------
+1. checking no_clock (0)
+2. checking constant_clock (0)
+3. checking pulse_width_clock (0)
+4. checking unconstrained_internal_endpoints (0)
+5. checking no_input_delay (1)
+6. checking no_output_delay (7)
+7. checking multiple_clock (0)
+8. checking generated_clocks (0)
+9. checking loops (0)
+10. checking partial_input_delay (0)
+11. checking partial_output_delay (0)
+12. checking latch_loops (0)
+
+1. checking no_clock (0)
+------------------------
+ There are 0 register/latch pins with no clock.
+
+
+2. checking constant_clock (0)
+------------------------------
+ There are 0 register/latch pins with constant_clock.
+
+
+3. checking pulse_width_clock (0)
+---------------------------------
+ There are 0 register/latch pins which need pulse_width check
+
+
+4. checking unconstrained_internal_endpoints (0)
+------------------------------------------------
+ There are 0 pins that are not constrained for maximum delay.
+
+ There are 0 pins that are not constrained for maximum delay due to constant clock.
+
+
+5. checking no_input_delay (1)
+------------------------------
+ There are 0 input ports with no input delay specified.
+
+ There is 1 input port with no input delay but user has a false path constraint. (MEDIUM)
+
+
+6. checking no_output_delay (7)
+-------------------------------
+ There are 0 ports with no output delay specified.
+
+ There are 7 ports with no output delay but user has a false path constraint (MEDIUM)
+
+ There are 0 ports with no output delay but with a timing clock defined on it or propagating through it
+
+
+7. checking multiple_clock (0)
+------------------------------
+ There are 0 register/latch pins with multiple clocks.
+
+
+8. checking generated_clocks (0)
+--------------------------------
+ There are 0 generated clocks that are not connected to a clock source.
+
+
+9. checking loops (0)
+---------------------
+ There are 0 combinational loops in the design.
+
+
+10. checking partial_input_delay (0)
+------------------------------------
+ There are 0 input ports with partial input delay specified.
+
+
+11. checking partial_output_delay (0)
+-------------------------------------
+ There are 0 ports with partial output delay specified.
+
+
+12. checking latch_loops (0)
+----------------------------
+ There are 0 combinational latch loops in the design through latch input
+
+
+
+------------------------------------------------------------------------------------------------
+| Design Timing Summary
+| ---------------------
+------------------------------------------------------------------------------------------------
+
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+      3.325        0.000                      0                 8411        0.025        0.000                      0                 8411        3.500        0.000                       0                  3160  
+
+
+All user specified timing constraints are met.
+
+
+------------------------------------------------------------------------------------------------
+| Clock Summary
+| -------------
+------------------------------------------------------------------------------------------------
+
+Clock     Waveform(ns)       Period(ns)      Frequency(MHz)
+-----     ------------       ----------      --------------
+clk_pl_0  {0.000 5.000}      10.000          100.000         
+clk_pl_1  {0.000 5.000}      10.000          100.000         
+
+
+------------------------------------------------------------------------------------------------
+| Intra Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+-----             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+clk_pl_0            3.325        0.000                      0                 8411        0.025        0.000                      0                 8411        3.500        0.000                       0                  3160  
+
+
+------------------------------------------------------------------------------------------------
+| Inter Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Other Path Groups Table
+| -----------------------
+------------------------------------------------------------------------------------------------
+
+Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Timing Details
+| --------------
+------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  clk_pl_0
+  To Clock:  clk_pl_0
+
+Setup :            0  Failing Endpoints,  Worst Slack        3.325ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.025ns,  Total Violation        0.000ns
+PW    :            0  Failing Endpoints,  Worst Slack        3.500ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             3.325ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[28]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        6.282ns  (logic 0.193ns (3.072%)  route 6.089ns (96.928%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.115ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.353ns = ( 11.353 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.137ns (routing 0.239ns, distribution 0.898ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.875     7.853    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X7Y218         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[28]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.137    11.353    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X7Y218         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[28]/C
+                         clock pessimism              0.103    11.456    <hidden>
+                         clock uncertainty           -0.160    11.296    <hidden>
+    SLICE_X7Y218         FDRE (Setup_DFF_SLICEM_C_R)
+                                                     -0.118    11.178    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[28]
+  -------------------------------------------------------------------
+                         required time                         11.178    <hidden>
+                         arrival time                          -7.853    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.325    <hidden>
+
+Slack (MET) :             3.349ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[31]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        6.280ns  (logic 0.193ns (3.073%)  route 6.087ns (96.927%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.093ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.375ns = ( 11.375 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.159ns (routing 0.239ns, distribution 0.920ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.873     7.851    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X8Y222         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[31]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.159    11.375    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X8Y222         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[31]/C
+                         clock pessimism              0.103    11.478    <hidden>
+                         clock uncertainty           -0.160    11.318    <hidden>
+    SLICE_X8Y222         FDRE (Setup_DFF_SLICEM_C_R)
+                                                     -0.118    11.200    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[31]
+  -------------------------------------------------------------------
+                         required time                         11.200    <hidden>
+                         arrival time                          -7.851    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.349    <hidden>
+
+Slack (MET) :             3.384ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[27]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        6.233ns  (logic 0.193ns (3.096%)  route 6.040ns (96.904%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.104ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.364ns = ( 11.364 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.148ns (routing 0.239ns, distribution 0.909ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.826     7.805    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X9Y221         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[27]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.148    11.364    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X9Y221         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[27]/C
+                         clock pessimism              0.103    11.467    <hidden>
+                         clock uncertainty           -0.160    11.307    <hidden>
+    SLICE_X9Y221         FDRE (Setup_DFF_SLICEL_C_R)
+                                                     -0.118    11.189    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[27]
+  -------------------------------------------------------------------
+                         required time                         11.189    <hidden>
+                         arrival time                          -7.805    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.384    <hidden>
+
+Slack (MET) :             3.384ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[29]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        6.233ns  (logic 0.193ns (3.096%)  route 6.040ns (96.904%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.104ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.364ns = ( 11.364 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.148ns (routing 0.239ns, distribution 0.909ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.826     7.805    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X9Y221         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[29]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.148    11.364    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X9Y221         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[29]/C
+                         clock pessimism              0.103    11.467    <hidden>
+                         clock uncertainty           -0.160    11.307    <hidden>
+    SLICE_X9Y221         FDRE (Setup_BFF_SLICEL_C_R)
+                                                     -0.118    11.189    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[29]
+  -------------------------------------------------------------------
+                         required time                         11.189    <hidden>
+                         arrival time                          -7.805    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.384    <hidden>
+
+Slack (MET) :             3.521ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[11]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        6.097ns  (logic 0.193ns (3.165%)  route 5.904ns (96.835%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.104ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.364ns = ( 11.364 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.148ns (routing 0.239ns, distribution 0.909ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.690     7.669    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X9Y215         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[11]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.148    11.364    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X9Y215         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[11]/C
+                         clock pessimism              0.103    11.467    <hidden>
+                         clock uncertainty           -0.160    11.307    <hidden>
+    SLICE_X9Y215         FDRE (Setup_BFF_SLICEL_C_R)
+                                                     -0.118    11.189    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[11]
+  -------------------------------------------------------------------
+                         required time                         11.189    <hidden>
+                         arrival time                          -7.669    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.521    <hidden>
+
+Slack (MET) :             3.521ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[14]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        6.097ns  (logic 0.193ns (3.165%)  route 5.904ns (96.835%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.104ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.364ns = ( 11.364 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.148ns (routing 0.239ns, distribution 0.909ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.690     7.669    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X9Y215         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[14]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.148    11.364    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X9Y215         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[14]/C
+                         clock pessimism              0.103    11.467    <hidden>
+                         clock uncertainty           -0.160    11.307    <hidden>
+    SLICE_X9Y215         FDRE (Setup_DFF_SLICEL_C_R)
+                                                     -0.118    11.189    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[14]
+  -------------------------------------------------------------------
+                         required time                         11.189    <hidden>
+                         arrival time                          -7.669    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.521    <hidden>
+
+Slack (MET) :             3.696ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[13]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        5.913ns  (logic 0.193ns (3.264%)  route 5.720ns (96.736%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.113ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.355ns = ( 11.355 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.139ns (routing 0.239ns, distribution 0.900ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.506     7.484    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X10Y215        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[13]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.139    11.355    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X10Y215        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[13]/C
+                         clock pessimism              0.103    11.458    <hidden>
+                         clock uncertainty           -0.160    11.298    <hidden>
+    SLICE_X10Y215        FDRE (Setup_BFF_SLICEM_C_R)
+                                                     -0.118    11.180    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[13]
+  -------------------------------------------------------------------
+                         required time                         11.180    <hidden>
+                         arrival time                          -7.484    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.696    <hidden>
+
+Slack (MET) :             3.771ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[12]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        5.841ns  (logic 0.193ns (3.304%)  route 5.648ns (96.696%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.110ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.358ns = ( 11.358 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.142ns (routing 0.239ns, distribution 0.903ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.433     7.412    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X10Y213        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[12]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.142    11.358    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X10Y213        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[12]/C
+                         clock pessimism              0.103    11.461    <hidden>
+                         clock uncertainty           -0.160    11.301    <hidden>
+    SLICE_X10Y213        FDRE (Setup_DFF_SLICEM_C_R)
+                                                     -0.118    11.183    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[12]
+  -------------------------------------------------------------------
+                         required time                         11.183    <hidden>
+                         arrival time                          -7.412    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.771    <hidden>
+
+Slack (MET) :             3.837ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[15]/R
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        5.766ns  (logic 0.193ns (3.347%)  route 5.573ns (96.653%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        -0.118ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.350ns = ( 11.350 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.134ns (routing 0.239ns, distribution 0.895ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 f  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        4.214     5.899    seizelut_bd_i/seizelut_0/inst/s_axi_aresetn
+    SLICE_X18Y224        LUT6 (Prop_F6LUT_SLICEM_I5_O)
+                                                      0.080     5.979 r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1/O
+                         net (fo=32, routed)          1.358     7.337    seizelut_bd_i/seizelut_0/inst/s_axi_rdata[31]_i_1_n_0
+    SLICE_X8Y210         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[15]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.134    11.350    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X8Y210         FDRE                                         r  seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[15]/C
+                         clock pessimism              0.103    11.453    <hidden>
+                         clock uncertainty           -0.160    11.293    <hidden>
+    SLICE_X8Y210         FDRE (Setup_EFF_SLICEM_C_R)
+                                                     -0.119    11.174    seizelut_bd_i/seizelut_0/inst/s_axi_rdata_reg[15]
+  -------------------------------------------------------------------
+                         required time                         11.174    <hidden>
+                         arrival time                          -7.337    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.837    <hidden>
+
+Slack (MET) :             3.839ns  (required time - arrival time)
+  Source:                 seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/res_bits_reg[32]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        5.852ns  (logic 0.299ns (5.110%)  route 5.553ns (94.890%))
+  Logic Levels:           1  (LUT4=1)
+  Clock Path Skew:        -0.069ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.399ns = ( 11.399 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.571ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Uncertainty:      0.160ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.312ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.304ns (routing 0.261ns, distribution 1.043ns)
+  Clock Net Delay (Destination): 1.183ns (routing 0.239ns, distribution 0.944ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.304     1.571    seizelut_bd_i/rst_pl0_100M/U0/slowest_sync_clk
+    SLICE_X7Y187         FDRE                                         r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X7Y187         FDRE (Prop_AFF_SLICEM_C_Q)
+                                                      0.113     1.684 r  seizelut_bd_i/rst_pl0_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=1720, routed)        3.714     5.399    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aresetn
+    SLICE_X13Y229        LUT4 (Prop_C6LUT_SLICEM_I3_O)
+                                                      0.186     5.585 r  seizelut_bd_i/seizelut_0/inst/u_cls/latency[31]_i_1/O
+                         net (fo=244, routed)         1.838     7.423    seizelut_bd_i/seizelut_0/inst/u_cls_n_0
+    SLICE_X13Y210        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_bits_reg[32]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000    10.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181    10.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035    10.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.183    11.399    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X13Y210        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_bits_reg[32]/C
+                         clock pessimism              0.103    11.502    <hidden>
+                         clock uncertainty           -0.160    11.342    <hidden>
+    SLICE_X13Y210        FDRE (Setup_EFF2_SLICEM_C_CE)
+                                                     -0.080    11.262    seizelut_bd_i/seizelut_0/inst/res_bits_reg[32]
+  -------------------------------------------------------------------
+                         required time                         11.262    <hidden>
+                         arrival time                          -7.423    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  3.839    <hidden>
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             0.025ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[8]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/res_luts_reg[8]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.247ns  (logic 0.112ns (45.289%)  route 0.135ns (54.711%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.120ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.620ns
+    Source Clock Delay      (SCD):    1.397ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.181ns (routing 0.239ns, distribution 0.942ns)
+  Clock Net Delay (Destination): 1.353ns (routing 0.261ns, distribution 1.092ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.181     1.397    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aclk
+    SLICE_X17Y214        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[8]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X17Y214        FDRE (Prop_GFF_SLICEM_C_Q)
+                                                      0.112     1.509 r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[8]/Q
+                         net (fo=4, routed)           0.135     1.644    seizelut_bd_i/seizelut_0/inst/dbg_luts[8]
+    SLICE_X15Y212        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_luts_reg[8]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.353     1.620    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X15Y212        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_luts_reg[8]/C
+                         clock pessimism             -0.103     1.517    <hidden>
+    SLICE_X15Y212        FDRE (Hold_FFF2_SLICEL_C_D)
+                                                      0.103     1.620    seizelut_bd_i/seizelut_0/inst/res_luts_reg[8]
+  -------------------------------------------------------------------
+                         required time                         -1.620    <hidden>
+                         arrival time                           1.644    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.025    <hidden>
+
+Slack (MET) :             0.035ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/u_cls/b_r_reg[142]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/res_bits_reg[142]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.190ns  (logic 0.112ns (58.947%)  route 0.078ns (41.053%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.054ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.624ns
+    Source Clock Delay      (SCD):    1.404ns
+    Clock Pessimism Removal (CPR):    0.166ns
+  Clock Net Delay (Source):      1.188ns (routing 0.239ns, distribution 0.949ns)
+  Clock Net Delay (Destination): 1.357ns (routing 0.261ns, distribution 1.096ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.188     1.404    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aclk
+    SLICE_X16Y209        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/b_r_reg[142]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X16Y209        FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.112     1.516 r  seizelut_bd_i/seizelut_0/inst/u_cls/b_r_reg[142]/Q
+                         net (fo=1, routed)           0.078     1.594    seizelut_bd_i/seizelut_0/inst/dbg_bits[142]
+    SLICE_X16Y209        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_bits_reg[142]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.357     1.624    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X16Y209        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_bits_reg[142]/C
+                         clock pessimism             -0.166     1.458    <hidden>
+    SLICE_X16Y209        FDRE (Hold_FFF_SLICEL_C_D)
+                                                      0.101     1.559    seizelut_bd_i/seizelut_0/inst/res_bits_reg[142]
+  -------------------------------------------------------------------
+                         required time                         -1.559    <hidden>
+                         arrival time                           1.594    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.035    <hidden>
+
+Slack (MET) :             0.036ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[38]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/res_luts_reg[38]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.260ns  (logic 0.112ns (43.016%)  route 0.148ns (56.984%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.122ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.627ns
+    Source Clock Delay      (SCD):    1.402ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.186ns (routing 0.239ns, distribution 0.947ns)
+  Clock Net Delay (Destination): 1.360ns (routing 0.261ns, distribution 1.099ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.186     1.402    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aclk
+    SLICE_X15Y211        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[38]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X15Y211        FDRE (Prop_HFF_SLICEL_C_Q)
+                                                      0.112     1.514 r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[38]/Q
+                         net (fo=5, routed)           0.148     1.663    seizelut_bd_i/seizelut_0/inst/dbg_luts[38]
+    SLICE_X15Y207        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_luts_reg[38]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.360     1.627    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X15Y207        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_luts_reg[38]/C
+                         clock pessimism             -0.103     1.524    <hidden>
+    SLICE_X15Y207        FDRE (Hold_GFF2_SLICEL_C_D)
+                                                      0.103     1.627    seizelut_bd_i/seizelut_0/inst/res_luts_reg[38]
+  -------------------------------------------------------------------
+                         required time                         -1.627    <hidden>
+                         arrival time                           1.663    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.036    <hidden>
+
+Slack (MET) :             0.045ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/u_cls/b_r_reg[111]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/res_bits_reg[111]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.241ns  (logic 0.112ns (46.473%)  route 0.129ns (53.527%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.094ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.609ns
+    Source Clock Delay      (SCD):    1.412ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.196ns (routing 0.239ns, distribution 0.957ns)
+  Clock Net Delay (Destination): 1.342ns (routing 0.261ns, distribution 1.081ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.196     1.412    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aclk
+    SLICE_X15Y223        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/b_r_reg[111]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X15Y223        FDRE (Prop_AFF_SLICEL_C_Q)
+                                                      0.112     1.524 r  seizelut_bd_i/seizelut_0/inst/u_cls/b_r_reg[111]/Q
+                         net (fo=1, routed)           0.129     1.653    seizelut_bd_i/seizelut_0/inst/dbg_bits[111]
+    SLICE_X14Y222        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_bits_reg[111]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.342     1.609    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X14Y222        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_bits_reg[111]/C
+                         clock pessimism             -0.103     1.506    <hidden>
+    SLICE_X14Y222        FDRE (Hold_AFF2_SLICEL_C_D)
+                                                      0.102     1.608    seizelut_bd_i/seizelut_0/inst/res_bits_reg[111]
+  -------------------------------------------------------------------
+                         required time                         -1.608    <hidden>
+                         arrival time                           1.653    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.045    <hidden>
+
+Slack (MET) :             0.048ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[25]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/res_luts_reg[25]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.211ns  (logic 0.112ns (53.004%)  route 0.099ns (46.996%))
+  Logic Levels:           0  
+  Clock Path Skew:        0.061ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.633ns
+    Source Clock Delay      (SCD):    1.414ns
+    Clock Pessimism Removal (CPR):    0.157ns
+  Clock Net Delay (Source):      1.198ns (routing 0.239ns, distribution 0.959ns)
+  Clock Net Delay (Destination): 1.366ns (routing 0.261ns, distribution 1.105ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.198     1.414    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aclk
+    SLICE_X16Y222        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[25]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X16Y222        FDRE (Prop_HFF_SLICEL_C_Q)
+                                                      0.112     1.526 r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[25]/Q
+                         net (fo=4, routed)           0.099     1.626    seizelut_bd_i/seizelut_0/inst/dbg_luts[25]
+    SLICE_X16Y223        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_luts_reg[25]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.366     1.633    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X16Y223        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/res_luts_reg[25]/C
+                         clock pessimism             -0.157     1.475    <hidden>
+    SLICE_X16Y223        FDRE (Hold_EFF2_SLICEL_C_D)
+                                                      0.102     1.577    seizelut_bd_i/seizelut_0/inst/res_luts_reg[25]
+  -------------------------------------------------------------------
+                         required time                         -1.577    <hidden>
+                         arrival time                           1.626    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.048    <hidden>
+
+Slack (MET) :             0.050ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/bist_t0_reg[20]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[20]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.273ns  (logic 0.181ns (66.300%)  route 0.092ns (33.700%))
+  Logic Levels:           2  (CARRY8=1 LUT2=1)
+  Clock Path Skew:        0.122ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.639ns
+    Source Clock Delay      (SCD):    1.414ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.198ns (routing 0.239ns, distribution 0.959ns)
+  Clock Net Delay (Destination): 1.372ns (routing 0.261ns, distribution 1.111ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.198     1.414    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X14Y233        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[20]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y233        FDRE (Prop_DFF_SLICEL_C_Q)
+                                                      0.112     1.526 r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[20]/Q
+                         net (fo=1, routed)           0.072     1.598    seizelut_bd_i/seizelut_0/inst/bist_t0[20]
+    SLICE_X15Y233        LUT2 (Prop_E6LUT_SLICEL_I1_O)
+                                                      0.033     1.631 r  seizelut_bd_i/seizelut_0/inst/bist_cyc[23]_i_5/O
+                         net (fo=1, routed)           0.009     1.640    seizelut_bd_i/seizelut_0/inst/bist_cyc[23]_i_5_n_0
+    SLICE_X15Y233        CARRY8 (Prop_CARRY8_SLICEL_S[4]_O[4])
+                                                      0.036     1.676 r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[23]_i_1/O[4]
+                         net (fo=1, routed)           0.011     1.687    seizelut_bd_i/seizelut_0/inst/bist_cyc0[20]
+    SLICE_X15Y233        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[20]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.372     1.639    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X15Y233        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[20]/C
+                         clock pessimism             -0.103     1.536    <hidden>
+    SLICE_X15Y233        FDRE (Hold_EFF_SLICEL_C_D)
+                                                      0.101     1.637    seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[20]
+  -------------------------------------------------------------------
+                         required time                         -1.637    <hidden>
+                         arrival time                           1.687    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.050    <hidden>
+
+Slack (MET) :             0.051ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/bist_t0_reg[28]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[28]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.273ns  (logic 0.181ns (66.300%)  route 0.092ns (33.700%))
+  Logic Levels:           2  (CARRY8=1 LUT2=1)
+  Clock Path Skew:        0.121ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.639ns
+    Source Clock Delay      (SCD):    1.415ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.199ns (routing 0.239ns, distribution 0.960ns)
+  Clock Net Delay (Destination): 1.372ns (routing 0.261ns, distribution 1.111ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.199     1.415    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X14Y234        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[28]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y234        FDRE (Prop_DFF_SLICEL_C_Q)
+                                                      0.112     1.527 r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[28]/Q
+                         net (fo=1, routed)           0.072     1.599    seizelut_bd_i/seizelut_0/inst/bist_t0[28]
+    SLICE_X15Y234        LUT2 (Prop_E6LUT_SLICEL_I1_O)
+                                                      0.033     1.632 r  seizelut_bd_i/seizelut_0/inst/bist_cyc[31]_i_6/O
+                         net (fo=1, routed)           0.009     1.641    seizelut_bd_i/seizelut_0/inst/bist_cyc[31]_i_6_n_0
+    SLICE_X15Y234        CARRY8 (Prop_CARRY8_SLICEL_S[4]_O[4])
+                                                      0.036     1.677 r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[31]_i_2/O[4]
+                         net (fo=1, routed)           0.011     1.688    seizelut_bd_i/seizelut_0/inst/bist_cyc0[28]
+    SLICE_X15Y234        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[28]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.372     1.639    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X15Y234        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[28]/C
+                         clock pessimism             -0.103     1.536    <hidden>
+    SLICE_X15Y234        FDRE (Hold_EFF_SLICEL_C_D)
+                                                      0.101     1.637    seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[28]
+  -------------------------------------------------------------------
+                         required time                         -1.637    <hidden>
+                         arrival time                           1.688    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.051    <hidden>
+
+Slack (MET) :             0.051ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/bist_t0_reg[12]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[12]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.273ns  (logic 0.181ns (66.300%)  route 0.092ns (33.700%))
+  Logic Levels:           2  (CARRY8=1 LUT2=1)
+  Clock Path Skew:        0.121ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.638ns
+    Source Clock Delay      (SCD):    1.414ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.198ns (routing 0.239ns, distribution 0.959ns)
+  Clock Net Delay (Destination): 1.371ns (routing 0.261ns, distribution 1.110ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.198     1.414    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X14Y232        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[12]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y232        FDRE (Prop_DFF_SLICEL_C_Q)
+                                                      0.112     1.526 r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[12]/Q
+                         net (fo=1, routed)           0.072     1.598    seizelut_bd_i/seizelut_0/inst/bist_t0[12]
+    SLICE_X15Y232        LUT2 (Prop_E6LUT_SLICEL_I1_O)
+                                                      0.033     1.631 r  seizelut_bd_i/seizelut_0/inst/bist_cyc[15]_i_5/O
+                         net (fo=1, routed)           0.009     1.640    seizelut_bd_i/seizelut_0/inst/bist_cyc[15]_i_5_n_0
+    SLICE_X15Y232        CARRY8 (Prop_CARRY8_SLICEL_S[4]_O[4])
+                                                      0.036     1.676 r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[15]_i_1/O[4]
+                         net (fo=1, routed)           0.011     1.687    seizelut_bd_i/seizelut_0/inst/bist_cyc0[12]
+    SLICE_X15Y232        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[12]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.371     1.638    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X15Y232        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[12]/C
+                         clock pessimism             -0.103     1.535    <hidden>
+    SLICE_X15Y232        FDRE (Hold_EFF_SLICEL_C_D)
+                                                      0.101     1.636    seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[12]
+  -------------------------------------------------------------------
+                         required time                         -1.636    <hidden>
+                         arrival time                           1.687    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.051    <hidden>
+
+Slack (MET) :             0.051ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/bist_t0_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[4]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.273ns  (logic 0.181ns (66.300%)  route 0.092ns (33.700%))
+  Logic Levels:           2  (CARRY8=1 LUT2=1)
+  Clock Path Skew:        0.121ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.638ns
+    Source Clock Delay      (SCD):    1.414ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.198ns (routing 0.239ns, distribution 0.959ns)
+  Clock Net Delay (Destination): 1.371ns (routing 0.261ns, distribution 1.110ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.198     1.414    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X14Y231        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X14Y231        FDRE (Prop_DFF_SLICEL_C_Q)
+                                                      0.112     1.526 r  seizelut_bd_i/seizelut_0/inst/bist_t0_reg[4]/Q
+                         net (fo=1, routed)           0.072     1.598    seizelut_bd_i/seizelut_0/inst/bist_t0[4]
+    SLICE_X15Y231        LUT2 (Prop_E6LUT_SLICEL_I1_O)
+                                                      0.033     1.631 r  seizelut_bd_i/seizelut_0/inst/bist_cyc[7]_i_5/O
+                         net (fo=1, routed)           0.009     1.640    seizelut_bd_i/seizelut_0/inst/bist_cyc[7]_i_5_n_0
+    SLICE_X15Y231        CARRY8 (Prop_CARRY8_SLICEL_S[4]_O[4])
+                                                      0.036     1.676 r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[7]_i_1/O[4]
+                         net (fo=1, routed)           0.011     1.687    seizelut_bd_i/seizelut_0/inst/bist_cyc0[4]
+    SLICE_X15Y231        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[4]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.371     1.638    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X15Y231        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[4]/C
+                         clock pessimism             -0.103     1.535    <hidden>
+    SLICE_X15Y231        FDRE (Hold_EFF_SLICEL_C_D)
+                                                      0.101     1.636    seizelut_bd_i/seizelut_0/inst/bist_cyc_reg[4]
+  -------------------------------------------------------------------
+                         required time                         -1.636    <hidden>
+                         arrival time                           1.687    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.051    <hidden>
+
+Slack (MET) :             0.055ns  (arrival time - required time)
+  Source:                 seizelut_bd_i/seizelut_0/inst/fi_l0_reg[5]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.274ns  (logic 0.164ns (59.829%)  route 0.110ns (40.171%))
+  Logic Levels:           1  (LUT4=1)
+  Clock Path Skew:        0.118ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.624ns
+    Source Clock Delay      (SCD):    1.403ns
+    Clock Pessimism Removal (CPR):    0.103ns
+  Clock Net Delay (Source):      1.187ns (routing 0.239ns, distribution 0.948ns)
+  Clock Net Delay (Destination): 1.357ns (routing 0.261ns, distribution 1.096ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.181     0.181    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.035     0.216 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.187     1.403    seizelut_bd_i/seizelut_0/inst/s_axi_aclk
+    SLICE_X20Y214        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/fi_l0_reg[5]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X20Y214        FDRE (Prop_DFF_SLICEM_C_Q)
+                                                      0.112     1.515 f  seizelut_bd_i/seizelut_0/inst/fi_l0_reg[5]/Q
+                         net (fo=2, routed)           0.081     1.596    seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[49]_2[5]
+    SLICE_X19Y214        LUT4 (Prop_A6LUT_SLICEL_I3_O)
+                                                      0.052     1.648 r  seizelut_bd_i/seizelut_0/inst/u_cls/h0[5]_i_1/O
+                         net (fo=1, routed)           0.029     1.677    seizelut_bd_i/seizelut_0/inst/u_cls/y0013_out
+    SLICE_X19Y214        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  <hidden>
+    PS8_X0Y0             PS8                          0.000     0.000 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.229     0.229    seizelut_bd_i/zynq_ultra_ps_e_0/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.038     0.267 r  seizelut_bd_i/zynq_ultra_ps_e_0/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X0Y3 (CLOCK_ROOT)    net (fo=3160, routed)        1.357     1.624    seizelut_bd_i/seizelut_0/inst/u_cls/s_axi_aclk
+    SLICE_X19Y214        FDRE                                         r  seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[5]/C
+                         clock pessimism             -0.103     1.521    <hidden>
+    SLICE_X19Y214        FDRE (Hold_AFF_SLICEL_C_D)
+                                                      0.101     1.622    seizelut_bd_i/seizelut_0/inst/u_cls/h0_reg[5]
+  -------------------------------------------------------------------
+                         required time                         -1.622    <hidden>
+                         arrival time                           1.677    <hidden>
+  -------------------------------------------------------------------
+                         slack                                  0.055    <hidden>
+
+
+
+
+
+Pulse Width Checks
+--------------------------------------------------------------------------------------
+Clock Name:         clk_pl_0
+Waveform(ns):       { 0.000 5.000 }
+Period(ns):         10.000
+Sources:            { seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/PLCLK[0] }
+
+Check Type        Corner  Lib Pin             Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location      Pin
+Min Period        n/a     PS8/MAXIGP2ACLK     n/a            3.000         10.000      7.000      PS8_X0Y0      seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/MAXIGP2ACLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y41  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_0/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y43  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_1/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y42  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_2/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y39  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_3/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y40  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_4/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y44  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_5/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y46  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_6/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y45  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_7/CLKARDCLK
+Min Period        n/a     RAMB36E2/CLKARDCLK  n/a            1.709         10.000      8.291      RAMB36_X0Y38  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_8/CLKARDCLK
+Low Pulse Width   Slow    PS8/MAXIGP2ACLK     n/a            1.500         5.000       3.500      PS8_X0Y0      seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/MAXIGP2ACLK
+Low Pulse Width   Fast    PS8/MAXIGP2ACLK     n/a            1.500         5.000       3.500      PS8_X0Y0      seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/MAXIGP2ACLK
+Low Pulse Width   Slow    SRL16E/CLK          n/a            0.762         5.000       4.238      SLICE_X7Y185  seizelut_bd_i/rst_pl0_100M/U0/EXT_LPF/POR_SRL_I/CLK
+Low Pulse Width   Fast    SRL16E/CLK          n/a            0.762         5.000       4.238      SLICE_X7Y185  seizelut_bd_i/rst_pl0_100M/U0/EXT_LPF/POR_SRL_I/CLK
+Low Pulse Width   Slow    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y41  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_0/CLKARDCLK
+Low Pulse Width   Fast    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y41  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_0/CLKARDCLK
+Low Pulse Width   Slow    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y43  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_1/CLKARDCLK
+Low Pulse Width   Fast    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y43  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_1/CLKARDCLK
+Low Pulse Width   Slow    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y42  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_2/CLKARDCLK
+Low Pulse Width   Fast    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y42  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_2/CLKARDCLK
+High Pulse Width  Slow    PS8/MAXIGP2ACLK     n/a            1.500         5.000       3.500      PS8_X0Y0      seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/MAXIGP2ACLK
+High Pulse Width  Fast    PS8/MAXIGP2ACLK     n/a            1.500         5.000       3.500      PS8_X0Y0      seizelut_bd_i/zynq_ultra_ps_e_0/inst/PS8_i/MAXIGP2ACLK
+High Pulse Width  Slow    SRL16E/CLK          n/a            0.762         5.000       4.238      SLICE_X7Y185  seizelut_bd_i/rst_pl0_100M/U0/EXT_LPF/POR_SRL_I/CLK
+High Pulse Width  Fast    SRL16E/CLK          n/a            0.762         5.000       4.238      SLICE_X7Y185  seizelut_bd_i/rst_pl0_100M/U0/EXT_LPF/POR_SRL_I/CLK
+High Pulse Width  Slow    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y41  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_0/CLKARDCLK
+High Pulse Width  Fast    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y41  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_0/CLKARDCLK
+High Pulse Width  Slow    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y43  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_1/CLKARDCLK
+High Pulse Width  Fast    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y43  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_1/CLKARDCLK
+High Pulse Width  Slow    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y42  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_2/CLKARDCLK
+High Pulse Width  Fast    RAMB36E2/CLKARDCLK  n/a            0.577         5.000       4.423      RAMB36_X0Y42  seizelut_bd_i/seizelut_0/inst/u_bist_rom/dout_a_reg_2/CLKARDCLK
+
+
+
