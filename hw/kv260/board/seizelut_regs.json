@@ -1,7 +1,7 @@
 {
  "id": 1397511508,
- "version": 1,
- "info": 53618177,
+ "version": 2,
+ "info": 53618178,
  "registers": {
   "ID": 0,
   "INFO": 4,
@@ -31,6 +31,12 @@
   "IO_STATE": 100,
   "DBG_BITS0": 112,
   "DBG_LUTS0": 132,
+  "FI_B0": 160,
+  "FI_B1": 180,
+  "FI_L0": 200,
+  "FI_L1": 208,
+  "FI_TT": 216,
+  "FI_ADDR": 224,
   "FEAT0": 256
  },
  "n_features": 38,
@@ -250,10 +256,12 @@
  },
  "bist": {
   "recording": "sub-098_run-03",
-  "start_window": 69571,
+  "start_window": 69699,
   "n": 1024,
-  "decisions": 77,
+  "selected": 255,
+  "composition": "255 coverage-selected training windows, then 769 windows of sub-098_run-03 from 69699",
+  "decisions": 85,
   "alarms": 26
  },
- "export": "export/n4_distill_s0"
+ "export": "/home/user/Final_year_proj/export/n4_distill_s0"
 }

@@ -123,6 +123,7 @@ def main() -> int:
                          "chosen on the training patients)")
     ap.add_argument("--op2-k", type=int, default=10, help="programmable operating point: k of the last 10 decisions")
     ap.add_argument("--no-e2e", action="store_true", help="skip the end-to-end test from raw samples")
+    ap.add_argument("--no-faults", action="store_true", help="skip the fault-injection campaign")
     args = ap.parse_args()
 
     out = {"started": dt.datetime.now().isoformat(timespec="seconds"), "backend": args.backend,
@@ -272,6 +273,18 @@ def main() -> int:
             step("7_end_to_end_raw", ok7, recordings=e2e)
         except Exception as e:   # report, do not hide, a failure of the optional end-to-end step
             step("7_end_to_end_raw", False, error=f"{type(e).__name__}: {e}")
+    if not args.no_faults:
+        print("8 fault-injection campaign (every single fault, one self-test pass each)")
+        try:
+            from fault_campaign import campaign
+            fc = campaign(core, model, max_faults=400 if args.quick else 0, log=print)
+            if "skipped" in fc:
+                print("    skipped:", fc["skipped"])
+                out["steps"]["8_fault_campaign"] = {"pass": True, **fc}
+            else:
+                step("8_fault_campaign", fc.get("pass", False), **{k: v for k, v in fc.items() if k != "pass"})
+        except Exception as e:
+            step("8_fault_campaign", False, error=f"{type(e).__name__}: {e}")
     out["finished"] = dt.datetime.now().isoformat(timespec="seconds")
     out["all_pass"] = bool(ok_all)
     res_dir = HERE / "results"

@@ -5,7 +5,12 @@ into the FPGA fabric of the AMD Kria KV260 and proves on the board that the hard
 result as the software for every one-second window of 10 recordings (431,960 windows). The board also reports the
 hardware cost, the latency, the throughput, the seizures the FPGA itself detects, and the measured power.
 
-**Live demo (new in kit v4):** `demo/DEMO.md`. Recorded patient signals stream second by second through the
+**Kit v5:** the core can inject any single hardware fault (a flipped truth-table bit, or a comparator or LUT
+output stuck at 0 or 1) through registers, and its self-test ROM starts with vectors selected to detect every fault
+that changes a decision on the training data. Board test step 8 injects all 3,592 single faults one by one, runs the
+self-test after each and checks the result against the software prediction (`board/fault_campaign.py`).
+
+**Live demo (kit v4):** `demo/DEMO.md`. Recorded patient signals stream second by second through the
 board, and the laptop's browser shows every stage. Demo 1 needs no extra parts and uses the board's own LEDs.
 Demo 2 adds PMOD LEDs, a buzzer and a button (parts list in `demo/ORDER_NOW.md`). You can rehearse both on the
 laptop without the board.
@@ -139,6 +144,7 @@ to `hw/kv260/measured/`; `tools/` there turns them into the paper's hardware tab
 | 5 detection | seizures detected and false alarms from the FPGA's own alarms (the dataset paper's definitions) | reported (no pass/fail) |
 | 6 power | SOM power from the on-board INA260 monitor: overlay idle vs. the classifier running continuously | reported |
 | 7 end to end | raw EEG/ECG/EMG/motion samples of 3 recordings -> integer front end in C on the ARM (all 117 features compared with the golden model) -> classifier in the fabric -> alarms compared with the golden model | 0 feature and 0 output mismatches; reports the front end's speed (x real time) |
+| 8 fault injection | each of the 3,592 single faults injected through the fault registers, one BIST pass each; error count and first failing vector compared with the software prediction | 0 hardware/software mismatches; reports the share of decision-relevant faults the self-test detects |
 
 Numbers the board must reproduce (they come from the simulation of the same RTL): BIST 1,024/1,024 in 1,028
 cycles; latency 3 cycles; 0 mismatches on 431,960 windows; frozen operating point: 1 of 19 seizures, 0 false
@@ -168,7 +174,7 @@ mismatches on the 3 raw recordings.
 | `rtl/` | `seizelut_axi.v` (AXI4-Lite core, BIST, programmable operating point), `lutnet_classifier.v` (the classifier, generated from the trained model), `seizelut_bist_rom.v` (self-test vectors), `seizelut_regs.json` (register map), `baselines/` (TreeLUT and logic-gate-network classifiers for the cost comparison; synthesised out of context by the build) |
 | `vivado/` | `build_kv260.tcl` (one-step build), `build.bat`, `build.sh`, `kv260_pmod.xdc` (PMOD pins for the demo LEDs, buzzer and button) |
 | `demo/` | live demo: `DEMO.md` (guide and presenter script), `ORDER_NOW.md` (parts and wiring for Demo 2), `demo1_now.sh`, `demo2_components.sh`, `rehearse_laptop.sh` / `.bat`, `net_direct.sh`, `seizelut_demo.py` (server, Python standard library + numpy), `board_io.py` (board LEDs and button), `web/` (dashboard), `segments/` (5 recorded inputs) |
-| `board/` | `run_tests.py` (test campaign), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (features of 10 recordings), `raw/` (raw samples of 3 recordings), `frontend/` (integer front end in C: `seizelut_fe.c` batch and `seizelut_fe_stream.c` second by second, both bit-exact with the golden model; `prebuilt/` libraries for the board's ARM, Linux x86-64 and Windows, used when there is no gcc) |
+| `board/` | `run_tests.py` (test campaign, steps 1-8), `fault_campaign.py` (step 8: every single fault injected, self-test after each), `fault_list.json` (each fault's effect on the training data), `seizelut_bist_vectors.npz` (the self-test vectors and their golden outputs), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (features of 10 recordings), `raw/` (raw samples of 3 recordings), `frontend/` (integer front end in C: `seizelut_fe.c` batch and `seizelut_fe_stream.c` second by second, both bit-exact with the golden model; `prebuilt/` libraries for the board's ARM, Linux x86-64 and Windows, used when there is no gcc) |
 | `sim/` | `tb_seizelut_axi.v` and `run_sim.sh` (Icarus Verilog), one bundled recording |
 | `tools/` | `parse_reports.py` (Vivado reports to JSON), `make_board_vectors.py` and `make_frontend_header.py` (regenerate vectors and the front end's constants, need the repository) |
 | `results/` | verification already done: `simulation_verification.json`, `frontend_c_verification.json`, `yosys_synthesis.json`, `hw_synthesis_yosys.json` (all three classifiers), `board_campaign_emulated.json` |
@@ -194,4 +200,7 @@ mismatches on the 3 raw recordings.
 | 0x064 | IO_STATE | R | the seven PMOD output pins as driven |
 | 0x070-0x080 | DBG_BITS0-4 | R | the 146 comparator bits of the last window |
 | 0x084-0x088 | DBG_LUTS0-1 | R | the 50 LUT outputs of the last window (0-24 background, 25-49 seizure) |
+| 0x0A0-0x0B0 / 0x0B4-0x0C4 | FI_B0 / FI_B1 | RW | fault injection: comparator output i stuck at 0 / 1 (bit i of the 160-bit mask) |
+| 0x0C8-0x0CC / 0x0D0-0x0D4 | FI_L0 / FI_L1 | RW | fault injection: LUT output j stuck at 0 / 1 |
+| 0x0D8-0x0DC / 0x0E0 | FI_TT / FI_ADDR | RW | fault injection: flip truth-table entry FI_ADDR of LUT j (all zero = no fault) |
 | 0x100 + 4i | FEAT i | RW | features 2i (bits 15:0) and 2i+1 (bits 31:16), int16 |

@@ -70,6 +70,10 @@ module tb_seizelut_axi;
     reg [63:0] got_luts;
     reg hb_prev;
     reg [6:0] exp_led;
+    // fault injection cases: {exp firsterr[15:0], exp err[15:0], addr[5:0], idx[7:0], v, kind[1:0]}
+    reg [63:0] fic [0:8191];
+    integer nfi, c, fkind, fv, fidx, faddr, freg, fi_err;
+    reg [8*1024-1:0] fifile;
 
     initial begin
         if (!$value$plusargs("vec=%s", vecfile)) vecfile = "vectors.hex";
@@ -78,6 +82,9 @@ module tb_seizelut_axi;
         if (!$value$plusargs("thr2=%d", thr2)) thr2 = 2;
         if (!$value$plusargs("k2=%d", k2)) k2 = 10;
         if (!$value$plusargs("dbg=%d", dbg)) dbg = 1;
+        if (!$value$plusargs("nfi=%d", nfi)) nfi = 0;
+        if (!$value$plusargs("fi=%s", fifile)) fifile = "fi_cases.hex";
+        if (nfi > 0) $readmemh(fifile, fic, 0, nfi - 1);
         exp_dec2_sum = 0; exp_alarm2_sum = 0; hist2 = 0;
         if (n > 0) $readmemh(vecfile, mem, 0, n - 1);
         errors = 0; exp_dec_sum = 0; exp_alarm_sum = 0;
@@ -185,6 +192,35 @@ module tb_seizelut_axi;
             axi_read(12'h03C, r); $display("BIST_CYC %0d", r);
             axi_read(12'h044, r); $display("BIST_FIRSTERR %h", r);
             // an AXI classification after BIST still works (soft reset first)
+        end
+        // ---------------- fault injection: each fault through its register, one BIST pass, counts as predicted
+        fi_err = 0;
+        for (c = 0; c < nfi; c = c + 1) begin
+            fkind = fic[c][1:0]; fv = fic[c][2]; fidx = fic[c][10:3]; faddr = fic[c][16:11];
+            freg = (fkind == 1) ? 12'h0D8 : (fkind == 2) ? (fv ? 12'h0B4 : 12'h0A0) : (fv ? 12'h0D0 : 12'h0C8);
+            if (fkind == 1) axi_write(12'h0E0, faddr);
+            axi_write(freg + 4 * (fidx / 32), 32'd1 << (fidx % 32));
+            axi_write(12'h008, 32'h4);
+            repeat (4) @(posedge clk);
+            r = 0; polls = 0;
+            while (!r[2] && polls < 10000) begin axi_read(12'h00C, r); polls = polls + 1; end
+            axi_read(12'h038, res);
+            axi_read(12'h044, r);
+            if (res[15:0] !== fic[c][32:17] || r[15:0] !== fic[c][48:33]) begin
+                fi_err = fi_err + 1; errors = errors + 1;
+                if (fi_err < 10) $display("FAULT CASE %0d kind %0d v %0d idx %0d addr %0d: BIST_ERR %0d exp %0d FIRSTERR %h exp %h",
+                                         c, fkind, fv, fidx, faddr, res, fic[c][32:17], r, fic[c][48:33]);
+            end
+            axi_write(freg + 4 * (fidx / 32), 32'd0);
+        end
+        if (nfi > 0) begin
+            axi_write(12'h008, 32'h4);
+            repeat (4) @(posedge clk);
+            r = 0; polls = 0;
+            while (!r[2] && polls < 10000) begin axi_read(12'h00C, r); polls = polls + 1; end
+            axi_read(12'h038, res);
+            if (res != 0) begin errors = errors + 1; $display("BIST after clearing the faults: %0d errors", res); end
+            $display("FAULT CASES %0d, mismatches with the prediction %0d", nfi, fi_err);
         end
         if (errors == 0) $display("PASS %0d windows, 0 mismatches", n);
         else $display("FAIL %0d errors", errors);

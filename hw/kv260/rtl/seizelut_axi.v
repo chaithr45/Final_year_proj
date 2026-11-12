@@ -41,7 +41,7 @@ module seizelut_axi #(
     localparam integer NB   = 1024;        // BIST vectors
     localparam integer BAW  = 10;       // BIST address width
     localparam integer RW   = FW + 2 + SW + 2;   // BIST ROM word
-    localparam [31:0]  INFO = 32'h03322601;
+    localparam [31:0]  INFO = 32'h03322602;
     localparam signed [7:0] OP_THR0 = 8'sd9;   // frozen decision threshold
     localparam [3:0]   OP_K0 = 4'd10;           // frozen k (of the last 10 decisions)
 
@@ -82,6 +82,9 @@ module seizelut_axi #(
     reg        bist_loop;
     reg        soft_rst, clr_cnt, bist_start, commit;
     reg [1:0]  commit_art;
+    reg [159:0] fi_b0, fi_b1;              // fault injection masks (zero: no fault)
+    reg [63:0]  fi_l0, fi_l1, fi_tt;
+    reg [5:0]   fi_addr;
     integer i;
     always @(posedge clk) begin
         soft_rst <= 1'b0; clr_cnt <= 1'b0; bist_start <= 1'b0; commit <= 1'b0;
@@ -89,6 +92,7 @@ module seizelut_axi #(
             for (i = 0; i < NW; i = i + 1) featw[i] <= 32'd0;
             scratch <= 32'd0; bist_loop <= 1'b0; commit_art <= 2'b00; op_thr <= OP_THR0; op_k <= OP_K0;
             io_ctrl <= 4'b0101; io_manual <= 7'd0;
+            fi_b0 <= 160'd0; fi_b1 <= 160'd0; fi_l0 <= 64'd0; fi_l1 <= 64'd0; fi_tt <= 64'd0; fi_addr <= 6'd0;
         end else if (wr_en) begin
             if (waddr[C_S_AXI_ADDR_WIDTH-1:8] != 0) begin
                 if (waddr[7:2] < NW) featw[waddr[7:2]] <= s_axi_wdata;
@@ -102,6 +106,16 @@ module seizelut_axi #(
                     8'h4C: op_k <= s_axi_wdata[3:0];
                     8'h58: io_ctrl <= s_axi_wdata[3:0];
                     8'h5C: io_manual <= s_axi_wdata[6:0];
+                    8'hA0: fi_b0[31:0] <= s_axi_wdata;    8'hA4: fi_b0[63:32] <= s_axi_wdata;
+                    8'hA8: fi_b0[95:64] <= s_axi_wdata;   8'hAC: fi_b0[127:96] <= s_axi_wdata;
+                    8'hB0: fi_b0[159:128] <= s_axi_wdata;
+                    8'hB4: fi_b1[31:0] <= s_axi_wdata;    8'hB8: fi_b1[63:32] <= s_axi_wdata;
+                    8'hBC: fi_b1[95:64] <= s_axi_wdata;   8'hC0: fi_b1[127:96] <= s_axi_wdata;
+                    8'hC4: fi_b1[159:128] <= s_axi_wdata;
+                    8'hC8: fi_l0[31:0] <= s_axi_wdata;    8'hCC: fi_l0[63:32] <= s_axi_wdata;
+                    8'hD0: fi_l1[31:0] <= s_axi_wdata;    8'hD4: fi_l1[63:32] <= s_axi_wdata;
+                    8'hD8: fi_tt[31:0] <= s_axi_wdata;    8'hDC: fi_tt[63:32] <= s_axi_wdata;
+                    8'hE0: fi_addr <= s_axi_wdata[5:0];
                     default: ;
                 endcase
             end
@@ -173,6 +187,8 @@ module seizelut_axi #(
     wire [146-1:0] dbg_bits;
     wire [50-1:0]  dbg_luts;
     lutnet_classifier u_cls (.clk(clk), .rst(cls_rst), .valid_in(cls_valid), .features(cls_feat),
+                             .fi_b0(fi_b0[146-1:0]), .fi_b1(fi_b1[146-1:0]), .fi_l0(fi_l0[50-1:0]),
+                             .fi_l1(fi_l1[50-1:0]), .fi_tt(fi_tt[50-1:0]), .fi_addr(fi_addr),
                              .dbg_bits(dbg_bits), .dbg_luts(dbg_luts),
                              .artefact(cls_art), .score(score), .decision(decision), .alarm(alarm),
                              .out_valid(out_valid));
@@ -343,6 +359,14 @@ module seizelut_axi #(
                 8'h80: rdata_c = res_bits_pad[159:128];
                 8'h84: rdata_c = res_luts_pad[31:0];
                 8'h88: rdata_c = res_luts_pad[63:32];
+                8'hA0: rdata_c = fi_b0[31:0];    8'hA4: rdata_c = fi_b0[63:32];   8'hA8: rdata_c = fi_b0[95:64];
+                8'hAC: rdata_c = fi_b0[127:96];  8'hB0: rdata_c = fi_b0[159:128];
+                8'hB4: rdata_c = fi_b1[31:0];    8'hB8: rdata_c = fi_b1[63:32];   8'hBC: rdata_c = fi_b1[95:64];
+                8'hC0: rdata_c = fi_b1[127:96];  8'hC4: rdata_c = fi_b1[159:128];
+                8'hC8: rdata_c = fi_l0[31:0];    8'hCC: rdata_c = fi_l0[63:32];
+                8'hD0: rdata_c = fi_l1[31:0];    8'hD4: rdata_c = fi_l1[63:32];
+                8'hD8: rdata_c = fi_tt[31:0];    8'hDC: rdata_c = fi_tt[63:32];
+                8'hE0: rdata_c = {26'd0, fi_addr};
                 default: rdata_c = 32'hDEADBEEF;
             endcase
         end

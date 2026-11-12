@@ -10,6 +10,12 @@ module lutnet_classifier (
     output reg  signed [5:0] score,
     output reg  decision,
     output reg  alarm,
+    input  wire [145:0] fi_b0,     // fault injection: comparator output stuck at 0
+    input  wire [145:0] fi_b1,     //                  comparator output stuck at 1
+    input  wire [49:0] fi_l0,      //                  LUT output stuck at 0
+    input  wire [49:0] fi_l1,      //                  LUT output stuck at 1
+    input  wire [49:0] fi_tt,      //                  flip truth-table entry fi_addr of these LUTs
+    input  wire [5:0] fi_addr,
     output reg  out_valid,
     output wire [145:0] dbg_bits,
     output wire [49:0] dbg_luts
@@ -206,108 +212,159 @@ module lutnet_classifier (
     assign b[143] = (x37 > 10'sd101);
     assign b[144] = (x37 > 10'sd104);
     assign b[145] = (x37 > 10'sd108);
+    wire [145:0] bf = (b & ~fi_b0) | fi_b1;   // comparator outputs after fault injection
     // layer 1: 50 LUT6
     wire [49:0] y0;
     localparam [63:0] T0_0 = 64'h200e54fe2333eeff;
-    assign y0[0] = T0_0[{b[100], b[113], b[94], b[133], b[46], b[54]}];
+    wire [5:0] a0_0 = {bf[100], bf[113], bf[94], bf[133], bf[46], bf[54]};
+    assign y0[0] = ((T0_0[a0_0] ^ (fi_tt[0] & (a0_0 == fi_addr))) & ~fi_l0[0]) | fi_l1[0];
     localparam [63:0] T0_1 = 64'hcfc4ff90ded4dad0;
-    assign y0[1] = T0_1[{b[139], b[39], b[24], b[88], b[74], b[106]}];
+    wire [5:0] a0_1 = {bf[139], bf[39], bf[24], bf[88], bf[74], bf[106]};
+    assign y0[1] = ((T0_1[a0_1] ^ (fi_tt[1] & (a0_1 == fi_addr))) & ~fi_l0[1]) | fi_l1[1];
     localparam [63:0] T0_2 = 64'hfffffe1e530f00ff;
-    assign y0[2] = T0_2[{b[60], b[3], b[50], b[86], b[42], b[30]}];
+    wire [5:0] a0_2 = {bf[60], bf[3], bf[50], bf[86], bf[42], bf[30]};
+    assign y0[2] = ((T0_2[a0_2] ^ (fi_tt[2] & (a0_2 == fi_addr))) & ~fi_l0[2]) | fi_l1[2];
     localparam [63:0] T0_3 = 64'he8eb4ed98f2f0e13;
-    assign y0[3] = T0_3[{b[4], b[35], b[66], b[80], b[127], b[36]}];
+    wire [5:0] a0_3 = {bf[4], bf[35], bf[66], bf[80], bf[127], bf[36]};
+    assign y0[3] = ((T0_3[a0_3] ^ (fi_tt[3] & (a0_3 == fi_addr))) & ~fi_l0[3]) | fi_l1[3];
     localparam [63:0] T0_4 = 64'h110b0108f951dfdf;
-    assign y0[4] = T0_4[{b[23], b[126], b[42], b[6], b[45], b[122]}];
+    wire [5:0] a0_4 = {bf[23], bf[126], bf[42], bf[6], bf[45], bf[122]};
+    assign y0[4] = ((T0_4[a0_4] ^ (fi_tt[4] & (a0_4 == fi_addr))) & ~fi_l0[4]) | fi_l1[4];
     localparam [63:0] T0_5 = 64'h55ddff6af7d1e72f;
-    assign y0[5] = T0_5[{b[12], b[31], b[19], b[36], b[109], b[85]}];
+    wire [5:0] a0_5 = {bf[12], bf[31], bf[19], bf[36], bf[109], bf[85]};
+    assign y0[5] = ((T0_5[a0_5] ^ (fi_tt[5] & (a0_5 == fi_addr))) & ~fi_l0[5]) | fi_l1[5];
     localparam [63:0] T0_6 = 64'h627231b0267e57ff;
-    assign y0[6] = T0_6[{b[64], b[43], b[69], b[105], b[10], b[33]}];
+    wire [5:0] a0_6 = {bf[64], bf[43], bf[69], bf[105], bf[10], bf[33]};
+    assign y0[6] = ((T0_6[a0_6] ^ (fi_tt[6] & (a0_6 == fi_addr))) & ~fi_l0[6]) | fi_l1[6];
     localparam [63:0] T0_7 = 64'hf5a4a339210103d3;
-    assign y0[7] = T0_7[{b[74], b[112], b[38], b[103], b[67], b[73]}];
+    wire [5:0] a0_7 = {bf[74], bf[112], bf[38], bf[103], bf[67], bf[73]};
+    assign y0[7] = ((T0_7[a0_7] ^ (fi_tt[7] & (a0_7 == fi_addr))) & ~fi_l0[7]) | fi_l1[7];
     localparam [63:0] T0_8 = 64'h4cfe2af20d200eb2;
-    assign y0[8] = T0_8[{b[4], b[127], b[30], b[118], b[140], b[134]}];
+    wire [5:0] a0_8 = {bf[4], bf[127], bf[30], bf[118], bf[140], bf[134]};
+    assign y0[8] = ((T0_8[a0_8] ^ (fi_tt[8] & (a0_8 == fi_addr))) & ~fi_l0[8]) | fi_l1[8];
     localparam [63:0] T0_9 = 64'h59bd70bddd8f7f77;
-    assign y0[9] = T0_9[{b[105], b[108], b[69], b[45], b[127], b[142]}];
+    wire [5:0] a0_9 = {bf[105], bf[108], bf[69], bf[45], bf[127], bf[142]};
+    assign y0[9] = ((T0_9[a0_9] ^ (fi_tt[9] & (a0_9 == fi_addr))) & ~fi_l0[9]) | fi_l1[9];
     localparam [63:0] T0_10 = 64'h0575e4dc90f4fff7;
-    assign y0[10] = T0_10[{b[75], b[93], b[12], b[17], b[139], b[121]}];
+    wire [5:0] a0_10 = {bf[75], bf[93], bf[12], bf[17], bf[139], bf[121]};
+    assign y0[10] = ((T0_10[a0_10] ^ (fi_tt[10] & (a0_10 == fi_addr))) & ~fi_l0[10]) | fi_l1[10];
     localparam [63:0] T0_11 = 64'h77f3fffbdd918488;
-    assign y0[11] = T0_11[{b[60], b[134], b[118], b[108], b[84], b[22]}];
+    wire [5:0] a0_11 = {bf[60], bf[134], bf[118], bf[108], bf[84], bf[22]};
+    assign y0[11] = ((T0_11[a0_11] ^ (fi_tt[11] & (a0_11 == fi_addr))) & ~fi_l0[11]) | fi_l1[11];
     localparam [63:0] T0_12 = 64'h00fc7335004037b7;
-    assign y0[12] = T0_12[{b[3], b[124], b[27], b[6], b[86], b[66]}];
+    wire [5:0] a0_12 = {bf[3], bf[124], bf[27], bf[6], bf[86], bf[66]};
+    assign y0[12] = ((T0_12[a0_12] ^ (fi_tt[12] & (a0_12 == fi_addr))) & ~fi_l0[12]) | fi_l1[12];
     localparam [63:0] T0_13 = 64'h8313aaab202faeae;
-    assign y0[13] = T0_13[{b[134], b[91], b[30], b[11], b[66], b[60]}];
+    wire [5:0] a0_13 = {bf[134], bf[91], bf[30], bf[11], bf[66], bf[60]};
+    assign y0[13] = ((T0_13[a0_13] ^ (fi_tt[13] & (a0_13 == fi_addr))) & ~fi_l0[13]) | fi_l1[13];
     localparam [63:0] T0_14 = 64'h7302cfc7762e1eff;
-    assign y0[14] = T0_14[{b[121], b[120], b[14], b[102], b[111], b[46]}];
+    wire [5:0] a0_14 = {bf[121], bf[120], bf[14], bf[102], bf[111], bf[46]};
+    assign y0[14] = ((T0_14[a0_14] ^ (fi_tt[14] & (a0_14 == fi_addr))) & ~fi_l0[14]) | fi_l1[14];
     localparam [63:0] T0_15 = 64'hcc545f7faa36cfcf;
-    assign y0[15] = T0_15[{b[139], b[32], b[122], b[128], b[24], b[103]}];
+    wire [5:0] a0_15 = {bf[139], bf[32], bf[122], bf[128], bf[24], bf[103]};
+    assign y0[15] = ((T0_15[a0_15] ^ (fi_tt[15] & (a0_15 == fi_addr))) & ~fi_l0[15]) | fi_l1[15];
     localparam [63:0] T0_16 = 64'h12433f07f353fafb;
-    assign y0[16] = T0_16[{b[119], b[43], b[95], b[21], b[125], b[28]}];
+    wire [5:0] a0_16 = {bf[119], bf[43], bf[95], bf[21], bf[125], bf[28]};
+    assign y0[16] = ((T0_16[a0_16] ^ (fi_tt[16] & (a0_16 == fi_addr))) & ~fi_l0[16]) | fi_l1[16];
     localparam [63:0] T0_17 = 64'h32ff79fc46cdcf8f;
-    assign y0[17] = T0_17[{b[36], b[132], b[106], b[32], b[24], b[139]}];
+    wire [5:0] a0_17 = {bf[36], bf[132], bf[106], bf[32], bf[24], bf[139]};
+    assign y0[17] = ((T0_17[a0_17] ^ (fi_tt[17] & (a0_17 == fi_addr))) & ~fi_l0[17]) | fi_l1[17];
     localparam [63:0] T0_18 = 64'h3f574d80bd850ee0;
-    assign y0[18] = T0_18[{b[138], b[75], b[24], b[27], b[58], b[145]}];
+    wire [5:0] a0_18 = {bf[138], bf[75], bf[24], bf[27], bf[58], bf[145]};
+    assign y0[18] = ((T0_18[a0_18] ^ (fi_tt[18] & (a0_18 == fi_addr))) & ~fi_l0[18]) | fi_l1[18];
     localparam [63:0] T0_19 = 64'hf7c0bb03d5f7df3b;
-    assign y0[19] = T0_19[{b[81], b[70], b[5], b[37], b[115], b[94]}];
+    wire [5:0] a0_19 = {bf[81], bf[70], bf[5], bf[37], bf[115], bf[94]};
+    assign y0[19] = ((T0_19[a0_19] ^ (fi_tt[19] & (a0_19 == fi_addr))) & ~fi_l0[19]) | fi_l1[19];
     localparam [63:0] T0_20 = 64'h4c6cdc2b4fff1fad;
-    assign y0[20] = T0_20[{b[133], b[53], b[99], b[65], b[56], b[14]}];
+    wire [5:0] a0_20 = {bf[133], bf[53], bf[99], bf[65], bf[56], bf[14]};
+    assign y0[20] = ((T0_20[a0_20] ^ (fi_tt[20] & (a0_20 == fi_addr))) & ~fi_l0[20]) | fi_l1[20];
     localparam [63:0] T0_21 = 64'h0fdf2270567750b0;
-    assign y0[21] = T0_21[{b[4], b[24], b[112], b[75], b[101], b[13]}];
+    wire [5:0] a0_21 = {bf[4], bf[24], bf[112], bf[75], bf[101], bf[13]};
+    assign y0[21] = ((T0_21[a0_21] ^ (fi_tt[21] & (a0_21 == fi_addr))) & ~fi_l0[21]) | fi_l1[21];
     localparam [63:0] T0_22 = 64'h0b0f0702f8e8ed2f;
-    assign y0[22] = T0_22[{b[113], b[45], b[132], b[97], b[7], b[24]}];
+    wire [5:0] a0_22 = {bf[113], bf[45], bf[132], bf[97], bf[7], bf[24]};
+    assign y0[22] = ((T0_22[a0_22] ^ (fi_tt[22] & (a0_22 == fi_addr))) & ~fi_l0[22]) | fi_l1[22];
     localparam [63:0] T0_23 = 64'h1119ffc818395fdd;
-    assign y0[23] = T0_23[{b[22], b[113], b[72], b[53], b[78], b[9]}];
+    wire [5:0] a0_23 = {bf[22], bf[113], bf[72], bf[53], bf[78], bf[9]};
+    assign y0[23] = ((T0_23[a0_23] ^ (fi_tt[23] & (a0_23 == fi_addr))) & ~fi_l0[23]) | fi_l1[23];
     localparam [63:0] T0_24 = 64'ha0f8015589ab93ff;
-    assign y0[24] = T0_24[{b[44], b[131], b[30], b[104], b[34], b[56]}];
+    wire [5:0] a0_24 = {bf[44], bf[131], bf[30], bf[104], bf[34], bf[56]};
+    assign y0[24] = ((T0_24[a0_24] ^ (fi_tt[24] & (a0_24 == fi_addr))) & ~fi_l0[24]) | fi_l1[24];
     localparam [63:0] T0_25 = 64'he1a479cdc5355935;
-    assign y0[25] = T0_25[{b[110], b[53], b[1], b[87], b[61], b[134]}];
+    wire [5:0] a0_25 = {bf[110], bf[53], bf[1], bf[87], bf[61], bf[134]};
+    assign y0[25] = ((T0_25[a0_25] ^ (fi_tt[25] & (a0_25 == fi_addr))) & ~fi_l0[25]) | fi_l1[25];
     localparam [63:0] T0_26 = 64'h3f086b5288920bde;
-    assign y0[26] = T0_26[{b[90], b[90], b[124], b[3], b[47], b[144]}];
+    wire [5:0] a0_26 = {bf[90], bf[90], bf[124], bf[3], bf[47], bf[144]};
+    assign y0[26] = ((T0_26[a0_26] ^ (fi_tt[26] & (a0_26 == fi_addr))) & ~fi_l0[26]) | fi_l1[26];
     localparam [63:0] T0_27 = 64'h518879b8e0ea222a;
-    assign y0[27] = T0_27[{b[77], b[139], b[134], b[67], b[49], b[89]}];
+    wire [5:0] a0_27 = {bf[77], bf[139], bf[134], bf[67], bf[49], bf[89]};
+    assign y0[27] = ((T0_27[a0_27] ^ (fi_tt[27] & (a0_27 == fi_addr))) & ~fi_l0[27]) | fi_l1[27];
     localparam [63:0] T0_28 = 64'hff970d1aa002feee;
-    assign y0[28] = T0_28[{b[120], b[41], b[112], b[48], b[6], b[128]}];
+    wire [5:0] a0_28 = {bf[120], bf[41], bf[112], bf[48], bf[6], bf[128]};
+    assign y0[28] = ((T0_28[a0_28] ^ (fi_tt[28] & (a0_28 == fi_addr))) & ~fi_l0[28]) | fi_l1[28];
     localparam [63:0] T0_29 = 64'hfe7d129a2cb4f9ba;
-    assign y0[29] = T0_29[{b[20], b[121], b[136], b[79], b[107], b[65]}];
+    wire [5:0] a0_29 = {bf[20], bf[121], bf[136], bf[79], bf[107], bf[65]};
+    assign y0[29] = ((T0_29[a0_29] ^ (fi_tt[29] & (a0_29 == fi_addr))) & ~fi_l0[29]) | fi_l1[29];
     localparam [63:0] T0_30 = 64'hc025b151b00d5088;
-    assign y0[30] = T0_30[{b[75], b[76], b[5], b[7], b[90], b[75]}];
+    wire [5:0] a0_30 = {bf[75], bf[76], bf[5], bf[7], bf[90], bf[75]};
+    assign y0[30] = ((T0_30[a0_30] ^ (fi_tt[30] & (a0_30 == fi_addr))) & ~fi_l0[30]) | fi_l1[30];
     localparam [63:0] T0_31 = 64'ha43ba7ab44af064b;
-    assign y0[31] = T0_31[{b[16], b[5], b[24], b[75], b[98], b[123]}];
+    wire [5:0] a0_31 = {bf[16], bf[5], bf[24], bf[75], bf[98], bf[123]};
+    assign y0[31] = ((T0_31[a0_31] ^ (fi_tt[31] & (a0_31 == fi_addr))) & ~fi_l0[31]) | fi_l1[31];
     localparam [63:0] T0_32 = 64'hc1f5c0d5a0b5f0f9;
-    assign y0[32] = T0_32[{b[71], b[54], b[24], b[144], b[14], b[75]}];
+    wire [5:0] a0_32 = {bf[71], bf[54], bf[24], bf[144], bf[14], bf[75]};
+    assign y0[32] = ((T0_32[a0_32] ^ (fi_tt[32] & (a0_32 == fi_addr))) & ~fi_l0[32]) | fi_l1[32];
     localparam [63:0] T0_33 = 64'hbf009f0432220a06;
-    assign y0[33] = T0_33[{b[36], b[68], b[113], b[54], b[5], b[2]}];
+    wire [5:0] a0_33 = {bf[36], bf[68], bf[113], bf[54], bf[5], bf[2]};
+    assign y0[33] = ((T0_33[a0_33] ^ (fi_tt[33] & (a0_33 == fi_addr))) & ~fi_l0[33]) | fi_l1[33];
     localparam [63:0] T0_34 = 64'hb3930111e9f525f4;
-    assign y0[34] = T0_34[{b[57], b[51], b[48], b[26], b[24], b[75]}];
+    wire [5:0] a0_34 = {bf[57], bf[51], bf[48], bf[26], bf[24], bf[75]};
+    assign y0[34] = ((T0_34[a0_34] ^ (fi_tt[34] & (a0_34 == fi_addr))) & ~fi_l0[34]) | fi_l1[34];
     localparam [63:0] T0_35 = 64'h0e0a03effc329848;
-    assign y0[35] = T0_35[{b[48], b[53], b[102], b[25], b[144], b[30]}];
+    wire [5:0] a0_35 = {bf[48], bf[53], bf[102], bf[25], bf[144], bf[30]};
+    assign y0[35] = ((T0_35[a0_35] ^ (fi_tt[35] & (a0_35 == fi_addr))) & ~fi_l0[35]) | fi_l1[35];
     localparam [63:0] T0_36 = 64'ha662a1018a6e4400;
-    assign y0[36] = T0_36[{b[32], b[94], b[94], b[78], b[6], b[14]}];
+    wire [5:0] a0_36 = {bf[32], bf[94], bf[94], bf[78], bf[6], bf[14]};
+    assign y0[36] = ((T0_36[a0_36] ^ (fi_tt[36] & (a0_36 == fi_addr))) & ~fi_l0[36]) | fi_l1[36];
     localparam [63:0] T0_37 = 64'h49be892645750931;
-    assign y0[37] = T0_37[{b[75], b[141], b[3], b[61], b[5], b[145]}];
+    wire [5:0] a0_37 = {bf[75], bf[141], bf[3], bf[61], bf[5], bf[145]};
+    assign y0[37] = ((T0_37[a0_37] ^ (fi_tt[37] & (a0_37 == fi_addr))) & ~fi_l0[37]) | fi_l1[37];
     localparam [63:0] T0_38 = 64'h626e417fe6508f54;
-    assign y0[38] = T0_38[{b[22], b[62], b[63], b[133], b[116], b[48]}];
+    wire [5:0] a0_38 = {bf[22], bf[62], bf[63], bf[133], bf[116], bf[48]};
+    assign y0[38] = ((T0_38[a0_38] ^ (fi_tt[38] & (a0_38 == fi_addr))) & ~fi_l0[38]) | fi_l1[38];
     localparam [63:0] T0_39 = 64'h95d8f08816222232;
-    assign y0[39] = T0_39[{b[13], b[129], b[123], b[142], b[45], b[123]}];
+    wire [5:0] a0_39 = {bf[13], bf[129], bf[123], bf[142], bf[45], bf[123]};
+    assign y0[39] = ((T0_39[a0_39] ^ (fi_tt[39] & (a0_39 == fi_addr))) & ~fi_l0[39]) | fi_l1[39];
     localparam [63:0] T0_40 = 64'h3f213f2f05244e3e;
-    assign y0[40] = T0_40[{b[64], b[134], b[18], b[40], b[129], b[127]}];
+    wire [5:0] a0_40 = {bf[64], bf[134], bf[18], bf[40], bf[129], bf[127]};
+    assign y0[40] = ((T0_40[a0_40] ^ (fi_tt[40] & (a0_40 == fi_addr))) & ~fi_l0[40]) | fi_l1[40];
     localparam [63:0] T0_41 = 64'h31f3e2a0e60693cc;
-    assign y0[41] = T0_41[{b[83], b[140], b[140], b[130], b[67], b[137]}];
+    wire [5:0] a0_41 = {bf[83], bf[140], bf[140], bf[130], bf[67], bf[137]};
+    assign y0[41] = ((T0_41[a0_41] ^ (fi_tt[41] & (a0_41 == fi_addr))) & ~fi_l0[41]) | fi_l1[41];
     localparam [63:0] T0_42 = 64'h54355551f656d680;
-    assign y0[42] = T0_42[{b[40], b[43], b[15], b[55], b[96], b[122]}];
+    wire [5:0] a0_42 = {bf[40], bf[43], bf[15], bf[55], bf[96], bf[122]};
+    assign y0[42] = ((T0_42[a0_42] ^ (fi_tt[42] & (a0_42 == fi_addr))) & ~fi_l0[42]) | fi_l1[42];
     localparam [63:0] T0_43 = 64'h014c5d080c44ddf8;
-    assign y0[43] = T0_43[{b[4], b[36], b[66], b[2], b[143], b[72]}];
+    wire [5:0] a0_43 = {bf[4], bf[36], bf[66], bf[2], bf[143], bf[72]};
+    assign y0[43] = ((T0_43[a0_43] ^ (fi_tt[43] & (a0_43 == fi_addr))) & ~fi_l0[43]) | fi_l1[43];
     localparam [63:0] T0_44 = 64'h5745cd48f014cc7f;
-    assign y0[44] = T0_44[{b[7], b[52], b[99], b[128], b[63], b[139]}];
+    wire [5:0] a0_44 = {bf[7], bf[52], bf[99], bf[128], bf[63], bf[139]};
+    assign y0[44] = ((T0_44[a0_44] ^ (fi_tt[44] & (a0_44 == fi_addr))) & ~fi_l0[44]) | fi_l1[44];
     localparam [63:0] T0_45 = 64'h4873087b44484000;
-    assign y0[45] = T0_45[{b[8], b[114], b[92], b[70], b[59], b[101]}];
+    wire [5:0] a0_45 = {bf[8], bf[114], bf[92], bf[70], bf[59], bf[101]};
+    assign y0[45] = ((T0_45[a0_45] ^ (fi_tt[45] & (a0_45 == fi_addr))) & ~fi_l0[45]) | fi_l1[45];
     localparam [63:0] T0_46 = 64'h37f21f5ebac01fd2;
-    assign y0[46] = T0_46[{b[120], b[139], b[70], b[104], b[24], b[67]}];
+    wire [5:0] a0_46 = {bf[120], bf[139], bf[70], bf[104], bf[24], bf[67]};
+    assign y0[46] = ((T0_46[a0_46] ^ (fi_tt[46] & (a0_46 == fi_addr))) & ~fi_l0[46]) | fi_l1[46];
     localparam [63:0] T0_47 = 64'hef334b84fcd72e64;
-    assign y0[47] = T0_47[{b[25], b[29], b[9], b[45], b[29], b[64]}];
+    wire [5:0] a0_47 = {bf[25], bf[29], bf[9], bf[45], bf[29], bf[64]};
+    assign y0[47] = ((T0_47[a0_47] ^ (fi_tt[47] & (a0_47 == fi_addr))) & ~fi_l0[47]) | fi_l1[47];
     localparam [63:0] T0_48 = 64'h40a30099008a4c8a;
-    assign y0[48] = T0_48[{b[7], b[25], b[3], b[135], b[32], b[82]}];
+    wire [5:0] a0_48 = {bf[7], bf[25], bf[3], bf[135], bf[32], bf[82]};
+    assign y0[48] = ((T0_48[a0_48] ^ (fi_tt[48] & (a0_48 == fi_addr))) & ~fi_l0[48]) | fi_l1[48];
     localparam [63:0] T0_49 = 64'hc45f808ad44a8088;
-    assign y0[49] = T0_49[{b[119], b[109], b[25], b[117], b[0], b[123]}];
+    wire [5:0] a0_49 = {bf[119], bf[109], bf[25], bf[117], bf[0], bf[123]};
+    assign y0[49] = ((T0_49[a0_49] ^ (fi_tt[49] & (a0_49 == fi_addr))) & ~fi_l0[49]) | fi_l1[49];
     reg [49:0] h0;
     reg [1:0] art0;
     reg v1;
@@ -316,7 +373,7 @@ module lutnet_classifier (
         else begin v1 <= v0; h0 <= y0; art0 <= art_r; end
     end
     reg [145:0] b_r;   // debug: comparator bits of the window now in h0
-    always @(posedge clk) begin if (rst) b_r <= 0; else b_r <= b; end
+    always @(posedge clk) begin if (rst) b_r <= 0; else b_r <= bf; end
     assign dbg_bits = b_r;
     assign dbg_luts = h0;
     // popcount per class (behavioural adder tree, synthesises to LUTs + carry chains)

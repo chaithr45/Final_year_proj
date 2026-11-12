@@ -1,0 +1,158 @@
+{
+ "what": "single-fault analysis of the deployed classifier on the 96 training patients (2,072 recordings)",
+ "model": "export/n4_distill_s0",
+ "windows": 31370985,
+ "hours": 8714.2,
+ "candidate_vectors": 1412302,
+ "faults": {
+  "truth_table_bits": 3200,
+  "comparator_stuck_at": 292,
+  "lut_output_stuck_at": 100
+ },
+ "truth_table": {
+  "entries": 3200,
+  "addressed_by_training_data": 2750,
+  "never_addressed": 450,
+  "never_addressed_pct": 14.06,
+  "entries_addressed_fewer_than_10_times": 31,
+  "per_lut_distinct_addresses_max": 64,
+  "per_lut_distinct_addresses_median": 64.0
+ },
+ "operating_points": {
+  "9": {
+   "threshold": 9,
+   "decision_relevant": {
+    "truth_table": 2498,
+    "stuck_at": 392
+   },
+   "alarm_relevant": {
+    "truth_table": 1674,
+    "stuck_at": 389
+   },
+   "worst_truth_table_fault_decision_changes_pct": 0.12,
+   "worst_stuck_at_fault_decision_changes_pct": 0.69,
+   "median_relevant_truth_table_fault_decision_changes": 193.0,
+   "rom_bist_detects": {
+    "decision_relevant": 50.66,
+    "alarm_relevant": 58.89
+   },
+   "selected_bist_detects": {
+    "decision_relevant": 100.0,
+    "alarm_relevant": 100.0
+   }
+  },
+  "2": {
+   "threshold": 2,
+   "decision_relevant": {
+    "truth_table": 2682,
+    "stuck_at": 392
+   },
+   "alarm_relevant": {
+    "truth_table": 2490,
+    "stuck_at": 392
+   },
+   "worst_truth_table_fault_decision_changes_pct": 0.48,
+   "worst_stuck_at_fault_decision_changes_pct": 4.85,
+   "median_relevant_truth_table_fault_decision_changes": 1551.0,
+   "rom_bist_detects": {
+    "decision_relevant": 48.63,
+    "alarm_relevant": 51.18
+   },
+   "selected_bist_detects": {
+    "decision_relevant": 100.0,
+    "alarm_relevant": 100.0
+   }
+  },
+  "-7": {
+   "threshold": -7,
+   "decision_relevant": {
+    "truth_table": 2709,
+    "stuck_at": 392
+   },
+   "alarm_relevant": {
+    "truth_table": 2671,
+    "stuck_at": 392
+   },
+   "worst_truth_table_fault_decision_changes_pct": 1.0,
+   "worst_stuck_at_fault_decision_changes_pct": 16.29,
+   "median_relevant_truth_table_fault_decision_changes": 5058.0,
+   "rom_bist_detects": {
+    "decision_relevant": 48.21,
+    "alarm_relevant": 48.78
+   },
+   "selected_bist_detects": {
+    "decision_relevant": 100.0,
+    "alarm_relevant": 100.0
+   }
+  }
+ },
+ "observable_faults": {
+  "truth_table": 2750,
+  "stuck_at": 392,
+  "total": 3142,
+  "of_all_faults": 3592
+ },
+ "rom_bist": {
+  "vectors": 1024,
+  "source": "sub-098_run-03 windows 69571-70594",
+  "detects_observable_pct": 47.58,
+  "detects_truth_table_observable_pct": 40.69,
+  "detects_stuck_at_observable_pct": 95.92
+ },
+ "selected_bist": {
+  "vectors": 255,
+  "for_truth_table": 255,
+  "lower_bound_vectors": 64,
+  "detects_observable_pct": 100.0,
+  "detects_truth_table_observable_pct": 100.0,
+  "detects_stuck_at_observable_pct": 100.0,
+  "undetected_observable_stuck_at": [],
+  "source": "windows of the 96 training patients (one per addressed truth-table entry per recording, plus 64 random per recording)",
+  "truth_table_coverage_curve": [
+   [
+    1,
+    1.82
+   ],
+   [
+    2,
+    3.64
+   ],
+   [
+    4,
+    6.95
+   ],
+   [
+    8,
+    13.05
+   ],
+   [
+    16,
+    21.67
+   ],
+   [
+    32,
+    37.45
+   ],
+   [
+    64,
+    58.98
+   ],
+   [
+    96,
+    72.65
+   ],
+   [
+    128,
+    82.04
+   ],
+   [
+    192,
+    93.45
+   ],
+   [
+    255,
+    100.0
+   ]
+  ]
+ }
+}

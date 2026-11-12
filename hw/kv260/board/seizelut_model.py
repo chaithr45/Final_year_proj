@@ -29,19 +29,50 @@ class SeizeLUTModel:
             tt = np.array([[(int(t, 16) >> a) & 1 for a in range(1 << mp.shape[1])] for t in tables], dtype=np.uint8)
             self.layers.append((mp, tt))
 
-    def forward(self, feats: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def forward(self, feats: np.ndarray, fault: dict | None = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """(n, n_features) integer features in register order -> comparator bits (n, n_bits), outputs of the last
-        LUT layer (n, n_luts) and scores (n,); the bits and LUT outputs are what the core's debug taps show."""
+        LUT layer (n, n_luts) and scores (n,); the bits and LUT outputs are what the core's debug taps show.
+        fault (as the core's fault-injection registers, one LUT layer): {"b0": [...], "b1": [...]} comparator
+        outputs stuck at 0 / 1, {"l0": [...], "l1": [...]} LUT outputs stuck at 0 / 1, {"tt": [...], "addr": a}
+        truth-table entry a of these LUTs flipped (lists of indices)."""
         bits = (feats.astype(np.int64)[:, self.bit_col] > self.bit_thr).astype(np.uint8)
+        fault = fault or {}
+        if fault.get("b0"):
+            bits[:, list(fault["b0"])] = 0
+        if fault.get("b1"):
+            bits[:, list(fault["b1"])] = 1
         h = bits
-        for mp, tt in self.layers:
+        for li, (mp, tt) in enumerate(self.layers):
             addr = np.zeros((len(h), mp.shape[0]), dtype=np.int64)
             for lb in range(mp.shape[1]):
                 addr |= h[:, mp[:, lb]].astype(np.int64) << lb
-            h = tt[np.arange(mp.shape[0])[None, :], addr]
+            h = tt[np.arange(mp.shape[0])[None, :], addr].copy()
+            if li == len(self.layers) - 1 and fault:
+                for j in fault.get("tt") or []:
+                    h[:, j] ^= (addr[:, j] == int(fault.get("addr", 0))).astype(h.dtype)
+                if fault.get("l0"):
+                    h[:, list(fault["l0"])] = 0
+                if fault.get("l1"):
+                    h[:, list(fault["l1"])] = 1
         a0, a1 = self.head["groups"]["background"]
         b0, b1 = self.head["groups"]["seizure"]
         return bits, h, h[:, b0:b1].sum(1).astype(np.int64) - h[:, a0:a1].sum(1).astype(np.int64)
+
+    def bist(self, feats: np.ndarray, art: np.ndarray, golden: dict, fault: dict | None = None) -> tuple[int, int]:
+        """What the on-chip self-test reports for these vectors with this fault: (mismatches, first mismatch index or
+        -1). Compares score, decision and alarm (alarm from a reset at the first vector) with the golden outputs."""
+        s = self.forward(feats, fault)[2]
+        dec = s >= int(self.head["decision_threshold"])
+        if self.head.get("artefact_gate", "none") != "none":
+            a = art.astype(bool)
+            g = (a[:, 0] & a[:, 1]) if self.head["artefact_gate"] == "both" else (a[:, 0] | a[:, 1])
+            dec &= ~g
+        c = np.concatenate(([0], np.cumsum(dec.astype(np.int64))))
+        t = np.arange(1, len(dec) + 1)
+        alarm = (c[t] - c[np.maximum(0, t - int(self.head["n"]))]) >= int(self.head["k"])
+        bad = (s != golden["score"]) | (dec != golden["decision"].astype(bool)) | (alarm != golden["alarm"].astype(bool))
+        idx = np.nonzero(bad)[0]
+        return int(len(idx)), int(idx[0]) if len(idx) else -1
 
     def score(self, feats: np.ndarray) -> np.ndarray:
         """(n, n_features) integer features in register order -> (n,) integer scores."""

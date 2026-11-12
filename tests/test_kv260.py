@@ -16,10 +16,12 @@ def test_axi_core_bundled_recording(tmp_path):
     srcs = [KIT / "sim/tb_seizelut_axi.v"] + [KIT / "rtl" / f for f in
                                              ("seizelut_axi.v", "lutnet_classifier.v", "seizelut_bist_rom.v")]
     subprocess.run(["iverilog", "-g2005", "-o", str(exe), *map(str, srcs)], check=True)
-    r = subprocess.run(["vvp", "-n", str(exe), f"+vec={KIT / 'sim/vectors/sub-097_run-10.hex'}", "+n=424"],
+    r = subprocess.run(["vvp", "-n", str(exe), f"+vec={KIT / 'sim/vectors/sub-097_run-10.hex'}", "+n=424",
+                        f"+fi={KIT / 'sim/fi_cases.hex'}", "+nfi=150"],
                        capture_output=True, text=True, check=True)
     assert "PASS 424 windows, 0 mismatches" in r.stdout, r.stdout[-2000:]
     assert "BIST_ERR 0" in r.stdout
+    assert "FAULT CASES 150, mismatches with the prediction 0" in r.stdout
 
 
 def test_register_map_matches_generator():

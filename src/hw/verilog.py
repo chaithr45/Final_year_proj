@@ -22,9 +22,13 @@ def _w(n: int) -> int:
     return max(1, math.ceil(math.log2(n + 1)))
 
 
-def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug: bool = False) -> dict:
+def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug: bool = False,
+             fi: bool = False) -> dict:
     """debug=True adds two outputs for the live demo: dbg_bits (the comparator bits, registered together with the
-    first LUT layer) and dbg_luts (the last LUT layer's outputs); score/decision/alarm are unchanged."""
+    first LUT layer) and dbg_luts (the last LUT layer's outputs); score/decision/alarm are unchanged.
+    fi=True (needs debug and one LUT layer) adds fault-injection inputs for the on-board fault campaign:
+    fi_b0/fi_b1 force comparator outputs to 0/1, fi_l0/fi_l1 force LUT outputs to 0/1, and fi_tt flips entry fi_addr
+    of the selected LUTs' truth tables. With all of them zero the classifier is unchanged."""
     feats = pkg["thresholds"]["features"]
     bits = pkg["thresholds"]["input_bits"]
     layers = pkg["mapping"]["layers"]
@@ -54,6 +58,15 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug
     w(f"    output reg  signed [{sw - 1}:0] score,")
     w("    output reg  decision,")
     w("    output reg  alarm,")
+    if fi:
+        assert debug and len(layers) == 1, "fault injection is generated for one LUT layer with debug taps"
+        nl0 = layers[0]["n_luts"]
+        w(f"    input  wire [{len(bits) - 1}:0] fi_b0,     // fault injection: comparator output stuck at 0")
+        w(f"    input  wire [{len(bits) - 1}:0] fi_b1,     //                  comparator output stuck at 1")
+        w(f"    input  wire [{nl0 - 1}:0] fi_l0,      //                  LUT output stuck at 0")
+        w(f"    input  wire [{nl0 - 1}:0] fi_l1,      //                  LUT output stuck at 1")
+        w(f"    input  wire [{nl0 - 1}:0] fi_tt,      //                  flip truth-table entry fi_addr of these LUTs")
+        w(f"    input  wire [{layers[0]['n_inputs'] - 1}:0] fi_addr,")
     if debug:
         w("    output reg  out_valid,")
         w(f"    output wire [{len(bits) - 1}:0] dbg_bits,")
@@ -84,6 +97,9 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug
             lit = f"-{wd}'sd{abs(t)}" if t < 0 else f"{wd}'sd{t}"
             w(f"    assign b[{i}] = (x{j} > {lit});")
     prev, prev_w = "b", len(bits)
+    if fi:
+        w(f"    wire [{len(bits) - 1}:0] bf = (b & ~fi_b0) | fi_b1;   // comparator outputs after fault injection")
+        prev = "bf"
     art_pipe = ["art_r"]
     for li, (layer, tabs) in enumerate(zip(layers, tables)):
         n_in = layer["n_inputs"]
@@ -93,7 +109,12 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug
         for i, (inp, tt) in enumerate(zip(layer["inputs"], tabs)):
             w(f"    localparam [{(1 << n_in) - 1}:0] T{li}_{i} = {1 << n_in}'h{tt};")
             addr = ", ".join(f"{prev}[{int(k)}]" for k in reversed(inp))
-            w(f"    assign y{li}[{i}] = T{li}_{i}[{{{addr}}}];")
+            if fi:
+                w(f"    wire [{n_in - 1}:0] a{li}_{i} = {{{addr}}};")
+                w(f"    assign y{li}[{i}] = ((T{li}_{i}[a{li}_{i}] ^ (fi_tt[{i}] & (a{li}_{i} == fi_addr))) & ~fi_l0[{i}])"
+                  f" | fi_l1[{i}];")
+            else:
+                w(f"    assign y{li}[{i}] = T{li}_{i}[{{{addr}}}];")
         w(f"    reg [{n - 1}:0] h{li};")
         w(f"    reg [1:0] art{li};")
         w(f"    reg v{li + 1};")
@@ -105,7 +126,7 @@ def generate(pkg: dict, out_path: Path, module: str = "lutnet_classifier", debug
         art_pipe.append(f"art{li}")
         if debug and li == 0:
             w(f"    reg [{len(bits) - 1}:0] b_r;   // debug: comparator bits of the window now in h0")
-            w("    always @(posedge clk) begin if (rst) b_r <= 0; else b_r <= b; end")
+            w(f"    always @(posedge clk) begin if (rst) b_r <= 0; else b_r <= {'bf' if fi else 'b'}; end")
             w("    assign dbg_bits = b_r;")
     nl = len(layers)
     if debug:

@@ -93,6 +93,28 @@ class _EmuBackend:
         self.luts = np.zeros(cfg.get("n_last_luts", 50), dtype=np.uint8)
         self.res_seen, self.heartbeat = 0, 0
         self.btn_pressed, self.btn_count = 0, 0
+        self.fi = {k: 0 for k in ("FI_B0", "FI_B1", "FI_L0", "FI_L1", "FI_TT")}
+        self.fi_addr = 0
+        self.bist_err, self.bist_first = 0, 0xFFFFFFFF
+        bv = HERE / "seizelut_bist_vectors.npz"
+        self.bist_vec = dict(np.load(bv)) if bv.exists() else None
+
+    def fault(self) -> dict:
+        """The fault-injection registers as a fault for the software model."""
+        ones = lambda v: [i for i in range(v.bit_length()) if (v >> i) & 1]
+        f = {"b0": ones(self.fi["FI_B0"]), "b1": ones(self.fi["FI_B1"]), "l0": ones(self.fi["FI_L0"]),
+             "l1": ones(self.fi["FI_L1"]), "tt": ones(self.fi["FI_TT"]), "addr": self.fi_addr}
+        return {k: v for k, v in f.items() if v or k == "addr"} if any(self.fi.values()) else {}
+
+    def _run_bist(self) -> None:
+        if self.bist_vec is None:          # an older kit without the vector file: report a pass
+            self.bist_runs, self.bist_ok, self.bist_err, self.bist_first = 1, self.cfg["bist"]["n"], 0, 0xFFFFFFFF
+            return
+        bv = self.bist_vec
+        err, first = self.model.bist(bv["feats"], bv["art"], bv, self.fault())
+        n = len(bv["feats"])
+        self.bist_runs, self.bist_ok, self.bist_err = 1, n - err, err
+        self.bist_first = 0xFFFFFFFF if first < 0 else first
 
     def press_button(self, down: bool = True) -> None:
         if down and not self.btn_pressed:
@@ -130,10 +152,10 @@ class _EmuBackend:
             if v & 2:
                 self.seq = self.nwin = self.ndec = self.nalarm = self.ndec2 = self.nalarm2 = 0
             if v & 4:
-                self.bist_runs, self.bist_ok = 1, self.cfg["bist"]["n"]
+                self._run_bist()
         elif off == r["COMMIT"]:
             hd = self.model.head
-            bits, luts, sc = self.model.forward(self._feats())
+            bits, luts, sc = self.model.forward(self._feats(), self.fault())
             s = int(sc[0])
             self.bits, self.luts = bits[0], luts[0]
             self.res_seen, self.heartbeat = 1, self.heartbeat ^ 1
@@ -160,6 +182,14 @@ class _EmuBackend:
             self.op_k = v & 0xF
         elif off == r.get("IO_CTRL"):
             self.io_ctrl = v & 0xF
+        elif "FI_B0" in r and r["FI_B0"] <= off < r["FI_ADDR"]:
+            for name, n_words in (("FI_B0", 5), ("FI_B1", 5), ("FI_L0", 2), ("FI_L1", 2), ("FI_TT", 2)):
+                k = (off - r[name]) >> 2
+                if 0 <= k < n_words:
+                    mask = 0xFFFFFFFF << (32 * k)
+                    self.fi[name] = (self.fi[name] & ~mask) | ((v & 0xFFFFFFFF) << (32 * k))
+        elif off == r.get("FI_ADDR"):
+            self.fi_addr = v & 0x3F
         elif off == r.get("IO_MANUAL"):
             self.io_manual = v & 0x7F
 
@@ -174,13 +204,21 @@ class _EmuBackend:
             return self.cfg["info"]
         if off == r["STATUS"]:
             done = 1 if self.bist_runs else 0
-            return (done << 3) | (done << 2) | self.valid
+            ok = done and self.bist_err == 0
+            return (int(ok) << 3) | (done << 2) | self.valid
         if "DBG_BITS0" in r and r["DBG_BITS0"] <= off < r["DBG_BITS0"] + 20:
             k = (off - r["DBG_BITS0"]) >> 2
             return int(sum(int(b) << j for j, b in enumerate(self.bits[32 * k: 32 * k + 32])))
         if "DBG_LUTS0" in r and r["DBG_LUTS0"] <= off < r["DBG_LUTS0"] + 8:
             k = (off - r["DBG_LUTS0"]) >> 2
             return int(sum(int(b) << j for j, b in enumerate(self.luts[32 * k: 32 * k + 32])))
+        if "FI_B0" in r and r["FI_B0"] <= off < r["FI_ADDR"]:
+            for name, n_words in (("FI_B0", 5), ("FI_B1", 5), ("FI_L0", 2), ("FI_L1", 2), ("FI_TT", 2)):
+                k = (off - r[name]) >> 2
+                if 0 <= k < n_words:
+                    return (self.fi[name] >> (32 * k)) & 0xFFFFFFFF
+        if off == r.get("FI_ADDR"):
+            return self.fi_addr
         if off == r.get("IO_CTRL"):
             return self.io_ctrl
         if off == r.get("IO_MANUAL"):
@@ -196,9 +234,9 @@ class _EmuBackend:
         return {r["NWIN"]: self.nwin, r["NDEC"]: self.ndec, r["NALARM"]: self.nalarm,
                 r["LATENCY"]: self.cfg["latency_cycles"], r["SCRATCH"]: self.scratch,
                 r["CYCLES"]: int((time.perf_counter() - self.cycles0) * 1e8) & 0xFFFFFFFF,
-                r["BIST_N"]: self.cfg["bist"]["n"], r["BIST_OK"]: self.bist_ok, r["BIST_ERR"]: 0,
+                r["BIST_N"]: self.cfg["bist"]["n"], r["BIST_OK"]: self.bist_ok, r["BIST_ERR"]: self.bist_err,
                 r["BIST_CYC"]: self.cfg["bist"]["n"] + self.cfg["latency_cycles"] + 1,
-                r["BIST_RUNS"]: self.bist_runs, r["BIST_FIRSTERR"]: 0xFFFFFFFF,
+                r["BIST_RUNS"]: self.bist_runs, r["BIST_FIRSTERR"]: self.bist_first,
                 r["OP_THR"]: self.op_thr & 0xFFFFFFFF, r["OP_K"]: self.op_k, r["NDEC2"]: self.ndec2,
                 r["NALARM2"]: self.nalarm2}.get(off, 0xDEADBEEF)
 
@@ -296,6 +334,24 @@ class SeizeLUT:
         """(pressed now, number of presses since reset) of the PMOD push button."""
         v = self.read("BTN")
         return v & 1, (v >> 16) & 0xFFFF
+
+    # ---- fault injection (core version 2)
+    FI_KINDS = {"tt": "FI_TT", "sab0": "FI_B0", "sab1": "FI_B1", "sal0": "FI_L0", "sal1": "FI_L1"}
+
+    def set_fault(self, kind: str, idx: int, addr: int = 0) -> int:
+        """Inject one fault: kind tt (truth-table entry addr of LUT idx flipped), sab0/sab1 (comparator output idx
+        stuck at 0/1) or sal0/sal1 (LUT output idx stuck at 0/1). Returns the register offset written."""
+        reg = self.R[self.FI_KINDS[kind]] + 4 * (int(idx) // 32)
+        if kind == "tt":
+            self.write("FI_ADDR", int(addr) & 0x3F)
+        self.write(reg, 1 << (int(idx) % 32))
+        return reg
+
+    def clear_faults(self) -> None:
+        for name, n in (("FI_B0", 5), ("FI_B1", 5), ("FI_L0", 2), ("FI_L1", 2), ("FI_TT", 2)):
+            for k in range(n):
+                self.write(self.R[name] + 4 * k, 0)
+        self.write("FI_ADDR", 0)
 
     def counters(self) -> dict:
         return {k.lower(): self.read(k) for k in ("NWIN", "NDEC", "NALARM", "NDEC2", "NALARM2", "LATENCY")}

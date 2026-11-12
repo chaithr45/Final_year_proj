@@ -36,6 +36,13 @@ Register map (byte offsets, 32-bit registers):
   0x064 IO_STATE  RO  PMOD outputs [6:0] now
   0x070 + 4 k     RO  comparator bits of the last result (k = 0..4, bit 32k + j)
   0x084 + 4 k     RO  LUT outputs of the last result (k = 0..1)
+  Fault injection (version 2; all zero = no fault; for the on-board fault campaign, see board/fault_campaign.py):
+  0x0A0 + 4 k     RW  FI_B0: force comparator output 32k + j to 0 (k = 0..4)
+  0x0B4 + 4 k     RW  FI_B1: force comparator output 32k + j to 1
+  0x0C8 + 4 k     RW  FI_L0: force LUT output 32k + j to 0 (k = 0..1)
+  0x0D0 + 4 k     RW  FI_L1: force LUT output 32k + j to 1
+  0x0D8 + 4 k     RW  FI_TT: flip truth-table entry FI_ADDR of LUT 32k + j
+  0x0E0 FI_ADDR   RW  the truth-table entry (LUT address, 6 bits) flipped by FI_TT
   PMOD outputs (KV260 J2): [0] A1 score bar low, [1] A2 score bar mid, [2] A3 score bar high, [3] A4 decision,
   [4] B1 ALARM, [5] B2 buzzer (pulsed ~3 Hz while the alarm is on), [6] B3 heartbeat (toggles per result);
   input B4 = push button to GND (pull-up).
@@ -52,12 +59,13 @@ import numpy as np
 from .verilog import generate
 
 ID_WORD = 0x534C5554
-VERSION = 1
+VERSION = 2          # 1: kit v3/v4 core; 2: fault injection and the coverage-selected self-test (kit v5)
 REGS = {"ID": 0x000, "INFO": 0x004, "CTRL": 0x008, "STATUS": 0x00C, "COMMIT": 0x010, "RESULT": 0x014,
         "NWIN": 0x018, "NDEC": 0x01C, "NALARM": 0x020, "LATENCY": 0x024, "CYCLES": 0x028, "SCRATCH": 0x02C,
         "BIST_N": 0x030, "BIST_OK": 0x034, "BIST_ERR": 0x038, "BIST_CYC": 0x03C, "BIST_RUNS": 0x040,
         "BIST_FIRSTERR": 0x044, "OP_THR": 0x048, "OP_K": 0x04C, "NDEC2": 0x050, "NALARM2": 0x054,
         "IO_CTRL": 0x058, "IO_MANUAL": 0x05C, "BTN": 0x060, "IO_STATE": 0x064, "DBG_BITS0": 0x070, "DBG_LUTS0": 0x084,
+        "FI_B0": 0x0A0, "FI_B1": 0x0B4, "FI_L0": 0x0C8, "FI_L1": 0x0D0, "FI_TT": 0x0D8, "FI_ADDR": 0x0E0,
         "FEAT0": 0x100}
 
 
@@ -199,6 +207,9 @@ module seizelut_axi #(
     reg        bist_loop;
     reg        soft_rst, clr_cnt, bist_start, commit;
     reg [1:0]  commit_art;
+    reg [159:0] fi_b0, fi_b1;              // fault injection masks (zero: no fault)
+    reg [63:0]  fi_l0, fi_l1, fi_tt;
+    reg [5:0]   fi_addr;
     integer i;
     always @(posedge clk) begin
         soft_rst <= 1'b0; clr_cnt <= 1'b0; bist_start <= 1'b0; commit <= 1'b0;
@@ -206,6 +217,7 @@ module seizelut_axi #(
             for (i = 0; i < NW; i = i + 1) featw[i] <= 32'd0;
             scratch <= 32'd0; bist_loop <= 1'b0; commit_art <= 2'b00; op_thr <= OP_THR0; op_k <= OP_K0;
             io_ctrl <= 4'b0101; io_manual <= 7'd0;
+            fi_b0 <= 160'd0; fi_b1 <= 160'd0; fi_l0 <= 64'd0; fi_l1 <= 64'd0; fi_tt <= 64'd0; fi_addr <= 6'd0;
         end else if (wr_en) begin
             if (waddr[C_S_AXI_ADDR_WIDTH-1:8] != 0) begin
                 if (waddr[7:2] < NW) featw[waddr[7:2]] <= s_axi_wdata;
@@ -219,6 +231,16 @@ module seizelut_axi #(
                     8'h4C: op_k <= s_axi_wdata[3:0];
                     8'h58: io_ctrl <= s_axi_wdata[3:0];
                     8'h5C: io_manual <= s_axi_wdata[6:0];
+                    8'hA0: fi_b0[31:0] <= s_axi_wdata;    8'hA4: fi_b0[63:32] <= s_axi_wdata;
+                    8'hA8: fi_b0[95:64] <= s_axi_wdata;   8'hAC: fi_b0[127:96] <= s_axi_wdata;
+                    8'hB0: fi_b0[159:128] <= s_axi_wdata;
+                    8'hB4: fi_b1[31:0] <= s_axi_wdata;    8'hB8: fi_b1[63:32] <= s_axi_wdata;
+                    8'hBC: fi_b1[95:64] <= s_axi_wdata;   8'hC0: fi_b1[127:96] <= s_axi_wdata;
+                    8'hC4: fi_b1[159:128] <= s_axi_wdata;
+                    8'hC8: fi_l0[31:0] <= s_axi_wdata;    8'hCC: fi_l0[63:32] <= s_axi_wdata;
+                    8'hD0: fi_l1[31:0] <= s_axi_wdata;    8'hD4: fi_l1[63:32] <= s_axi_wdata;
+                    8'hD8: fi_tt[31:0] <= s_axi_wdata;    8'hDC: fi_tt[63:32] <= s_axi_wdata;
+                    8'hE0: fi_addr <= s_axi_wdata[5:0];
                     default: ;
                 endcase
             end
@@ -253,6 +275,8 @@ module seizelut_axi #(
     wire [@NBITS@-1:0] dbg_bits;
     wire [@NLUT@-1:0]  dbg_luts;
     lutnet_classifier u_cls (.clk(clk), .rst(cls_rst), .valid_in(cls_valid), .features(cls_feat),
+                             .fi_b0(fi_b0[@NBITS@-1:0]), .fi_b1(fi_b1[@NBITS@-1:0]), .fi_l0(fi_l0[@NLUT@-1:0]),
+                             .fi_l1(fi_l1[@NLUT@-1:0]), .fi_tt(fi_tt[@NLUT@-1:0]), .fi_addr(fi_addr),
                              .dbg_bits(dbg_bits), .dbg_luts(dbg_luts),
                              .artefact(cls_art), .score(score), .decision(decision), .alarm(alarm),
                              .out_valid(out_valid));
@@ -423,6 +447,14 @@ module seizelut_axi #(
                 8'h80: rdata_c = res_bits_pad[159:128];
                 8'h84: rdata_c = res_luts_pad[31:0];
                 8'h88: rdata_c = res_luts_pad[63:32];
+                8'hA0: rdata_c = fi_b0[31:0];    8'hA4: rdata_c = fi_b0[63:32];   8'hA8: rdata_c = fi_b0[95:64];
+                8'hAC: rdata_c = fi_b0[127:96];  8'hB0: rdata_c = fi_b0[159:128];
+                8'hB4: rdata_c = fi_b1[31:0];    8'hB8: rdata_c = fi_b1[63:32];   8'hBC: rdata_c = fi_b1[95:64];
+                8'hC0: rdata_c = fi_b1[127:96];  8'hC4: rdata_c = fi_b1[159:128];
+                8'hC8: rdata_c = fi_l0[31:0];    8'hCC: rdata_c = fi_l0[63:32];
+                8'hD0: rdata_c = fi_l1[31:0];    8'hD4: rdata_c = fi_l1[63:32];
+                8'hD8: rdata_c = fi_tt[31:0];    8'hDC: rdata_c = fi_tt[63:32];
+                8'hE0: rdata_c = {26'd0, fi_addr};
                 default: rdata_c = 32'hDEADBEEF;
             endcase
         end
@@ -445,13 +477,37 @@ endmodule
 """
 
 
-def build(export_dir: Path, vec_dir: Path, out_dir: Path, bist_run: str, bist_n: int = 1024) -> dict:
-    """Write the KV260 RTL kit into out_dir; returns the configuration (also written as seizelut_regs.json)."""
+def reference(pkg: dict, F: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Score and decision of the exported classifier (one LUT layer) for features F in model order."""
+    th, mp, lt, hd = pkg["thresholds"], pkg["mapping"], pkg["luts"], pkg["head"]
+    col = {f["name"]: i for i, f in enumerate(th["features"])}
+    bc = np.array([col[b["feature"]] for b in th["input_bits"]])
+    bt = np.array([b["threshold"] for b in th["input_bits"]], dtype=np.int64)
+    h = (F.astype(np.int64)[:, bc] > bt).astype(np.int64)
+    for layer, tabs in zip(mp["layers"], lt["layers"]):
+        m = np.array(layer["inputs"], dtype=np.int64)
+        tt = np.array([[(int(t, 16) >> a) & 1 for a in range(1 << m.shape[1])] for t in tabs], dtype=np.int64)
+        addr = np.zeros((len(h), m.shape[0]), np.int64)
+        for lb in range(m.shape[1]):
+            addr |= h[:, m[:, lb]] << lb
+        h = tt[np.arange(m.shape[0])[None, :], addr]
+    a0, a1 = hd["groups"]["background"]
+    b0, b1 = hd["groups"]["seizure"]
+    score = h[:, b0:b1].sum(1) - h[:, a0:a1].sum(1)
+    return score, (score >= int(hd["decision_threshold"])).astype(np.uint8)
+
+
+def build(export_dir: Path, vec_dir: Path, out_dir: Path, bist_run: str, bist_n: int = 1024,
+          bist_selected: Path | None = None) -> dict:
+    """Write the KV260 RTL kit into out_dir; returns the configuration (also written as seizelut_regs.json).
+    bist_selected: npz with 'feats' (model order) and 'art' of coverage-selected self-test vectors
+    (scripts/fault_analysis.py); they open the BIST ROM, and a seizure stretch of bist_run fills the rest."""
     from .export import load_export
     pkg = load_export(Path(export_dir))
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    info = generate(pkg, out_dir / "lutnet_classifier.v", debug=True)
+    info = generate(pkg, out_dir / "lutnet_classifier.v", debug=True, fi=True)
+    generate(pkg, out_dir / "lutnet_classifier_plain.v", module="lutnet_classifier_plain")   # cost (no test logic)
     feats = pkg["thresholds"]["features"]
     widths = info["widths"]
     nf, sw, lat, fw = len(feats), info["score_bits"], info["latency_cycles"], info["feature_bus_bits"]
@@ -470,7 +526,8 @@ def build(export_dir: Path, vec_dir: Path, out_dir: Path, bist_run: str, bist_n:
         pos += wd
     assert pos == fw
 
-    # BIST vectors: bist_n consecutive windows of one recording around its first alarm, expected alarm from reset
+    # BIST vectors: the coverage-selected vectors (if any), then consecutive windows of one recording around its
+    # first alarm; expected outputs from the reference model, alarm from reset over the whole sequence
     rec = Path(vec_dir) / bist_run
     n_spec = len(json.loads((Path(vec_dir) / "manifest.json").read_text())["feature_names"])
     X117 = np.fromfile(rec / "features.i16", dtype=np.int16).reshape(-1, n_spec)
@@ -478,12 +535,27 @@ def build(export_dir: Path, vec_dir: Path, out_dir: Path, bist_run: str, bist_n:
     score = np.fromfile(rec / "score.i32", dtype=np.int32)
     dec = np.fromfile(rec / "decision.u8", dtype=np.uint8)
     alarm = np.fromfile(rec / "alarm.u8", dtype=np.uint8)
+    n_sel = 0
+    if bist_selected is not None:
+        d = np.load(bist_selected)
+        Fs, As = d["feats"].astype(np.int16), d["art"].astype(np.uint8)
+        n_sel = len(Fs)
+        assert n_sel < bist_n
+    n_rec = bist_n - n_sel
     first = int(np.argmax(alarm)) if alarm.any() else int(np.argmax(dec)) if dec.any() else 0
-    start = int(min(max(0, first - bist_n // 2), max(0, len(dec) - bist_n)))
-    sl = slice(start, start + bist_n)
+    start = int(min(max(0, first - n_rec // 2), max(0, len(dec) - n_rec)))
+    sl = slice(start, start + n_rec)
     F = model_features(X117[sl], pkg)
-    exp_alarm = alarm_from_reset(dec[sl], hd["k"], hd["n"])
-    words = _pack(F, art[sl], score[sl], dec[sl], exp_alarm, widths, sw)
+    A = art[sl]
+    sc_ref, dec_ref = reference(pkg, F)
+    assert np.array_equal(sc_ref, score[sl]) and np.array_equal(dec_ref, dec[sl]), "reference model != export vectors"
+    if n_sel:
+        F, A = np.concatenate([Fs, F]), np.concatenate([As, A])
+    sc_all, dec_all = reference(pkg, F)
+    exp_alarm = alarm_from_reset(dec_all, hd["k"], hd["n"])
+    words = _pack(F, A, sc_all, dec_all, exp_alarm, widths, sw)
+    np.savez_compressed(out_dir / "seizelut_bist_vectors.npz", feats=F.astype(np.int16), art=A.astype(np.uint8),
+                        score=sc_all.astype(np.int16), decision=dec_all, alarm=exp_alarm, n_selected=np.int64(n_sel))
     rw = fw + 2 + sw + 2
     write_bist_rom(out_dir / "seizelut_bist_rom.v", words, rw)
 
@@ -508,13 +580,16 @@ def build(export_dir: Path, vec_dir: Path, out_dir: Path, bist_run: str, bist_n:
            "n_bits": len(pkg["thresholds"]["input_bits"]), "n_last_luts": n_last,
            "pmod": {"outputs": ["A1 score bar low", "A2 score bar mid", "A3 score bar high", "A4 decision",
                                 "B1 ALARM", "B2 buzzer", "B3 heartbeat"], "input": "B4 button to GND"},
-           "bist": {"recording": bist_run, "start_window": start, "n": len(words),
-                    "decisions": int(dec[sl].sum()), "alarms": int(exp_alarm.sum())},
+           "bist": {"recording": bist_run, "start_window": start, "n": len(words), "selected": n_sel,
+                    "composition": (f"{n_sel} coverage-selected training windows, then " if n_sel else "")
+                    + f"{n_rec} windows of {bist_run} from {start}",
+                    "decisions": int(dec_all.sum()), "alarms": int(exp_alarm.sum())},
            "export": str(export_dir)}
     (out_dir / "seizelut_regs.json").write_text(json.dumps(cfg, indent=1))
     return cfg
 
 
 def copy_rtl(src_dir: Path, dst_dir: Path) -> None:
-    for f in ("lutnet_classifier.v", "seizelut_bist_rom.v", "seizelut_axi.v", "seizelut_regs.json"):
+    for f in ("lutnet_classifier.v", "lutnet_classifier_plain.v", "seizelut_bist_rom.v", "seizelut_axi.v",
+              "seizelut_regs.json", "seizelut_bist_vectors.npz"):
         shutil.copy(Path(src_dir) / f, Path(dst_dir) / f)

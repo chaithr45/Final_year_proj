@@ -232,7 +232,8 @@ proc ooc_run {tag file top period} {
     close_project
 }
 if {$run_ooc} {
-    ooc_run classifier [file join $rtl_dir lutnet_classifier.v] lutnet_classifier 2.5
+    # the classifier's cost: the plain module (no debug taps, no fault-injection inputs), as deployed
+    ooc_run classifier [file join $rtl_dir lutnet_classifier_plain.v] lutnet_classifier_plain 2.5
     if {$run_baselines} {
         foreach {tag top} {treelut treelut_classifier lgn lgn_classifier} {
             set f [file join $rtl_dir baselines ${top}.v]

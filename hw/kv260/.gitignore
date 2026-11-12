@@ -12,3 +12,5 @@ sim/vectors/*
 board/frontend/libseizelut_fe.so
 !board/raw/*.npz
 !demo/segments/*.npz
+!board/seizelut_bist_vectors.npz
+!rtl/seizelut_bist_vectors.npz
