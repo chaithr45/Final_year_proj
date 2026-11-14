@@ -13,10 +13,11 @@ buzzer and button.
 | 1 | Breadboard, half size (400 points) | 1 | "400 point breadboard" | holds LEDs, resistors, button |
 | 2 | Jumper wires male-to-male, 20 cm | 1 pack (20-40) | "male to male jumper wire 20cm" | PMOD socket to breadboard |
 | 3 | Jumper wires female-to-male, 20 cm | 1 pack | "female to male jumper wire" | spare, in case your PMOD has pins instead of a socket |
-| 4 | 5 mm LEDs: 2 green, 2 yellow (or 1 yellow + 1 orange), 1 red, 1 blue or white | 1 assorted pack | "5mm LED assorted kit" | score bar, decision, ALARM, heartbeat |
-| 5 | Resistors 330 ohm (220-470 ohm also fine) | 6+ | "330 ohm resistor" or a resistor kit | one per LED (protects the FPGA pin) |
-| 6 | **Active** buzzer **module** (3-pin: VCC, GND, I/O; works at 3.3 V) | 1 | "active buzzer module 3.3V 5V" | beeps on ALARM. Must be *active* (beeps by itself) and a *module* (has a transistor) |
-| 7 | Tactile push button 6x6 mm (4 legs) | 2 | "6x6 tactile push button" | "patient presses the button" / jump to seizure |
+| 4 | 5 mm **diffused** LEDs: 2 green, 1 yellow, 1 orange, 1 blue or white; plus one **10 mm red** LED for ALARM | assorted pack + spares | "5mm diffused LED", "10mm red LED" | score bar, decision, ALARM, heartbeat (diffused LEDs glow evenly) |
+| 5 | Resistors: 220 ohm (red/green/yellow/orange LEDs), 100 ohm (blue or white LED), 1 kohm (transistor base) | 10 / 4 / 4, or a resistor kit | "resistor kit" | one per LED (limits the FPGA pin's current) |
+| 6 | **Active** buzzer: a 3-pin **module** (VCC, GND, I/O; works at 3.3 V), or a plain 2-pin active buzzer (3 V-5 V) with the transistor below | 1 (+1 spare) | "active buzzer module 3.3V 5V" or "active buzzer 3V" | beeps on ALARM. Must be *active*: touched to a 3 V coin cell it beeps by itself (a *passive* one only clicks) |
+| 6b | Only for a plain 2-pin buzzer: NPN transistor BC547 (or 2N2222, S8050), 1 kohm resistor, diode 1N4148 | 2 each | "BC547 transistor", "1N4148" | the FPGA pin switches the transistor, which powers the buzzer |
+| 7 | Tactile push button 12x12 mm with a round cap (6x6 mm also works) | 2 | "12x12 tactile switch with cap" | the patient button: marks the moment, starts playback |
 | 8 | Ethernet cable Cat6, 1-2 m | 1 | "cat6 ethernet cable 1.5m" | laptop <-> KV260, no Wi-Fi needed |
 | 9 | USB to Ethernet adapter (USB-A or USB-C, gigabit) | 1 | "usb to ethernet adapter gigabit" | **only if your laptop has no Ethernet port** |
 
@@ -34,16 +35,21 @@ Find **pin 1** of the PMOD connector (small triangle or "1" on the board). The c
 
 | PMOD position | FPGA pin | Connect to |
 |---|---|---|
-| A1 | H12 | 330 ohm -> green LED 1 (score bar, low) -> GND |
-| A2 | E10 | 330 ohm -> green LED 2 (score bar, mid) -> GND |
-| A3 | D10 | 330 ohm -> yellow LED (score bar, high) -> GND |
-| A4 | C11 | 330 ohm -> orange/yellow LED (**DECISION**: this second looks like a seizure) -> GND |
-| B1 | B10 | 330 ohm -> **red LED (ALARM)** -> GND |
-| B2 | E12 | buzzer module **I/O** pin (buzzer VCC -> 3.3 V, buzzer GND -> GND) |
-| B3 | D11 | 330 ohm -> blue/white LED (**heartbeat**: blinks once per second processed by the FPGA) -> GND |
+| A1 | H12 | 220 ohm -> green LED 1 (score bar, low) -> GND |
+| A2 | E10 | 220 ohm -> green LED 2 (score bar, mid) -> GND |
+| A3 | D10 | 220 ohm -> yellow LED (score bar, high) -> GND |
+| A4 | C11 | 220 ohm -> orange LED (**DECISION**: this second looks like a seizure) -> GND |
+| B1 | B10 | 220 ohm -> **10 mm red LED (ALARM)** -> GND |
+| B2 | E12 | buzzer module **I/O** pin (buzzer VCC -> 3.3 V, buzzer GND -> GND); for a plain 2-pin buzzer see below |
+| B3 | D11 | 100 ohm -> blue/white LED (**heartbeat**: blinks once per second processed by the FPGA) -> GND |
 | B4 | B11 | push button -> other leg of the button to GND (the FPGA pulls this pin up; pressing = 0) |
 | GND | - | breadboard blue (-) rail; every LED's short leg and the button go here |
 | 3.3 V | - | buzzer module VCC only |
+
+**Plain 2-pin active buzzer** (no module): B2 -> 1 kohm -> transistor base; emitter -> GND; collector -> buzzer
+short leg (-); buzzer long leg (+) -> PMOD 3.3 V. Optional: 1N4148 across the buzzer, striped end to 3.3 V. A BC547 seen
+from its flat face has the legs C, B, E from left to right (a 2N2222 or S8050 is E, B, C: check the shop's pinout).
+The buzzer sounds when B2 is high, the design's default (no `--buzzer-active-low`).
 
 LED direction: the **long leg** (+) goes towards the resistor and the FPGA pin, the **short leg** (-) to GND. If
 an LED stays dark in the dashboard's "LED walk test", turn it around.
