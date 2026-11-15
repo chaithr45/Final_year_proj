@@ -1,0 +1,130 @@
+{
+ "what": "feature-engine program (instruction-level C simulator) against the C front end, 38 classifier features of every window",
+ "recordings": 10,
+ "windows": 431960,
+ "mismatch_windows": 0,
+ "rom_instructions": 2323,
+ "ram_registers": 930,
+ "instructions_mean": {
+  "bio_event": 1090.3,
+  "mov_event": 46.6,
+  "sec_event": 992.2,
+  "per_second_of_signal": 281263.0
+ },
+ "max_abs_value": 17179869184,
+ "bits_needed_signed": 36,
+ "datapath_bits": 48,
+ "runs": {
+  "sub-097_run-02": {
+   "seconds": 68637,
+   "windows": 68636,
+   "windows_expected": 68636,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 1473511424,
+   "bad_ops": 0,
+   "seconds_sim": 54.5
+  },
+  "sub-097_run-04": {
+   "seconds": 76313,
+   "windows": 76312,
+   "windows_expected": 76312,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 1354235904,
+   "bad_ops": 0,
+   "seconds_sim": 62.0
+  },
+  "sub-097_run-05": {
+   "seconds": 6466,
+   "windows": 6465,
+   "windows_expected": 6465,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 1288044544,
+   "bad_ops": 0,
+   "seconds_sim": 5.1
+  },
+  "sub-097_run-07": {
+   "seconds": 41798,
+   "windows": 41797,
+   "windows_expected": 41797,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 1240072192,
+   "bad_ops": 0,
+   "seconds_sim": 33.2
+  },
+  "sub-097_run-09": {
+   "seconds": 77153,
+   "windows": 77152,
+   "windows_expected": 77152,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 1300234240,
+   "bad_ops": 0,
+   "seconds_sim": 63.5
+  },
+  "sub-097_run-10": {
+   "seconds": 425,
+   "windows": 424,
+   "windows_expected": 424,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 1323827200,
+   "bad_ops": 0,
+   "seconds_sim": 0.3
+  },
+  "sub-098_run-03": {
+   "seconds": 76569,
+   "windows": 76568,
+   "windows_expected": 76568,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 17179869184,
+   "bad_ops": 0,
+   "seconds_sim": 72.5
+  },
+  "sub-099_run-01": {
+   "seconds": 75817,
+   "windows": 75816,
+   "windows_expected": 75816,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 17179869184,
+   "bad_ops": 0,
+   "seconds_sim": 74.4
+  },
+  "sub-099_run-02": {
+   "seconds": 4937,
+   "windows": 4936,
+   "windows_expected": 4936,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 344457216,
+   "bad_ops": 0,
+   "seconds_sim": 4.2
+  },
+  "sub-100_run-03": {
+   "seconds": 3855,
+   "windows": 3854,
+   "windows_expected": 3854,
+   "mismatch_windows": 0,
+   "first_bad": null,
+   "bad_features": [],
+   "max_abs_value": 17179869184,
+   "bad_ops": 0,
+   "seconds_sim": 3.9
+  }
+ },
+ "all_bit_exact": true
+}

@@ -1,6 +1,7 @@
 # Notes for Claude sessions on this repository
 
-SeizeLUT: a LUT-native multimodal seizure detector on SeizeIT2 (OpenNeuro ds005873). Milestones M1-M8 and their
+SeizeLUT: a LUT-native multimodal seizure detector on SeizeIT2 (OpenNeuro ds005873). **Current state, open work and
+how to resume: `reports/PROGRESS.md` (read it first).** Milestones M1-M8 and their
 status are in `README.md`; every decision and result is in `results/decisions.md` (failed ideas stay there).
 
 ## Rules (from the project brief; not negotiable)
