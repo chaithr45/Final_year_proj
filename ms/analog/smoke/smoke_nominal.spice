@@ -1,0 +1,50 @@
+* SeizeLUT-MS Phase 0: SKY130 + ngspice smoke test, part 1 of 2 (nominal devices and inverter)
+* Run with ms/analog/smoke/run_smoke.sh. Checks that the SKY130A device models load and that
+* DC and transient analyses run. Not a design: the numbers only confirm the install.
+* The runner prepends:  .lib <PDK_ROOT>/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+* (typical-typical process corner, no mismatch)
+
+.param vdd=1.8
+.option temp=27
+
+* --- 1. single devices: drain current at |VGS| = |VDS| = 1.8 V -------------------------
+Vgn  gn 0 {vdd}
+Vdn  dn 0 {vdd}
+XMN1 dn gn 0 0 sky130_fd_pr__nfet_01v8 W=1 L=0.15 nf=1
+Vgp  gp 0 0
+Vdp  dp 0 0
+Vsp  sp 0 {vdd}
+XMP1 dp gp sp sp sky130_fd_pr__pfet_01v8 W=2 L=0.15 nf=1
+
+* --- 2. inverter (Wn = 1 um, Wp = 2 um, L = 0.15 um), 10 fF load --------------------------
+Vsup vs 0 {vdd}
+Vin  in 0 PULSE(0 {vdd} 1n 50p 50p 2n 4n)
+XMN2 out in 0 0 sky130_fd_pr__nfet_01v8 W=1 L=0.15 nf=1
+XMP2 out in vs vs sky130_fd_pr__pfet_01v8 W=2 L=0.15 nf=1
+Cl   out 0 10f
+
+.control
+  * device currents (nominal run)
+  op
+  let idn_ua = -i(Vdn)*1e6
+  let idp_ua = abs(i(Vdp))*1e6
+  echo "RESULT id_nfet_W1_L0.15_uA" $&idn_ua
+  echo "RESULT id_pfet_W2_L0.15_uA" $&idp_ua
+
+  * inverter transfer curve: switching threshold VM (Vin = Vout)
+  dc Vin 0 1.8 0.001
+  let d = v(out) - v(in)
+  meas dc vm when d=0
+  echo "RESULT inv_vm_V" $&vm
+
+  * inverter delay into 10 fF
+  tran 1p 6n
+  meas tran tphl trig v(in) val=0.9 rise=1 targ v(out) val=0.9 fall=1
+  meas tran tplh trig v(in) val=0.9 fall=1 targ v(out) val=0.9 rise=1
+  let tphl_ps = tphl*1e12
+  let tplh_ps = tplh*1e12
+  echo "RESULT inv_tphl_ps" $&tphl_ps
+  echo "RESULT inv_tplh_ps" $&tplh_ps
+
+.endc
+.end

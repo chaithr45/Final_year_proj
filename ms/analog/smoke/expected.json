@@ -1,0 +1,18 @@
+{
+  "what": "Reference values for run_smoke.sh. Measured on 15 Nov 2026 with ngspice-42 and SKY130A from open_pdks 1689ac3f2dc763876eaf967227c7dfe831b031ae (the commit IIC-OSIC-TOOLS 2026.10 pins), fetched with ciel. Ranges allow for another ngspice version (the container has ngspice-47) and, for the Monte Carlo lines, for a different random-number sequence: the std of 40 samples has a relative sampling spread of about 11 %, so the range is about +-35 %; the mean of 40 samples of a zero-mean offset has a spread of std/sqrt(40) = 1.5 mV, so the range is +-4 of those.",
+  "reference": {
+    "id_nfet_W1_L0.15_uA": 501.046, "id_pfet_W2_L0.15_uA": 403.379, "inv_vm_V": 0.869826,
+    "inv_tphl_ps": 35.986, "inv_tplh_ps": 43.2752,
+    "mc_samples": 40, "mc_dvgs_mean_mV": -2.943, "mc_dvgs_std_mV": 9.538
+  },
+  "checks": {
+    "id_nfet_W1_L0.15_uA": {"min": 486.0, "max": 516.0, "unit": "uA (+-3 %)"},
+    "id_pfet_W2_L0.15_uA": {"min": 391.3, "max": 415.5, "unit": "uA (+-3 %)"},
+    "inv_vm_V":            {"min": 0.855, "max": 0.885, "unit": "V (+-15 mV)"},
+    "inv_tphl_ps":         {"min": 32.4,  "max": 39.6,  "unit": "ps (+-10 %)"},
+    "inv_tplh_ps":         {"min": 38.9,  "max": 47.6,  "unit": "ps (+-10 %)"},
+    "mc_samples":          {"min": 40,    "max": 40,    "unit": "samples"},
+    "mc_dvgs_mean_mV":     {"min": -6.0,  "max": 6.0,   "unit": "mV"},
+    "mc_dvgs_std_mV":      {"min": 6.2,   "max": 12.9,  "unit": "mV"}
+  }
+}

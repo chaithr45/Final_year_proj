@@ -1,0 +1,16 @@
+# SeizeLUT-MS log: problems and fixes
+
+Newest first. Format: date | problem | cause | fix | evidence.
+
+## 15 Nov 2026 (Phase 0, cloud session)
+
+| # | Problem | Cause | Fix | Evidence |
+|---|---|---|---|---|
+| L8 | Fetching the 2023 SSC Magazine review on amplifier efficiency (for the NEF formula) failed | The host `bioee.ucsd.edu` is not reachable from the cloud network | NEF formula checked in secondary sources (patent text, review summary) and marked as such in `MS_SPEC.md`; the 1987 primary paper is to be read in Phase 1 | `MS_SPEC.md`, verified references |
+| L7 | `scripts/verify_fe_engine.py --quick` (listed in `reports/PROGRESS.md` as a 5 s check) fails with `min() iterable argument is empty` | Its raw inputs (`export/n4_distill_s0/vectors/<rec>/inputs/*.i16`) are not committed; only `manifest.json` is | Not fixed: regenerating them reads test-patient recordings (ground rule 2). Recorded in `ms/REPO_MAP.md` §4. The FCCM session that has those files can still run it | console output |
+| L6 | `scripts/verify_kv260_rtl.py --quick` overwrote the committed full-run `hw/kv260/results/simulation_verification.json` with a one-recording version | The script always writes its JSON, quick mode included | Restored with `git checkout -- hw/kv260/results/`; build directory removed. Rule for this branch: after any FCCM verification script, `git status` must show no change outside `ms/` and the four planning files | `git diff --stat` before the restore: 3 insertions, 291 deletions |
+| L5 | The first SKY130 smoke test gave different device currents on every run | The `tt_mm` library section switches device mismatch on, so the "nominal" operating point also gets random mismatch | Split into `smoke_nominal.spice` (corner `tt`, deterministic: same numbers on repeated runs) and `smoke_mc.spice` (corner `tt_mm`) | `ms/analog/smoke/` |
+| L4 | ngspice Monte Carlo loop lost its result vector after each sample | Each `op` creates a new plot, and vectors made with `let` belong to the plot that was current | Print each sample (`echo "MC dvgs_mV" ...`) and compute mean and std in the Python checker; seed with `setseed` 1..40 (seed 0 is rejected) and redraw mismatch with `mc_source` | 40 samples repeat exactly for the same seeds |
+| L3 | `ciel` could not list or fetch the SKY130 PDK in the cloud | The network policy blocks `fossi-foundation.github.io` (ciel's default index) and `api.github.com` | Found the tag with `git ls-remote` (github.com works), then downloaded `common.tar.zst` and `sky130_fd_pr.tar.zst` of release `sky130-1689ac3f...` directly from github.com release URLs. This is the same open_pdks commit IIC-OSIC-TOOLS 2026.10 pins | `MS_SPEC.md` D-MS3 |
+| L2 | Docker image of IIC-OSIC-TOOLS cannot run in the cloud session | No Docker daemon; the image is about 4 GB compressed | Installed ngspice (apt) and SKY130A (L3) natively to validate the smoke test; Magic/netgen/KLayout/xschem checks are left to your container run | `ms/setup/IIC_OSIC_TOOLS.md`, last section |
+| L1 | The frozen design was not on the session's starting branch | `main` (and the session branch made from it) holds an early M4 state; the FCCM work lives on the unmerged branch `claude/optimistic-heisenberg-ph0bvj` | Branch `FPGA` created from that branch's tip `986c8ae` (your request for a branch named FPGA) | `ms/REPO_MAP.md` §1 |

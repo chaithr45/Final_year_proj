@@ -1,0 +1,9 @@
+# Scripts and netlists run inside the Linux container: keep LF line endings even when the
+# repository is cloned on Windows (CRLF breaks bash with "$'\r': command not found").
+*.sh    text eol=lf
+*.spice text eol=lf
+*.sch   text eol=lf
+*.sym   text eol=lf
+*.mag   text eol=lf
+*.tcl   text eol=lf
+*.py    text eol=lf

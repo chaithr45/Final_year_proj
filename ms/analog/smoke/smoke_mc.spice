@@ -1,0 +1,30 @@
+* SeizeLUT-MS Phase 0: SKY130 + ngspice smoke test, part 2 of 2 (Monte Carlo mismatch)
+* Run with ms/analog/smoke/run_smoke.sh. The runner prepends:
+*   .lib <PDK_ROOT>/sky130A/libs.tech/ngspice/sky130.lib.spice tt_mm
+* (tt corner with device mismatch switched on). Two identical nfets, each diode-connected and fed
+* 10 uA; dVGS = VGS(A) - VGS(B) is the pair's input-referred offset. 40 samples, seeds 1..40.
+
+.param vdd=1.8
+.option temp=27
+Vsup vs 0 {vdd}
+* --- matched pair (W = 1 um, L = 0.5 um) -------------------------------------------------
+Ia   vs ga 10u
+Ib   vs gb 10u
+XMA  ga ga 0 0 sky130_fd_pr__nfet_01v8 W=1 L=0.5 nf=1
+XMB  gb gb 0 0 sky130_fd_pr__nfet_01v8 W=1 L=0.5 nf=1
+
+.control
+  * Monte Carlo mismatch: new random device parameters per sample (mc_source re-reads the
+  * circuit, so every agauss() mismatch term is drawn again); seeds 1..N
+  set ii = 1
+  repeat 40
+    setseed $ii
+    mc_source
+    op
+    let dvgs_mv = (v(ga) - v(gb))*1e3
+    echo "MC dvgs_mV" $&dvgs_mv
+    let inext = $ii + 1
+    set ii = "$&inext"
+  end
+.endc
+.end

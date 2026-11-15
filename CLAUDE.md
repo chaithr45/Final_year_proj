@@ -1,5 +1,13 @@
 # Notes for Claude sessions on this repository
 
+> **Branch `FPGA` (mixed-signal study, SeizeLUT-MS).** If `git branch --show-current` prints `FPGA`, you are on the
+> mixed-signal branch: read `MS_SPEC.md` (status, decisions), `ms/REPO_MAP.md`, `PREREG.md`, `LOG.md` first, and
+> work only on `FPGA`. Do not commit to `claude/optimistic-heisenberg-ph0bvj` (the FCCM branch) and do not change
+> FCCM files (`hw/kv260/`, `paper/`, `export/`, `src/`, `scripts/`, `results/`) on `FPGA` without the user's OK;
+> new work goes under `ms/`. After running any FCCM verification script, `git status` must show no change outside
+> `ms/` and the four planning files (see `LOG.md` L6). The rules below (test patients, no invented numbers) apply
+> unchanged. The FCCM branch's own instructions follow.
+
 SeizeLUT: a LUT-native multimodal seizure detector on SeizeIT2 (OpenNeuro ds005873). **Current state, open work and
 how to resume: `reports/PROGRESS.md` (read it first).** Milestones M1-M8 and their
 status are in `README.md`; every decision and result is in `results/decisions.md` (failed ideas stay there).
