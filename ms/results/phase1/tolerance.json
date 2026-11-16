@@ -1,0 +1,7000 @@
+{
+ "deltas": {
+  "delta_f1": 0.03072803715502296,
+  "delta_fp24": 0.12624212899317888,
+  "source": "ms/results/phase1/deltas.json (subset)"
+ },
+ "grids": {
+  "eeg": {
+   "clean": {
+    "f1": 0.34206538715064166,
+    "sensitivity": 0.297322044978295,
+    "precision": 0.514804292929293,
+    "fp_per_24h": 0.7574452812469555
+   },
+   "families": {
+    "eeg/clip": {
+     "modality": "eeg",
+     "family": "clip",
+     "label": "clip level C",
+     "status": "limit",
+     "limit": 1024.0,
+     "limit_unit": "uV",
+     "first_failing": 512.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_clip_4096uV",
+       "level": 4096.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 7391,
+       "tolerated": true,
+       "bit_flips_per_window": 0.0004231748190990125,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         0.005
+        ],
+        [
+         "eeg_sign_agree",
+         0.002
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         0.0
+        ]
+       ]
+      },
+      {
+       "name": "eeg_clip_2048uV",
+       "level": 2048.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33164872048397503,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2869053783116283,
+       "d_f1": -0.01041666666666663,
+       "d_fp24": 0.0,
+       "clipped_samples": 7255371,
+       "tolerated": true,
+       "bit_flips_per_window": 0.15504942107102382,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         0.453
+        ],
+        [
+         "eeg_sign_agree",
+         0.334
+        ],
+        [
+         "eeg_mav_absdiff",
+         0.289
+        ]
+       ]
+      },
+      {
+       "name": "eeg_clip_1024uV",
+       "level": 1024.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3283649163811185,
+       "f1_sd": null,
+       "fp_per_24h": 0.7712300398988061,
+       "fp24_sd": null,
+       "sensitivity": 0.28214306104931103,
+       "d_f1": -0.013700470769523188,
+       "d_fp24": 0.013784758651850582,
+       "clipped_samples": 14734833,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6036168118692207,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         0.953
+        ],
+        [
+         "eeg_ext_absdiff",
+         0.785
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         0.582
+        ]
+       ]
+      },
+      {
+       "name": "eeg_clip_512uV",
+       "level": 512.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.2975183991656778,
+       "f1_sd": null,
+       "fp_per_24h": 0.7830451328301135,
+       "fp24_sd": null,
+       "sensitivity": 0.25810104403854406,
+       "d_f1": -0.04454698798496387,
+       "d_fp24": 0.025599851583157918,
+       "clipped_samples": 33269321,
+       "tolerated": false,
+       "bit_flips_per_window": 1.7341995644131636,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         2.35
+        ],
+        [
+         "eeg_ext_absdiff",
+         1.575
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         1.432
+        ]
+       ]
+      },
+      {
+       "name": "eeg_clip_256uV",
+       "level": 256.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.25952191853126566,
+       "f1_sd": null,
+       "fp_per_24h": 0.7243129675100466,
+       "fp24_sd": null,
+       "sensitivity": 0.22498048873048873,
+       "d_f1": -0.082543468619376,
+       "d_fp24": -0.03313231373690895,
+       "clipped_samples": 83650064,
+       "tolerated": false,
+       "bit_flips_per_window": 4.74745584882996,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         6.025
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.676
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         3.315
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/drift": {
+     "modality": "eeg",
+     "family": "drift",
+     "label": "drift (tau 64 s)",
+     "status": "limit",
+     "limit": 100.0,
+     "limit_unit": "uVrms",
+     "first_failing": 1000.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_drift_10uVrms",
+       "level": 10.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3492285163890803,
+       "f1_sd": 0.003610402627970377,
+       "fp_per_24h": 0.7105382891128899,
+       "fp24_sd": 0.03677286431709538,
+       "sensitivity": 0.30221973284473286,
+       "d_f1": 0.007163129238438648,
+       "d_fp24": -0.046906992134065684,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7484545025287055,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         4.498
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.292
+        ],
+        [
+         "eeg_delta_absdiff",
+         0.405
+        ]
+       ]
+      },
+      {
+       "name": "eeg_drift_100uVrms",
+       "level": 100.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3403467017015808,
+       "f1_sd": 0.008554753111556207,
+       "fp_per_24h": 0.7867708707358796,
+       "fp24_sd": 0.08153121981608355,
+       "sensitivity": 0.29726025413525414,
+       "d_f1": -0.0017186854490608416,
+       "d_fp24": 0.029325589488924053,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 5.469866218168001,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         22.044
+        ],
+        [
+         "eeg_ext_absdiff",
+         5.297
+        ],
+        [
+         "eeg_delta_mean",
+         2.728
+        ]
+       ]
+      },
+      {
+       "name": "eeg_drift_1000uVrms",
+       "level": 1000.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.2585501298031823,
+       "f1_sd": 0.00669365984502361,
+       "fp_per_24h": 0.7530960990777835,
+       "fp24_sd": 0.09855155406470159,
+       "sensitivity": 0.23438814079439077,
+       "d_f1": -0.08351525734745935,
+       "d_fp24": -0.004349182169172017,
+       "clipped_samples": 6,
+       "tolerated": false,
+       "bit_flips_per_window": 35.904280438285824,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         62.342
+        ],
+        [
+         "eeg_delta_mean",
+         19.516
+        ],
+        [
+         "eeg_ch1_theta",
+         17.641
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/gain+": {
+     "modality": "eeg",
+     "family": "gain+",
+     "label": "gain error +",
+     "status": "limit",
+     "limit": 0.05,
+     "limit_unit": "",
+     "first_failing": 0.1,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_gain_+0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.35411127402536247,
+       "f1_sd": null,
+       "fp_per_24h": 0.8717933302678592,
+       "fp24_sd": null,
+       "sensitivity": 0.30711558852183857,
+       "d_f1": 0.012045886874720801,
+       "d_fp24": 0.11434804902090367,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.0839498038026587,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.134
+        ],
+        [
+         "eeg_sign_agree",
+         1.505
+        ],
+        [
+         "eeg_ch1_theta",
+         0.57
+        ]
+       ]
+      },
+      {
+       "name": "eeg_gain_+0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.35427764498609116,
+       "f1_sd": null,
+       "fp_per_24h": 0.9639728089886587,
+       "fp24_sd": null,
+       "sensitivity": 0.30957034238284237,
+       "d_f1": 0.012212257835449492,
+       "d_fp24": 0.20652752774170313,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 3.2844538649897395,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.115
+        ],
+        [
+         "eeg_sign_agree",
+         1.491
+        ],
+        [
+         "eeg_ch1_hf",
+         1.101
+        ]
+       ]
+      },
+      {
+       "name": "eeg_gain_+0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3586783200871704,
+       "f1_sd": null,
+       "fp_per_24h": 1.2958300190057979,
+       "fp24_sd": null,
+       "sensitivity": 0.31487975894225895,
+       "d_f1": 0.016612932936528713,
+       "d_fp24": 0.5383847377588423,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 5.425221135916171,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.04
+        ],
+        [
+         "eeg_ch1_hf",
+         2.101
+        ],
+        [
+         "eeg_ch1_theta",
+         2.098
+        ]
+       ]
+      },
+      {
+       "name": "eeg_gain_+0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3466865576495309,
+       "f1_sd": null,
+       "fp_per_24h": 2.5296356900499894,
+       "fp24_sd": null,
+       "sensitivity": 0.32289194523569525,
+       "d_f1": 0.0046211704988892155,
+       "d_fp24": 1.7721904088030338,
+       "clipped_samples": 51,
+       "tolerated": false,
+       "bit_flips_per_window": 10.348638988978712,
+       "top_features": [
+        [
+         "eeg_ch1_theta",
+         4.696
+        ],
+        [
+         "eeg_theta_mean",
+         4.679
+        ],
+        [
+         "eeg_delta_mean",
+         4.678
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/gain-": {
+     "modality": "eeg",
+     "family": "gain-",
+     "label": "gain error -",
+     "status": "limit",
+     "limit": 0.05,
+     "limit_unit": "",
+     "first_failing": 0.1,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_gain_-0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.32190853317221385,
+       "f1_sd": null,
+       "fp_per_24h": 0.604012186425143,
+       "fp24_sd": null,
+       "sensitivity": 0.2847736483673983,
+       "d_f1": -0.020156853978427813,
+       "d_fp24": -0.15343309482181255,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.086900365238188,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.194
+        ],
+        [
+         "eeg_sign_agree",
+         1.546
+        ],
+        [
+         "eeg_ch1_theta",
+         0.598
+        ]
+       ]
+      },
+      {
+       "name": "eeg_gain_-0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3079604460500828,
+       "f1_sd": null,
+       "fp_per_24h": 0.550146032435324,
+       "fp24_sd": null,
+       "sensitivity": 0.26498265201390203,
+       "d_f1": -0.03410494110055884,
+       "d_fp24": -0.20729924881163153,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 3.69543825042203,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.274
+        ],
+        [
+         "eeg_sign_agree",
+         1.584
+        ],
+        [
+         "eeg_ch2_alpha",
+         1.215
+        ]
+       ]
+      },
+      {
+       "name": "eeg_gain_-0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3015287295114359,
+       "f1_sd": null,
+       "fp_per_24h": 0.40771417139703825,
+       "fp24_sd": null,
+       "sensitivity": 0.2615126830751831,
+       "d_f1": -0.040536657639205775,
+       "d_fp24": -0.3497311098499173,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 6.335136963279171,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.346
+        ],
+        [
+         "eeg_ch2_alpha",
+         2.569
+        ],
+        [
+         "eeg_delta_mean",
+         2.564
+        ]
+       ]
+      },
+      {
+       "name": "eeg_gain_-0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.22678489777144836,
+       "f1_sd": null,
+       "fp_per_24h": 0.12605117567979826,
+       "fp24_sd": null,
+       "sensitivity": 0.1962286352911353,
+       "d_f1": -0.1152804893791933,
+       "d_fp24": -0.6313941055671572,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 11.079377766411664,
+       "top_features": [
+        [
+         "eeg_ch1_theta",
+         8.002
+        ],
+        [
+         "eeg_theta_mean",
+         7.994
+        ],
+        [
+         "eeg_delta_mean",
+         7.989
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/hp": {
+     "modality": "eeg",
+     "family": "hp",
+     "label": "high-pass corner",
+     "status": "beyond grid",
+     "limit": 1.0,
+     "limit_unit": "Hz",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_hp_0.05Hz",
+       "level": 0.05,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3461300331090585,
+       "f1_sd": null,
+       "fp_per_24h": 0.7477742221003343,
+       "fp24_sd": null,
+       "sensitivity": 0.2981280965655966,
+       "d_f1": 0.004064645958416824,
+       "d_fp24": -0.009671059146621253,
+       "clipped_samples": 9,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5417612319385364,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         4.086
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.194
+        ],
+        [
+         "eeg_delta_absdiff",
+         0.235
+        ]
+       ]
+      },
+      {
+       "name": "eeg_hp_0.1Hz",
+       "level": 0.1,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3356069596474384,
+       "f1_sd": null,
+       "fp_per_24h": 0.6795835238539688,
+       "fp24_sd": null,
+       "sensitivity": 0.2904315607440608,
+       "d_f1": -0.006458427503203246,
+       "d_fp24": -0.07786175739298673,
+       "clipped_samples": 26,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7381801566829758,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         6.244
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.25
+        ],
+        [
+         "eeg_delta_absdiff",
+         0.385
+        ]
+       ]
+      },
+      {
+       "name": "eeg_hp_0.3Hz",
+       "level": 0.3,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3412535341724758,
+       "f1_sd": null,
+       "fp_per_24h": 0.6296914195762914,
+       "fp24_sd": null,
+       "sensitivity": 0.2921732354544855,
+       "d_f1": -0.0008118529781658834,
+       "d_fp24": -0.12775386167066416,
+       "clipped_samples": 45,
+       "tolerated": true,
+       "bit_flips_per_window": 1.2891321125961568,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         11.55
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.53
+        ],
+        [
+         "eeg_delta_absdiff",
+         0.771
+        ]
+       ]
+      },
+      {
+       "name": "eeg_hp_0.5Hz",
+       "level": 0.5,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33757331986035527,
+       "f1_sd": null,
+       "fp_per_24h": 0.6486782466345999,
+       "fp24_sd": null,
+       "sensitivity": 0.2907874993812494,
+       "d_f1": -0.0044920672902863945,
+       "d_fp24": -0.1087670346123556,
+       "clipped_samples": 54,
+       "tolerated": true,
+       "bit_flips_per_window": 1.7236793384478064,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         14.547
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.807
+        ],
+        [
+         "eeg_delta_absdiff",
+         0.995
+        ]
+       ]
+      },
+      {
+       "name": "eeg_hp_1.0Hz",
+       "level": 1.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3128284236252736,
+       "f1_sd": null,
+       "fp_per_24h": 0.6915892172273027,
+       "fp24_sd": null,
+       "sensitivity": 0.2766143770831271,
+       "d_f1": -0.029236963525368087,
+       "d_fp24": -0.06585606401965283,
+       "clipped_samples": 52,
+       "tolerated": true,
+       "bit_flips_per_window": 2.891959636786054,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         18.743
+        ],
+        [
+         "eeg_ext_absdiff",
+         4.428
+        ],
+        [
+         "eeg_delta_mean",
+         1.897
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/lp": {
+     "modality": "eeg",
+     "family": "lp",
+     "label": "low-pass corner",
+     "status": "limit",
+     "limit": 100.0,
+     "limit_unit": "Hz",
+     "first_failing": 70.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_lp_100Hz",
+       "level": 100.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34857110384507123,
+       "f1_sd": null,
+       "fp_per_24h": 0.658455970138647,
+       "fp24_sd": null,
+       "sensitivity": 0.3016890012202513,
+       "d_f1": 0.006505716694429564,
+       "d_fp24": -0.09898931110830855,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.49341017677128446,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         3.476
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.466
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         0.157
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lp_70Hz",
+       "level": 70.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3464104226441295,
+       "f1_sd": null,
+       "fp_per_24h": 0.9157202042288191,
+       "fp24_sd": null,
+       "sensitivity": 0.30158979487104487,
+       "d_f1": 0.004345035493487859,
+       "d_fp24": 0.15827492298186352,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 1.207990007076516,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.755
+        ],
+        [
+         "eeg_sign_agree",
+         3.726
+        ],
+        [
+         "eeg_ch1_hf",
+         0.533
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lp_50Hz",
+       "level": 50.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3384526985733729,
+       "f1_sd": null,
+       "fp_per_24h": 1.008504323882789,
+       "fp24_sd": null,
+       "sensitivity": 0.3012715789278289,
+       "d_f1": -0.0036126885772687634,
+       "d_fp24": 0.25105904263583356,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.173951923841861,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         5.736
+        ],
+        [
+         "eeg_sign_agree",
+         3.759
+        ],
+        [
+         "eeg_ch1_hf",
+         2.14
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lp_40Hz",
+       "level": 40.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3349134579334665,
+       "f1_sd": null,
+       "fp_per_24h": 1.1849886767412106,
+       "fp24_sd": null,
+       "sensitivity": 0.301091417028917,
+       "d_f1": -0.007151929217175168,
+       "d_fp24": 0.427543395494255,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 3.1341143463344356,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         7.915
+        ],
+        [
+         "eeg_sign_agree",
+         5.511
+        ],
+        [
+         "eeg_ch1_hf",
+         3.887
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lp_30Hz",
+       "level": 30.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3272414580745364,
+       "f1_sd": null,
+       "fp_per_24h": 1.1823430899965912,
+       "fp24_sd": null,
+       "sensitivity": 0.2950031068781069,
+       "d_f1": -0.014823929076105247,
+       "d_fp24": 0.4248978087496357,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 4.720092765251682,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         10.679
+        ],
+        [
+         "eeg_sign_agree",
+         6.965
+        ],
+        [
+         "eeg_ch1_hf",
+         6.81
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/lsb": {
+     "modality": "eeg",
+     "family": "lsb",
+     "label": "LSB q",
+     "status": "limit",
+     "limit": 32.0,
+     "limit_unit": "uV",
+     "first_failing": 64.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_lsb_0.5uV",
+       "level": 0.5,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34239755126628796,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29760357650982655,
+       "d_f1": 0.000332164115646294,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.16281734466964248,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         1.589
+        ],
+        [
+         "eeg_sign_agree",
+         0.788
+        ],
+        [
+         "eeg_ll_absdiff",
+         0.038
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34223318139462794,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2974628107440607,
+       "d_f1": 0.00016779424398627452,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.18237751775480768,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         1.578
+        ],
+        [
+         "eeg_sign_agree",
+         0.855
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         0.042
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_2uV",
+       "level": 2.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3527661853839028,
+       "f1_sd": null,
+       "fp_per_24h": 0.7477742221003343,
+       "fp24_sd": null,
+       "sensitivity": 0.30456598534723534,
+       "d_f1": 0.010700798233261144,
+       "d_fp24": -0.009671059146621253,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6235247713460667,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.466
+        ],
+        [
+         "eeg_sign_agree",
+         2.568
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         0.19
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_4uV",
+       "level": 4.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33828571028628734,
+       "f1_sd": null,
+       "fp_per_24h": 0.8764289693251722,
+       "fp24_sd": null,
+       "sensitivity": 0.2979892076767077,
+       "d_f1": -0.00377967686435432,
+       "d_fp24": 0.11898368807821669,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.149197029945866,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         4.27
+        ],
+        [
+         "eeg_sign_agree",
+         3.916
+        ],
+        [
+         "eeg_ll_absdiff",
+         0.41
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_8uV",
+       "level": 8.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33987763079268163,
+       "f1_sd": null,
+       "fp_per_24h": 0.7676805678570583,
+       "fp24_sd": null,
+       "sensitivity": 0.2953447167509668,
+       "d_f1": -0.0021877563579600356,
+       "d_fp24": 0.010235286610102756,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 2.2211363326820495,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         6.479
+        ],
+        [
+         "eeg_ext_absdiff",
+         5.389
+        ],
+        [
+         "eeg_ch1_hf",
+         0.805
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_16uV",
+       "level": 16.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.349336475007788,
+       "f1_sd": null,
+       "fp_per_24h": 0.7649252445595399,
+       "fp24_sd": null,
+       "sensitivity": 0.30435408904158906,
+       "d_f1": 0.007271087857146363,
+       "d_fp24": 0.007479963312584381,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 4.852981320746936,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         12.186
+        ],
+        [
+         "eeg_ext_absdiff",
+         8.109
+        ],
+        [
+         "eeg_ch1_hf",
+         1.795
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_32uV",
+       "level": 32.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3467346353165464,
+       "f1_sd": null,
+       "fp_per_24h": 0.5391077985585456,
+       "fp24_sd": null,
+       "sensitivity": 0.30019151925401927,
+       "d_f1": 0.004669248165904749,
+       "d_fp24": -0.2183374826884099,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 11.69027226884596,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         23.967
+        ],
+        [
+         "eeg_ext_absdiff",
+         13.236
+        ],
+        [
+         "eeg_ch1_hf",
+         4.818
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_64uV",
+       "level": 64.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3010974976614939,
+       "f1_sd": null,
+       "fp_per_24h": 1.0010138325393567,
+       "fp24_sd": null,
+       "sensitivity": 0.26286144598644595,
+       "d_f1": -0.04096788948914776,
+       "d_fp24": 0.24356855129240118,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 23.581783323663345,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         43.108
+        ],
+        [
+         "eeg_ext_absdiff",
+         20.83
+        ],
+        [
+         "eeg_ch1_hf",
+         15.87
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_128uV",
+       "level": 128.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.2341304336394313,
+       "f1_sd": null,
+       "fp_per_24h": 0.8180696987054367,
+       "fp24_sd": null,
+       "sensitivity": 0.20553795210045211,
+       "d_f1": -0.10793495351121035,
+       "d_fp24": 0.06062441745848113,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 32.04978135273495,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         82.883
+        ],
+        [
+         "eeg_ch1_hf",
+         41.704
+        ],
+        [
+         "eeg_ch1_theta",
+         39.888
+        ]
+       ]
+      },
+      {
+       "name": "eeg_lsb_256uV",
+       "level": 256.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.1838120118816041,
+       "f1_sd": null,
+       "fp_per_24h": 0.6589206766498729,
+       "fp24_sd": null,
+       "sensitivity": 0.16235342079092077,
+       "d_f1": -0.15825337526903757,
+       "d_fp24": -0.09852460459708268,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 35.848185617137574,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         118.858
+        ],
+        [
+         "eeg_ch1_hf",
+         62.282
+        ],
+        [
+         "eeg_ch1_theta",
+         59.723
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/mains250": {
+     "modality": "eeg",
+     "family": "mains250",
+     "label": "mains 250 Hz (aliases to 6 Hz)",
+     "status": "limit",
+     "limit": 1.0,
+     "limit_unit": "uV",
+     "first_failing": 10.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_mains250_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3455218401138634,
+       "f1_sd": 0.001358324515921538,
+       "fp_per_24h": 0.7614106366940826,
+       "fp24_sd": 0.022522603321021115,
+       "sensitivity": 0.3005899394961895,
+       "d_f1": 0.0034564529632217234,
+       "d_fp24": 0.003965355447127061,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.1717281734883476,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         5.8
+        ],
+        [
+         "eeg_ext_absdiff",
+         3.532
+        ],
+        [
+         "eeg_ch1_theta",
+         0.679
+        ]
+       ]
+      },
+      {
+       "name": "eeg_mains250_10uV",
+       "level": 10.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3346588614506787,
+       "f1_sd": 0.0039810042766023675,
+       "fp_per_24h": 1.0528826959426631,
+       "fp24_sd": 0.04375483073772515,
+       "sensitivity": 0.29735885032760034,
+       "d_f1": -0.007406525699962974,
+       "d_fp24": 0.2954374146957076,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 14.489296023420117,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         52.345
+        ],
+        [
+         "eeg_ext_absdiff",
+         9.761
+        ],
+        [
+         "eeg_ch1_theta",
+         9.083
+        ]
+       ]
+      },
+      {
+       "name": "eeg_mains250_100uV",
+       "level": 100.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.20141678065023763,
+       "f1_sd": 0.006319737404238566,
+       "fp_per_24h": 0.3594919224490439,
+       "fp24_sd": 0.04590148332112406,
+       "sensitivity": 0.17692564989439988,
+       "d_f1": -0.14064860650040403,
+       "d_fp24": -0.39795335879791166,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 36.69639317050266,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         131.525
+        ],
+        [
+         "eeg_ch1_theta",
+         33.128
+        ],
+        [
+         "eeg_theta_mean",
+         30.829
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/mains50": {
+     "modality": "eeg",
+     "family": "mains50",
+     "label": "mains 50 Hz",
+     "status": "limit",
+     "limit": 1.0,
+     "limit_unit": "uV",
+     "first_failing": 10.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_mains50_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.35177244166415167,
+       "f1_sd": 0.002104094596166404,
+       "fp_per_24h": 0.6617568984773649,
+       "fp24_sd": 0.03039542597203229,
+       "sensitivity": 0.3041067314504815,
+       "d_f1": 0.009707054513510005,
+       "d_fp24": -0.09568838276959069,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.878752917136456,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         4.347
+        ],
+        [
+         "eeg_sign_agree",
+         2.684
+        ],
+        [
+         "eeg_ch1_hf",
+         0.648
+        ]
+       ]
+      },
+      {
+       "name": "eeg_mains50_10uV",
+       "level": 10.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.29109523618338234,
+       "f1_sd": 0.005970099953780264,
+       "fp_per_24h": 0.4715019666935769,
+       "fp24_sd": 0.09416253826350503,
+       "sensitivity": 0.254890135046385,
+       "d_f1": -0.05097015096725932,
+       "d_fp24": -0.2859433145533786,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 6.754542083333506,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         18.441
+        ],
+        [
+         "eeg_sign_agree",
+         8.965
+        ],
+        [
+         "eeg_ch1_hf",
+         8.0
+        ]
+       ]
+      },
+      {
+       "name": "eeg_mains50_100uV",
+       "level": 100.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.1250524751532816,
+       "f1_sd": 0.005209733261829903,
+       "fp_per_24h": 0.06535505538665136,
+       "fp24_sd": 0.07369682632275032,
+       "sensitivity": 0.11051944801944802,
+       "d_f1": -0.21701291199736006,
+       "d_fp24": -0.6920902258603042,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 15.677341418082698,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         92.255
+        ],
+        [
+         "eeg_ch1_hf",
+         30.52
+        ],
+        [
+         "eeg_ch2_hf",
+         28.232
+        ]
+       ]
+      },
+      {
+       "name": "eeg_mains50_1000uV",
+       "level": 1000.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.01060185185185185,
+       "f1_sd": 0.00016037507477489608,
+       "fp_per_24h": 0.0,
+       "fp24_sd": 0.0,
+       "sensitivity": 0.010510510510510511,
+       "d_f1": -0.3314635352987898,
+       "d_fp24": -0.7574452812469555,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 33.631006552129016,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         139.159
+        ],
+        [
+         "eeg_ch1_hf",
+         57.181
+        ],
+        [
+         "eeg_ch2_hf",
+         54.815
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/offset": {
+     "modality": "eeg",
+     "family": "offset",
+     "label": "DC offset",
+     "status": "beyond grid",
+     "limit": 0.9,
+     "limit_unit": "C",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_offset_0.1C",
+       "level": 0.1,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.342412392864162,
+       "f1_sd": null,
+       "fp_per_24h": 0.7384314645401485,
+       "fp24_sd": null,
+       "sensitivity": 0.2974628107440607,
+       "d_f1": 0.00034700571352030973,
+       "d_fp24": -0.01901381670680702,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.15916371325907502,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         0.746
+        ],
+        [
+         "eeg_sign_agree",
+         0.33
+        ],
+        [
+         "eeg_theta_mean_ctx",
+         0.07
+        ]
+       ]
+      },
+      {
+       "name": "eeg_offset_0.3C",
+       "level": 0.3,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33650944536347077,
+       "f1_sd": null,
+       "fp_per_24h": 0.7384314645401485,
+       "fp24_sd": null,
+       "sensitivity": 0.29335379101004105,
+       "d_f1": -0.005555941787170893,
+       "d_fp24": -0.01901381670680702,
+       "clipped_samples": 6,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3025729112303349,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         2.642
+        ],
+        [
+         "eeg_sign_agree",
+         1.244
+        ],
+        [
+         "eeg_theta_mean_ctx",
+         0.107
+        ]
+       ]
+      },
+      {
+       "name": "eeg_offset_0.6C",
+       "level": 0.6,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3364996491252262,
+       "f1_sd": null,
+       "fp_per_24h": 0.728990382261847,
+       "fp24_sd": null,
+       "sensitivity": 0.29335379101004105,
+       "d_f1": -0.00556573802541549,
+       "d_fp24": -0.028454898985108557,
+       "clipped_samples": 92659,
+       "tolerated": true,
+       "bit_flips_per_window": 0.325713409851893,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         2.657
+        ],
+        [
+         "eeg_sign_agree",
+         1.258
+        ],
+        [
+         "eeg_theta_mean_ctx",
+         0.134
+        ]
+       ]
+      },
+      {
+       "name": "eeg_offset_0.9C",
+       "level": 0.9,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33000501528684245,
+       "f1_sd": null,
+       "fp_per_24h": 0.6641250453480548,
+       "fp24_sd": null,
+       "sensitivity": 0.28606212434337436,
+       "d_f1": -0.012060371863799213,
+       "d_fp24": -0.0933202358989007,
+       "clipped_samples": 11336028,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7695429920209056,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         2.435
+        ],
+        [
+         "eeg_sign_agree",
+         1.594
+        ],
+        [
+         "eeg_hf_absdiff_ctx",
+         0.529
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/pink": {
+     "modality": "eeg",
+     "family": "pink",
+     "label": "1/f corner (1 uV rms white)",
+     "status": "beyond grid",
+     "limit": 30.0,
+     "limit_unit": "Hz",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_pink_1Hz_white1uV",
+       "level": 1.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3490525629161856,
+       "f1_sd": 0.006133909116726419,
+       "fp_per_24h": 0.6524957800162686,
+       "fp24_sd": 0.0488372116743007,
+       "sensitivity": 0.3021445237070237,
+       "d_f1": 0.006987175765543918,
+       "d_fp24": -0.10494950123068691,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.191279044502358,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         4.67
+        ],
+        [
+         "eeg_ext_absdiff",
+         4.093
+        ],
+        [
+         "eeg_ch1_hf",
+         0.518
+        ]
+       ]
+      },
+      {
+       "name": "eeg_pink_3Hz_white1uV",
+       "level": 3.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3474679120631829,
+       "f1_sd": 0.006953259283914669,
+       "fp_per_24h": 0.6459339932467264,
+       "fp24_sd": 0.05266958418230684,
+       "sensitivity": 0.30080501455501457,
+       "d_f1": 0.005402524912541229,
+       "d_fp24": -0.11151128800022914,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.2760682560990695,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         4.974
+        ],
+        [
+         "eeg_ext_absdiff",
+         4.129
+        ],
+        [
+         "eeg_ch1_hf",
+         0.527
+        ]
+       ]
+      },
+      {
+       "name": "eeg_pink_10Hz_white1uV",
+       "level": 10.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34592563531369996,
+       "f1_sd": 0.008416984668362396,
+       "fp_per_24h": 0.7446036184846411,
+       "fp24_sd": 0.04448282927936456,
+       "sensitivity": 0.30027218261593264,
+       "d_f1": 0.0038602481630582997,
+       "d_fp24": -0.012841662762314465,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.506455567962945,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         5.839
+        ],
+        [
+         "eeg_ext_absdiff",
+         4.243
+        ],
+        [
+         "eeg_ch1_hf",
+         0.557
+        ]
+       ]
+      },
+      {
+       "name": "eeg_pink_30Hz_white1uV",
+       "level": 30.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34473176629745633,
+       "f1_sd": 0.00694678944211283,
+       "fp_per_24h": 0.7601413377434364,
+       "fp24_sd": 0.056607239297086,
+       "sensitivity": 0.2986975052600053,
+       "d_f1": 0.002666379146814668,
+       "d_fp24": 0.0026960564964808587,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.9726015130165824,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         7.501
+        ],
+        [
+         "eeg_ext_absdiff",
+         4.517
+        ],
+        [
+         "eeg_ch1_hf",
+         0.638
+        ]
+       ]
+      }
+     ]
+    },
+    "eeg/white": {
+     "modality": "eeg",
+     "family": "white",
+     "label": "white noise",
+     "status": "limit",
+     "limit": 8.0,
+     "limit_unit": "uVrms",
+     "first_failing": 16.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "eeg_white_0.25uVrms",
+       "level": 0.25,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3459052891468401,
+       "f1_sd": 0.004298964651697054,
+       "fp_per_24h": 0.7093486787153459,
+       "fp24_sd": 0.024325278041308327,
+       "sensitivity": 0.29996106792981797,
+       "d_f1": 0.003839901996198436,
+       "d_fp24": -0.048096602531609634,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.4420844858530075,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.31
+        ],
+        [
+         "eeg_sign_agree",
+         2.361
+        ],
+        [
+         "eeg_ch2_hf",
+         0.23
+        ]
+       ]
+      },
+      {
+       "name": "eeg_white_0.5uVrms",
+       "level": 0.5,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.34623046997790324,
+       "f1_sd": 0.00718890219865713,
+       "fp_per_24h": 0.692361064585191,
+       "fp24_sd": 0.028174955393847192,
+       "sensitivity": 0.29979790395415395,
+       "d_f1": 0.004165082827261579,
+       "d_fp24": -0.06508421666176456,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6562680062759825,
+       "top_features": [
+        [
+         "eeg_ext_absdiff",
+         3.509
+        ],
+        [
+         "eeg_sign_agree",
+         3.214
+        ],
+        [
+         "eeg_ch1_hf",
+         0.295
+        ]
+       ]
+      },
+      {
+       "name": "eeg_white_1uVrms",
+       "level": 1.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3508834458115288,
+       "f1_sd": 0.004790966443278957,
+       "fp_per_24h": 0.7448304182004433,
+       "fp24_sd": 0.06481128715768097,
+       "sensitivity": 0.30355865212115213,
+       "d_f1": 0.00881805866088714,
+       "d_fp24": -0.01261486304651227,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.1433177322328012,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         4.517
+        ],
+        [
+         "eeg_ext_absdiff",
+         4.077
+        ],
+        [
+         "eeg_ch1_hf",
+         0.513
+        ]
+       ]
+      },
+      {
+       "name": "eeg_white_2uVrms",
+       "level": 2.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.33993363957862865,
+       "f1_sd": 0.009551836269331811,
+       "fp_per_24h": 0.741033820143831,
+       "fp24_sd": 0.04322436000403585,
+       "sensitivity": 0.295250106968857,
+       "d_f1": -0.0021317475720130097,
+       "d_fp24": -0.016411461103124525,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 2.088841971278258,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         6.619
+        ],
+        [
+         "eeg_ext_absdiff",
+         5.354
+        ],
+        [
+         "eeg_ch1_hf",
+         1.142
+        ]
+       ]
+      },
+      {
+       "name": "eeg_white_4uVrms",
+       "level": 4.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3348016270153241,
+       "f1_sd": 0.00853028413966145,
+       "fp_per_24h": 0.7366041540074832,
+       "fp24_sd": 0.09855804674004433,
+       "sensitivity": 0.29251270885645886,
+       "d_f1": -0.007263760135317543,
+       "d_fp24": -0.02084112723947229,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 4.160172252143885,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         10.294
+        ],
+        [
+         "eeg_ext_absdiff",
+         7.576
+        ],
+        [
+         "eeg_ch1_hf",
+         2.819
+        ]
+       ]
+      },
+      {
+       "name": "eeg_white_8uVrms",
+       "level": 8.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.31245012424322594,
+       "f1_sd": 0.006627757158849161,
+       "fp_per_24h": 0.5329918050449799,
+       "fp24_sd": 0.07574532329605548,
+       "sensitivity": 0.2706597992847993,
+       "d_f1": -0.02961526290741573,
+       "d_fp24": -0.22445347620197564,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 8.205105587532003,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         17.045
+        ],
+        [
+         "eeg_ext_absdiff",
+         10.247
+        ],
+        [
+         "eeg_ch1_hf",
+         5.982
+        ]
+       ]
+      },
+      {
+       "name": "eeg_white_16uVrms",
+       "level": 16.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.26938998312357426,
+       "f1_sd": 0.004220351450091995,
+       "fp_per_24h": 0.2863728050163067,
+       "fp24_sd": 0.11530670358686511,
+       "sensitivity": 0.23361851671226672,
+       "d_f1": -0.0726754040270674,
+       "d_fp24": -0.47107247623064885,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 15.832840948328107,
+       "top_features": [
+        [
+         "eeg_sign_agree",
+         28.058
+        ],
+        [
+         "eeg_ext_absdiff",
+         12.69
+        ],
+        [
+         "eeg_ch1_hf",
+         10.967
+        ]
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "ecg": {
+   "clean": {
+    "f1": 0.34206538715064166,
+    "sensitivity": 0.297322044978295,
+    "precision": 0.514804292929293,
+    "fp_per_24h": 0.7574452812469555
+   },
+   "families": {
+    "ecg/clip": {
+     "modality": "ecg",
+     "family": "clip",
+     "label": "clip level C",
+     "status": "limit",
+     "limit": 1024.0,
+     "limit_unit": "uV",
+     "first_failing": 512.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_clip_4096uV",
+       "level": 4096.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 2226,
+       "tolerated": true,
+       "bit_flips_per_window": 0.0026027750438481585,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.011
+        ],
+        [
+         "ecg_log_masrd",
+         0.011
+        ],
+        [
+         "ecg_log_rr",
+         0.011
+        ]
+       ]
+      },
+      {
+       "name": "ecg_clip_2048uV",
+       "level": 2048.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3415305079985898,
+       "f1_sd": null,
+       "fp_per_24h": 0.7393329850102882,
+       "fp24_sd": null,
+       "sensitivity": 0.2974288825851326,
+       "d_f1": -0.0005348791520518592,
+       "d_fp24": -0.018112296236667325,
+       "clipped_samples": 3605377,
+       "tolerated": true,
+       "bit_flips_per_window": 0.1374751707589532,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         0.625
+        ],
+        [
+         "ecg_log_masrd",
+         0.466
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         0.306
+        ]
+       ]
+      },
+      {
+       "name": "ecg_clip_1024uV",
+       "level": 1024.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3210148587038708,
+       "f1_sd": null,
+       "fp_per_24h": 0.6722811998293853,
+       "fp24_sd": null,
+       "sensitivity": 0.2763151005338505,
+       "d_f1": -0.021050528446770855,
+       "d_fp24": -0.08516408141757026,
+       "clipped_samples": 7408457,
+       "tolerated": true,
+       "bit_flips_per_window": 0.4738745778143937,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         2.134
+        ],
+        [
+         "ecg_log_masrd",
+         1.65
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         0.94
+        ]
+       ]
+      },
+      {
+       "name": "ecg_clip_512uV",
+       "level": 512.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.29262553550432163,
+       "f1_sd": null,
+       "fp_per_24h": 0.8486183446493021,
+       "fp24_sd": null,
+       "sensitivity": 0.24912538053163055,
+       "d_f1": -0.04943985164632003,
+       "d_fp24": 0.09117306340234654,
+       "clipped_samples": 20416933,
+       "tolerated": false,
+       "bit_flips_per_window": 1.2738824082145896,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         4.597
+        ],
+        [
+         "ecg_log_masrd",
+         4.214
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.323
+        ]
+       ]
+      },
+      {
+       "name": "ecg_clip_256uV",
+       "level": 256.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.2913514715308507,
+       "f1_sd": null,
+       "fp_per_24h": 0.8292853930897883,
+       "fp24_sd": null,
+       "sensitivity": 0.24584028396528393,
+       "d_f1": -0.05071391561979094,
+       "d_fp24": 0.07184011184283279,
+       "clipped_samples": 48219447,
+       "tolerated": false,
+       "bit_flips_per_window": 2.5924993096335998,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         7.649
+        ],
+        [
+         "ecg_log_rr",
+         6.409
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         4.178
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/drift": {
+     "modality": "ecg",
+     "family": "drift",
+     "label": "drift (tau 64 s)",
+     "status": "limit",
+     "limit": 100.0,
+     "limit_unit": "uVrms",
+     "first_failing": 1000.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_drift_10uVrms",
+       "level": 10.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34624970119873444,
+       "f1_sd": 0.004325884147089662,
+       "fp_per_24h": 0.747960314918586,
+       "fp24_sd": 0.016428443588816035,
+       "sensitivity": 0.30036959802584806,
+       "d_f1": 0.004184314048092774,
+       "d_fp24": -0.009484966328369593,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.38132799422216435,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.872
+        ],
+        [
+         "ecg_log_masrd",
+         0.859
+        ],
+        [
+         "ecg_log_rr",
+         0.308
+        ]
+       ]
+      },
+      {
+       "name": "ecg_drift_100uVrms",
+       "level": 100.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3483700979648417,
+       "f1_sd": 0.0034806562484612593,
+       "fp_per_24h": 0.8261155280240681,
+       "fp24_sd": 0.03712137938636477,
+       "sensitivity": 0.30147159287784286,
+       "d_f1": 0.006304710814200032,
+       "d_fp24": 0.06867024677711253,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.8017042782724304,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.887
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.721
+        ],
+        [
+         "ecg_log_rr",
+         0.534
+        ]
+       ]
+      },
+      {
+       "name": "ecg_drift_1000uVrms",
+       "level": 1000.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.28930151435092677,
+       "f1_sd": 0.005399851938488905,
+       "fp_per_24h": 0.8026799689061123,
+       "fp24_sd": 0.10339063924130276,
+       "sensitivity": 0.2482018146080646,
+       "d_f1": -0.052763872799714895,
+       "d_fp24": 0.045234687659156725,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.7877849089028732,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         6.263
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.821
+        ],
+        [
+         "ecg_log_rr",
+         2.612
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/gain+": {
+     "modality": "ecg",
+     "family": "gain+",
+     "label": "gain error +",
+     "status": "beyond grid",
+     "limit": 0.5,
+     "limit_unit": "",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_gain_+0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3328025119409601,
+       "f1_sd": null,
+       "fp_per_24h": 0.7992652708245528,
+       "fp24_sd": null,
+       "sensitivity": 0.2916009220696721,
+       "d_f1": -0.009262875209681554,
+       "d_fp24": 0.04181998957759725,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.34405695533214853,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.818
+        ],
+        [
+         "ecg_log_masrd",
+         0.705
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.119
+        ]
+       ]
+      },
+      {
+       "name": "ecg_gain_+0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34733502494221974,
+       "f1_sd": null,
+       "fp_per_24h": 0.7583468017170952,
+       "fp24_sd": null,
+       "sensitivity": 0.30141430688305687,
+       "d_f1": 0.0052696377915780745,
+       "d_fp24": 0.0009015204701396939,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.34146376003322093,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.814
+        ],
+        [
+         "ecg_log_masrd",
+         0.701
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.123
+        ]
+       ]
+      },
+      {
+       "name": "ecg_gain_+0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33505220433564964,
+       "f1_sd": null,
+       "fp_per_24h": 0.8066175480884569,
+       "fp24_sd": null,
+       "sensitivity": 0.2933618347680848,
+       "d_f1": -0.007013182814992025,
+       "d_fp24": 0.04917226684150133,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3330065113109714,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.796
+        ],
+        [
+         "ecg_log_masrd",
+         0.678
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.116
+        ]
+       ]
+      },
+      {
+       "name": "ecg_gain_+0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3396190487668033,
+       "f1_sd": null,
+       "fp_per_24h": 0.728990382261847,
+       "fp24_sd": null,
+       "sensitivity": 0.29533791799416803,
+       "d_f1": -0.0024463383838383423,
+       "d_fp24": -0.028454898985108557,
+       "clipped_samples": 24,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3159853871404003,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.761
+        ],
+        [
+         "ecg_log_masrd",
+         0.636
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.106
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/gain-": {
+     "modality": "ecg",
+     "family": "gain-",
+     "label": "gain error -",
+     "status": "beyond grid",
+     "limit": 0.5,
+     "limit_unit": "",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_gain_-0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33946350484070015,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29631322365697366,
+       "d_f1": -0.0026018823099415167,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3481125195187303,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.832
+        ],
+        [
+         "ecg_log_masrd",
+         0.708
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.108
+        ]
+       ]
+      },
+      {
+       "name": "ecg_gain_-0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3409148953373475,
+       "f1_sd": null,
+       "fp_per_24h": 0.8066175480884569,
+       "fp24_sd": null,
+       "sensitivity": 0.29747085450210453,
+       "d_f1": -0.0011504918132941855,
+       "d_fp24": 0.04917226684150133,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3606936401739515,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.856
+        ],
+        [
+         "ecg_log_masrd",
+         0.744
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.124
+        ]
+       ]
+      },
+      {
+       "name": "ecg_gain_-0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3446796242292565,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29904575529575533,
+       "d_f1": 0.002614237078614856,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.38189569823636893,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.921
+        ],
+        [
+         "ecg_log_masrd",
+         0.797
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.148
+        ]
+       ]
+      },
+      {
+       "name": "ecg_gain_-0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3387026264794133,
+       "f1_sd": null,
+       "fp_per_24h": 0.7764590979537624,
+       "fp24_sd": null,
+       "sensitivity": 0.29544475560100564,
+       "d_f1": -0.003362760671228371,
+       "d_fp24": 0.019013816706806907,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.47505788456740583,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         1.119
+        ],
+        [
+         "ecg_log_masrd",
+         1.017
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.16
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/hp": {
+     "modality": "ecg",
+     "family": "hp",
+     "label": "high-pass corner",
+     "status": "limit",
+     "limit": 0.3,
+     "limit_unit": "Hz",
+     "first_failing": 0.5,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_hp_0.05Hz",
+       "level": 0.05,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3434806113282279,
+       "f1_sd": null,
+       "fp_per_24h": 0.7335001953107027,
+       "fp24_sd": null,
+       "sensitivity": 0.2994801955739456,
+       "d_f1": 0.0014152241775862162,
+       "d_fp24": -0.023945085936252886,
+       "clipped_samples": 2,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5329428684838471,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         1.274
+        ],
+        [
+         "ecg_log_masrd",
+         1.195
+        ],
+        [
+         "ecg_log_rr",
+         0.202
+        ]
+       ]
+      },
+      {
+       "name": "ecg_hp_0.1Hz",
+       "level": 0.1,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.35538756481710143,
+       "f1_sd": null,
+       "fp_per_24h": 0.6869330000889269,
+       "fp24_sd": null,
+       "sensitivity": 0.30818555271680276,
+       "d_f1": 0.013322177666459767,
+       "d_fp24": -0.07051228115802866,
+       "clipped_samples": 9,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7417492364318532,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         1.741
+        ],
+        [
+         "ecg_log_masrd",
+         1.74
+        ],
+        [
+         "ecg_log_rr",
+         0.338
+        ]
+       ]
+      },
+      {
+       "name": "ecg_hp_0.3Hz",
+       "level": 0.3,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3468525537836606,
+       "f1_sd": null,
+       "fp_per_24h": 0.7561782230451813,
+       "fp24_sd": null,
+       "sensitivity": 0.3009645370582871,
+       "d_f1": 0.004787166633018924,
+       "d_fp24": -0.001267058201774196,
+       "clipped_samples": 18,
+       "tolerated": true,
+       "bit_flips_per_window": 1.17087515967977,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         2.814
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.65
+        ],
+        [
+         "ecg_log_rr",
+         0.605
+        ]
+       ]
+      },
+      {
+       "name": "ecg_hp_0.5Hz",
+       "level": 0.5,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.32396513656516596,
+       "f1_sd": null,
+       "fp_per_24h": 0.9205928418116257,
+       "fp24_sd": null,
+       "sensitivity": 0.2857407194907195,
+       "d_f1": -0.018100250585475708,
+       "d_fp24": 0.16314756056467017,
+       "clipped_samples": 15,
+       "tolerated": false,
+       "bit_flips_per_window": 1.3407948439313775,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.197
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.998
+        ],
+        [
+         "ecg_log_rr",
+         0.622
+        ]
+       ]
+      },
+      {
+       "name": "ecg_hp_1.0Hz",
+       "level": 1.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.31450400027266234,
+       "f1_sd": null,
+       "fp_per_24h": 0.9081493753774241,
+       "fp24_sd": null,
+       "sensitivity": 0.2754247235497235,
+       "d_f1": -0.02756138687797932,
+       "d_fp24": 0.1507040941304686,
+       "clipped_samples": 17,
+       "tolerated": false,
+       "bit_flips_per_window": 1.528118842150378,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.644
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.261
+        ],
+        [
+         "ecg_log_rr",
+         0.873
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/lp": {
+     "modality": "ecg",
+     "family": "lp",
+     "label": "low-pass corner",
+     "status": "none tolerated",
+     "limit": null,
+     "limit_unit": null,
+     "first_failing": 100.0,
+     "non_monotonic": [
+      "ecg_lp_50Hz",
+      "ecg_lp_30Hz"
+     ],
+     "levels": [
+      {
+       "name": "ecg_lp_100Hz",
+       "level": 100.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3127848430061793,
+       "f1_sd": null,
+       "fp_per_24h": 0.9153482158905301,
+       "fp24_sd": null,
+       "sensitivity": 0.2743010208635209,
+       "d_f1": -0.02928054414446235,
+       "d_fp24": 0.15790293464357452,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 1.4439732783428207,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.436
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.175
+        ],
+        [
+         "ecg_log_rr",
+         0.779
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lp_70Hz",
+       "level": 70.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34422375466713045,
+       "f1_sd": null,
+       "fp_per_24h": 0.922686506520698,
+       "fp24_sd": null,
+       "sensitivity": 0.3040635289072789,
+       "d_f1": 0.0021583675164887905,
+       "d_fp24": 0.1652412252737424,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 1.482809980761373,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.481
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.29
+        ],
+        [
+         "ecg_log_rr",
+         0.737
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lp_50Hz",
+       "level": 50.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3410406272284386,
+       "f1_sd": null,
+       "fp_per_24h": 0.8748356231916201,
+       "fp24_sd": null,
+       "sensitivity": 0.2963392988392988,
+       "d_f1": -0.0010247599222030779,
+       "d_fp24": 0.11739034194466458,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.018880427706455,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         2.527
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.272
+        ],
+        [
+         "ecg_log_rr",
+         0.809
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lp_40Hz",
+       "level": 40.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3218140807778966,
+       "f1_sd": null,
+       "fp_per_24h": 0.9444924799922486,
+       "fp24_sd": null,
+       "sensitivity": 0.2825208701771202,
+       "d_f1": -0.02025130637274508,
+       "d_fp24": 0.18704719874529308,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 1.6225530520026041,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.922
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.418
+        ],
+        [
+         "ecg_log_rr",
+         1.169
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lp_30Hz",
+       "level": 30.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3263115263282606,
+       "f1_sd": null,
+       "fp_per_24h": 0.8003691146362892,
+       "fp24_sd": null,
+       "sensitivity": 0.2834385289072789,
+       "d_f1": -0.01575386082238106,
+       "d_fp24": 0.0429238333893337,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.3673769700433047,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.362
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.871
+        ],
+        [
+         "ecg_log_rr",
+         1.088
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/lsb": {
+     "modality": "ecg",
+     "family": "lsb",
+     "label": "LSB q",
+     "status": "limit",
+     "limit": 32.0,
+     "limit_unit": "uV",
+     "first_failing": 64.0,
+     "non_monotonic": [
+      "ecg_lsb_128uV"
+     ],
+     "levels": [
+      {
+       "name": "ecg_lsb_0.5uV",
+       "level": 0.5,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.09242787805734436,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.237
+        ],
+        [
+         "ecg_log_masrd",
+         0.191
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.034
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3421605483211705,
+       "f1_sd": null,
+       "fp_per_24h": 0.7393329850102882,
+       "fp24_sd": null,
+       "sensitivity": 0.29777610480735484,
+       "d_f1": 9.516117052882356e-05,
+       "d_fp24": -0.018112296236667325,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.09822279071297876,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.247
+        ],
+        [
+         "ecg_log_masrd",
+         0.202
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.037
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_2uV",
+       "level": 2.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3391240855879014,
+       "f1_sd": null,
+       "fp_per_24h": 0.7583468017170952,
+       "fp24_sd": null,
+       "sensitivity": 0.2978709541209541,
+       "d_f1": -0.0029413015627402506,
+       "d_fp24": 0.0009015204701396939,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3919398525302397,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.937
+        ],
+        [
+         "ecg_log_masrd",
+         0.826
+        ],
+        [
+         "ecg_log_rr_ctx",
+         0.155
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_4uV",
+       "level": 4.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3512981959086761,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.30581986285111284,
+       "d_f1": 0.00923280875803445,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.48205859555108316,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         1.123
+        ],
+        [
+         "ecg_log_masrd",
+         1.029
+        ],
+        [
+         "ecg_log_rr",
+         0.184
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_8uV",
+       "level": 8.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3365168668477492,
+       "f1_sd": null,
+       "fp_per_24h": 0.7781626491033483,
+       "fp24_sd": null,
+       "sensitivity": 0.2903852317914818,
+       "d_f1": -0.00554852030289249,
+       "d_fp24": 0.020717367856392777,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6663508127580544,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         1.528
+        ],
+        [
+         "ecg_log_masrd",
+         1.484
+        ],
+        [
+         "ecg_log_rr",
+         0.286
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_16uV",
+       "level": 16.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33133603831586805,
+       "f1_sd": null,
+       "fp_per_24h": 0.8066175480884569,
+       "fp24_sd": null,
+       "sensitivity": 0.28709071990321994,
+       "d_f1": -0.010729348834773611,
+       "d_fp24": 0.04917226684150133,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.945996062308327,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         2.117
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.058
+        ],
+        [
+         "ecg_log_rr",
+         0.392
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_32uV",
+       "level": 32.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33938686554990394,
+       "f1_sd": null,
+       "fp_per_24h": 0.6685981985096036,
+       "fp24_sd": null,
+       "sensitivity": 0.2905288902163902,
+       "d_f1": -0.0026785216007377266,
+       "d_fp24": -0.08884708273735198,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.4341998559706177,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.284
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.778
+        ],
+        [
+         "ecg_log_rr",
+         0.85
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_64uV",
+       "level": 64.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.30388345431567115,
+       "f1_sd": null,
+       "fp_per_24h": 0.6523979602126836,
+       "fp24_sd": null,
+       "sensitivity": 0.26687212046587044,
+       "d_f1": -0.03818193283497051,
+       "d_fp24": -0.10504732103427195,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.0918710033200063,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         5.009
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.645
+        ],
+        [
+         "ecg_log_rr",
+         1.382
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_128uV",
+       "level": 128.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.313548185920636,
+       "f1_sd": null,
+       "fp_per_24h": 0.5284332407606727,
+       "fp24_sd": null,
+       "sensitivity": 0.2683415449040449,
+       "d_f1": -0.028517201230005673,
+       "d_fp24": -0.22901204048628288,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.3614658509166775,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         8.956
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         5.278
+        ],
+        [
+         "ecg_log_rr",
+         3.266
+        ]
+       ]
+      },
+      {
+       "name": "ecg_lsb_256uV",
+       "level": 256.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.2374432383038589,
+       "f1_sd": null,
+       "fp_per_24h": 0.526551881349515,
+       "fp24_sd": null,
+       "sensitivity": 0.20728938760188761,
+       "d_f1": -0.10462214884678275,
+       "d_fp24": -0.2308933998974405,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 4.773399880628048,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         15.399
+        ],
+        [
+         "ecg_log_rr",
+         8.471
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         8.042
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/mains250": {
+     "modality": "ecg",
+     "family": "mains250",
+     "label": "mains 250 Hz (aliases to 6 Hz)",
+     "status": "limit",
+     "limit": 10.0,
+     "limit_unit": "uV",
+     "first_failing": 100.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_mains250_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34765627032029717,
+       "f1_sd": 0.00661869247360165,
+       "fp_per_24h": 0.7298480186819187,
+       "fp24_sd": 0.033366638930501145,
+       "sensitivity": 0.3021754818629819,
+       "d_f1": 0.005590883169655503,
+       "d_fp24": -0.027597262565036806,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.46597295429753605,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         1.046
+        ],
+        [
+         "ecg_log_masrd",
+         1.046
+        ],
+        [
+         "ecg_log_rr",
+         0.363
+        ]
+       ]
+      },
+      {
+       "name": "ecg_mains250_10uV",
+       "level": 10.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.33586461854845556,
+       "f1_sd": 0.007044161409526996,
+       "fp_per_24h": 0.8079834828718641,
+       "fp24_sd": 0.08614681972596404,
+       "sensitivity": 0.2914125898500899,
+       "d_f1": -0.006200768602186102,
+       "d_fp24": 0.05053820162490852,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.3099744442949635,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.03
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.652
+        ],
+        [
+         "ecg_log_rr",
+         0.785
+        ]
+       ]
+      },
+      {
+       "name": "ecg_mains250_100uV",
+       "level": 100.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.2829636520255289,
+       "f1_sd": 0.010498021049625583,
+       "fp_per_24h": 1.1016855474087037,
+       "fp24_sd": 0.08468283031082792,
+       "sensitivity": 0.24448909355159354,
+       "d_f1": -0.05910173512511274,
+       "d_fp24": 0.3442402661617482,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.82527808680554,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         6.547
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         4.16
+        ],
+        [
+         "ecg_log_rr",
+         2.685
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/mains50": {
+     "modality": "ecg",
+     "family": "mains50",
+     "label": "mains 50 Hz",
+     "status": "limit",
+     "limit": 10.0,
+     "limit_unit": "uV",
+     "first_failing": 100.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_mains50_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3404358135355086,
+       "f1_sd": 0.007930271561310227,
+       "fp_per_24h": 0.778151928316845,
+       "fp24_sd": 0.025487824536874662,
+       "sensitivity": 0.29811215514340517,
+       "d_f1": -0.0016295736151330509,
+       "d_fp24": 0.02070664706988945,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.38217087293828966,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         0.894
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         0.879
+        ],
+        [
+         "ecg_log_rr",
+         0.329
+        ]
+       ]
+      },
+      {
+       "name": "ecg_mains50_10uV",
+       "level": 10.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34163323653291355,
+       "f1_sd": 0.006327519527602867,
+       "fp_per_24h": 0.7462514135342079,
+       "fp24_sd": 0.058262326764643345,
+       "sensitivity": 0.29582017300767305,
+       "d_f1": -0.0004321506177281109,
+       "d_fp24": -0.011193867712747663,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.9793188579222477,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         2.274
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.121
+        ],
+        [
+         "ecg_log_rr",
+         0.578
+        ]
+       ]
+      },
+      {
+       "name": "ecg_mains50_100uV",
+       "level": 100.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.32318810236804096,
+       "f1_sd": 0.013339862794409397,
+       "fp_per_24h": 0.9811654754551066,
+       "fp24_sd": 0.08694369744989414,
+       "sensitivity": 0.28292773308398306,
+       "d_f1": -0.0188772847826007,
+       "d_fp24": 0.22372019420815104,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.1869842643665285,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         5.366
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.766
+        ],
+        [
+         "ecg_log_rr",
+         2.05
+        ]
+       ]
+      },
+      {
+       "name": "ecg_mains50_1000uV",
+       "level": 1000.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.18587084964513081,
+       "f1_sd": 0.007276992974188658,
+       "fp_per_24h": 0.8314275808712651,
+       "fp24_sd": 0.0534146318938017,
+       "sensitivity": 0.15891270328770332,
+       "d_f1": -0.15619453750551085,
+       "d_fp24": 0.07398229962430958,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 6.725803403919393,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         13.468
+        ],
+        [
+         "ecg_log_rr",
+         12.759
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         5.087
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/offset": {
+     "modality": "ecg",
+     "family": "offset",
+     "label": "DC offset",
+     "status": "limit",
+     "limit": 0.1,
+     "limit_unit": "C",
+     "first_failing": 0.3,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_offset_0.1C",
+       "level": 0.1,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.32720190191629484,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2843092554030054,
+       "d_f1": -0.01486348523434683,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7047426818037743,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         2.87
+        ],
+        [
+         "ecg_log_masrd",
+         2.448
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         0.867
+        ]
+       ]
+      },
+      {
+       "name": "ecg_offset_0.3C",
+       "level": 0.3,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.240729725944861,
+       "f1_sd": null,
+       "fp_per_24h": 0.739915492381578,
+       "fp24_sd": null,
+       "sensitivity": 0.21163983117108118,
+       "d_f1": -0.10133566120578066,
+       "d_fp24": -0.017529788865377482,
+       "clipped_samples": 4,
+       "tolerated": false,
+       "bit_flips_per_window": 3.7948497625264537,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         21.506
+        ],
+        [
+         "ecg_log_masrd",
+         12.816
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.287
+        ]
+       ]
+      },
+      {
+       "name": "ecg_offset_0.6C",
+       "level": 0.6,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.11005083452838871,
+       "f1_sd": null,
+       "fp_per_24h": 0.223286116953738,
+       "fp24_sd": null,
+       "sensitivity": 0.09831037768537769,
+       "d_f1": -0.23201455262225296,
+       "d_fp24": -0.5341591642932175,
+       "clipped_samples": 27284,
+       "tolerated": false,
+       "bit_flips_per_window": 7.305164023976019,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         42.247
+        ],
+        [
+         "ecg_log_masrd",
+         23.886
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.474
+        ]
+       ]
+      },
+      {
+       "name": "ecg_offset_0.9C",
+       "level": 0.9,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.07733870967741935,
+       "f1_sd": null,
+       "fp_per_24h": 0.19934103101748515,
+       "fp24_sd": null,
+       "sensitivity": 0.07166854354354353,
+       "d_f1": -0.2647266774732223,
+       "d_fp24": -0.5581042502294704,
+       "clipped_samples": 6186852,
+       "tolerated": false,
+       "bit_flips_per_window": 8.358122103428759,
+       "top_features": [
+        [
+         "ecg_log_rr",
+         48.428
+        ],
+        [
+         "ecg_log_masrd",
+         27.575
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         4.038
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/pink": {
+     "modality": "ecg",
+     "family": "pink",
+     "label": "1/f corner (1 uV rms white)",
+     "status": "beyond grid",
+     "limit": 30.0,
+     "limit_unit": "Hz",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_pink_1Hz_white1uV",
+       "level": 1.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.346370057509847,
+       "f1_sd": 0.003253996780870532,
+       "fp_per_24h": 0.7871656702295272,
+       "fp24_sd": 0.08284864106217069,
+       "sensitivity": 0.30271044333544334,
+       "d_f1": 0.004304670359205343,
+       "d_fp24": 0.029720388982571677,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5120694373232694,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.168
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.148
+        ],
+        [
+         "ecg_log_rr",
+         0.355
+        ]
+       ]
+      },
+      {
+       "name": "ecg_pink_3Hz_white1uV",
+       "level": 3.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3461437022860569,
+       "f1_sd": 0.009397639024884226,
+       "fp_per_24h": 0.7514078491680665,
+       "fp24_sd": 0.010457139107882126,
+       "sensitivity": 0.3010140783578284,
+       "d_f1": 0.004078315135415234,
+       "d_fp24": -0.006037432078889071,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5217001353798445,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.192
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.159
+        ],
+        [
+         "ecg_log_rr",
+         0.365
+        ]
+       ]
+      },
+      {
+       "name": "ecg_pink_10Hz_white1uV",
+       "level": 10.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34457011475405736,
+       "f1_sd": 0.0032141183927682435,
+       "fp_per_24h": 0.7514078491680665,
+       "fp24_sd": 0.010457139107882126,
+       "sensitivity": 0.29915432024807026,
+       "d_f1": 0.0025047276034156907,
+       "d_fp24": -0.006037432078889071,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5480229141945024,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.257
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.223
+        ],
+        [
+         "ecg_log_rr",
+         0.364
+        ]
+       ]
+      },
+      {
+       "name": "ecg_pink_30Hz_white1uV",
+       "level": 30.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.34238331712957576,
+       "f1_sd": 0.008957124331750532,
+       "fp_per_24h": 0.7871656702295272,
+       "fp24_sd": 0.06528549894811064,
+       "sensitivity": 0.29762488903113904,
+       "d_f1": 0.000317929978934095,
+       "d_fp24": 0.029720388982571677,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6128740387107774,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.415
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.362
+        ],
+        [
+         "ecg_log_rr",
+         0.387
+        ]
+       ]
+      }
+     ]
+    },
+    "ecg/white": {
+     "modality": "ecg",
+     "family": "white",
+     "label": "white noise",
+     "status": "beyond grid",
+     "limit": 16.0,
+     "limit_unit": "uVrms",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "ecg_white_0.25uVrms",
+       "level": 0.25,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.33811421758549576,
+       "f1_sd": 0.005840947964435811,
+       "fp_per_24h": 0.7907514046932178,
+       "fp24_sd": 0.02274187442619455,
+       "sensitivity": 0.29475347194097196,
+       "d_f1": -0.003951169565145907,
+       "d_fp24": 0.03330612344626227,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.37706300848140634,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.859
+        ],
+        [
+         "ecg_log_masrd",
+         0.853
+        ],
+        [
+         "ecg_log_rr",
+         0.3
+        ]
+       ]
+      },
+      {
+       "name": "ecg_white_0.5uVrms",
+       "level": 0.5,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.34173849299383124,
+       "f1_sd": 0.00676644556745359,
+       "fp_per_24h": 0.7712628020506451,
+       "fp24_sd": 0.03310703507028286,
+       "sensitivity": 0.2975195037695038,
+       "d_f1": -0.00032689415681042,
+       "d_fp24": 0.013817520803689587,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.4099313632101975,
+       "top_features": [
+        [
+         "ecg_log_masrd_ctx",
+         0.938
+        ],
+        [
+         "ecg_log_masrd",
+         0.926
+        ],
+        [
+         "ecg_log_rr",
+         0.313
+        ]
+       ]
+      },
+      {
+       "name": "ecg_white_1uVrms",
+       "level": 1.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3483137082787768,
+       "f1_sd": 0.005162773268622828,
+       "fp_per_24h": 0.7564123568732554,
+       "fp24_sd": 0.02009662695636895,
+       "sensitivity": 0.3038130586568087,
+       "d_f1": 0.006248321128135115,
+       "d_fp24": -0.0010329243737001725,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5074616633186153,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.16
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.133
+        ],
+        [
+         "ecg_log_rr",
+         0.369
+        ]
+       ]
+      },
+      {
+       "name": "ecg_white_2uVrms",
+       "level": 2.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3470204157112648,
+       "f1_sd": 0.006092660508746108,
+       "fp_per_24h": 0.7564123568732554,
+       "fp24_sd": 0.029140791802116806,
+       "sensitivity": 0.3015560317122817,
+       "d_f1": 0.0049550285606231315,
+       "d_fp24": -0.0010329243737001725,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6788482980750128,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         1.581
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         1.498
+        ],
+        [
+         "ecg_log_rr",
+         0.439
+        ]
+       ]
+      },
+      {
+       "name": "ecg_white_4uVrms",
+       "level": 4.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.33524225351273457,
+       "f1_sd": 0.006862968836680748,
+       "fp_per_24h": 0.7818344165198496,
+       "fp24_sd": 0.028870579598619803,
+       "sensitivity": 0.29096956337581337,
+       "d_f1": -0.006823133637907097,
+       "d_fp24": 0.024389135272894102,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.9329895176765037,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         2.195
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.004
+        ],
+        [
+         "ecg_log_rr",
+         0.56
+        ]
+       ]
+      },
+      {
+       "name": "ecg_white_8uVrms",
+       "level": 8.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3438552143812005,
+       "f1_sd": 0.011418409871876006,
+       "fp_per_24h": 0.7248363327289062,
+       "fp24_sd": 0.08297760373027278,
+       "sensitivity": 0.2976790341790342,
+       "d_f1": 0.0017898272305588159,
+       "d_fp24": -0.0326089485180493,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.2928777095579616,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         3.052
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         2.595
+        ],
+        [
+         "ecg_log_rr",
+         0.88
+        ]
+       ]
+      },
+      {
+       "name": "ecg_white_16uVrms",
+       "level": 16.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.32174711374054504,
+       "f1_sd": 0.009815719732823535,
+       "fp_per_24h": 0.7979653794101463,
+       "fp24_sd": 0.12434019644318174,
+       "sensitivity": 0.2794711721274221,
+       "d_f1": -0.02031827341009662,
+       "d_fp24": 0.0405200981631908,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.8701694656876446,
+       "top_features": [
+        [
+         "ecg_log_masrd",
+         4.297
+        ],
+        [
+         "ecg_log_masrd_ctx",
+         3.22
+        ],
+        [
+         "ecg_log_rr",
+         1.532
+        ]
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "emg": {
+   "clean": {
+    "f1": 0.34206538715064166,
+    "sensitivity": 0.297322044978295,
+    "precision": 0.514804292929293,
+    "fp_per_24h": 0.7574452812469555
+   },
+   "families": {
+    "emg/clip": {
+     "modality": "emg",
+     "family": "clip",
+     "label": "clip level C",
+     "status": "limit",
+     "limit": 1024.0,
+     "limit_unit": "uV",
+     "first_failing": 512.0,
+     "non_monotonic": [
+      "emg_clip_256uV"
+     ],
+     "levels": [
+      {
+       "name": "emg_clip_4096uV",
+       "level": 4096.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 26501,
+       "tolerated": true,
+       "bit_flips_per_window": 4.4566639412986554e-05,
+       "top_features": [
+        [
+         "emg_zc",
+         0.001
+        ],
+        [
+         "emg_ll",
+         0.0
+        ],
+        [
+         "emg_mav",
+         0.0
+        ]
+       ]
+      },
+      {
+       "name": "emg_clip_2048uV",
+       "level": 2048.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3426224281488592,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29766926720051723,
+       "d_f1": 0.0005570409982175173,
+       "d_fp24": 0.0,
+       "clipped_samples": 14893903,
+       "tolerated": true,
+       "bit_flips_per_window": 0.027699207671792944,
+       "top_features": [
+        [
+         "emg_zc",
+         2.169
+        ],
+        [
+         "emg_ll",
+         0.7
+        ],
+        [
+         "emg_mav",
+         0.686
+        ]
+       ]
+      },
+      {
+       "name": "emg_clip_1024uV",
+       "level": 1024.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3265895732167685,
+       "f1_sd": null,
+       "fp_per_24h": 0.7335001953107027,
+       "fp24_sd": null,
+       "sensitivity": 0.28199030699030697,
+       "d_f1": -0.01547581393387315,
+       "d_fp24": -0.023945085936252886,
+       "clipped_samples": 27833758,
+       "tolerated": true,
+       "bit_flips_per_window": 0.11041905552878317,
+       "top_features": [
+        [
+         "emg_zc",
+         4.417
+        ],
+        [
+         "emg_ll",
+         1.472
+        ],
+        [
+         "emg_mav",
+         1.47
+        ]
+       ]
+      },
+      {
+       "name": "emg_clip_512uV",
+       "level": 512.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3098207491348343,
+       "f1_sd": null,
+       "fp_per_24h": 0.7623719357783444,
+       "fp24_sd": null,
+       "sensitivity": 0.2657985572048072,
+       "d_f1": -0.03224463801580735,
+       "d_fp24": 0.004926654531388852,
+       "clipped_samples": 57318512,
+       "tolerated": false,
+       "bit_flips_per_window": 0.3182487060055421,
+       "top_features": [
+        [
+         "emg_zc",
+         9.598
+        ],
+        [
+         "emg_mav",
+         3.356
+        ],
+        [
+         "emg_ll",
+         3.334
+        ]
+       ]
+      },
+      {
+       "name": "emg_clip_256uV",
+       "level": 256.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.31199503110837995,
+       "f1_sd": null,
+       "fp_per_24h": 0.7140504107503451,
+       "fp24_sd": null,
+       "sensitivity": 0.26956404143904145,
+       "d_f1": -0.030070356042261714,
+       "d_fp24": -0.043394870496610394,
+       "clipped_samples": 109907206,
+       "tolerated": true,
+       "bit_flips_per_window": 0.713282816145119,
+       "top_features": [
+        [
+         "emg_zc",
+         18.597
+        ],
+        [
+         "emg_mav",
+         6.989
+        ],
+        [
+         "emg_ll",
+         6.908
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/drift": {
+     "modality": "emg",
+     "family": "drift",
+     "label": "drift (tau 64 s)",
+     "status": "beyond grid",
+     "limit": 1000.0,
+     "limit_unit": "uVrms",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_drift_10uVrms",
+       "level": 10.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3407850391040243,
+       "f1_sd": 0.003105302819456432,
+       "fp_per_24h": 0.7209009764622712,
+       "fp24_sd": 0.02182248718116257,
+       "sensitivity": 0.2962115594928095,
+       "d_f1": -0.0012803480466173633,
+       "d_fp24": -0.03654430478468429,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.06647829278393912,
+       "top_features": [
+        [
+         "emg_zc",
+         2.09
+        ],
+        [
+         "emg_ll",
+         0.427
+        ],
+        [
+         "emg_mav",
+         0.376
+        ]
+       ]
+      },
+      {
+       "name": "emg_drift_100uVrms",
+       "level": 100.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3487280401456129,
+       "f1_sd": 0.004042900090681806,
+       "fp_per_24h": 0.7103744172460061,
+       "fp24_sd": 0.042944411798652035,
+       "sensitivity": 0.30102699993324994,
+       "d_f1": 0.006662652994971263,
+       "d_fp24": -0.0470708640009494,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.24963482428873515,
+       "top_features": [
+        [
+         "emg_zc",
+         4.416
+        ],
+        [
+         "emg_ll",
+         0.743
+        ],
+        [
+         "emg_mav",
+         0.735
+        ]
+       ]
+      },
+      {
+       "name": "emg_drift_1000uVrms",
+       "level": 1000.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3414097088865125,
+       "f1_sd": 0.002351921386483014,
+       "fp_per_24h": 0.7358116069900262,
+       "fp24_sd": 0.03374496144442114,
+       "sensitivity": 0.2961382495757496,
+       "d_f1": -0.0006556782641291559,
+       "d_fp24": -0.021633674256929303,
+       "clipped_samples": 2,
+       "tolerated": true,
+       "bit_flips_per_window": 2.278402937122025,
+       "top_features": [
+        [
+         "emg_zc",
+         10.151
+        ],
+        [
+         "emg_ll",
+         4.878
+        ],
+        [
+         "emg_mav",
+         4.724
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/gain+": {
+     "modality": "emg",
+     "family": "gain+",
+     "label": "gain error +",
+     "status": "beyond grid",
+     "limit": 0.5,
+     "limit_unit": "",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_gain_+0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34353093549119,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2989192672005172,
+       "d_f1": 0.0014655483405483505,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.1802912159153717,
+       "top_features": [
+        [
+         "emg_zc",
+         0.776
+        ],
+        [
+         "emg_ll",
+         0.551
+        ],
+        [
+         "emg_mav",
+         0.545
+        ]
+       ]
+      },
+      {
+       "name": "emg_gain_+0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3462381785221859,
+       "f1_sd": null,
+       "fp_per_24h": 0.6977703132193137,
+       "fp24_sd": null,
+       "sensitivity": 0.2998989298989299,
+       "d_f1": 0.004172791371544249,
+       "d_fp24": -0.05967496802764183,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3093757796558706,
+       "top_features": [
+        [
+         "emg_ll",
+         1.054
+        ],
+        [
+         "emg_mav",
+         1.05
+        ],
+        [
+         "emg_zc",
+         0.747
+        ]
+       ]
+      },
+      {
+       "name": "emg_gain_+0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34715574382844316,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.3026438623313623,
+       "d_f1": 0.0050903566778015,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5507003834813543,
+       "top_features": [
+        [
+         "emg_ll",
+         2.014
+        ],
+        [
+         "emg_mav",
+         2.004
+        ],
+        [
+         "emg_zc",
+         0.699
+        ]
+       ]
+      },
+      {
+       "name": "emg_gain_+0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34122073064678266,
+       "f1_sd": null,
+       "fp_per_24h": 0.7272115476294067,
+       "fp24_sd": null,
+       "sensitivity": 0.29835385804135806,
+       "d_f1": -0.0008446565038590093,
+       "d_fp24": -0.030233733617548886,
+       "clipped_samples": 118,
+       "tolerated": true,
+       "bit_flips_per_window": 1.1163622459753617,
+       "top_features": [
+        [
+         "emg_ll",
+         4.493
+        ],
+        [
+         "emg_mav",
+         4.477
+        ],
+        [
+         "emg_zc",
+         0.678
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/gain-": {
+     "modality": "emg",
+     "family": "gain-",
+     "label": "gain error -",
+     "status": "beyond grid",
+     "limit": 0.5,
+     "limit_unit": "",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_gain_-0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3418940603962557,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29718127921252924,
+       "d_f1": -0.00017132675438596978,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.18008087803776834,
+       "top_features": [
+        [
+         "emg_zc",
+         0.841
+        ],
+        [
+         "emg_mav",
+         0.576
+        ],
+        [
+         "emg_ll",
+         0.567
+        ]
+       ]
+      },
+      {
+       "name": "emg_gain_-0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34403575348998366,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2984213585776086,
+       "d_f1": 0.001970366339342,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3114133497494064,
+       "top_features": [
+        [
+         "emg_mav",
+         1.169
+        ],
+        [
+         "emg_ll",
+         1.157
+        ],
+        [
+         "emg_zc",
+         0.859
+        ]
+       ]
+      },
+      {
+       "name": "emg_gain_-0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33883446366963615,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.295329997986248,
+       "d_f1": -0.00323092348100551,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5794087964549945,
+       "top_features": [
+        [
+         "emg_mav",
+         2.497
+        ],
+        [
+         "emg_ll",
+         2.467
+        ],
+        [
+         "emg_zc",
+         0.853
+        ]
+       ]
+      },
+      {
+       "name": "emg_gain_-0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33921777281587145,
+       "f1_sd": null,
+       "fp_per_24h": 0.8661891393106993,
+       "fp24_sd": null,
+       "sensitivity": 0.2986440263002763,
+       "d_f1": -0.00284761433477021,
+       "d_fp24": 0.10874385806374376,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.466279089624345,
+       "top_features": [
+        [
+         "emg_mav",
+         7.71
+        ],
+        [
+         "emg_ll",
+         7.673
+        ],
+        [
+         "emg_zc",
+         1.219
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/hp": {
+     "modality": "emg",
+     "family": "hp",
+     "label": "high-pass corner",
+     "status": "beyond grid",
+     "limit": 1.0,
+     "limit_unit": "Hz",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_hp_0.05Hz",
+       "level": 0.05,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33113348750906463,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2881454576767077,
+       "d_f1": -0.010931899641577036,
+       "d_fp24": 0.0,
+       "clipped_samples": 22,
+       "tolerated": true,
+       "bit_flips_per_window": 0.0490466279506135,
+       "top_features": [
+        [
+         "emg_zc",
+         0.803
+        ],
+        [
+         "emg_ll",
+         0.025
+        ],
+        [
+         "emg_mav",
+         0.018
+        ]
+       ]
+      },
+      {
+       "name": "emg_hp_0.1Hz",
+       "level": 0.1,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3365096150863842,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29175844566469566,
+       "d_f1": -0.005555772064257447,
+       "d_fp24": 0.0,
+       "clipped_samples": 44,
+       "tolerated": true,
+       "bit_flips_per_window": 0.054565810556795595,
+       "top_features": [
+        [
+         "emg_zc",
+         0.878
+        ],
+        [
+         "emg_ll",
+         0.024
+        ],
+        [
+         "emg_mav",
+         0.016
+        ]
+       ]
+      },
+      {
+       "name": "emg_hp_0.3Hz",
+       "level": 0.3,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 79,
+       "tolerated": true,
+       "bit_flips_per_window": 0.06735227096183555,
+       "top_features": [
+        [
+         "emg_zc",
+         1.175
+        ],
+        [
+         "emg_ll",
+         0.021
+        ],
+        [
+         "emg_mav",
+         0.017
+        ]
+       ]
+      },
+      {
+       "name": "emg_hp_0.5Hz",
+       "level": 0.5,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33164872048397503,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.28864148942273943,
+       "d_f1": -0.01041666666666663,
+       "d_fp24": 0.0,
+       "clipped_samples": 89,
+       "tolerated": true,
+       "bit_flips_per_window": 0.08052858533407695,
+       "top_features": [
+        [
+         "emg_zc",
+         1.433
+        ],
+        [
+         "emg_ll",
+         0.022
+        ],
+        [
+         "emg_mav",
+         0.019
+        ]
+       ]
+      },
+      {
+       "name": "emg_hp_1.0Hz",
+       "level": 1.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33164872048397503,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.28864148942273943,
+       "d_f1": -0.01041666666666663,
+       "d_fp24": 0.0,
+       "clipped_samples": 69,
+       "tolerated": true,
+       "bit_flips_per_window": 0.11635808086887453,
+       "top_features": [
+        [
+         "emg_zc",
+         2.042
+        ],
+        [
+         "emg_ll",
+         0.029
+        ],
+        [
+         "emg_mav",
+         0.029
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/lp": {
+     "modality": "emg",
+     "family": "lp",
+     "label": "low-pass corner",
+     "status": "limit",
+     "limit": 70.0,
+     "limit_unit": "Hz",
+     "first_failing": 50.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_lp_100Hz",
+       "level": 100.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3371888009708824,
+       "f1_sd": null,
+       "fp_per_24h": 0.7213511758512473,
+       "fp24_sd": null,
+       "sensitivity": 0.294552310958561,
+       "d_f1": -0.004876586179759279,
+       "d_fp24": -0.03609410539570823,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.38792052477009653,
+       "top_features": [
+        [
+         "emg_zc",
+         4.722
+        ],
+        [
+         "emg_ll",
+         0.362
+        ],
+        [
+         "emg_mav",
+         0.143
+        ]
+       ]
+      },
+      {
+       "name": "emg_lp_70Hz",
+       "level": 70.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34059105958928887,
+       "f1_sd": null,
+       "fp_per_24h": 0.751873849290261,
+       "fp24_sd": null,
+       "sensitivity": 0.29621153714903714,
+       "d_f1": -0.001474327561352795,
+       "d_fp24": -0.005571431956694517,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.1472723342381332,
+       "top_features": [
+        [
+         "emg_zc",
+         14.276
+        ],
+        [
+         "emg_ll",
+         1.812
+        ],
+        [
+         "emg_mav",
+         0.869
+        ]
+       ]
+      },
+      {
+       "name": "emg_lp_50Hz",
+       "level": 50.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34040481191633637,
+       "f1_sd": null,
+       "fp_per_24h": 0.888021101248344,
+       "fp24_sd": null,
+       "sensitivity": 0.30122037497037496,
+       "d_f1": -0.0016605752343052949,
+       "d_fp24": 0.13057582000138845,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 1.8469706555752659,
+       "top_features": [
+        [
+         "emg_zc",
+         26.037
+        ],
+        [
+         "emg_ll",
+         4.61
+        ],
+        [
+         "emg_mav",
+         2.775
+        ]
+       ]
+      },
+      {
+       "name": "emg_lp_40Hz",
+       "level": 40.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33735507827184463,
+       "f1_sd": null,
+       "fp_per_24h": 0.9047197242379493,
+       "fp24_sd": null,
+       "sensitivity": 0.2993099824349824,
+       "d_f1": -0.0047103088787970315,
+       "d_fp24": 0.1472744429909938,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.4721314807495025,
+       "top_features": [
+        [
+         "emg_zc",
+         35.628
+        ],
+        [
+         "emg_ll",
+         7.338
+        ],
+        [
+         "emg_mav",
+         4.773
+        ]
+       ]
+      },
+      {
+       "name": "emg_lp_30Hz",
+       "level": 30.0,
+       "unit": "Hz",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3319301153037783,
+       "f1_sd": null,
+       "fp_per_24h": 0.9971053651957211,
+       "fp24_sd": null,
+       "sensitivity": 0.2974659509034509,
+       "d_f1": -0.010135271846863358,
+       "d_fp24": 0.2396600839487656,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 3.276498511599197,
+       "top_features": [
+        [
+         "emg_zc",
+         49.238
+        ],
+        [
+         "emg_ll",
+         11.578
+        ],
+        [
+         "emg_mav",
+         7.804
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/lsb": {
+     "modality": "emg",
+     "family": "lsb",
+     "label": "LSB q",
+     "status": "beyond grid",
+     "limit": 256.0,
+     "limit_unit": "uV",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_lsb_0.5uV",
+       "level": 0.5,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.03335125717491656,
+       "top_features": [
+        [
+         "emg_zc",
+         0.483
+        ],
+        [
+         "emg_ll",
+         0.012
+        ],
+        [
+         "emg_mav",
+         0.01
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34504157762683213,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2990581560894061,
+       "d_f1": 0.0029761904761904656,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.042310817739521736,
+       "top_features": [
+        [
+         "emg_zc",
+         0.584
+        ],
+        [
+         "emg_ll",
+         0.016
+        ],
+        [
+         "emg_mav",
+         0.013
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_2uV",
+       "level": 2.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34272804942981855,
+       "f1_sd": null,
+       "fp_per_24h": 0.6721789090097459,
+       "fp24_sd": null,
+       "sensitivity": 0.2974628107440607,
+       "d_f1": 0.0006626622791768844,
+       "d_fp24": -0.08526637223720968,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.1482761249015473,
+       "top_features": [
+        [
+         "emg_zc",
+         2.493
+        ],
+        [
+         "emg_ll",
+         0.154
+        ],
+        [
+         "emg_mav",
+         0.128
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_4uV",
+       "level": 4.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3365096150863842,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29349455677580677,
+       "d_f1": -0.005555772064257447,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.26257664316574747,
+       "top_features": [
+        [
+         "emg_zc",
+         3.972
+        ],
+        [
+         "emg_ll",
+         0.589
+        ],
+        [
+         "emg_mav",
+         0.481
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_8uV",
+       "level": 8.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34176435373586106,
+       "f1_sd": null,
+       "fp_per_24h": 0.7920198344104469,
+       "fp24_sd": null,
+       "sensitivity": 0.29570746164496164,
+       "d_f1": -0.00030103341478060486,
+       "d_fp24": 0.03457455316349134,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.5006591281015986,
+       "top_features": [
+        [
+         "emg_zc",
+         4.576
+        ],
+        [
+         "emg_ll",
+         0.813
+        ],
+        [
+         "emg_mav",
+         0.46
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_16uV",
+       "level": 16.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3417536006001079,
+       "f1_sd": null,
+       "fp_per_24h": 0.7120443400089451,
+       "fp24_sd": null,
+       "sensitivity": 0.2967987314862315,
+       "d_f1": -0.0003117865505337658,
+       "d_fp24": -0.04540094123801042,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.26815746934794,
+       "top_features": [
+        [
+         "emg_zc",
+         14.105
+        ],
+        [
+         "emg_ll",
+         2.213
+        ],
+        [
+         "emg_mav",
+         1.286
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_32uV",
+       "level": 32.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3406203815539424,
+       "f1_sd": null,
+       "fp_per_24h": 0.6317322043816981,
+       "fp24_sd": null,
+       "sensitivity": 0.2938392988392988,
+       "d_f1": -0.0014450055966992448,
+       "d_fp24": -0.12571307686525746,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.9811378987620887,
+       "top_features": [
+        [
+         "emg_zc",
+         37.801
+        ],
+        [
+         "emg_ll",
+         3.285
+        ],
+        [
+         "emg_mav",
+         2.108
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_64uV",
+       "level": 64.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.31829923602057236,
+       "f1_sd": null,
+       "fp_per_24h": 0.7153942882684973,
+       "fp24_sd": null,
+       "sensitivity": 0.2790829576767077,
+       "d_f1": -0.023766151130069302,
+       "d_fp24": -0.04205099297845827,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 2.6165823718532097,
+       "top_features": [
+        [
+         "emg_zc",
+         71.278
+        ],
+        [
+         "emg_ll",
+         7.873
+        ],
+        [
+         "emg_mav",
+         6.949
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_128uV",
+       "level": 128.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3355820633497196,
+       "f1_sd": null,
+       "fp_per_24h": 0.8836694400970638,
+       "fp24_sd": null,
+       "sensitivity": 0.29386886996261996,
+       "d_f1": -0.006483323800922092,
+       "d_fp24": 0.1262241588501083,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.181584481479646,
+       "top_features": [
+        [
+         "emg_zc",
+         104.216
+        ],
+        [
+         "emg_ll",
+         24.3
+        ],
+        [
+         "emg_mav",
+         23.48
+        ]
+       ]
+      },
+      {
+       "name": "emg_lsb_256uV",
+       "level": 256.0,
+       "unit": "uV",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33358996309847705,
+       "f1_sd": null,
+       "fp_per_24h": 0.8106228299588517,
+       "fp24_sd": null,
+       "sensitivity": 0.2945306581244081,
+       "d_f1": -0.008475424052164615,
+       "d_fp24": 0.05317754871189617,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.723678505426509,
+       "top_features": [
+        [
+         "emg_zc",
+         129.397
+        ],
+        [
+         "emg_ll",
+         45.566
+        ],
+        [
+         "emg_mav",
+         44.721
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/mains250": {
+     "modality": "emg",
+     "family": "mains250",
+     "label": "mains 250 Hz (aliases to 6 Hz)",
+     "status": "limit",
+     "limit": 10.0,
+     "limit_unit": "uV",
+     "first_failing": 100.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_mains250_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.338877183667943,
+       "f1_sd": 0.003073009057401737,
+       "fp_per_24h": 0.7209009764622714,
+       "fp24_sd": 0.02182248718116257,
+       "sensitivity": 0.2948888081700582,
+       "d_f1": -0.0031882034826986594,
+       "d_fp24": -0.03654430478468418,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.06327365985269129,
+       "top_features": [
+        [
+         "emg_zc",
+         1.742
+        ],
+        [
+         "emg_ll",
+         0.407
+        ],
+        [
+         "emg_mav",
+         0.36
+        ]
+       ]
+      },
+      {
+       "name": "emg_mains250_10uV",
+       "level": 10.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3396270428795641,
+       "f1_sd": 0.004389386816769684,
+       "fp_per_24h": 0.7100859994171853,
+       "fp24_sd": 0.043411939609246775,
+       "sensitivity": 0.2947703861766362,
+       "d_f1": -0.002438344271077586,
+       "d_fp24": -0.04735928182977023,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.16893685795751232,
+       "top_features": [
+        [
+         "emg_zc",
+         2.954
+        ],
+        [
+         "emg_mav",
+         0.643
+        ],
+        [
+         "emg_ll",
+         0.429
+        ]
+       ]
+      },
+      {
+       "name": "emg_mains250_100uV",
+       "level": 100.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.35631139419646796,
+       "f1_sd": 0.0023461284538167783,
+       "fp_per_24h": 0.8971395548778713,
+       "fp24_sd": 0.024685951202524883,
+       "sensitivity": 0.3078230370417871,
+       "d_f1": 0.014246007045826292,
+       "d_fp24": 0.1396942736309158,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 1.5556252053918136,
+       "top_features": [
+        [
+         "emg_zc",
+         36.848
+        ],
+        [
+         "emg_mav",
+         3.203
+        ],
+        [
+         "emg_ll",
+         0.719
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/mains50": {
+     "modality": "emg",
+     "family": "mains50",
+     "label": "mains 50 Hz",
+     "status": "beyond grid",
+     "limit": 1000.0,
+     "limit_unit": "uV",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_mains50_1uV",
+       "level": 1.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3433826590313533,
+       "f1_sd": 0.006166518110600766,
+       "fp_per_24h": 0.6987401323293638,
+       "fp24_sd": 0.030463392187297236,
+       "sensitivity": 0.29804151444776444,
+       "d_f1": 0.0013172718807116235,
+       "d_fp24": -0.05870514891759171,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.2980800108625978,
+       "top_features": [
+        [
+         "emg_zc",
+         4.481
+        ],
+        [
+         "emg_ll",
+         0.836
+        ],
+        [
+         "emg_mav",
+         0.804
+        ]
+       ]
+      },
+      {
+       "name": "emg_mains50_10uV",
+       "level": 10.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3371741416876964,
+       "f1_sd": 0.004374099401309492,
+       "fp_per_24h": 0.7276008096740773,
+       "fp24_sd": 0.015249603929033432,
+       "sensitivity": 0.2922301003551004,
+       "d_f1": -0.004891245462945282,
+       "d_fp24": -0.029844471572878284,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 2.2438707334211063,
+       "top_features": [
+        [
+         "emg_zc",
+         11.71
+        ],
+        [
+         "emg_ll",
+         4.732
+        ],
+        [
+         "emg_mav",
+         4.222
+        ]
+       ]
+      },
+      {
+       "name": "emg_mains50_100uV",
+       "level": 100.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.32785218374035874,
+       "f1_sd": 0.0013529829049974177,
+       "fp_per_24h": 0.6632465999097232,
+       "fp24_sd": 0.01132798797453538,
+       "sensitivity": 0.2865750703250703,
+       "d_f1": -0.014213203410282926,
+       "d_fp24": -0.0941986813372323,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.8544563237909353,
+       "top_features": [
+        [
+         "emg_ll",
+         22.093
+        ],
+        [
+         "emg_mav",
+         21.122
+        ],
+        [
+         "emg_zc",
+         18.536
+        ]
+       ]
+      },
+      {
+       "name": "emg_mains50_1000uV",
+       "level": 1000.0,
+       "unit": "uV",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.317884381741154,
+       "f1_sd": 0.0020046884346861934,
+       "fp_per_24h": 0.7408847036502099,
+       "fp24_sd": 0.028965712830762772,
+       "sensitivity": 0.2791786113661114,
+       "d_f1": -0.024181005409487644,
+       "d_fp24": -0.016560577596745674,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.9457214429539382,
+       "top_features": [
+        [
+         "emg_ll",
+         46.178
+        ],
+        [
+         "emg_mav",
+         44.898
+        ],
+        [
+         "emg_zc",
+         19.612
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/offset": {
+     "modality": "emg",
+     "family": "offset",
+     "label": "DC offset",
+     "status": "beyond grid",
+     "limit": 0.9,
+     "limit_unit": "C",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_offset_0.1C",
+       "level": 0.1,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34206538715064166,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": 0.0,
+       "d_fp24": 0.0,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.009822987139400701,
+       "top_features": [
+        [
+         "emg_zc",
+         0.154
+        ],
+        [
+         "emg_ll",
+         0.006
+        ],
+        [
+         "emg_mav",
+         0.003
+        ]
+       ]
+      },
+      {
+       "name": "emg_offset_0.3C",
+       "level": 0.3,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.33685705381730835,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.2938498227560728,
+       "d_f1": -0.005208333333333315,
+       "d_fp24": 0.0,
+       "clipped_samples": 17,
+       "tolerated": true,
+       "bit_flips_per_window": 0.0166429325015338,
+       "top_features": [
+        [
+         "emg_zc",
+         0.254
+        ],
+        [
+         "emg_ll",
+         0.008
+        ],
+        [
+         "emg_mav",
+         0.004
+        ]
+       ]
+      },
+      {
+       "name": "emg_offset_0.6C",
+       "level": 0.6,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.336341820842398,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29335379101004105,
+       "d_f1": -0.005723566308243666,
+       "d_fp24": 0.0,
+       "clipped_samples": 206138,
+       "tolerated": true,
+       "bit_flips_per_window": 0.028758810762135354,
+       "top_features": [
+        [
+         "emg_zc",
+         0.427
+        ],
+        [
+         "emg_ll",
+         0.015
+        ],
+        [
+         "emg_mav",
+         0.01
+        ]
+       ]
+      },
+      {
+       "name": "emg_offset_0.9C",
+       "level": 0.9,
+       "unit": "C",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3239910069085248,
+       "f1_sd": null,
+       "fp_per_24h": 0.782672462152204,
+       "fp24_sd": null,
+       "sensitivity": 0.2814942752442753,
+       "d_f1": -0.018074380242116883,
+       "d_fp24": 0.025227180905248447,
+       "clipped_samples": 22458759,
+       "tolerated": true,
+       "bit_flips_per_window": 0.1351960244891601,
+       "top_features": [
+        [
+         "emg_zc",
+         4.105
+        ],
+        [
+         "emg_ll",
+         1.25
+        ],
+        [
+         "emg_mav",
+         1.245
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/pink": {
+     "modality": "emg",
+     "family": "pink",
+     "label": "1/f corner (1 uV rms white)",
+     "status": "beyond grid",
+     "limit": 30.0,
+     "limit_unit": "Hz",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_pink_1Hz_white1uV",
+       "level": 1.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3518611477054512,
+       "f1_sd": 0.002977074622422398,
+       "fp_per_24h": 0.7312194739829215,
+       "fp24_sd": 0.037457430080139555,
+       "sensitivity": 0.3041892023142023,
+       "d_f1": 0.009795760554809518,
+       "d_fp24": -0.026225807264034007,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3498706109669753,
+       "top_features": [
+        [
+         "emg_zc",
+         6.631
+        ],
+        [
+         "emg_ll",
+         0.926
+        ],
+        [
+         "emg_mav",
+         0.769
+        ]
+       ]
+      },
+      {
+       "name": "emg_pink_3Hz_white1uV",
+       "level": 3.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3523444115148644,
+       "f1_sd": 0.00042842897836346724,
+       "fp_per_24h": 0.7122823162322213,
+       "fp24_sd": 0.006425068467175479,
+       "sensitivity": 0.3043338782401282,
+       "d_f1": 0.010279024364222733,
+       "d_fp24": -0.04516296501473427,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.35119011670211864,
+       "top_features": [
+        [
+         "emg_zc",
+         6.615
+        ],
+        [
+         "emg_ll",
+         0.929
+        ],
+        [
+         "emg_mav",
+         0.773
+        ]
+       ]
+      },
+      {
+       "name": "emg_pink_10Hz_white1uV",
+       "level": 10.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3507494933421908,
+       "f1_sd": 0.001841233165986878,
+       "fp_per_24h": 0.7040037034376985,
+       "fp24_sd": 0.055256447233203075,
+       "sensitivity": 0.3032215158777659,
+       "d_f1": 0.008684106191549135,
+       "d_fp24": -0.05344157780925707,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3562684922050726,
+       "top_features": [
+        [
+         "emg_zc",
+         6.566
+        ],
+        [
+         "emg_ll",
+         0.939
+        ],
+        [
+         "emg_mav",
+         0.785
+        ]
+       ]
+      },
+      {
+       "name": "emg_pink_30Hz_white1uV",
+       "level": 30.0,
+       "unit": "Hz",
+       "seeds": [
+        0,
+        1,
+        2
+       ],
+       "f1": 0.3499392320086776,
+       "f1_sd": 0.002359519434910873,
+       "fp_per_24h": 0.7103416423399675,
+       "fp24_sd": 0.06491823315659814,
+       "sensitivity": 0.3026692672005172,
+       "d_f1": 0.007873844858035939,
+       "d_fp24": -0.04710363890698799,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3699412872705877,
+       "top_features": [
+        [
+         "emg_zc",
+         6.468
+        ],
+        [
+         "emg_ll",
+         0.965
+        ],
+        [
+         "emg_mav",
+         0.82
+        ]
+       ]
+      }
+     ]
+    },
+    "emg/white": {
+     "modality": "emg",
+     "family": "white",
+     "label": "white noise",
+     "status": "beyond grid",
+     "limit": 16.0,
+     "limit_unit": "uVrms",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "emg_white_0.25uVrms",
+       "level": 0.25,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3397103131269351,
+       "f1_sd": 0.004697618716731683,
+       "fp_per_24h": 0.7335001953107027,
+       "fp24_sd": 0.0,
+       "sensitivity": 0.2950684520997021,
+       "d_f1": -0.0023550740237065493,
+       "d_fp24": -0.023945085936252886,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.17085924897298885,
+       "top_features": [
+        [
+         "emg_zc",
+         4.06
+        ],
+        [
+         "emg_ll",
+         0.546
+        ],
+        [
+         "emg_mav",
+         0.488
+        ]
+       ]
+      },
+      {
+       "name": "emg_white_0.5uVrms",
+       "level": 0.5,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3407096265739953,
+       "f1_sd": 0.003776774503135539,
+       "fp_per_24h": 0.7126441575218994,
+       "fp24_sd": 0.02357900779213904,
+       "sensitivity": 0.2959398592211092,
+       "d_f1": -0.001355760576646381,
+       "d_fp24": -0.04480112372505618,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.2255184412172274,
+       "top_features": [
+        [
+         "emg_zc",
+         5.216
+        ],
+        [
+         "emg_ll",
+         0.676
+        ],
+        [
+         "emg_mav",
+         0.598
+        ]
+       ]
+      },
+      {
+       "name": "emg_white_1uVrms",
+       "level": 1.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3460346295710031,
+       "f1_sd": 0.004972309048100366,
+       "fp_per_24h": 0.7163680792195557,
+       "fp24_sd": 0.03402253141851856,
+       "sensitivity": 0.2996784504909505,
+       "d_f1": 0.003969242420361452,
+       "d_fp24": -0.04107720202739984,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.34930648894434957,
+       "top_features": [
+        [
+         "emg_zc",
+         6.64
+        ],
+        [
+         "emg_ll",
+         0.925
+        ],
+        [
+         "emg_mav",
+         0.767
+        ]
+       ]
+      },
+      {
+       "name": "emg_white_2uVrms",
+       "level": 2.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3518330475056408,
+       "f1_sd": 0.0027114420463096073,
+       "fp_per_24h": 0.7062521671075499,
+       "fp24_sd": 0.06033893979798081,
+       "sensitivity": 0.3033149664712164,
+       "d_f1": 0.009767660354999153,
+       "d_fp24": -0.05119311413940564,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7839840826290484,
+       "top_features": [
+        [
+         "emg_zc",
+         10.7
+        ],
+        [
+         "emg_ll",
+         1.529
+        ],
+        [
+         "emg_mav",
+         1.126
+        ]
+       ]
+      },
+      {
+       "name": "emg_white_4uVrms",
+       "level": 4.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3405514904999033,
+       "f1_sd": 0.001908661157484801,
+       "fp_per_24h": 0.6405301099788838,
+       "fp24_sd": 0.012718915368012606,
+       "sensitivity": 0.29438714579339575,
+       "d_f1": -0.0015138966507383667,
+       "d_fp24": -0.11691517126807172,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 1.7918730442221853,
+       "top_features": [
+        [
+         "emg_zc",
+         22.18
+        ],
+        [
+         "emg_ll",
+         3.083
+        ],
+        [
+         "emg_mav",
+         2.013
+        ]
+       ]
+      },
+      {
+       "name": "emg_white_8uVrms",
+       "level": 8.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.33555296537137275,
+       "f1_sd": 0.0021135879559846206,
+       "fp_per_24h": 0.6522905257007808,
+       "fp24_sd": 0.027356956436945433,
+       "sensitivity": 0.2911431548931549,
+       "d_f1": -0.006512421779268918,
+       "d_fp24": -0.1051547555461747,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.1884123405441045,
+       "top_features": [
+        [
+         "emg_zc",
+         41.543
+        ],
+        [
+         "emg_ll",
+         6.023
+        ],
+        [
+         "emg_mav",
+         4.25
+        ]
+       ]
+      },
+      {
+       "name": "emg_white_16uVrms",
+       "level": 16.0,
+       "unit": "uVrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3299556252814785,
+       "f1_sd": 0.000690694027730368,
+       "fp_per_24h": 0.7189491137621546,
+       "fp24_sd": 0.041976456518433805,
+       "sensitivity": 0.2901847473097473,
+       "d_f1": -0.012109761869163183,
+       "d_fp24": -0.03849616748480089,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 3.8099133699501726,
+       "top_features": [
+        [
+         "emg_zc",
+         61.749
+        ],
+        [
+         "emg_ll",
+         10.557
+        ],
+        [
+         "emg_mav",
+         7.943
+        ]
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "mov": {
+   "clean": {
+    "f1": 0.34206538715064166,
+    "sensitivity": 0.297322044978295,
+    "precision": 0.514804292929293,
+    "fp_per_24h": 0.7574452812469555
+   },
+   "families": {
+    "mov/gain+": {
+     "modality": "mov",
+     "family": "gain+",
+     "label": "gain error +",
+     "status": "beyond grid",
+     "limit": 0.5,
+     "limit_unit": "",
+     "first_failing": null,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "mov_gain_+0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3438981148073581,
+       "f1_sd": null,
+       "fp_per_24h": 0.7010782315559613,
+       "fp24_sd": null,
+       "sensitivity": 0.29836371164496167,
+       "d_f1": 0.0018327276567164374,
+       "d_fp24": -0.056367049690994264,
+       "clipped_samples": 3179399,
+       "tolerated": true,
+       "bit_flips_per_window": 0.18852063331277158,
+       "top_features": [
+        [
+         "mov_acc_mag",
+         0.52
+        ],
+        [
+         "mov_acc_jerk",
+         0.517
+        ],
+        [
+         "mov_acc_jerk_ctx",
+         0.444
+        ]
+       ]
+      },
+      {
+       "name": "mov_gain_+0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34472863155239947,
+       "f1_sd": null,
+       "fp_per_24h": 0.6941858522300359,
+       "fp24_sd": null,
+       "sensitivity": 0.2992150093712594,
+       "d_f1": 0.0026632444017578027,
+       "d_fp24": -0.06325942901691961,
+       "clipped_samples": 3179399,
+       "tolerated": true,
+       "bit_flips_per_window": 0.31290778995701196,
+       "top_features": [
+        [
+         "mov_acc_mag",
+         0.995
+        ],
+        [
+         "mov_acc_jerk",
+         0.98
+        ],
+        [
+         "mov_gyr_jerk",
+         0.724
+        ]
+       ]
+      },
+      {
+       "name": "mov_gain_+0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3434834494684016,
+       "f1_sd": null,
+       "fp_per_24h": 0.7502504983974626,
+       "fp24_sd": null,
+       "sensitivity": 0.2993638188950689,
+       "d_f1": 0.0014180623177599272,
+       "d_fp24": -0.007194782849492931,
+       "clipped_samples": 3203797,
+       "tolerated": true,
+       "bit_flips_per_window": 0.6167302331335054,
+       "top_features": [
+        [
+         "mov_gyr_mag",
+         2.086
+        ],
+        [
+         "mov_gyr_jerk",
+         2.013
+        ],
+        [
+         "mov_acc_mag",
+         1.914
+        ]
+       ]
+      },
+      {
+       "name": "mov_gain_+0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.342204986898134,
+       "f1_sd": null,
+       "fp_per_24h": 0.7692643151042695,
+       "fp24_sd": null,
+       "sensitivity": 0.298736942018192,
+       "d_f1": 0.00013959974749233606,
+       "d_fp24": 0.011819033857313976,
+       "clipped_samples": 3225617,
+       "tolerated": true,
+       "bit_flips_per_window": 1.2701808780794195,
+       "top_features": [
+        [
+         "mov_acc_mag",
+         4.271
+        ],
+        [
+         "mov_acc_jerk",
+         4.25
+        ],
+        [
+         "mov_gyr_mag",
+         4.242
+        ]
+       ]
+      }
+     ]
+    },
+    "mov/gain-": {
+     "modality": "mov",
+     "family": "gain-",
+     "label": "gain error -",
+     "status": "limit",
+     "limit": 0.1,
+     "limit_unit": "",
+     "first_failing": 0.2,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "mov_gain_-0.05",
+       "level": 0.05,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34739028982171066,
+       "f1_sd": null,
+       "fp_per_24h": 0.8085832728829935,
+       "fp24_sd": null,
+       "sensitivity": 0.2989837513275013,
+       "d_f1": 0.005324902671068998,
+       "d_fp24": 0.05113799163603794,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.19488283347196195,
+       "top_features": [
+        [
+         "mov_acc_jerk",
+         0.552
+        ],
+        [
+         "mov_acc_mag",
+         0.551
+        ],
+        [
+         "mov_acc_jerk_ctx",
+         0.453
+        ]
+       ]
+      },
+      {
+       "name": "mov_gain_-0.1",
+       "level": 0.1,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3440398243371325,
+       "f1_sd": null,
+       "fp_per_24h": 0.8085832728829935,
+       "fp24_sd": null,
+       "sensitivity": 0.2986260051885052,
+       "d_f1": 0.0019744371864908183,
+       "d_fp24": 0.05113799163603794,
+       "clipped_samples": 0,
+       "tolerated": true,
+       "bit_flips_per_window": 0.3481441743280329,
+       "top_features": [
+        [
+         "mov_acc_mag",
+         1.098
+        ],
+        [
+         "mov_acc_jerk",
+         1.092
+        ],
+        [
+         "mov_gyr_jerk",
+         0.793
+        ]
+       ]
+      },
+      {
+       "name": "mov_gain_-0.2",
+       "level": 0.2,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3437579467980698,
+       "f1_sd": null,
+       "fp_per_24h": 0.9109511466416441,
+       "fp24_sd": null,
+       "sensitivity": 0.29889882264882267,
+       "d_f1": 0.001692559647428149,
+       "d_fp24": 0.15350586539468858,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 0.7424885428333303,
+       "top_features": [
+        [
+         "mov_gyr_mag",
+         2.629
+        ],
+        [
+         "mov_gyr_jerk",
+         2.527
+        ],
+        [
+         "mov_acc_mag",
+         2.337
+        ]
+       ]
+      },
+      {
+       "name": "mov_gain_-0.5",
+       "level": 0.5,
+       "unit": "",
+       "seeds": [
+        0
+       ],
+       "f1": 0.348375200086602,
+       "f1_sd": null,
+       "fp_per_24h": 0.898045557505152,
+       "fp24_sd": null,
+       "sensitivity": 0.30430337492837495,
+       "d_f1": 0.006309812935960335,
+       "d_fp24": 0.1406002762581965,
+       "clipped_samples": 0,
+       "tolerated": false,
+       "bit_flips_per_window": 2.0957966161841877,
+       "top_features": [
+        [
+         "mov_gyr_mag",
+         7.327
+        ],
+        [
+         "mov_acc_mag",
+         7.324
+        ],
+        [
+         "mov_acc_jerk",
+         7.18
+        ]
+       ]
+      }
+     ]
+    },
+    "mov/lsb": {
+     "modality": "mov",
+     "family": "lsb",
+     "label": "LSB q",
+     "status": "limit",
+     "limit": 16.0,
+     "limit_unit": "LSB",
+     "first_failing": 32.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "mov_lsb_2LSB",
+       "level": 2.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3435344042446588,
+       "f1_sd": null,
+       "fp_per_24h": 0.7574452812469555,
+       "fp24_sd": null,
+       "sensitivity": 0.29836371164496167,
+       "d_f1": 0.0014690170940171443,
+       "d_fp24": 0.0,
+       "clipped_samples": 852866,
+       "tolerated": true,
+       "bit_flips_per_window": 0.06845477464899608,
+       "top_features": [
+        [
+         "mov_acc_jerk_ctx",
+         0.21
+        ],
+        [
+         "mov_acc_jerk",
+         0.175
+        ],
+        [
+         "mov_acc_mag",
+         0.158
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_4LSB",
+       "level": 4.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34201840476232553,
+       "f1_sd": null,
+       "fp_per_24h": 0.7643376605728808,
+       "fp24_sd": null,
+       "sensitivity": 0.297322044978295,
+       "d_f1": -4.698238831613022e-05,
+       "d_fp24": 0.006892379325925235,
+       "clipped_samples": 852866,
+       "tolerated": true,
+       "bit_flips_per_window": 0.1028244003600318,
+       "top_features": [
+        [
+         "mov_acc_jerk_ctx",
+         0.293
+        ],
+        [
+         "mov_acc_jerk",
+         0.268
+        ],
+        [
+         "mov_acc_mag",
+         0.259
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_8LSB",
+       "level": 8.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34977496344906034,
+       "f1_sd": null,
+       "fp_per_24h": 0.7498330644848542,
+       "fp24_sd": null,
+       "sensitivity": 0.30320002116877115,
+       "d_f1": 0.007709576298418674,
+       "d_fp24": -0.0076122167621013315,
+       "clipped_samples": 865471,
+       "tolerated": true,
+       "bit_flips_per_window": 0.7693917986554203,
+       "top_features": [
+        [
+         "mov_acc_jerk",
+         2.445
+        ],
+        [
+         "mov_acc_jerk_ctx",
+         2.156
+        ],
+        [
+         "mov_acc_mag",
+         1.997
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_16LSB",
+       "level": 16.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3421228750403929,
+       "f1_sd": null,
+       "fp_per_24h": 0.8030913922427821,
+       "fp24_sd": null,
+       "sensitivity": 0.2997854458791959,
+       "d_f1": 5.748788975123986e-05,
+       "d_fp24": 0.045646110995826605,
+       "clipped_samples": 865471,
+       "tolerated": true,
+       "bit_flips_per_window": 1.5674736838159373,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         8.401
+        ],
+        [
+         "mov_gyr_mag",
+         7.435
+        ],
+        [
+         "mov_acc_jerk",
+         6.723
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_32LSB",
+       "level": 32.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.34233307857913947,
+       "f1_sd": null,
+       "fp_per_24h": 0.8998309981770634,
+       "fp24_sd": null,
+       "sensitivity": 0.2986408861408862,
+       "d_f1": 0.00026769142849780714,
+       "d_fp24": 0.14238571693010782,
+       "clipped_samples": 865471,
+       "tolerated": false,
+       "bit_flips_per_window": 2.699273896986087,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         19.902
+        ],
+        [
+         "mov_gyr_mag",
+         19.462
+        ],
+        [
+         "mov_acc_jerk",
+         12.992
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_64LSB",
+       "level": 64.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.361689469953739,
+       "f1_sd": null,
+       "fp_per_24h": 1.1414761455739066,
+       "fp24_sd": null,
+       "sensitivity": 0.31483880280755283,
+       "d_f1": 0.019624082803097354,
+       "d_fp24": 0.3840308643269511,
+       "clipped_samples": 865471,
+       "tolerated": false,
+       "bit_flips_per_window": 3.793183303420927,
+       "top_features": [
+        [
+         "mov_gyr_mag",
+         30.282
+        ],
+        [
+         "mov_gyr_jerk",
+         30.103
+        ],
+        [
+         "mov_acc_jerk",
+         21.075
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_128LSB",
+       "level": 128.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.3332061756800984,
+       "f1_sd": null,
+       "fp_per_24h": 0.9963922788450592,
+       "fp24_sd": null,
+       "sensitivity": 0.2900283776846277,
+       "d_f1": -0.008859211470543249,
+       "d_fp24": 0.23894699759810367,
+       "clipped_samples": 865471,
+       "tolerated": false,
+       "bit_flips_per_window": 4.842803883045476,
+       "top_features": [
+        [
+         "mov_gyr_mag",
+         40.987
+        ],
+        [
+         "mov_gyr_jerk",
+         40.157
+        ],
+        [
+         "mov_acc_jerk",
+         29.721
+        ]
+       ]
+      },
+      {
+       "name": "mov_lsb_256LSB",
+       "level": 256.0,
+       "unit": "LSB",
+       "seeds": [
+        0
+       ],
+       "f1": 0.30118796095526845,
+       "f1_sd": null,
+       "fp_per_24h": 1.2713929895920983,
+       "fp24_sd": null,
+       "sensitivity": 0.25846046642921644,
+       "d_f1": -0.04087742619537321,
+       "d_fp24": 0.5139477083451428,
+       "clipped_samples": 865471,
+       "tolerated": false,
+       "bit_flips_per_window": 5.723023750686722,
+       "top_features": [
+        [
+         "mov_gyr_mag",
+         49.05
+        ],
+        [
+         "mov_gyr_jerk",
+         47.274
+        ],
+        [
+         "mov_acc_mag",
+         37.319
+        ]
+       ]
+      }
+     ]
+    },
+    "mov/white": {
+     "modality": "mov",
+     "family": "white",
+     "label": "white noise",
+     "status": "limit",
+     "limit": 2.0,
+     "limit_unit": "LSBrms",
+     "first_failing": 4.0,
+     "non_monotonic": [],
+     "levels": [
+      {
+       "name": "mov_white_1LSBrms",
+       "level": 1.0,
+       "unit": "LSBrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.3424650617813238,
+       "f1_sd": 0.0021709293132364167,
+       "fp_per_24h": 0.7310670482958681,
+       "fp24_sd": 0.02475601078849665,
+       "sensitivity": 0.29723475989100995,
+       "d_f1": 0.00039967463068213416,
+       "d_fp24": -0.026378232951087432,
+       "clipped_samples": 962095,
+       "tolerated": true,
+       "bit_flips_per_window": 1.2640664184540875,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         5.052
+        ],
+        [
+         "mov_acc_jerk",
+         3.951
+        ],
+        [
+         "mov_gyr_mag",
+         2.615
+        ]
+       ]
+      },
+      {
+       "name": "mov_white_2LSBrms",
+       "level": 2.0,
+       "unit": "LSBrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.32103368142611516,
+       "f1_sd": 0.002379182090774668,
+       "fp_per_24h": 0.7994062779413853,
+       "fp24_sd": 0.00871247124253127,
+       "sensitivity": 0.2784762108199608,
+       "d_f1": -0.021031705724526506,
+       "d_fp24": 0.041960996694429764,
+       "clipped_samples": 1262697,
+       "tolerated": true,
+       "bit_flips_per_window": 2.060800141946829,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         7.551
+        ],
+        [
+         "mov_acc_jerk",
+         6.402
+        ],
+        [
+         "mov_gyr_mag",
+         4.133
+        ]
+       ]
+      },
+      {
+       "name": "mov_white_4LSBrms",
+       "level": 4.0,
+       "unit": "LSBrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.29423828892900483,
+       "f1_sd": 0.003830703836637733,
+       "fp_per_24h": 0.8600142943576881,
+       "fp24_sd": 0.010414296314586735,
+       "sensitivity": 0.25060258857133855,
+       "d_f1": -0.04782709822163683,
+       "d_fp24": 0.10256901311073252,
+       "clipped_samples": 1423582,
+       "tolerated": false,
+       "bit_flips_per_window": 2.534953032176697,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         11.25
+        ],
+        [
+         "mov_acc_jerk",
+         10.259
+        ],
+        [
+         "mov_gyr_mag",
+         6.634
+        ]
+       ]
+      },
+      {
+       "name": "mov_white_8LSBrms",
+       "level": 8.0,
+       "unit": "LSBrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.2829108526167684,
+       "f1_sd": 0.0024170567527926415,
+       "fp_per_24h": 0.7891685670154645,
+       "fp24_sd": 0.006113754071891249,
+       "sensitivity": 0.24376769392394393,
+       "d_f1": -0.05915453453387326,
+       "d_fp24": 0.03172328576850891,
+       "clipped_samples": 1505951,
+       "tolerated": false,
+       "bit_flips_per_window": 3.3060460269257472,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         16.207
+        ],
+        [
+         "mov_acc_jerk",
+         15.51
+        ],
+        [
+         "mov_gyr_mag",
+         10.35
+        ]
+       ]
+      },
+      {
+       "name": "mov_white_16LSBrms",
+       "level": 16.0,
+       "unit": "LSBrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.24731742307690233,
+       "f1_sd": 0.005806083935237699,
+       "fp_per_24h": 0.7807880822192368,
+       "fp24_sd": 0.013404131393071053,
+       "sensitivity": 0.2130861762111762,
+       "d_f1": -0.09474796407373934,
+       "d_fp24": 0.023342800972281252,
+       "clipped_samples": 1547454,
+       "tolerated": false,
+       "bit_flips_per_window": 4.3056707508312515,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         22.08
+        ],
+        [
+         "mov_acc_jerk",
+         21.673
+        ],
+        [
+         "mov_gyr_mag",
+         15.147
+        ]
+       ]
+      },
+      {
+       "name": "mov_white_32LSBrms",
+       "level": 32.0,
+       "unit": "LSBrms",
+       "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "f1": 0.22567827420935482,
+       "f1_sd": 0.0011598738480312403,
+       "fp_per_24h": 0.6763992979506194,
+       "fp24_sd": 0.02718290466059791,
+       "sensitivity": 0.193475878007128,
+       "d_f1": -0.11638711294128684,
+       "d_fp24": -0.08104598329633617,
+       "clipped_samples": 1568155,
+       "tolerated": false,
+       "bit_flips_per_window": 4.575403630056908,
+       "top_features": [
+        [
+         "mov_gyr_jerk",
+         28.559
+        ],
+        [
+         "mov_acc_jerk",
+         28.356
+        ],
+        [
+         "mov_gyr_mag",
+         20.8
+        ]
+       ]
+      }
+     ]
+    }
+   }
+  }
+ }
+}

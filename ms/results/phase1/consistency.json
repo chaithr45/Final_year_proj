@@ -1,0 +1,54 @@
+{
+ "eeg": {
+  "lsb_status": "limit",
+  "lsb_limit": 32.0,
+  "lsb_first_failing": 64.0,
+  "qnoise_at_limit": 8.144527815247079,
+  "qnoise_at_first_failing": 16.289055630494158,
+  "white_status": "limit",
+  "white_limit": 8.0,
+  "white_first_failing": 16.0,
+  "band_hz": 99.5,
+  "nyquist_hz": 128.0,
+  "agree": true
+ },
+ "ecg": {
+  "lsb_status": "limit",
+  "lsb_limit": 32.0,
+  "lsb_first_failing": 64.0,
+  "qnoise_at_limit": 8.144527815247079,
+  "qnoise_at_first_failing": 16.289055630494158,
+  "white_status": "beyond grid",
+  "white_limit": 16.0,
+  "white_first_failing": null,
+  "band_hz": 99.5,
+  "nyquist_hz": 128.0,
+  "agree": true
+ },
+ "emg": {
+  "lsb_status": "beyond grid",
+  "lsb_limit": 256.0,
+  "lsb_first_failing": null,
+  "qnoise_at_limit": 65.15622252197663,
+  "qnoise_at_first_failing": null,
+  "white_status": "beyond grid",
+  "white_limit": 16.0,
+  "white_first_failing": null,
+  "band_hz": 99.5,
+  "nyquist_hz": 128.0,
+  "agree": true
+ },
+ "mov": {
+  "lsb_status": "limit",
+  "lsb_limit": 16.0,
+  "lsb_first_failing": 32.0,
+  "qnoise_at_limit": 4.618802153517007,
+  "qnoise_at_first_failing": 9.237604307034013,
+  "white_status": "limit",
+  "white_limit": 2.0,
+  "white_first_failing": 4.0,
+  "band_hz": 12.5,
+  "nyquist_hz": 12.5,
+  "agree": false
+ }
+}
