@@ -127,15 +127,24 @@ def main() -> int:
         res["grids"][g] = {"clean": {k: clean[k] for k in ("f1", "sensitivity", "precision", "fp_per_24h")},
                            "families": a}
         md += [f"\n## {g}: clean F1 {clean['f1']:.4f}, FP/24h {clean['fp_per_24h']:.3f}\n",
-               "| parameter | limit | first failing | at limit: dF1 / dFP24 / bit flips per window | status |",
-               "|---|---|---|---|---|"]
+               "| parameter | limit | first failing | at limit: dF1 / dFP24 / bit flips per window | "
+               "first failing: dF1 / dFP24 / bit flips per window / features moving most (mean abs LSB) | status |",
+               "|---|---|---|---|---|---|"]
         for k, f in a.items():
             lim = next((x for x in f["levels"] if x["level"] == f["limit"]), None)
-            at = "-" if lim is None else (f"{lim['d_f1']:+.4f} / {lim['d_fp24']:+.3f} / "
-                                          f"{fmt(round(lim.get('bit_flips_per_window', float('nan')), 3))}")
+            bad = next((x for x in f["levels"] if not x["tolerated"]), None)
+
+            def cell(x, feats=False):
+                if x is None:
+                    return "-"
+                s = f"{x['d_f1']:+.4f} / {x['d_fp24']:+.3f} / {round(x.get('bit_flips_per_window', float('nan')), 3):g}"
+                if feats and x.get("top_features"):
+                    s += " / " + ", ".join(f"{n} {v:g}" for n, v in x["top_features"])
+                return s
             unit = f["limit_unit"] or ""
             st = f["status"] + (f" (non-monotonic: {', '.join(f['non_monotonic'])})" if f["non_monotonic"] else "")
-            md.append(f"| {f['label']} | {fmt(f['limit'])} {unit} | {fmt(f['first_failing'])} | {at} | {st} |")
+            md.append(f"| {f['label']} | {fmt(f['limit'])} {unit} | {fmt(f['first_failing'])} | {cell(lim)} | "
+                      f"{cell(bad, True)} | {st} |")
     (P1 / "tolerance.json").write_text(json.dumps(res, indent=1) + "\n")
     (P1 / "tolerance_table.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))

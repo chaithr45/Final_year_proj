@@ -86,6 +86,11 @@ def get(grid: str, seeds: list[int]) -> list[dict]:
         return [j for s in range(5) for j in (
             _job(f"eeg_white_{r}uVrms", s, eeg={"white_density": dens(r)}),
             _job(f"eeg_white_{r}uVrms_refgauss", s, eeg={"white_density": dens(r), "reference_gaussian": True}))]
+    if grid == "combined":       # step 7b; built from the limits by ms/py/combined.py
+        import json
+        from pathlib import Path
+        p = Path(__file__).resolve().parents[2] / "ms/results/phase1/combined_jobs.json"
+        return json.loads(p.read_text())["jobs"]
     if grid in ("eeg", "ecg", "emg"):
         return bio(grid, seeds)
     if grid == "mov":
