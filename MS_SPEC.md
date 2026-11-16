@@ -178,6 +178,14 @@ kit, ARM driver, board build.
    comparator bits flip. This links Phase 1 to Phase 2.
 7. Full-data confirmation at each limit (D-MS5 (2)), then the front-end spec table
    (`python ms/py/confirm_full.py --models <seed-0 fold models>`, `python ms/py/spec_table.py`).
+   **Impairment seeds of the confirmation (fixed 16 Nov, LOG L18):** one seed (0) for every job. Fixed while the
+   EEG grid ran; the only results printed by then were the first batch (EEG LSB and two clip levels), which are
+   deterministic and use one seed in any case; no random-family result had been seen. Cost, from our own timing:
+   104 s per job on the subset (667 h) means about 23 min per job on the 8,714 h, and about 80 jobs (limit and one
+   step beyond, 39 families), so about 30 h; five seeds on the random families would add about 50 h. To show what
+   one seed can hide, every random-family result (white, 1/f, drift, mains) is printed next to that level's
+   impairment-seed sd on the subset, and a verdict whose margin to the threshold is smaller than that sd is labelled
+   **marginal**. The label is a report, not a second test.
    7b (added 16 Nov, before any sweep result). **Combined spec point.** Each limit is measured with every other
    impairment clean, and tolerances measured one at a time need not add up. The spec point (all impairments of all
    modalities at their limits at once) is run on the subset and on the full training set with the same D-MS10 test.

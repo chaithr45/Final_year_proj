@@ -153,16 +153,41 @@ def summarise(rows: list[dict], jobs: list[dict]) -> dict:
     return {"clean": clean, "jobs": per_job[1:]}
 
 
+def verdicts(jobs: list[dict], d_full: dict, subset_levels: dict) -> None:
+    """D-MS10 on the full training set: tolerated <=> F1 drop <= delta_F1, FP/24h rise <= delta_FA (full deltas) and
+    Wilcoxon p >= 0.05. "marginal" (MS_SPEC step 7, LOG L18; a report, not a test): a random-family job whose margin
+    to either threshold is smaller than that level's impairment-seed sd on the subset."""
+    df1, dfa = d_full["delta_f1"], d_full["delta_fp24"]
+    for j in jobs:
+        j["tolerated"] = bool(-j["d_f1"] <= df1 and j["d_fp24"] <= dfa and j["wilcoxon_p"] >= 0.05)
+        lv = subset_levels.get(j["name"])
+        sd1, sda = (lv.get("f1_sd"), lv.get("fp24_sd")) if lv else (None, None)
+        j["subset_seed_sd"] = {"f1": sd1, "fp24": sda}
+        j["marginal"] = bool(sd1 is not None and sda is not None and
+                             (abs(-j["d_f1"] - df1) < sd1 or abs(j["d_fp24"] - dfa) < sda))
+
+
+def subset_level_table() -> dict:
+    p = REPO / "ms/results/phase1/tolerance.json"
+    if not p.exists():
+        return {}
+    tol = json.loads(p.read_text())
+    return {x["name"]: x for g in tol["grids"].values() for f in g["families"].values() for x in f["levels"]}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--models", required=True)
-    ap.add_argument("--jobs", default="limits", help="'limits' (from tolerance.json) or 'clean'")
+    ap.add_argument("--jobs", default="limits",
+                    help="'limits' (from tolerance.json), 'combined' (combined_jobs.json, step 7b) or 'clean'")
     ap.add_argument("--seeds", type=int, nargs="*", default=[0])
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--limit-runs", type=int, default=None, help="first N recordings only (quick checks)")
     ap.add_argument("--tag", default=None)
     args = ap.parse_args()
-    jobs = [{"name": "clean", "seed": 0}] + (limit_jobs(args.seeds) if args.jobs == "limits" else [])
+    extra = {"limits": lambda: limit_jobs(args.seeds), "clean": list,
+             "combined": lambda: [j for j in grids.get("combined", []) if j["seed"] in args.seeds]}[args.jobs]()
+    jobs = [{"name": "clean", "seed": 0}] + extra
     tag = args.tag or args.jobs + (f"_runs{args.limit_runs}" if args.limit_runs else "")
     subjects = sorted(load_folds(REPO / "configs/folds_inner5.json"))
     runs = sorted(r.key for r in discover_runs(RAW, subjects))
@@ -196,6 +221,8 @@ def main() -> int:
     rows = [done[k] for k in runs]
     bad = [r["run"] for r in rows if not r["clean_equal_cache"]]
     summ = summarise(rows, jobs)
+    summ["deltas_full"] = json.loads((REPO / "ms/results/phase1/deltas.json").read_text())["full"]
+    verdicts(summ["jobs"], summ["deltas_full"], subset_level_table())
     summ["recordings"] = len(rows)
     summ["clean_feature_mismatches"] = bad
     c = summ["clean"]
@@ -214,7 +241,8 @@ def main() -> int:
           f"problems: {bad or 'none'}; clean vs CV: {summ.get('clean_vs_cv')}")
     for j in summ["jobs"]:
         print(f"  {j['name']:<30s} seed {j['seed']}: F1 {j['f1']:.4f} ({j['d_f1']:+.4f}) FP/24h {j['fp_per_24h']:.3f} "
-              f"({j['d_fp24']:+.3f}) Wilcoxon p {j['wilcoxon_p']:.3g}")
+              f"({j['d_fp24']:+.3f}) Wilcoxon p {j['wilcoxon_p']:.3g} -> "
+              f"{'tolerated' if j['tolerated'] else 'NOT tolerated'}{' (marginal)' if j['marginal'] else ''}")
     return 1 if bad else 0
 
 
