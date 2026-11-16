@@ -179,3 +179,24 @@ limits. (An earlier draft of this entry said amplifiers need microwatts and domi
 removed.)
 **Q: Your ADC power estimate is 30 pW. Do you believe it?** A: No. It is a FOM extrapolated down to a rate where
 static power dominates; I quote the lowest power that a real low-rate design has achieved beside it.
+
+### 17. Why a DC offset breaks the ECG features: a start-up transient that locks an adaptive threshold
+**Plain words.** The ECG features come from beat times. The frozen front end finds beats with a Pan-Tompkins-style
+detector: high-pass at 5 Hz, low-pass at 15 Hz, a slope and a moving sum, then an adaptive threshold between a
+"signal peak" level and a "noise peak" level. The signal level is set from the largest value in the first 2 s and
+afterwards moves only when a beat is accepted. A DC offset that is there from power-on is a step for the high-pass
+filter (its state starts at zero), and the step's ringing in those first 2 s can be several times taller than the R
+peaks. The threshold then sits above every real R peak; rejected peaks only raise the noise level towards the R-peak
+height, which keeps the threshold above them. The detector never recovers within the segment.
+**Our numbers** (`python ms/py/ecg_offset_lockup.py`, 874 subset segments with ECG, training patients only). Minutes
+with fewer than 20 detected beats: 10.8 % clean, 16.6 % at an offset of 0.1 C (819 uV), 50.3 % at 0.3 C (2,458 uV).
+Median largest |filtered ECG| in the warm-up: 617, 1,563 and 4,642 internal units. In the sweep, the feature that
+moves most at 0.3 C is `ecg_log_rr` (21.5 feature LSBs on average), and event-F1 drops by 0.10.
+**Why it matters here.** The offset limit of the ECG channel is not about headroom (nothing clips at 0.3 C); it is
+about the digital back end's start-up. So the analog answer is AC coupling or an offset spec, and the digital answer
+is a detector whose initial levels are not taken from the start-up transient. Which one is cheaper is a co-design
+question. Note also: 10.8 % of clean minutes already have fewer than 20 detected beats. That may be real signal loss
+(electrodes) or the same lock-up after a large transient in the recording; this script does not separate the two.
+**Q: Why does your ECG channel need an offset below about 800 uV when the ADC range is 16 mV?** A: Because the beat
+detector learns its threshold from the first two seconds; a DC step at power-on rings through its high-pass filter
+and sets the threshold above every real R peak for the rest of the recording.
