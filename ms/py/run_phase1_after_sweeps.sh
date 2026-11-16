@@ -8,6 +8,8 @@ PY=${PY:-python}
 WORKERS=${WORKERS:-4}
 test -s ms/results/phase1/tolerance.json || { echo "tolerance.json missing: run ms/py/run_phase1_sweeps.sh first"; exit 1; }
 MODELS=$(ls -d cache/ms/cv_s0/checkpoints/*_n4_distill_s0 | head -1)
+echo "== LSB vs white-noise cross-check"
+$PY ms/py/consistency.py
 echo "== generator A/B"
 $PY ms/py/sweep.py --models "$MODELS" --grid gauss_ab --seeds 0 1 2 3 4 --workers "$WORKERS" --batch 12
 $PY ms/py/gauss_ab.py
