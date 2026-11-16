@@ -164,7 +164,13 @@ multi-channel arrangement, board build.
 
 6. Mechanism table: for each impairment, how far each of the 38 features moves (in LSBs) and how many of the 146
    comparator bits flip. This links Phase 1 to Phase 2.
-7. Full-data confirmation at each limit (D-MS5 (2)), then the front-end spec table.
+7. Full-data confirmation at each limit (D-MS5 (2)), then the front-end spec table
+   (`python ms/py/confirm_full.py --models <seed-0 fold models>`, `python ms/py/spec_table.py`).
+   7b (added 16 Nov, before any sweep result). **Combined spec point.** Each limit is measured with every other
+   impairment clean, and tolerances measured one at a time need not add up. The spec point (all impairments of all
+   modalities at their limits at once) is run on the subset and on the full training set with the same D-MS10 test.
+   If it fails, the limits that move the features most (mechanism table, step 6) are backed off one grid step at a
+   time, most-moving first, until the combined point passes. The spec table reports the combined point.
 8. In-fabric emulator: Verilog block plus Python golden model, Verilator word-for-word check, then board runs of the
    subset at selected points (D-MS6).
 

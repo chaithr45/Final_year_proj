@@ -170,8 +170,12 @@ a 50 dB converter.
 within 20 dB above the required SNDR). At 60 dB SNDR and fsnyq = 256 Hz: best-Walden scaling 0.13 nW, best-Schreier
 0.03 nW; the lowest-power design in the survey with fsnyq <= 20 kHz that reaches 60 dB uses 180 nW (ISSCC 2018, 17.3, at
 6 kHz). At 48 dB the lowest is 2.7 nW (ISSCC 2017, 21.6, at 1 kS/s).
-**Why it matters here.** A biopotential amplifier needs microwatts per channel (item 10). Even the measured low-rate
-floor puts the ADC well below that, so the detector's noise tolerance, not its resolution tolerance, is what sets
-front-end power. To be confirmed with the measured tolerance limits.
+**Why it matters here.** Which block dominates depends on the noise limit, so it is not assumed. The NEF formula
+(item 10; T = 300 K, 0.5-100 Hz, 1.8 V) gives a noise-set amplifier power of 1.08 uW at 1 uV rms but 0.27 uW at
+2 uV rms and 0.07 uW at 4 uV rms for NEF 3 (current ~ 1/noise^2), the same order as the low-rate ADC floor
+(0.003-0.47 uW). If the detector tolerates several uV of added noise, the amplifier's noise-set power becomes small,
+and other needs (CMRR, input range, settling, chopping) set its real power. The comparison is made at the measured
+limits. (An earlier draft of this entry said amplifiers need microwatts and dominate; that was an assumption, now
+removed.)
 **Q: Your ADC power estimate is 30 pW. Do you believe it?** A: No. It is a FOM extrapolated down to a rate where
 static power dominates; I quote the lowest power that a real low-rate design has achieved beside it.
