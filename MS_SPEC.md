@@ -75,8 +75,14 @@ Measured values (written before the first sweep):
 
 | data | seeds | F1 mean +- sd | FP/24 h mean +- sd | delta_F1 | delta_FA |
 |---|---|---|---|---|---|
-| subset (curves) | pending | | | | |
-| full (confirmation) | pending | | | | |
+| subset (curves) | 5 (0-4) | 0.3055 +- 0.0307 | 0.833 +- 0.126 | **0.0307** | **0.126** |
+| full (confirmation) | 5 (0-4) | 0.2137 +- 0.0092 | 1.033 +- 0.206 | **0.0092** | **0.206** |
+
+Source: `ms/results/phase1/deltas.json` (16 Nov). Both spreads are above the floors (0.005, 0.1), so the floors do
+not bind. What this means for reading the results: the subset curves compare the same seed-0 models with and without
+an impairment, but their threshold is the spread *between* models, so they only flag F1 drops larger than 0.031
+(9 % of the seed-0 clean subset F1 of 0.342). That is the rule fixed in D-MS10 and it stays; the stricter check is
+the full-data confirmation (0.0092, 4 % of 0.229, plus the Wilcoxon test).
 
 ## Phase 1 plan: detector-derived front-end specification
 
