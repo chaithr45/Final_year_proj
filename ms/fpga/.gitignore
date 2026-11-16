@@ -1,0 +1,4 @@
+# Vivado project and outputs of build_ms1.tcl (large; rebuilt from the scripts)
+/build/
+/out/*
+!/out/README.md

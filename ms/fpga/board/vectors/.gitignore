@@ -1,0 +1,2 @@
+# board self-test vectors are small and generated from the golden model (ms/fpga/make_board_files.py): keep them
+!impair_cases.npz
