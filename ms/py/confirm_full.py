@@ -13,7 +13,10 @@ job's metrics must equal ms/results/phase1/cv_frozen_op.json (seed-0 models), el
 
 Jobs (--jobs): "limits" = from ms/results/phase1/tolerance.json, per parameter the limit level and the first
 failing level (only the limit if every level passed; only the mildest level if none passed), with impairment
-seeds --seeds. Noise streams are keyed (seed, 100000 + recording index, channel index): independent of the subset.
+seeds --seeds. "stepdown" = the next milder level of every limit that failed on the full data (rule LOG L20, via
+ms/py/full_spec.py); "combined" = the step 7b spec point from combined_jobs.json. Summaries of these two go to
+confirm_<jobs>_<hash of the job names>.json, so later rounds never overwrite earlier ones.
+Noise streams are keyed (seed, 100000 + recording index, channel index): independent of the subset.
 
 Usage: python ms/py/confirm_full.py --models <fold checkpoint dir> [--workers 4] [--seeds 0] [--limit-runs N]
 Per-recording counts: cache/ms/confirm/<tag>.jsonl (resumable). Summary: ms/results/phase1/confirm_<tag>.json
@@ -65,14 +68,31 @@ def _init(models_dir: str):
     assert sorted(_models) == [0, 1, 2, 3, 4], f"need fold_0..4.pkl in {models_dir}"
 
 
-def limit_jobs(seeds: list[int]) -> list[dict]:
-    tol = json.loads((REPO / "ms/results/phase1/tolerance.json").read_text())
+def jobs_by_name(names: list[str], seeds: list[int]) -> list[dict]:
     every = {}
     for g in ("eeg", "ecg", "emg"):
         for j in grids.bio(g, seeds):
             every[(j["name"], j["seed"])] = j
     for j in grids.mov(seeds):
         every[(j["name"], j["seed"])] = j
+    jobs = []
+    for n in names:
+        js = [every[(n, s)] for s in seeds if (n, s) in every]
+        if not js:      # deterministic impairments are defined for the first seed only
+            js = [j for (nn, _), j in every.items() if nn == n][:1]
+        jobs += js
+    return jobs
+
+
+def stepdown_jobs(seeds: list[int]) -> list[dict]:
+    """Next milder levels needed by the step-down rule (LOG L20), from tolerance.json and the confirmations so far."""
+    import full_spec
+    tol = json.loads((REPO / "ms/results/phase1/tolerance.json").read_text())
+    return jobs_by_name(full_spec.pending_names(full_spec.build(tol, full_spec.load_full_results())), seeds)
+
+
+def limit_jobs(seeds: list[int]) -> list[dict]:
+    tol = json.loads((REPO / "ms/results/phase1/tolerance.json").read_text())
     names = []
     for grid in tol["grids"].values():
         for f in grid["families"].values():
@@ -83,13 +103,7 @@ def limit_jobs(seeds: list[int]) -> list[dict]:
                 names.append(next(x["name"] for x in lv if x["level"] == f["limit"]))
                 if f["status"] == "limit":
                     names.append(next(x["name"] for x in lv if not x["tolerated"]))
-    jobs = []
-    for n in names:
-        js = [every[(n, s)] for s in seeds if (n, s) in every]
-        if not js:      # deterministic impairments are defined for the first seed only
-            js = [j for (nn, _), j in every.items() if nn == n][:1]
-        jobs += js
-    return jobs
+    return jobs_by_name(names, seeds)
 
 
 def process(idx: int, run_key: str, jobs: list[dict]) -> dict:
@@ -179,16 +193,24 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--models", required=True)
     ap.add_argument("--jobs", default="limits",
-                    help="'limits' (from tolerance.json), 'combined' (combined_jobs.json, step 7b) or 'clean'")
+                    help="'limits' (from tolerance.json), 'stepdown' (next milder levels of limits that failed, LOG L20), "
+                         "'combined' (combined_jobs.json, step 7b) or 'clean'")
     ap.add_argument("--seeds", type=int, nargs="*", default=[0])
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--limit-runs", type=int, default=None, help="first N recordings only (quick checks)")
     ap.add_argument("--tag", default=None)
     args = ap.parse_args()
     extra = {"limits": lambda: limit_jobs(args.seeds), "clean": list,
+             "stepdown": lambda: stepdown_jobs(args.seeds),
              "combined": lambda: [j for j in grids.get("combined", []) if j["seed"] in args.seeds]}[args.jobs]()
+    if args.jobs in ("stepdown", "combined") and not extra:
+        print(f"no {args.jobs} jobs to run"); return 0
     jobs = [{"name": "clean", "seed": 0}] + extra
-    tag = args.tag or args.jobs + (f"_runs{args.limit_runs}" if args.limit_runs else "")
+    name = args.jobs
+    if args.jobs in ("stepdown", "combined"):   # one summary file per distinct job set (resumable, never overwritten)
+        import hashlib
+        name += "_" + hashlib.sha1(json.dumps(sorted(j["name"] for j in extra)).encode()).hexdigest()[:8]
+    tag = args.tag or name + (f"_runs{args.limit_runs}" if args.limit_runs else "")
     subjects = sorted(load_folds(REPO / "configs/folds_inner5.json"))
     runs = sorted(r.key for r in discover_runs(RAW, subjects))
     assert len(subjects) == 96 and all(int(s.split("-")[1]) <= 96 for s in subjects)

@@ -186,6 +186,15 @@ kit, ARM driver, board build.
    one seed can hide, every random-family result (white, 1/f, drift, mains) is printed next to that level's
    impairment-seed sd on the subset, and a verdict whose margin to the threshold is smaller than that sd is labelled
    **marginal**. The label is a report, not a second test.
+   **If a limit fails on the full data (added 16 Nov, LOG L20):** the spec limit moves one grid step milder at a
+   time, each new level run on the full data (`confirm_full.py --jobs stepdown`), until one is tolerated; if even the
+   mildest level fails, the spec is "tighter than the mildest level tested". If the full data also tolerates the
+   subset's first failing level, the spec stays at the subset limit (the subset curve failed there). A
+   "beyond grid" family confirmed at its worst level stays a bound. `python ms/py/full_spec.py` applies this rule
+   to `tolerance.json` and every `confirm_*.json` and writes `spec_limits.json`; the spec table and the combined spec
+   point (7b) use it. Written after the EEG subset curves had been read (the EEG white-noise limit passes the subset
+   test by 0.0007 in F1, so a full-data failure is likely) and before any full-data result; the rule takes the
+   obvious step and has no free parameter.
    7b (added 16 Nov, before any sweep result). **Combined spec point.** Each limit is measured with every other
    impairment clean, and tolerances measured one at a time need not add up. The spec point (all impairments of all
    modalities at their limits at once) is run on the subset and on the full training set with the same D-MS10 test.

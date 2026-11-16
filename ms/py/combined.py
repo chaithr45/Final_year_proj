@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Combined spec point (MS_SPEC.md 1.2 step 7b): every impairment of every modality at its tolerance limit at once.
 
-Built from ms/results/phase1/tolerance.json:
+Built from ms/results/phase1/spec_limits.json (full-data limits, ms/py/full_spec.py) when it exists; before that from
+the subset limits in tolerance.json, as a preview with job names combined_preview_gain+/-:
   * a family with a limit, or "beyond grid", enters at its limit (for "beyond grid" the worst level tested);
   * a family where no level passed enters clean, and is listed under "excluded" (its spec is tighter than the
     mildest level tested, so the combined point cannot include it);
@@ -28,6 +29,8 @@ MOV_BAND = 12.5
 
 
 def level(f: dict):
+    if f["status"] == "pending":
+        raise SystemExit("spec_limits.json has unconfirmed limits: run confirm_full.py --jobs stepdown first")
     if f["status"] == "none tolerated":
         return None
     return f["limit"]
@@ -95,9 +98,16 @@ def main() -> int:
     import sys
     if "--evaluate" in sys.argv:
         return evaluate()
-    tol = json.loads((P1 / "tolerance.json").read_text())
+    # the spec point uses the full-data limits (full_spec.py) once they exist; before that, the subset limits give a
+    # preview under different job names, so the two never mix in sweeps/combined.jsonl
+    src = P1 / "spec_limits.json"
+    preview = not src.exists()
+    if preview:
+        src = P1 / "tolerance.json"
+    tol = json.loads(src.read_text())
     jobs, excluded = [], set()
-    for sign, tag in ((+1, "gain+"), (-1, "gain-")):
+    for sign, gtag in ((+1, "gain+"), (-1, "gain-")):
+        tag = ("preview_" if preview else "") + gtag
         imp = {}
         for mod, g in tol["grids"].items():
             kw, ex = impair_for(mod, g["families"], sign)
@@ -105,8 +115,8 @@ def main() -> int:
             if kw:
                 imp[mod] = kw
         jobs += [{"name": f"combined_{tag}", "seed": s, "impair": imp} for s in range(5)]
-    out = {"what": "combined spec point, MS_SPEC.md step 7b", "excluded_none_tolerated": sorted(excluded),
-           "jobs": jobs}
+    out = {"what": "combined spec point, MS_SPEC.md step 7b" + (" (preview from the subset limits)" if preview else ""),
+           "source": src.name, "excluded_none_tolerated": sorted(excluded), "jobs": jobs}
     (P1 / "combined_jobs.json").write_text(json.dumps(out, indent=1) + "\n")
     print(json.dumps({"excluded": sorted(excluded), "impair_gain+": jobs[0]["impair"]}, indent=1))
     return 0

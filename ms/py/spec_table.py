@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Detector-derived front-end specification and per-channel power (MS_SPEC.md 1.2 step 7, 1.3).
 
-From the tolerance limits (ms/results/phase1/tolerance.json; full-data verdicts from confirm_limits.json when
-present) to an analog front-end spec per modality, then to power:
+From the tolerance limits to an analog front-end spec per modality, then to power. Default source: the full-data
+limits ms/results/phase1/spec_limits.json (ms/py/full_spec.py) when it exists, else the subset limits in
+tolerance.json (labelled "subset only"):
 
   * ADC resolution: the LSB limit q and the clip limit C give N = ceil(log2(2 C / q)) bits, i.e. an ideal
     quantisation-limited SNDR of 6.02 N + 1.76 dB for a full-scale sine. ADC power at that SNDR and
@@ -51,11 +52,15 @@ def limit(fams: dict, key: str):
     lv = f["levels"]
     if f["status"] == "none tolerated":
         return lv[0]["level"], "tighter than"
+    if f["status"] == "pending":
+        return None, "pending"
     return f["limit"], ("at least" if f["status"] == "beyond grid" else "limit")
 
 
 def main() -> int:
-    src = Path(sys.argv[1]) if len(sys.argv) > 1 else P1 / "tolerance.json"
+    src = Path(sys.argv[1]) if len(sys.argv) > 1 else (P1 / "spec_limits.json" if (P1 / "spec_limits.json").exists()
+                                                         else P1 / "tolerance.json")
+    basis = "full data (D-MS10 + Wilcoxon)" if src.name == "spec_limits.json" else "subset only (not yet confirmed)"
     tol = json.loads(src.read_text())
     import adc_power
     survey = adc_power.load()
@@ -88,10 +93,12 @@ def main() -> int:
         md += [f"\n## {mod.upper()} ({n_ch} channel{'s' if n_ch > 1 else ''})\n", "| spec | value | basis |", "|---|---|---|"]
         def line(lbl, key, unit, fmt="{:g}"):
             v = s[key]
-            if v["value"] is None:
+            if v["kind"] == "pending":
+                md.append(f"| {lbl} | pending (full-data step-down not finished) | |")
+            elif v["value"] is None:
                 md.append(f"| {lbl} | not swept | |")
             else:
-                md.append(f"| {lbl} | {v['kind']} {fmt.format(v['value'])} {unit} | tolerance limit (D-MS10) |")
+                md.append(f"| {lbl} | {v['kind']} {fmt.format(v['value'])} {unit} | {basis} |")
         line("input-referred noise, 0.5-100 Hz", "white", "uV rms")
         line("1/f corner at 1 uV rms white", "pink", "Hz")
         line("LSB (input-referred)", "lsb", "uV")
@@ -113,7 +120,7 @@ def main() -> int:
             p = ", ".join(f"{k}: {v:.3g} uW" for k, v in row["amp_power_uW_per_channel"].items())
             md.append(f"| amplifier power per channel (noise-set lower bound) | {p} | NEF definition, VDD 1.8 V, 300 K |")
     out = {"constants": {"T_K": T_K, "U_T_V": U_T, "BW_Hz": BW_HZ, "VDD_V": VDD, "fsnyq_Hz": FSNYQ, "NEF": NEFS},
-           "source": str(src), "modalities": spec}
+           "source": str(src), "basis": basis, "modalities": spec}
     dst = P1 if src.parent == P1 else src.parent
     (dst / "spec.json").write_text(json.dumps(out, indent=1, default=str) + "\n")
     (dst / "spec_table.md").write_text("\n".join(md) + "\n")
