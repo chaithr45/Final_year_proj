@@ -104,7 +104,12 @@ Progress (16 Nov): step 2 done: `python ms/py/make_subset.py` -> `ms/results/pha
 one, as in the pipeline), 389 h of background, 667 h scored, 792 h processed with warm-up. Three patients have
 little or no seizure-free background (sub-087 0.4 h, sub-090 and sub-091 none: almost every recording holds a
 seizure). Step 3 done: `ms/py/impair.py`, 14 tests (`pytest -q ms/py/tests`). Step 1 waits for the training
-feature cache (extraction running).
+feature cache (extraction running). Step 8, first part done: the RTL emulator `ms/fpga/rtl/ms_impair.v` (one channel) is bit-exact with
+`impair.py` on 11 configurations x 70,000 samples, with a negative control (`python ms/py/impair_rtl.py` ->
+`ms/results/phase1/impair_rtl_check.json`). Yosys (`synth_xilinx -family xcup`): 4,713 LUTs, 5,731 FFs, 2 RAMB36
+(sine table), 0 DSP per channel (`ms/results/phase1/impair_rtl_yosys.txt`); the 80 configuration words and the
+64-bit state dominate, so there is room to shrink it if several channels are needed. Not yet done: AXI-Lite wrapper,
+multi-channel arrangement, board build.
 
 1. Retrain the 5 fold models (D-MS4, seed 0) and check them against run `20261108-145504_n4_distill_s0`.
    Train seeds 1-4 and record sigma_seed in D-MS10.

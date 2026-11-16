@@ -124,3 +124,38 @@ the signal by (1 + eps) adds log2(1 + eps) to such a feature.
 cancel a constant gain error (to be tested in Phase 1).
 **Q: Which analog error is the detector likely most robust to?** A: Constant gain error, for the baseline-relative
 features. Phase 1 tests this rather than assuming it.
+
+### 13. Gaussian noise in hardware, and why the variance is not enough
+**Plain words.** Hardware random generators give uniform bits. Adding n uniform numbers gives an approximately
+Gaussian number (central limit theorem). The sum has the right mean and variance for any n, but its tails converge
+slowly: it can never exceed sqrt(3n) sigma, and big excursions are too rare. A generator validated only by its
+variance can be badly wrong where it matters for rare events.
+**Equation.** Sum of n uniforms on [0, 1): mean n/2, variance n/12, support +-sqrt(3n) sigma, excess kurtosis -6/(5n).
+**Our numbers** (exact convolution, LOG L12). Share of the true Gaussian's probability beyond 4 sigma:
+41 % for n = 16, 83 % for n = 64, 96 % for n = 256. We use n = 64 (16 steps of xoroshiro128+, four 12-bit fields each).
+The uniform source is checked bit-exact against an independent implementation (randomgen) and the sum against
+its exact distribution. A software-only A/B run with an exact Gaussian will show whether the tail deficit changes any
+detection result.
+**Q: How would you validate a hardware noise generator?** A: Three levels. (1) The uniform source equals a
+reference implementation bit for bit. (2) The output distribution matches its exact theoretical distribution
+(CDF and tails, not just mean and variance). (3) The effect of its known deviation from the ideal on the actual
+application is measured with an A/B run against an ideal generator.
+
+### 14. 1/f (flicker) noise and the Voss-McCartney generator
+**Plain words.** Amplifier noise has a white part and a 1/f part that dominates below the corner frequency f_c.
+Voss-McCartney makes 1/f noise by summing random values that are held for 2, 4, 8, ... samples. Each held row
+covers one octave, and together they give a roughly 1/f spectrum with only adders and registers.
+**Equation.** Noise PSD S(f) = S_white (1 + f_c / f).
+**Our numbers.** Our 16-row generator follows 1/f within about +-5 % from fs/8192 to fs/64 (0.03-4 Hz at 256 Hz),
+and is 8 % and 20 % low in the two octaves below fs/8 (measured, `impair.py`).
+**Q: Why does 1/f noise matter more for EEG than for audio?** A: EEG's useful band starts near 0.5 Hz, where 1/f
+noise is largest. CMOS amplifiers often have 1/f corners of tens of Hz or more unless chopped.
+
+### 15. Co-verification with a negative control
+**Plain words.** Comparing RTL against a golden model only proves something if the comparison can fail. A
+negative control deliberately breaks one thing and checks that the comparison reports it.
+**Our numbers.** The emulator RTL equals `impair.py` on 11 configurations x 70,000 samples (0 mismatches, equal clip
+counts); flipping one bit of one noise seed gives 65,702 mismatches (`ms/results/phase1/impair_rtl_check.json`).
+**Q: Your testbench says 0 mismatches. How do you know it works?** A: Because a corrupted configuration makes it
+report mismatches. Also because each case reports how many samples the impairment actually changed: an impairment that
+changes nothing would "match" trivially.

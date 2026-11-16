@@ -1,0 +1,31 @@
+# Yosys 0.71 (yowasp-yosys), read_verilog ms_impair.v; synth_xilinx -family xcup -top ms_impair -flatten -abc9; stat
+# run 16 Nov 2026 in the cloud session; same command as scripts/export_verifier.py
+
+3. Printing statistics.
+
+=== ms_impair ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5795 wires
+    18155 wire bits
+      174 public wires
+     6354 public wire bits
+       12 ports
+      110 port bits
+    10995 cells
+        1   BUFG
+      305   CARRY4
+     5730   FDRE
+        1   FDSE
+       60   IBUF
+      132   INV
+      505   LUT2
+     1038   LUT3
+      369   LUT4
+     1410   LUT5
+     1391   LUT6
+        1   MUXF7
+       50   OBUF
+        2   RAMB36E2
+
