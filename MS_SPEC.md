@@ -11,8 +11,8 @@ Companion files: `PREREG.md` (anything that touches test patients), `LOG.md` (pr
 
 | Phase | Content | State |
 |---|---|---|
-| 0 | Inventory, planning files, analog tool setup | **done on my side; waiting for your container check** (`ms/setup/check_tools.sh`) |
-| 1 | Detector-derived analog front-end specification | plan below; needs your answers to D-MS4..D-MS10 |
+| 0 | Inventory, planning files, analog tool setup | done on my side (15 Nov); **your container check pending** (`ms/setup/check_tools.sh`) |
+| 1 | Detector-derived analog front-end specification | **started 16 Nov** (decisions D-MS4..D-MS10 settled: your go-ahead "do what you think is best") |
 | 2 | Comparator design (SKY130) and offset tolerance on the FPGA | Feb-Mar 2027 |
 | 3 | FPGA delta-sigma ADC, designed and measured | Mar-Apr 2027 |
 | 4 | Measured analog chain into the detector | Apr-May 2027 |
@@ -30,21 +30,23 @@ background, 25 seizure), score = popcount difference, decision score >= 9, alarm
 ## Decisions
 
 Status: **decided** (in force), **proposed** (my recommendation, waiting for your OK), **open** (you choose).
+On 16 Nov you answered the Phase 0 questions with "do what you think is best": every proposal below became
+**decided** as proposed, and the two open items took my recommendation.
 
 | ID | Decision | Status | Why |
 |---|---|---|---|
 | D-MS1 | All mixed-signal work on branch `FPGA`, created from the FCCM branch tip `986c8ae`. Only new files are added, plus a short section in `CLAUDE.md`. FCCM commits come in with `git merge origin/claude/optimistic-heisenberg-ph0bvj` | decided (your message, 15 Nov) | The frozen model, kit and fault injection exist only on the FCCM branch (`main` is stale). Branching from its tip gives us the design without changing it |
 | D-MS2 | Layout: the four planning files at the repo root; code, netlists and results under `ms/` (`ms/analog/`, `ms/fpga/`, `ms/py/`, `ms/results/`). One script per figure or table | decided | Keeps FCCM files untouched and makes merges trivial |
 | D-MS3 | Analog tools: IIC-OSIC-TOOLS release 2026.10 (ngspice-47, Magic 8.3.685, netgen 1.5.324, KLayout 0.30.12) with SKY130A from open_pdks `1689ac3f`. Cloud reference simulations use the same PDK commit with ngspice-42 | decided | Free, runs on both of your machines, and the PDK is pinned, so simulations are reproducible |
-| D-MS4 | Models for the tolerance study: **retrain the 5 inner-fold models of the frozen recipe** (`configs/m5/n4_distill.yaml`, seed 0) so every training patient is scored by a model that never saw it. First check that they reproduce the committed out-of-fold result of run `20261108-145504_n4_distill_s0` (event-F1 0.229, 0.9 FP/24 h). Then train seeds 1-4 of the same folds to measure the run-to-run spread | proposed | The frozen `n4_distill_s0` was trained on all 96 training patients, so scoring it on them is in-sample and flatters the clean baseline. The fold checkpoints of the original CV run were in a cloud container that no longer exists |
-| D-MS5 | Sweep data: (1) a **sweep subset** of the 96 training patients, fixed before any sweep: every training seizure (702) with 20 min before onset and 10 min after offset, plus 4 random background hours per patient (seeded draw, at least 30 min from any seizure). Every segment gets 10 min of warm-up for the 64 s baselines, and warm-up windows are not scored. (2) Each tolerance limit is **confirmed on all 8,714 training hours** at the limit and one step beyond | proposed | The golden front end runs about 5,900x real time per core (measured), so compute is fine. Moving about 100 GB of raw EDF from S3 for every sweep point is not. The subset is roughly 10 % of the data and can be cached as int16. Subset numbers are used for curves; full-data numbers are used for the spec |
-| D-MS6 | Where the in-fabric impairment emulator sits | **open** | (a) Now, kit "ms1" (separate bitstream; FCCM kit untouched): ARM writes raw samples, the fabric impairs them, the ARM front end (C) computes features, and the fabric classifier decides. Works with today's kit. Register traffic limits speed to roughly the subset size per sweep point. (b) Later, after N10's feature-engine RTL exists: raw -> impairment -> feature engine -> classifier, all in the fabric. This is the stronger "board runs the sweep" story but depends on FCCM work. **Recommendation:** build and verify the block standalone now, integrate as (a), and move to (b) when N10 lands |
-| D-MS7 | Noise generator in the fabric: a multiplier-free design. Uniform bits from a 64-bit xorshift-type generator; Gaussian via the sum of 16 uniform 12-bit values (central limit, LUT adders only); amplitude set by a shift plus a 4-term signed-power-of-two mantissa; 1/f noise via the Voss-McCartney method (octave-rate random rows, adders only). The Python model uses the same integer algorithm, so the board and Python produce identical sequences for the same seed | proposed | Matches SeizeLUT's no-multiplier story and makes bit-exact checking possible. The sum of 16 uniforms is not exactly Gaussian: it has no tail beyond about +-6.9 sigma and excess kurtosis -0.075. These are measured and reported (KS and Anderson-Darling tests, tail probabilities at 3, 4 and 5 sigma, spectrum) rather than assumed. If a test fails we switch to an inverse-CDF table |
-| D-MS8 | ADC model parameterised by **input-referred LSB q** and **input-referred clip level C**, not by "bits" alone; bits = log2(2C/q). Today's pipeline is q = 0.25 uV, C = 8.19 mV (16 bits) | proposed | "8 bits" means nothing without a full scale. A real front end chooses gain (which sets C) and ADC bits separately. This makes the amplifier-gain/ADC trade visible |
-| D-MS9 | Sampling-rate sweep | **open** | The frozen front end is fixed at 256 Hz. A lower ADC rate only makes sense with interpolation back to 256 Hz, which is a different system. Options: (i) Python only, sample-and-hold to fs then re-interpolate, flagged approximate; (ii) drop it and study anti-alias filtering at 256 Hz instead (mains harmonics fold into the band; see below). **Recommendation: (ii)**, plus (i) as a short appendix if time allows |
-| D-MS10 | Definition of "tolerated" (below) | proposed: must be approved and frozen **before the first sweep** | Brief, Phase 1 |
+| D-MS4 | Models for the tolerance study: **retrain the 5 inner-fold models of the frozen recipe** (`configs/m5/n4_distill.yaml`, seed 0) so every training patient is scored by a model that never saw it. First check that they reproduce the committed out-of-fold result of run `20261108-145504_n4_distill_s0` (event-F1 0.229, 0.9 FP/24 h). Then train seeds 1-4 of the same folds to measure the run-to-run spread | decided (16 Nov) | The frozen `n4_distill_s0` was trained on all 96 training patients, so scoring it on them is in-sample and flatters the clean baseline. The fold checkpoints of the original CV run were in a cloud container that no longer exists |
+| D-MS5 | Sweep data: (1) a **sweep subset** of the 96 training patients, fixed before any sweep: every training seizure (702) with 20 min before onset and 10 min after offset, plus 4 random background hours per patient (seeded draw, at least 30 min from any seizure; 1-h blocks, or whole recordings of >= 10 min where a patient's files are shorter than 1 h, amended 16 Nov before any sweep, LOG L13). Every segment gets 10 min of warm-up for the 64 s baselines, and warm-up windows are not scored. (2) Each tolerance limit is **confirmed on all 8,714 training hours** at the limit and one step beyond | decided (16 Nov) | The golden front end runs about 5,900x real time per core (measured), so compute is fine. Moving about 100 GB of raw EDF from S3 for every sweep point is not. The subset is roughly 10 % of the data and can be cached as int16. Subset numbers are used for curves; full-data numbers are used for the spec |
+| D-MS6 | Where the in-fabric impairment emulator sits | decided (16 Nov): build and verify standalone, integrate as (a), move to (b) when N10 RTL exists | (a) Now, kit "ms1" (separate bitstream; FCCM kit untouched): ARM writes raw samples, the fabric impairs them, the ARM front end (C) computes features, and the fabric classifier decides. Works with today's kit. Register traffic limits speed to roughly the subset size per sweep point. (b) Later, after N10's feature-engine RTL exists: raw -> impairment -> feature engine -> classifier, all in the fabric. This is the stronger "board runs the sweep" story but depends on FCCM work. **Recommendation:** build and verify the block standalone now, integrate as (a), and move to (b) when N10 lands |
+| D-MS7 | Noise generator in the fabric: a multiplier-free design. Uniform bits from xoroshiro128+ (constants 24, 16, 37; identical to the `randomgen` reference over 100,000 outputs); Gaussian via the sum of **64** uniform 12-bit values (amended 16 Nov from 16, see LOG L12: the exact distribution of a 16-sum has only 41 % of the Gaussian tail beyond 4 sigma; a 64-sum has 83 %, max CDF error 4.3e-4), accumulated serially (one adder; 16 generator steps per sample); amplitude set by a shift plus a 4-term signed-power-of-two mantissa; 1/f noise via the Voss-McCartney method (octave-rate random rows, adders only). The Python model uses the same integer algorithm, so the board and Python produce identical sequences for the same seed | decided (16 Nov) | Matches SeizeLUT's no-multiplier story and makes bit-exact checking possible. The 64-sum is not exactly Gaussian (support +-13.9 sigma; tail beyond 4 sigma 83 % and beyond 5 sigma 62 % of Gaussian; computed exactly by convolution). This is tested and reported, and one noise level is also run with an exact Gaussian to show the difference does not matter for the detector (A/B, step 5). Fall-back if it does: an inverse-CDF table |
+| D-MS8 | ADC model parameterised by **input-referred LSB q** and **input-referred clip level C**, not by "bits" alone; bits = log2(2C/q). Today's pipeline is q = 0.25 uV, C = 8.19 mV (16 bits) | decided (16 Nov) | "8 bits" means nothing without a full scale. A real front end chooses gain (which sets C) and ADC bits separately. This makes the amplifier-gain/ADC trade visible |
+| D-MS9 | Sampling-rate sweep | decided (16 Nov): (ii), with (i) as an appendix only if time allows | The frozen front end is fixed at 256 Hz. A lower ADC rate only makes sense with interpolation back to 256 Hz, which is a different system. Options: (i) Python only, sample-and-hold to fs then re-interpolate, flagged approximate; (ii) drop it and study anti-alias filtering at 256 Hz instead (mains harmonics fold into the band; see below). **Recommendation: (ii)**, plus (i) as a short appendix if time allows |
+| D-MS10 | Definition of "tolerated" (below) | decided (16 Nov); the two deltas are measured and written below **before the first sweep** | Brief, Phase 1 |
 
-### D-MS10 (proposed) Definition of "tolerated"
+### D-MS10 (decided 16 Nov) Definition of "tolerated"
 
 An impairment level is **tolerated** by the frozen detector if, scored out-of-fold on the 96 training patients
 with the frozen recipe's fold models (D-MS4), at the frozen operating point (score >= 9, 10 of 10, no gate), and
@@ -96,6 +98,13 @@ resolution and noise are not documented in the repository; the EDF storage scale
 recordings' own noise floor from their quietest segments and states it.
 
 ### 1.2 Steps (one command each; all on training patients)
+
+Progress (16 Nov): step 2 done: `python ms/py/make_subset.py` -> `ms/results/phase1/subset.json`: 96 patients,
+899 segments, all 698 training seizure intervals (702 annotations; 5 overlapping ones in sub-055 run-01 merge into
+one, as in the pipeline), 389 h of background, 667 h scored, 792 h processed with warm-up. Three patients have
+little or no seizure-free background (sub-087 0.4 h, sub-090 and sub-091 none: almost every recording holds a
+seizure). Step 3 done: `ms/py/impair.py`, 14 tests (`pytest -q ms/py/tests`). Step 1 waits for the training
+feature cache (extraction running).
 
 1. Retrain the 5 fold models (D-MS4, seed 0) and check them against run `20261108-145504_n4_distill_s0`.
    Train seeds 1-4 and record sigma_seed in D-MS10.
@@ -165,8 +174,8 @@ budget figure compared with published wearable EEG front ends (each value read f
 
 ## Open questions for you
 
-1. D-MS4, D-MS5, D-MS7, D-MS8, D-MS10: OK as proposed?
-2. D-MS6 (emulator placement) and D-MS9 (sampling rate): your choice.
+1. (answered 16 Nov) Decisions D-MS4..D-MS10: as recommended.
+2. (answered 16 Nov) D-MS6 and D-MS9: as recommended.
 3. Does your laptop still hold the training feature cache (`cache/features/int/`, about 7 GB) and/or the raw
    SeizeIT2 EDFs? If yes, Phase 1 can run there, or I can run it in the cloud from S3.
 4. Which machine runs IIC-OSIC-TOOLS, and the result of `ms/setup/check_tools.sh`.

@@ -2,6 +2,16 @@
 
 Newest first. Format: date | problem | cause | fix | evidence.
 
+## 16 Nov 2026 (Phase 1 start, cloud session)
+
+| # | Problem | Cause | Fix | Evidence |
+|---|---|---|---|---|
+| L13 | The first subset draw gave 3 patients no background and 5 fewer than 4 blocks | Their recordings are split into files of 1 h or less, so a 1-h block plus the 30-min seizure guard rarely fits | Rule amended **before any sweep**: 1-h blocks where a recording allows, else whole recordings of >= 10 min (which start cold exactly like the full pipeline, so they need no warm-up). Now 389 h of background; sub-087 0.4 h and sub-090, sub-091 none remain, because almost every one of their recordings holds a seizure | `ms/py/make_subset.py`, `ms/results/phase1/subset.json` |
+| L12 | The proposed Gaussian generator (sum of 16 uniforms) has the right variance but the wrong tails | Central-limit sums converge slowly in the tails. Exact convolution: P(\|z\|>4) is 41 % and P(\|z\|>5) 6 % of Gaussian for n = 16; 83 % and 62 % for n = 64; 96 % and 89 % for n = 256; max CDF error 1.7e-3, 4.3e-4, 1.1e-4 | n = 64 for both the fabric and the Python model (the Python sweeps must produce the same sequence, and 64 keeps them fast: 16 generator steps per sample). The deviation is tested exactly in `test_gaussian_generator_distribution`. An A/B run against an exact Gaussian at one noise level will show whether it matters for the detector | brief: "check the distribution, not only its variance" |
+| L11 | Gain-error test failed: fitted gain 1.050001 but the configured gain 1.0498 | Test artefact: at ~40 LSB amplitude the final rounding to integer samples correlates with x and biases the fitted slope. The scale factor itself was exact (checked on internal values) | Test measures the gain on a 4,000-LSB signal; achieved-vs-requested error bounded at 1 % (4 signed powers of two give 0.4 % at 5 %) | `ms/py/tests/test_impair.py` |
+| L10 | The 1/f coefficient in the first draft of `impair.py` was a typed placeholder (0.18) | Written before measuring | Measured with `voss_calibration()` on 2^24 samples: 1.3737, 1.3753, 1.3766 (seeds 1-3), mean 1.3752, 7.6 times the placeholder. The code now holds the measured value and a test re-measures it | `ms/py/impair.py` |
+| L9 | Two design details that would have biased results | (a) a floor shift in the drift integrator leaves a bias of about 2^(k-1)/256 internal units (about 0.5 uV at tau = 64 s); (b) Voss rows starting at zero leave the slow rows silent for minutes | (a) rounding shift; (b) rows start with random values | tests `test_offset_and_drift`, `test_pink_corner` |
+
 ## 15 Nov 2026 (Phase 0, cloud session)
 
 | # | Problem | Cause | Fix | Evidence |
