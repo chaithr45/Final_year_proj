@@ -159,3 +159,19 @@ counts); flipping one bit of one noise seed gives 65,702 mismatches (`ms/results
 **Q: Your testbench says 0 mismatches. How do you know it works?** A: Because a corrupted configuration makes it
 report mismatches. Also because each case reports how many samples the impairment actually changed: an impairment that
 changes nothing would "match" trivially.
+
+### 16. ADC power at 256 samples per second: where FOM scaling stops working
+**Plain words.** A figure of merit says how much energy a converter spends per conversion step. Multiplying it by
+our tiny rate (256 S/s) predicts picowatts. Real converters at low rates do not get there, because their static
+power (bias currents, references, leakage) does not scale down with the clock. Also, a FOM is only comparable
+between designs of similar resolution: the Schreier FOM grows with SNDR, so a 120 dB champion's FOM says nothing about
+a 50 dB converter.
+**Our numbers** (`python ms/py/adc_power.py`, Murmann survey rev 20260801, 763 designs; FOM population = designs
+within 20 dB above the required SNDR). At 60 dB SNDR and fsnyq = 256 Hz: best-Walden scaling 0.13 nW, best-Schreier
+0.03 nW; the lowest-power design in the survey with fsnyq <= 20 kHz that reaches 60 dB uses 180 nW (ISSCC 2018, 17.3, at
+6 kHz). At 48 dB the lowest is 2.7 nW (ISSCC 2017, 21.6, at 1 kS/s).
+**Why it matters here.** A biopotential amplifier needs microwatts per channel (item 10). Even the measured low-rate
+floor puts the ADC well below that, so the detector's noise tolerance, not its resolution tolerance, is what sets
+front-end power. To be confirmed with the measured tolerance limits.
+**Q: Your ADC power estimate is 30 pW. Do you believe it?** A: No. It is a FOM extrapolated down to a rate where
+static power dominates; I quote the lowest power that a real low-rate design has achieved beside it.

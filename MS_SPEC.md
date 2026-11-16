@@ -62,6 +62,22 @@ addition, the paired per-patient Wilcoxon test of impaired vs clean event-F1 is 
 **tolerance limit** of a parameter is the worst tested level that is tolerated, with all other impairments at
 their clean values.
 
+Two details settled 16 Nov before any sweep result existed (LOG L15):
+- sigma_seed is measured on the same data each test uses: the **subset** spread (clean subset run of each seed's fold
+  models) for the subset tolerance curves, the **full** spread (all training hours, out-of-fold) for the full-data
+  confirmations. Both are written below. Command: `python ms/py/deltas.py` -> `ms/results/phase1/deltas.json`.
+- "Worst tested level that is tolerated" means: the most severe level of the unbroken run of tolerated levels that
+  starts at the mildest level. A tolerated level after a failing one is reported as non-monotonic and does not
+  extend the limit. If every level is tolerated, the limit is "beyond the grid" (the worst tested level is a lower
+  bound). Command: `python ms/py/tolerance.py` -> `ms/results/phase1/tolerance.json`, `tolerance_table.md`.
+
+Measured values (written before the first sweep):
+
+| data | seeds | F1 mean +- sd | FP/24 h mean +- sd | delta_F1 | delta_FA |
+|---|---|---|---|---|---|
+| subset (curves) | pending | | | | |
+| full (confirmation) | pending | | | | |
+
 ## Phase 1 plan: detector-derived front-end specification
 
 Question: what is the cheapest analog front end (amplifier + ADC) the frozen detector can live with?
@@ -96,6 +112,21 @@ Every sweep measures tolerance to **additional** impairment on top of that. The 
 resolution and noise are not documented in the repository; the EDF storage scale (about 0.02 uV/LSB for EEG,
 `results/audit/signal_channels.csv`) is the file format's scale, not a measured ADC spec. Phase 1 estimates the
 recordings' own noise floor from their quietest segments and states it.
+
+Measured on all 899 subset segments (`python ms/py/signal_levels.py` -> `ms/results/phase1/signal_levels.json`;
+0.5-100 Hz, 1-s blocks; motion 0.5-12 Hz):
+
+| modality | channels | typical level: median of per-channel median RMS (IQR) | quietest second: median of per-channel 1st percentile |
+|---|---|---|---|
+| EEG | 1,796 | 13.1 uV (8.9-19.9) | 7.0 uV |
+| ECG | 871 | 53.5 uV (36.2-74.9) | 30.9 uV |
+| EMG | 871 | 17.7 uV (10.9-39.2) | 9.9 uV |
+| motion | 4,806 | 3.2 LSB (2.0-6.4) | 1.1 LSB |
+
+The quietest-second column is an upper bound on each recording's own noise floor (it still holds some signal).
+So an added white noise of, say, 1 uV rms on EEG sits below a floor that is already about 7 uV in the median
+channel; added noise adds in power, so 1 uV on 7 uV raises the floor by about 1 %. Expect the EEG noise limit to land
+at several uV, and read it as "additional noise the detector tolerates on top of the SeizeIT2 device's own".
 
 ### 1.2 Steps (one command each; all on training patients)
 

@@ -1,0 +1,172 @@
+{
+ "source": "Murmann ADC Performance Survey 1997-2026, rev 20260801, commit 00b4b85 (ISSCC + VLSI sheets)",
+ "designs": 763,
+ "lowrate_max_fsnyq_Hz": 20000.0,
+ "rows": [
+  {
+   "sndr_dB": 40,
+   "enob": 6.352159468438539,
+   "fsnyq_Hz": 256.0,
+   "designs_meeting_sndr": 656,
+   "designs_in_fom_band": 221,
+   "walden": {
+    "best_fomw_fJ": 0.3535180070866174,
+    "median_fomw_fJ": 180.22461404143124,
+    "P_best_W": 7.393363222721336e-12,
+    "P_median_W": 3.769160287658529e-09
+   },
+   "schreier": {
+    "best_foms_dB": 180.76199648183163,
+    "median_foms_dB": 151.68402002101044,
+    "P_best_W": 1.0740149371314537e-12,
+    "P_median_W": 8.685762850636542e-10
+   },
+   "lowrate_floor": {
+    "P_W": 2.7e-09,
+    "design": {
+     "venue": "ISSCC",
+     "year": 2017,
+     "id": 21.6,
+     "arch": "SAR",
+     "title": "A 12nW Always-On Acoustic Sensing and Object Recognition Microsystem using Frequency-Domain Feature Extraction and SVM Classification",
+     "doi": "10.1109/ISSCC.2017.7870411",
+     "fsnyq_Hz": 1000.0,
+     "sndr_dB": 48.3
+    },
+    "designs_considered": 57
+   }
+  },
+  {
+   "sndr_dB": 50,
+   "enob": 8.013289036544851,
+   "fsnyq_Hz": 256.0,
+   "designs_meeting_sndr": 579,
+   "designs_in_fom_band": 296,
+   "walden": {
+    "best_fomw_fJ": 0.3535180070866174,
+    "median_fomw_fJ": 175.4335949533231,
+    "P_best_W": 2.3382549883007238e-11,
+    "P_median_W": 1.1603609159706225e-08
+   },
+   "schreier": {
+    "best_foms_dB": 182.02429823902062,
+    "median_foms_dB": 155.3559429326324,
+    "P_best_W": 8.031194535863264e-12,
+    "P_median_W": 3.729200007177047e-09
+   },
+   "lowrate_floor": {
+    "P_W": 2.1e-08,
+    "design": {
+     "venue": "VLSI",
+     "year": 2018,
+     "id": 9.2,
+     "arch": "SAR, VCO",
+     "title": "A 0.5-1.1V 10b Adaptive Bypassing SAR ADC Utilizing Oscillation Cycle Information of VCO-based Comparator",
+     "doi": "10.1109/VLSIC.2018.8502440",
+     "fsnyq_Hz": 20000.0,
+     "sndr_dB": 54.56
+    },
+    "designs_considered": 55
+   }
+  },
+  {
+   "sndr_dB": 60,
+   "enob": 9.674418604651164,
+   "fsnyq_Hz": 256.0,
+   "designs_meeting_sndr": 435,
+   "designs_in_fom_band": 296,
+   "walden": {
+    "best_fomw_fJ": 0.6061765186096236,
+    "median_fomw_fJ": 152.44761568026155,
+    "P_best_W": 1.268029230743705e-10,
+    "P_median_W": 3.1889726326440564e-08
+   },
+   "schreier": {
+    "best_foms_dB": 186.82513089773843,
+    "median_foms_dB": 161.14220077906248,
+    "P_best_W": 2.658868628378853e-11,
+    "P_median_W": 9.839882030461182e-09
+   },
+   "lowrate_floor": {
+    "P_W": 1.8e-07,
+    "design": {
+     "venue": "ISSCC",
+     "year": 2018,
+     "id": 17.3,
+     "arch": "SDSC",
+     "title": "A 0.3V Biofuel-Cell-Powered Glucose/Lactate Biosensing System Employing a 180nW 64dB SNR Passive \u0394\u03a3 ADC and a 920MHz Wireless Transmitter",
+     "doi": "10.1109/ISSCC.2018.8310295",
+     "fsnyq_Hz": 6000.0,
+     "sndr_dB": 60.0
+    },
+    "designs_considered": 46
+   }
+  },
+  {
+   "sndr_dB": 70,
+   "enob": 11.335548172757475,
+   "fsnyq_Hz": 256.0,
+   "designs_meeting_sndr": 283,
+   "designs_in_fom_band": 213,
+   "walden": {
+    "best_fomw_fJ": 0.6061765186096236,
+    "median_fomw_fJ": 175.8110908228278,
+    "P_best_W": 4.010320587233712e-10,
+    "P_median_W": 1.1631246268132972e-07
+   },
+   "schreier": {
+    "best_foms_dB": 186.82513089773843,
+    "median_foms_dB": 163.75330769061475,
+    "P_best_W": 2.6588686283788527e-10,
+    "P_median_W": 5.393605780027415e-08
+   },
+   "lowrate_floor": {
+    "P_W": 4.68e-07,
+    "design": {
+     "venue": "ISSCC",
+     "year": 2021,
+     "id": 27.2,
+     "arch": "SAR",
+     "title": "14.1-ENOB 184.9dB-FoM Capacitor-Array-Assisted Cascaded Charge-Injection SAR ADC",
+     "doi": "10.1109/ISSCC42613.2021.9365863",
+     "fsnyq_Hz": 6000.0,
+     "sndr_dB": 86.66
+    },
+    "designs_considered": 38
+   }
+  },
+  {
+   "sndr_dB": 80,
+   "enob": 12.996677740863788,
+   "fsnyq_Hz": 256.0,
+   "designs_meeting_sndr": 139,
+   "designs_in_fom_band": 114,
+   "walden": {
+    "best_fomw_fJ": 4.432733012508982,
+    "median_fomw_fJ": 86.9077923575641,
+    "P_best_W": 9.274732303491269e-09,
+    "P_median_W": 1.8183962510920077e-07
+   },
+   "schreier": {
+    "best_foms_dB": 184.8349420596763,
+    "median_foms_dB": 172.3818478253738,
+    "P_best_W": 4.204513620183197e-09,
+    "P_median_W": 7.39648170054036e-08
+   },
+   "lowrate_floor": {
+    "P_W": 4.68e-07,
+    "design": {
+     "venue": "ISSCC",
+     "year": 2021,
+     "id": 27.2,
+     "arch": "SAR",
+     "title": "14.1-ENOB 184.9dB-FoM Capacitor-Array-Assisted Cascaded Charge-Injection SAR ADC",
+     "doi": "10.1109/ISSCC42613.2021.9365863",
+     "fsnyq_Hz": 6000.0,
+     "sndr_dB": 86.66
+    },
+    "designs_considered": 34
+   }
+  }
+ ]
+}
