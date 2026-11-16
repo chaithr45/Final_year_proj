@@ -134,6 +134,8 @@ class Impairment:
     aa_order: int = 2
     hp_hz: float | None = None         # front-end high-pass corner (2nd-order Butterworth); None = DC-coupled
     lp_hz: float | None = None         # front-end low-pass corner (2nd-order Butterworth); None = none
+    reference_gaussian: bool = False   # SOFTWARE-ONLY A/B check: white noise from an exact Gaussian (numpy) of the
+                                       # same std instead of the 64-uniform sum; not reproducible by the RTL
 
 
 @dataclass
@@ -153,6 +155,7 @@ class Compiled:
     hp: tuple | None = None           # (b0, b1, b2, a1, a2, frac)
     lp: tuple | None = None
     achieved: dict = field(default_factory=dict)
+    reference_gaussian: bool = False
 
     @property
     def bits(self) -> int:
@@ -243,7 +246,8 @@ def compile_impairment(imp: Impairment, fs: float, base_per_lsb: float) -> Compi
         b = design_biquad("afe_lp", "low", imp.lp_hz, fs, frac_bits=AFE_F, b_terms=6, a_terms=8)
         lp = (*b.b, *b.a, b.frac_bits)
         ach["lp_hz_design"] = imp.lp_hz
-    return Compiled(fs, qs, 1 << (cs - qs), white_c, pink_c, gain_c, offset_i, drift_c, drift_k, inc, mc, hp, lp, ach)
+    return Compiled(fs, qs, 1 << (cs - qs), white_c, pink_c, gain_c, offset_i, drift_c, drift_k, inc, mc, hp, lp, ach,
+                    imp.reference_gaussian)
 
 
 # ----------------------------------------------------------------------------- the chain
@@ -339,8 +343,12 @@ def apply(x: np.ndarray, c: Compiled, key: tuple[int, ...]) -> tuple[np.ndarray,
         z = _gauss_block(np.array(stream_state(*key, 3), dtype=np.uint64), n)
         v = v + _ou(_scale(z, c.drift_c, SCALE_F), c.drift_k)
     if c.white_c:
-        z = _gauss_block(np.array(stream_state(*key, 1), dtype=np.uint64), n)
-        v = v + _scale(z, c.white_c, SCALE_F)
+        if c.reference_gaussian:     # A/B only: exact Gaussian with the same std, rounded like the hardware path
+            rng = np.random.default_rng([int(k) & 0xFFFFFFFF for k in key] + [1])
+            v = v + np.round(rng.normal(0.0, SIGMA_Z * c.white_c / 2**SCALE_F, n)).astype(np.int64)
+        else:
+            z = _gauss_block(np.array(stream_state(*key, 1), dtype=np.uint64), n)
+            v = v + _scale(z, c.white_c, SCALE_F)
     if c.pink_c:
         n_upd = VOSS_ROWS + sum(n // (1 << (r + 1)) + 1 for r in range(VOSS_ROWS))
         z = _gauss_block(np.array(stream_state(*key, 2), dtype=np.uint64), n_upd)
