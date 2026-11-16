@@ -200,3 +200,33 @@ question. Note also: 10.8 % of clean minutes already have fewer than 20 detected
 **Q: Why does your ECG channel need an offset below about 800 uV when the ADC range is 16 mV?** A: Because the beat
 detector learns its threshold from the first two seconds; a DC step at power-on rings through its high-pass filter
 and sets the threshold above every real R peak for the rest of the recording.
+
+### 18. Why a coarse motion ADC is tolerated while a little white noise is not: rounding a quiet signal is not noise
+**Plain words.** The textbook says rounding to a step q adds white noise of rms q/sqrt(12). That holds only when the
+signal moves across many steps between samples (a "busy" signal). Our motion channels are mostly quiet: median rms
+3.2 LSB (`signal_levels.json`), against steps of 16 or 32 LSB. Then the rounded output sits on one code for long
+stretches. Rounding does not add movement; it removes the small movement that was there. White noise does the
+opposite: it adds movement to every sample. The motion features that react most are "jerk" (line length,
+sum |x[n] - x[n-1]|) and "mag" (sum |x - offset|), and they react to exactly this.
+**Our numbers** (`python ms/py/mov_quant_vs_white.py`, every 4th subset segment, training patients only, the
+sweep's own impairment code and the frozen front end's feature code). Median change of the per-second jerk sum,
+as log2(impaired/clean), so +1 = doubled:
+
+| | quiet seconds (acc / gyr) | active seconds (top 10 %) |
+|---|---|---|
+| LSB 16 | -0.24 / -1.12 | +0.01 / +0.01 |
+| LSB 32 | -1.51 / -5.52 | +0.02 / +0.01 |
+| white 2 LSB rms | +1.33 / +1.47 | +0.01 / +0.00 |
+| white 4 LSB rms | +2.11 / +2.26 | +0.02 / +0.01 |
+
+At 32 LSB, 31 % (acc) and 71 % (gyr) of the quiet seconds have zero jerk, against 2 % and 5 % clean. Neither
+impairment changes the active seconds. So the two impairments push the same feature in opposite directions, and
+the q/sqrt(12) conversion (4.6 LSB rms at q = 16) cannot predict the white-noise limit (2 LSB rms). This is the
+"intervals agree: NO" row of `consistency.md`. For EEG, ECG and EMG the conversion does agree.
+**Why it matters here.** For a quiet sensor the ADC step and the amplifier noise are not interchangeable. A real
+front end has both, and its own noise acts as dither on the quantiser. That is why the combined spec point (all
+limits at once) is run, not only the single-impairment curves.
+**Q: Your motion ADC can have a 16-LSB step (4.6 LSB rms of quantisation noise) but only 2 LSB rms of white noise.
+Isn't that inconsistent?** A: No. q/sqrt(12) assumes the signal crosses many codes between samples. Ours sits within
+one code most of the time, so rounding removes movement instead of adding it. I measured it: in quiet seconds a
+16-LSB step lowers the jerk feature, while 2 LSB rms of white noise multiplies it by about 2.5.

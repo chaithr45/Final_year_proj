@@ -1,0 +1,68 @@
+{
+ "what": "median log2(impaired / clean) of the per-second motion jerk sum (3 axes); see script header",
+ "segments": 225,
+ "every_nth_segment": 4,
+ "noise_seed": 0,
+ "sensors": {
+  "acc": {
+   "seconds": 692426,
+   "clean_jerk_median": 143.0,
+   "clean_jerk_p90": 1123.5,
+   "clean_jerk_per_sample_median": 5.72,
+   "lsb_16": {
+    "quiet_median_log2_ratio": -0.23878685958711662,
+    "active_median_log2_ratio": 0.008161600349976051,
+    "quiet_fraction_zero_jerk": 0.16396262739676207,
+    "clean_quiet_fraction_zero_jerk": 0.023422820147954868
+   },
+   "lsb_32": {
+    "quiet_median_log2_ratio": -1.5090136474878575,
+    "active_median_log2_ratio": 0.019487945668576343,
+    "quiet_fraction_zero_jerk": 0.3146422211125767,
+    "clean_quiet_fraction_zero_jerk": 0.023422820147954868
+   },
+   "white_2LSBrms": {
+    "quiet_median_log2_ratio": 1.3310111996498006,
+    "active_median_log2_ratio": 0.006408428264591358,
+    "quiet_fraction_zero_jerk": 0.0,
+    "clean_quiet_fraction_zero_jerk": 0.023422820147954868
+   },
+   "white_4LSBrms": {
+    "quiet_median_log2_ratio": 2.1143993727370862,
+    "active_median_log2_ratio": 0.02340460433494382,
+    "quiet_fraction_zero_jerk": 0.0,
+    "clean_quiet_fraction_zero_jerk": 0.023422820147954868
+   }
+  },
+  "gyr": {
+   "seconds": 685773,
+   "clean_jerk_median": 159.0,
+   "clean_jerk_p90": 1486.0,
+   "clean_jerk_per_sample_median": 6.36,
+   "lsb_16": {
+    "quiet_median_log2_ratio": -1.1202942337177118,
+    "active_median_log2_ratio": 0.007072395379933672,
+    "quiet_fraction_zero_jerk": 0.3215308528547213,
+    "clean_quiet_fraction_zero_jerk": 0.05224472944330245
+   },
+   "lsb_32": {
+    "quiet_median_log2_ratio": -5.523561956057013,
+    "active_median_log2_ratio": 0.012873900335025723,
+    "quiet_fraction_zero_jerk": 0.710852796571485,
+    "clean_quiet_fraction_zero_jerk": 0.05224472944330245
+   },
+   "white_2LSBrms": {
+    "quiet_median_log2_ratio": 1.4656635723488118,
+    "active_median_log2_ratio": 0.0024750042258737445,
+    "quiet_fraction_zero_jerk": 0.0,
+    "clean_quiet_fraction_zero_jerk": 0.05224472944330245
+   },
+   "white_4LSBrms": {
+    "quiet_median_log2_ratio": 2.264415636232154,
+    "active_median_log2_ratio": 0.00995762488732668,
+    "quiet_fraction_zero_jerk": 0.0,
+    "clean_quiet_fraction_zero_jerk": 0.05224472944330245
+   }
+  }
+ }
+}
