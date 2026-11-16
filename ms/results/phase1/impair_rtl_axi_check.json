@@ -1,0 +1,126 @@
+{
+ "what": "RTL impairment emulator behind its AXI4-Lite wrapper (ms/fpga/rtl/ms_impair_axi.v, bus transactions in Verilator) vs golden model (ms/py/impair.py)",
+ "all_bit_exact": true,
+ "cases": [
+  {
+   "case": "identity",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 0,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 0.7
+  },
+  {
+   "case": "q4_clip1024",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 52419,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 0.6
+  },
+  {
+   "case": "q2_clip64_clipping",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 54297,
+   "clipped_rtl": 38619,
+   "clipped_model": 38619,
+   "rtl_seconds": 0.6
+  },
+  {
+   "case": "white_1uV",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 63754,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 1.9
+  },
+  {
+   "case": "pink_10Hz",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 65570,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 2.3
+  },
+  {
+   "case": "drift_100uV",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 69919,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 1.6
+  },
+  {
+   "case": "mains_h1_h5",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 70000,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 2.1
+  },
+  {
+   "case": "gain_-0.2",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 69735,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 0.8
+  },
+  {
+   "case": "offset_hp",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 69410,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 2.1
+  },
+  {
+   "case": "lp_40",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 69723,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 2.3
+  },
+  {
+   "case": "everything",
+   "samples": 70000,
+   "mismatches": 0,
+   "first_mismatch": null,
+   "samples_changed_by_impairment": 69885,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 8.9
+  },
+  {
+   "case": "NEGATIVE_CONTROL_white_seed_bit_flipped",
+   "samples": 70000,
+   "mismatches": 65702,
+   "first_mismatch": 0,
+   "samples_changed_by_impairment": 63754,
+   "clipped_rtl": 0,
+   "clipped_model": 0,
+   "rtl_seconds": 1.7
+  }
+ ]
+}

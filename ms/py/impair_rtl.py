@@ -27,6 +27,8 @@ from seizelut.features.fixedpoint import csd  # noqa: E402
 
 RTL = REPO / "ms/fpga/rtl/ms_impair.v"
 TB = REPO / "ms/fpga/sim/tb_ms_impair.v"
+AXI_RTL = REPO / "ms/fpga/rtl/ms_impair_axi.v"
+AXI_TB = REPO / "ms/fpga/sim/tb_ms_impair_axi.v"
 W_Q, W_OFF, W_SEEDW, W_DK, W_NM, W_PH, W_INC, W_TERMS, W_FLAGS = 0, 1, 2, 14, 15, 16, 23, 30, 72
 P_WHITE, P_PINK, P_DRIFT, P_GAIN, P_MAINS, P_HP, P_LP = 0, 1, 2, 3, 4, 11, 16
 M32 = 0xFFFFFFFF
@@ -92,13 +94,15 @@ CASES = {
 }
 
 
-def build(work: Path) -> Path:
+def build(work: Path, axi: bool = False) -> Path:
     sin_hex = work / "sin4096.hex"
     sin_hex.write_text("\n".join(f"{int(v) & 0xFFFF:04x}" for v in IMP.SIN_TABLE) + "\n")
+    top = "tb_ms_impair_axi" if axi else "tb_ms_impair"
+    srcs = [RTL, AXI_RTL, AXI_TB] if axi else [RTL, TB]
     subprocess.run(["verilator", "--binary", "--timing", "-j", "4", "-Wno-fatal", "-Wno-lint", "-Wno-style",
-                    "--top-module", "tb_ms_impair", f"-GSIN_HEX=\"{sin_hex}\"", str(RTL), str(TB),
+                    "--top-module", top, f"-GSIN_HEX=\"{sin_hex}\"", *map(str, srcs),
                     "--Mdir", str(work / "obj")], check=True, capture_output=True, text=True)
-    return work / "obj" / "Vtb_ms_impair"
+    return work / "obj" / f"V{top}"
 
 
 def run_case(exe: Path, work: Path, name: str, kw: dict, x: np.ndarray, key=(11, 22, 33), corrupt=None) -> dict:
@@ -128,11 +132,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--quick", action="store_true", help="5,000 samples per case")
     ap.add_argument("--keep", action="store_true")
+    ap.add_argument("--axi", action="store_true", help="through the AXI4-Lite wrapper (ms_impair_axi.v), driven as "
+                                                       "the ARM would -> impair_rtl_axi_check.json")
     args = ap.parse_args()
     if not shutil.which("verilator"):
         raise SystemExit("verilator not found")
     work = Path(tempfile.mkdtemp(prefix="ms_impair_"))
-    exe = build(work)
+    exe = build(work, args.axi)
     rng = np.random.default_rng(5)
     n = 5_000 if args.quick else 70_000                         # 70,000 samples reach Voss row 15 (2^16 hold)
     x = np.clip(np.round(rng.normal(0, 40, n) + 400 * np.sin(2 * np.pi * 7 * np.arange(n) / 256)),
@@ -144,10 +150,12 @@ def main() -> int:
         print(r, flush=True)
     ok = all(r["mismatches"] == 0 and r["clipped_rtl"] == r["clipped_model"] for r in res) and neg["mismatches"] > 0
     res.append(neg)
-    out = {"what": "RTL impairment emulator (ms/fpga/rtl/ms_impair.v, Verilator) vs golden model (ms/py/impair.py)",
-           "all_bit_exact": ok, "cases": res}
+    what = ("RTL impairment emulator behind its AXI4-Lite wrapper (ms/fpga/rtl/ms_impair_axi.v, bus transactions "
+            "in Verilator)" if args.axi else "RTL impairment emulator (ms/fpga/rtl/ms_impair.v, Verilator)")
+    out = {"what": what + " vs golden model (ms/py/impair.py)", "all_bit_exact": ok, "cases": res}
     if not args.quick:
-        (REPO / "ms/results/phase1/impair_rtl_check.json").write_text(json.dumps(out, indent=1) + "\n")
+        name = "impair_rtl_axi_check.json" if args.axi else "impair_rtl_check.json"
+        (REPO / "ms/results/phase1" / name).write_text(json.dumps(out, indent=1) + "\n")
     print("ALL BIT-EXACT" if ok else "MISMATCHES FOUND")
     if not args.keep:
         shutil.rmtree(work, ignore_errors=True)

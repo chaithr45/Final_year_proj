@@ -1,0 +1,32 @@
+# Yosys 0.71 (git sha1 b4c586fd3, Release, Clang /workspace/YoWASP/yosys/wasi-sdk-33.0-x86_64-linux/share/cmake/../..//bin/clang++ 22.1.0); read_verilog ms_impair.v ms_impair_axi.v; synth_xilinx -family xcup -top ms_impair_axi -flatten -abc9; stat
+# run 16 Nov 2026 (bash ms/fpga/synth_yosys.sh ms_impair_axi)
+5. Printing statistics.
+
+=== ms_impair_axi ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     6463 wires
+    20083 wire bits
+      211 public wires
+     6639 public wire bits
+       21 ports
+      114 port bits
+    11666 cells
+        1   $scopeinfo
+        1   BUFG
+      339   CARRY4
+     5948   FDRE
+        2   FDSE
+       73   IBUF
+      139   INV
+      707   LUT2
+      956   LUT3
+      514   LUT4
+     1406   LUT5
+     1534   LUT6
+        1   MUXF7
+       41   OBUF
+        2   RAMB18E2
+        2   RAMB36E2
+

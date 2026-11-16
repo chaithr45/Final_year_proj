@@ -139,8 +139,14 @@ feature cache (extraction running). Step 8, first part done: the RTL emulator `m
 `impair.py` on 11 configurations x 70,000 samples, with a negative control (`python ms/py/impair_rtl.py` ->
 `ms/results/phase1/impair_rtl_check.json`). Yosys (`synth_xilinx -family xcup`): 4,713 LUTs, 5,731 FFs, 2 RAMB36
 (sine table), 0 DSP per channel (`ms/results/phase1/impair_rtl_yosys.txt`); the 80 configuration words and the
-64-bit state dominate, so there is room to shrink it if several channels are needed. Not yet done: AXI-Lite wrapper,
-multi-channel arrangement, board build.
+64-bit state dominate, so there is room to shrink it if several channels are needed. AXI4-Lite wrapper
+`ms/fpga/rtl/ms_impair_axi.v` (register map in its header; 512-entry input and output FIFOs) is bit-exact with
+`impair.py` through real bus transactions on the same 11 configurations x 70,000 samples, negative control caught,
+no dropped samples (`python ms/py/impair_rtl.py --axi` -> `ms/results/phase1/impair_rtl_axi_check.json`). Yosys:
+5,117 LUTs, 5,950 FFs, 2 RAMB36 + 2 RAMB18, 0 DSP (`bash ms/fpga/synth_yosys.sh` ->
+`ms/results/phase1/ms_impair_axi_yosys.txt`). One instance serves all channels in turn: the ARM loads a channel's
+configuration (its own seeds), streams that channel, then the next. Not yet done: Vivado block design of the "ms1"
+kit, ARM driver, board build.
 
 1. Retrain the 5 fold models (D-MS4, seed 0) and check them against run `20261108-145504_n4_distill_s0`.
    Train seeds 1-4 and record sigma_seed in D-MS10.
