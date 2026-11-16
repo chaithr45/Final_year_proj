@@ -24,7 +24,6 @@ HP = [0.05, 0.1, 0.3, 0.5, 1.0]                             # Hz, 2nd-order Butt
 LP = [100, 70, 50, 40, 30]                                  # Hz, 2nd-order Butterworth
 MOV_LSB = [2, 4, 8, 16, 32, 64, 128, 256]                   # input LSBs (2^-12 g each)
 MOV_NOISE = [1, 2, 4, 8, 16, 32]                            # LSB rms over 0-12.5 Hz
-GAUSS_AB_UVRMS = 2.0     # EEG level for the generator A/B; to be moved to the level nearest the EEG noise limit
 
 
 def _job(name, seed, **impair):
@@ -75,17 +74,31 @@ def mov(seeds: list[int]) -> list[dict]:
     return J
 
 
+def gauss_ab_level() -> float:
+    """EEG white-noise level (uV rms) of the generator A/B. Rule fixed 16 Nov before any EEG sweep result (LOG L17):
+    the EEG white-noise tolerance limit from tolerance.json; the most severe tested level if every level is
+    tolerated; the mildest level if none is."""
+    import json
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[2] / "ms/results/phase1/tolerance.json"
+    if not p.exists():
+        raise SystemExit("gauss_ab needs the EEG limits: run ms/py/tolerance.py eeg first")
+    f = json.loads(p.read_text())["grids"]["eeg"]["families"]["eeg/white"]
+    lv = [x["level"] for x in f["levels"]]
+    return {"limit": f["limit"], "beyond grid": lv[-1] if lv else None, "none tolerated": lv[0] if lv else None}[f["status"]]
+
+
 def get(grid: str, seeds: list[int]) -> list[dict]:
     if grid == "clean":
         return []
     if grid == "smoke":          # pipeline check: one deterministic and one random job on EEG
         return [_job("eeg_lsb_4uV", 0, eeg={"lsb": 4.0}),
                 _job("eeg_white_1uVrms", 0, eeg={"white_density": dens(1.0)})]
-    if grid == "gauss_ab":       # generator A/B (LOG L12): 64-uniform sum vs exact Gaussian, 5 seeds each
-        r = GAUSS_AB_UVRMS
+    if grid == "gauss_ab":       # generator A/B (LOG L12, L17): 64-uniform sum vs exact Gaussian, 5 seeds each
+        r = gauss_ab_level()
         return [j for s in range(5) for j in (
-            _job(f"eeg_white_{r}uVrms", s, eeg={"white_density": dens(r)}),
-            _job(f"eeg_white_{r}uVrms_refgauss", s, eeg={"white_density": dens(r), "reference_gaussian": True}))]
+            _job(f"eeg_white_{r:g}uVrms", s, eeg={"white_density": dens(r)}),
+            _job(f"eeg_white_{r:g}uVrms_refgauss", s, eeg={"white_density": dens(r), "reference_gaussian": True}))]
     if grid == "combined":       # step 7b; built from the limits by ms/py/combined.py
         import json
         from pathlib import Path
