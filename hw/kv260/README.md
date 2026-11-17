@@ -1,5 +1,17 @@
 # SeizeLUT on the Kria KV260: build and test guide
 
+**New to the board? Start with `START_HERE.md`** (step by step from an unopened KV260: SD card, PYNQ, Vivado
+build, tests, live demo). This file is the reference.
+
+**Kit v6: the whole detector in the fabric.** The core (version 3) now also holds the integer front end: a microcoded
+feature engine (`rtl/fe_engine_inline.v`, one 40-bit adder and two shifters, no multiplier) computes the 38
+classifier features from raw EEG, ECG, EMG and motion samples and hands each finished window to the classifier. The
+ARM only writes raw samples (FE window at 0x1000) and starts events. Board test step 9 runs the 3 raw recordings
+through it and compares every window's features, score, decision and alarm with the golden model; the demo uses it
+automatically. Verified before shipping: the engine program on all 431,960 windows (`results/fe_engine_isa_verification.json`),
+the engine RTL (`results/fe_engine_rtl_verification.json`), and the whole v6 core driven through AXI from raw samples
+(`results/fe_core_verification.json`), plus the unchanged classifier checks (`results/simulation_verification.json`).
+
 This kit puts the final SeizeLUT seizure classifier (50 six-input LUTs, 146 threshold comparators, no multipliers)
 into the FPGA fabric of the AMD Kria KV260 and proves on the board that the hardware gives **exactly** the same
 result as the software for every one-second window of 10 recordings (431,960 windows). The board also reports the
@@ -45,7 +57,7 @@ Expected end of the output: `ALL TESTS PASSED`. Send back `board/results/kv260_r
 |---|---|
 | Kria KV260 Vision AI Starter Kit | with its 12 V power adapter, the micro-SD card, an Ethernet cable and the micro-USB cable |
 | A PC with Windows 10/11 or Ubuntu (or WSL) | 16 GB RAM recommended (8 GB works for this small design), about 60-100 GB free disk for Vivado |
-| Vivado **2022.1 to 2025.2**, free *Standard* edition | the K26 device needs no licence in these versions; 2026.1 changed the licensing, so avoid it |
+| Vivado 2022.1 or newer, free *Standard* edition | kit v5 was built with Vivado 2026.1 without a paid licence; the K26 device is in the free edition |
 | A router or switch | the board and the PC on the same network (Ethernet) |
 
 ## Part A: build the bitstream on your PC
@@ -145,11 +157,13 @@ to `hw/kv260/measured/`; `tools/` there turns them into the paper's hardware tab
 | 6 power | SOM power from the on-board INA260 monitor: overlay idle vs. the classifier running continuously | reported |
 | 7 end to end | raw EEG/ECG/EMG/motion samples of 3 recordings -> integer front end in C on the ARM (all 117 features compared with the golden model) -> classifier in the fabric -> alarms compared with the golden model | 0 feature and 0 output mismatches; reports the front end's speed (x real time) |
 | 8 fault injection | each of the 3,592 single faults injected through the fault registers, one BIST pass each; error count and first failing vector compared with the software prediction | 0 hardware/software mismatches; reports the share of decision-relevant faults the self-test detects |
+| 9 whole detector in the fabric (v6) | raw samples of the 3 recordings written into the feature engine (FE window, FE_CTRL events); the engine computes the 38 features and the core classifies them; features, score, decision, alarm and the programmable path compared with the golden model per window | 0 mismatches, 0 dropped accesses; reports the engine's busy cycles per second of signal (lowest real-time clock) |
 
 Numbers the board must reproduce (they come from the simulation of the same RTL): BIST 1,024/1,024 in 1,028
 cycles; latency 3 cycles; 0 mismatches on 431,960 windows; frozen operating point: 1 of 19 seizures, 0 false
 alarms in 120 hours; programmable point (threshold 2, k 10): 3 of 19 seizures, 25 false alarms; end to end: 0
-mismatches on the 3 raw recordings.
+mismatches on the 3 raw recordings; step 9: 0 mismatches on the 9,214 windows of the 3 raw recordings, at most about
+946,000 engine cycles per second of signal (the all-sensor recording; 787,614 for EEG only).
 
 ## Troubleshooting
 
@@ -171,13 +185,14 @@ mismatches on the 3 raw recordings.
 
 | Path | Content |
 |---|---|
-| `rtl/` | `seizelut_axi.v` (AXI4-Lite core, BIST, programmable operating point), `lutnet_classifier.v` (the classifier, generated from the trained model), `seizelut_bist_rom.v` (self-test vectors), `seizelut_regs.json` (register map), `baselines/` (TreeLUT and logic-gate-network classifiers for the cost comparison; synthesised out of context by the build) |
+| `START_HERE.md` | the step-by-step guide |
+| `rtl/` | `seizelut_axi.v` (AXI4-Lite core version 3: feature engine, classifier, BIST, fault injection, programmable operating point), `fe_engine_inline.v` (the feature engine with its program and initial register file, built by Vivado), `fe_engine.v` + `fe/` (the same engine with its ROM/RAM images as files, and `fe_io.vh` with its register addresses), `lutnet_classifier.v` (the classifier, generated from the trained model), `seizelut_bist_rom.v` (self-test vectors), `seizelut_regs.json` (register map), `baselines/` (TreeLUT and logic-gate-network classifiers for the cost comparison; synthesised out of context by the build) |
 | `vivado/` | `build_kv260.tcl` (one-step build), `build.bat`, `build.sh`, `kv260_pmod.xdc` (PMOD pins for the demo LEDs, buzzer and button) |
 | `demo/` | live demo: `DEMO.md` (guide and presenter script), `ORDER_NOW.md` (parts and wiring for Demo 2), `demo1_now.sh`, `demo2_components.sh`, `rehearse_laptop.sh` / `.bat`, `net_direct.sh`, `seizelut_demo.py` (server, Python standard library + numpy), `board_io.py` (board LEDs and button), `web/` (dashboard), `segments/` (5 recorded inputs) |
-| `board/` | `run_tests.py` (test campaign, steps 1-8), `fault_campaign.py` (step 8: every single fault injected, self-test after each), `fault_list.json` (each fault's effect on the training data), `seizelut_bist_vectors.npz` (the self-test vectors and their golden outputs), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (features of 10 recordings), `raw/` (raw samples of 3 recordings), `frontend/` (integer front end in C: `seizelut_fe.c` batch and `seizelut_fe_stream.c` second by second, both bit-exact with the golden model; `prebuilt/` libraries for the board's ARM, Linux x86-64 and Windows, used when there is no gcc) |
-| `sim/` | `tb_seizelut_axi.v` and `run_sim.sh` (Icarus Verilog), one bundled recording |
+| `board/` | `run_board_tests.sh` (runs the campaign as root in the PYNQ environment and saves the console), `pack_results.sh` (results to send back), `run_tests.py` (test campaign, steps 1-9), `fe_ram.hex` (the engine's initial register file, restored before every recording), `prebuilt/linux-aarch64/libfastio.so` (fast register streaming when the board has no gcc), `fault_campaign.py` (step 8: every single fault injected, self-test after each), `fault_list.json` (each fault's effect on the training data), `seizelut_bist_vectors.npz` (the self-test vectors and their golden outputs), `seizelut_kv260.py` (driver), `seizelut_model.py` (software reference), `fastio.c` (fast register streaming), `SeizeLUT_KV260.ipynb`, `model/` (trained model), `vectors/` (features of 10 recordings), `raw/` (raw samples of 3 recordings), `frontend/` (integer front end in C: `seizelut_fe.c` batch and `seizelut_fe_stream.c` second by second, both bit-exact with the golden model; `prebuilt/` libraries for the board's ARM, Linux x86-64 and Windows, used when there is no gcc) |
+| `sim/` | `tb_seizelut_axi.v` and `run_sim.sh` (Icarus Verilog), one bundled recording; `tb_seizelut_fe.v` and `run_sim_fe.sh` (v6: raw samples through the feature engine and classifier via AXI; `fe_vectors/` holds the bundled recording's raw samples); `tb_fe_engine.v` (the engine alone) |
 | `tools/` | `parse_reports.py` (Vivado reports to JSON), `make_board_vectors.py` and `make_frontend_header.py` (regenerate vectors and the front end's constants, need the repository) |
-| `results/` | verification already done: `simulation_verification.json`, `frontend_c_verification.json`, `yosys_synthesis.json`, `hw_synthesis_yosys.json` (all three classifiers), `board_campaign_emulated.json` |
+| `results/` | verification already done: `fe_engine_isa_verification.json`, `fe_engine_rtl_verification.json`, `fe_core_verification.json` (v6 front end), `simulation_verification.json`, `frontend_c_verification.json`, `yosys_synthesis.json`, `hw_synthesis_yosys.json` (all three classifiers), `board_campaign_emulated.json` |
 
 ## Register map (base address from the `.hwh`, normally 0x8000_0000)
 
@@ -203,4 +218,9 @@ mismatches on the 3 raw recordings.
 | 0x0A0-0x0B0 / 0x0B4-0x0C4 | FI_B0 / FI_B1 | RW | fault injection: comparator output i stuck at 0 / 1 (bit i of the 160-bit mask) |
 | 0x0C8-0x0CC / 0x0D0-0x0D4 | FI_L0 / FI_L1 | RW | fault injection: LUT output j stuck at 0 / 1 |
 | 0x0D8-0x0DC / 0x0E0 | FI_TT / FI_ADDR | RW | fault injection: flip truth-table entry FI_ADDR of LUT j (all zero = no fault) |
+| 0x0E4 | FE_CTRL | RW | v6: start a feature-engine event: 0 BIO (one 256-Hz sample), 1 MOV (one 25-Hz motion sample), 2 SEC (end of a second), 3 FLUSH (last window); ignored while busy |
+| 0x0E8 | FE_STATUS | R | busy [0] (engine, feature transfer or the classification it started), window ended [1], auto mode [2], dropped accesses [15:8], events started [31:16] |
+| 0x0EC | FE_CFG | RW | bit0 auto (reset 1): a finished window's features go into FEAT and are classified |
+| 0x0F0-0x0FC | FE_BUSYCYC, FE_NEV, FE_NWIN, FE_LASTWIN | R | engine busy cycles, events, windows, index of the last window |
 | 0x100 + 4i | FEAT i | RW | features 2i (bits 15:0) and 2i+1 (bits 31:16), int16 |
+| 0x1000 + 4i | FE window | RW | v6: the engine's register i (inputs, presence bits, WIN_VALID, WIN_INDEX, FEAT_0..37; addresses in `seizelut_regs.json["fe"]["io"]`), only while FE_STATUS[0] = 0 |

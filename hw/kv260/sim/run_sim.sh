@@ -6,5 +6,5 @@ cd "$(dirname "$0")/.."
 VEC=${1:-sim/vectors/sub-097_run-10.hex}
 N=${2:-424}
 mkdir -p build
-iverilog -g2005 -o build/tb.vvp sim/tb_seizelut_axi.v rtl/seizelut_axi.v rtl/lutnet_classifier.v rtl/seizelut_bist_rom.v
+iverilog -g2005 -o build/tb.vvp sim/tb_seizelut_axi.v rtl/seizelut_axi.v rtl/lutnet_classifier.v rtl/seizelut_bist_rom.v rtl/fe_engine_inline.v
 vvp -n build/tb.vvp +vec="$VEC" +n="$N" +thr2=2 +k2=10

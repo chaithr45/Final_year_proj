@@ -11,7 +11,7 @@ module tb_seizelut_axi;
     reg clk = 0, rstn = 0;
     always #5 clk = ~clk;
 
-    reg  [11:0] awaddr = 0, araddr = 0;
+    reg  [12:0] awaddr = 0, araddr = 0;
     reg         awvalid = 0, wvalid = 0, bready = 1, arvalid = 0, rready = 1;
     reg  [31:0] wdata = 0;
     wire        awready, wready, bvalid, arready, rvalid;
@@ -27,7 +27,7 @@ module tb_seizelut_axi;
         .s_axi_araddr(araddr), .s_axi_arprot(3'b000), .s_axi_arvalid(arvalid), .s_axi_arready(arready),
         .s_axi_rdata(rdata), .s_axi_rresp(rresp), .s_axi_rvalid(rvalid), .s_axi_rready(rready));
 
-    task axi_write(input [11:0] a, input [31:0] d);
+    task axi_write(input [12:0] a, input [31:0] d);
         reg aw_done, w_done;
         begin
             @(negedge clk); awaddr = a; wdata = d; awvalid = 1; wvalid = 1; aw_done = 0; w_done = 0;
@@ -44,7 +44,7 @@ module tb_seizelut_axi;
         end
     endtask
 
-    task axi_read(input [11:0] a, output [31:0] d);
+    task axi_read(input [12:0] a, output [31:0] d);
         begin
             @(negedge clk); araddr = a; arvalid = 1;
             @(posedge clk); while (!arready) @(posedge clk);

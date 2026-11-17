@@ -1,6 +1,6 @@
 {
  "simulator": "Verilator (testbench sim/tb_seizelut_axi.v; the same testbench runs on Icarus Verilog 12)",
- "rtl": "rtl/seizelut_axi.v (core version 2: PMOD I/O, debug taps, fault injection, coverage-selected BIST) + rtl/lutnet_classifier.v + rtl/seizelut_bist_rom.v",
+ "rtl": "rtl/seizelut_axi.v (core version 3: PMOD I/O, debug taps, fault injection, coverage-selected BIST, feature engine) + rtl/lutnet_classifier.v + rtl/seizelut_bist_rom.v + rtl/fe_engine_inline.v; the front-end path is checked by scripts/verify_kv260_fe.py",
  "recordings": 10,
  "windows_per_pass": 431960,
  "operating_points_programmable": [
@@ -17,7 +17,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 2694 alarms 8",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -33,7 +33,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 20965 alarms 2755",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -49,7 +49,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 2767 alarms 6",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -65,7 +65,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 49771 alarms 16525",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -81,7 +81,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 398 alarms 0",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -97,7 +97,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 3479 alarms 629",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -113,7 +113,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 1035 alarms 0",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -129,7 +129,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 30780 alarms 6976",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -145,7 +145,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 1761 alarms 3",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -161,7 +161,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 63270 alarms 27123",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -177,7 +177,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 15 alarms 0",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -193,7 +193,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 242 alarms 49",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -209,7 +209,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 1399 alarms 154",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -225,7 +225,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 8403 alarms 1412",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -241,7 +241,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 729 alarms 4",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -257,7 +257,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 6381 alarms 780",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -273,7 +273,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 74 alarms 0",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -289,7 +289,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 1261 alarms 122",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -305,7 +305,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 23 alarms 0",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -321,7 +321,7 @@
    "fault_cases": 0,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=-7 k=10: decisions 336 alarms 52",
     "LATENCY 3 cycles",
     "BIST status 1101",
@@ -337,7 +337,7 @@
    "fault_cases": 3592,
    "pass": true,
    "output": [
-    "INFO 03322602",
+    "INFO 03322603",
     "OP2 thr=2 k=10: decisions 15 alarms 0",
     "LATENCY 3 cycles",
     "BIST status 1101",

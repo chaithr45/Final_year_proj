@@ -6,6 +6,7 @@ Backends:
   emu     no hardware: the same registers emulated in Python with the reference model (tests the scripts)
 
 Register map: seizelut_regs.json (generated with the RTL by src/hw/kv260.py).
+Core version 3 (kit v6) also holds the integer front end in the fabric (feature engine): see SeizeLUT.fe_* below.
 """
 from __future__ import annotations
 
@@ -13,6 +14,7 @@ import ctypes
 import json
 import mmap
 import os
+import platform
 import subprocess
 import time
 from collections import deque
@@ -21,6 +23,21 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
+SENSORS = ("eeg1", "eeg2", "ecg", "emg", "acc_x", "acc_y", "acc_z", "gyr_x", "gyr_y", "gyr_z")
+FE_INPUTS = ("IN_EEG1", "IN_EEG2", "IN_ECG", "IN_EMG", "IN_AX", "IN_AY", "IN_AZ", "IN_GX", "IN_GY", "IN_GZ")
+FE_EV = {"BIO": 0, "MOV": 1, "SEC": 2, "FLUSH": 3}
+
+
+def load_fe_ram(path) -> list[int]:
+    """The feature engine's initial register file (40-bit hex words) as signed values; every value fits in 32 bits,
+    so the host can restore it through the 32-bit FE window (the core sign-extends)."""
+    vals = []
+    for line in Path(path).read_text().split():
+        v = int(line, 16)
+        v = v - (1 << 40) if v >> 39 else v
+        assert -(1 << 31) <= v < (1 << 31), "engine register image needs more than 32 bits"
+        vals.append(v)
+    return vals
 
 
 def pack_words(feats: np.ndarray) -> np.ndarray:
@@ -42,7 +59,7 @@ def decode_result(r: int) -> tuple[int, int, int, int, int, int, int]:
 class _MemBackend:
     """32-bit register access through an mmap of /dev/mem (works with any loader)."""
 
-    def __init__(self, base: int, size: int = 0x1000):
+    def __init__(self, base: int, size: int = 0x2000):
         self.base, self.size = int(base), int(size)
         fd = os.open("/dev/mem", os.O_RDWR | os.O_SYNC)
         try:
@@ -69,7 +86,7 @@ class _PynqBackend(_MemBackend):
             raise RuntimeError(f"no seizelut IP in the overlay; IPs: {list(self.overlay.ip_dict)}")
         ip = self.overlay.ip_dict[keys[0]]
         self.ip_name = keys[0]
-        super().__init__(ip["phys_addr"], max(0x1000, int(ip.get("addr_range", 0x1000))))
+        super().__init__(ip["phys_addr"], max(0x2000, int(ip.get("addr_range", 0x1000))))
 
 
 class _EmuBackend:
@@ -98,6 +115,12 @@ class _EmuBackend:
         self.bist_err, self.bist_first = 0, 0xFFFFFFFF
         bv = HERE / "seizelut_bist_vectors.npz"
         self.bist_vec = dict(np.load(bv)) if bv.exists() else None
+        self.fe = _FeEmu(self, cfg) if "fe" in cfg else None
+
+    def fe_reset(self) -> None:
+        """Restore the emulated engine's register file (the board writes fe_ram.hex through the FE window)."""
+        if self.fe is not None:
+            self.fe.reset()
 
     def fault(self) -> dict:
         """The fault-injection registers as a fault for the software model."""
@@ -142,6 +165,9 @@ class _EmuBackend:
 
     def write(self, off: int, v: int) -> None:
         r = self.r
+        if self.fe is not None and (off >= r["FE_WIN"] or r["FE_CTRL"] <= off <= r["FE_LASTWIN"]):
+            self.fe.write(off, v)
+            return
         if off >= r["FEAT0"]:
             k = (off - r["FEAT0"]) >> 2
             if k < self.nw:
@@ -151,6 +177,8 @@ class _EmuBackend:
                 self.hist.clear(); self.hist2.clear(); self.valid = 0
             if v & 2:
                 self.seq = self.nwin = self.ndec = self.nalarm = self.ndec2 = self.nalarm2 = 0
+                if self.fe is not None:
+                    self.fe.nwin = 0
             if v & 4:
                 self._run_bist()
         elif off == r["COMMIT"]:
@@ -195,6 +223,8 @@ class _EmuBackend:
 
     def read(self, off: int) -> int:
         r = self.r
+        if self.fe is not None and (off >= r["FE_WIN"] or r["FE_CTRL"] <= off <= r["FE_LASTWIN"]):
+            return self.fe.read(off)
         if off >= r["FEAT0"]:
             k = (off - r["FEAT0"]) >> 2
             return self.feat[k] if k < self.nw else 0
@@ -239,6 +269,97 @@ class _EmuBackend:
                 r["BIST_RUNS"]: self.bist_runs, r["BIST_FIRSTERR"]: self.bist_first,
                 r["OP_THR"]: self.op_thr & 0xFFFFFFFF, r["OP_K"]: self.op_k, r["NDEC2"]: self.ndec2,
                 r["NALARM2"]: self.nalarm2}.get(off, 0xDEADBEEF)
+
+
+class _FeEmu:
+    """Feature engine of core version 3 at register level, emulated with the streaming C front end
+    (frontend/seizelut_fe_stream.c), which gives exactly the engine's features on every window (both are checked
+    against the golden model: scripts/verify_fe_engine.py, results/fe_engine_*_verification.json). No timing:
+    every event finishes at once (FE_BUSYCYC stays 0)."""
+
+    def __init__(self, emu, cfg: dict):
+        self.emu, self.r, fe = emu, cfg["registers"], cfg["fe"]
+        self.io = fe["io"]
+        self.win0 = fe["window"]
+        self.img = load_fe_ram(HERE / fe.get("ram_image", "fe_ram.hex"))[: fe["n_ram"]]
+        self.spec = [f["spec_index"] for f in cfg["features"]]
+        self.nev, self.nwin, self.auto, self.ev = 0, 0, 1, 0
+        self.reset()
+
+    def reset(self) -> None:
+        self.ram = dict(enumerate(self.img))
+        self.stream = None
+        self.buf = {k: [] for k in SENSORS}
+        self.winv, self.lastwin = 0, 0
+
+    def _present(self) -> dict:
+        p = {k: bool(self.ram.get(self.io[f"PRES_{k.upper()}"], 0)) for k in ("ecg", "emg", "acc", "gyr")}
+        return {"eeg1": True, "eeg2": True, "ecg": p["ecg"], "emg": p["emg"], "acc_x": p["acc"], "acc_y": p["acc"],
+                "acc_z": p["acc"], "gyr_x": p["gyr"], "gyr_y": p["gyr"], "gyr_z": p["gyr"]}
+
+    def _window(self, w, X) -> None:
+        io = self.io
+        self.winv = int(w is not None)
+        self.ram[io["WIN_VALID"]] = self.winv
+        if w is None:
+            return
+        self.ram[io["WIN_INDEX"]] = int(w)
+        f = [int(X[i]) for i in self.spec]
+        for j, v in enumerate(f):
+            self.ram[io[f"FEAT_{j}"]] = v
+        self.lastwin, self.nwin = int(w), self.nwin + 1
+        if self.auto:                      # the core copies the features into the classifier and classifies them
+            for k in range(0, len(f), 2):
+                lo, hi = f[k] & 0xFFFF, (f[k + 1] & 0xFFFF) if k + 1 < len(f) else 0
+                self.emu.write(self.r["FEAT0"] + 2 * k, lo | (hi << 16))
+            self.emu.write(self.r["COMMIT"], 0)
+
+    def _event(self, ev: int) -> None:
+        import sys
+        if str(HERE / "frontend") not in sys.path:
+            sys.path.insert(0, str(HERE / "frontend"))
+        import frontend as fe_c
+        pres = self._present()
+        self.nev, self.ev = self.nev + 1, ev
+        if ev == 0:
+            for k in SENSORS[:4]:
+                if pres[k]:
+                    self.buf[k].append(self.ram.get(self.io[FE_INPUTS[SENSORS.index(k)]], 0))
+        elif ev == 1:
+            for k in SENSORS[4:]:
+                if pres[k]:
+                    self.buf[k].append(self.ram.get(self.io[FE_INPUTS[SENSORS.index(k)]], 0))
+        else:
+            if self.stream is None:
+                self.stream = fe_c.Stream()
+            if ev == 2:
+                blk = {k: np.array(v, dtype=np.int16) for k, v in self.buf.items() if pres[k]}
+                bad = {k: len(v) for k, v in blk.items() if len(v) != (256 if k in SENSORS[:4] else 25)}
+                if bad:
+                    raise RuntimeError(f"emulated engine: a second needs 256 BIO and 25 MOV events, got {bad}")
+                self.buf = {k: [] for k in SENSORS}
+                w, X, _, _ = self.stream.push(blk)
+            else:
+                w, X, _ = self.stream.flush()
+            self._window(w, X)
+
+    def write(self, off: int, v: int) -> None:
+        r = self.r
+        if off >= self.win0:
+            v &= 0xFFFFFFFF
+            self.ram[(off - self.win0) >> 2] = v - (1 << 32) if v >> 31 else v
+        elif off == r["FE_CTRL"]:
+            self._event(v & 3)
+        elif off == r["FE_CFG"]:
+            self.auto = v & 1
+
+    def read(self, off: int) -> int:
+        r = self.r
+        if off >= self.win0:
+            return self.ram.get((off - self.win0) >> 2, 0) & 0xFFFFFFFF
+        return {r["FE_CTRL"]: self.ev, r["FE_STATUS"]: ((self.nev & 0xFFFF) << 16) | (self.auto << 2) | (self.winv << 1),
+                r["FE_CFG"]: self.auto, r["FE_BUSYCYC"]: 0, r["FE_NEV"]: self.nev & 0xFFFFFFFF,
+                r["FE_NWIN"]: self.nwin, r["FE_LASTWIN"]: self.lastwin}.get(off, 0)
 
 
 # ---------------------------------------------------------------------------------------------- driver
@@ -376,15 +497,23 @@ class SeizeLUT:
         if self.base is None:
             return False
         so = HERE / "libfastio.so"
+        pre = HERE / "prebuilt" / f"linux-{platform.machine()}" / "libfastio.so"
         try:
             if not so.exists() or so.stat().st_mtime < (HERE / "fastio.c").stat().st_mtime:
-                subprocess.run(["gcc", "-O2", "-shared", "-fPIC", "-o", str(so), str(HERE / "fastio.c")],
-                               check=True, capture_output=True)
+                try:
+                    subprocess.run(["gcc", "-O2", "-shared", "-fPIC", "-o", str(so), str(HERE / "fastio.c")],
+                                   check=True, capture_output=True)
+                except (OSError, subprocess.CalledProcessError):
+                    if not pre.exists():
+                        raise
+                    so = pre                   # no compiler on the board: the library built with the kit
             lib = ctypes.CDLL(str(so))
+            P = ctypes.c_void_p
             lib.sl_open.argtypes = [ctypes.c_uint64, ctypes.c_uint32]
-            lib.sl_run.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_void_p,
-                                   ctypes.c_void_p]
-            if lib.sl_open(self.base, 0x1000) != 0:
+            lib.sl_run.argtypes = [P, P, ctypes.c_int, ctypes.c_int, P, P]
+            lib.sl_fe_run.argtypes = [P] * 10 + [P, ctypes.c_int, ctypes.c_int, ctypes.c_int, P, P, P, P, P]
+            lib.sl_fe_run.restype = ctypes.c_int
+            if lib.sl_open(self.base, 0x2000 if "FE_WIN" in self.R else 0x1000) != 0:
                 return False
             self.fast = lib
         except Exception as e:   # no compiler or no /dev/mem access: fall back to Python
@@ -440,6 +569,158 @@ class SeizeLUT:
                 "alarm": ((res >> 9) & 1).astype(np.uint8), "decision2": ((res >> 10) & 1).astype(np.uint8),
                 "alarm2": ((res >> 11) & 1).astype(np.uint8), "seconds": seconds, "worst_window_s": worst,
                 "method": method, "counters": self.counters()}
+
+    # ---- front end in the fabric (core version 3)
+    def has_fabric_fe(self) -> bool:
+        """True when the loaded core holds the feature engine (version >= 3) and the register map describes it."""
+        return "fe" in self.cfg and (self.read("INFO") & 0xFF) >= 3
+
+    def _fe_reg(self, name: str) -> int:
+        return self.cfg["fe"]["window"] + 4 * self.cfg["fe"]["io"][name]
+
+    def fe_wait(self, nev: int, timeout_s: float = 2.0) -> int:
+        """Wait until event number nev has started and the core is idle again (engine, feature transfer and the
+        classification it triggered). Polling the event count makes this safe even if a read overtakes the write."""
+        t0 = time.perf_counter()
+        st_reg = self.R["FE_STATUS"]
+        while True:
+            st = self.hw.read(st_reg)
+            if (st >> 16) == (nev & 0xFFFF) and not st & 1:
+                return st
+            if time.perf_counter() - t0 > timeout_s:
+                raise TimeoutError(f"feature engine: event {nev} not finished (FE_STATUS 0x{st:08X})")
+
+    def fe_reset(self, sensors) -> None:
+        """Before a recording: restore the engine's initial register file (fe_ram.hex) through the FE window and set
+        which sensors are present. EEG (two channels) is always present."""
+        st = self.read("FE_STATUS")
+        self.fe_wait(st >> 16)                    # nothing running
+        if hasattr(self.hw, "fe_reset"):
+            self.hw.fe_reset()                    # emulator
+        else:
+            if not hasattr(self, "_fe_img"):
+                self._fe_img = load_fe_ram(HERE / self.cfg["fe"].get("ram_image", "fe_ram.hex"))[: self.cfg["fe"]["n_ram"]]
+            w0 = self.cfg["fe"]["window"]
+            for i, v in enumerate(self._fe_img):
+                self.hw.write(w0 + 4 * i, v & 0xFFFFFFFF)
+        s = set(sensors)
+        pres = {"PRES_ECG": "ecg" in s, "PRES_EMG": "emg" in s, "PRES_ACC": "acc_x" in s, "PRES_GYR": "gyr_x" in s}
+        for name, on in pres.items():
+            self.hw.write(self._fe_reg(name), int(on))
+        for _ in range(10000):                    # the last write has landed when it reads back
+            if self.hw.read(self._fe_reg("PRES_GYR")) == int(pres["PRES_GYR"]):
+                break
+        self.write("FE_CFG", 1)
+        self._fe_nev = self.read("FE_STATUS") >> 16
+
+    def fe_event(self, ev: int) -> int:
+        self.write("FE_CTRL", ev)
+        self._fe_nev = (self._fe_nev + 1) & 0xFFFF
+        return self.fe_wait(self._fe_nev)
+
+    def fe_features(self) -> np.ndarray:
+        """The 38 features in the classifier's registers (written there by the engine in auto mode), int16."""
+        w = [self.read(self.R["FEAT0"] + 4 * k) for k in range(self.cfg["n_feature_words"])]
+        f = []
+        for v in w:
+            for x in (v & 0xFFFF, (v >> 16) & 0xFFFF):
+                f.append(x - 0x10000 if x & 0x8000 else x)
+        return np.array(f[: self.cfg["n_features"]], dtype=np.int16)
+
+    def _fe_window(self, st: int):
+        if not (st >> 1) & 1:
+            return None
+        return self.read("FE_LASTWIN"), self.read("RESULT"), self.fe_features()
+
+    def fe_second(self, block: dict):
+        """One second of raw samples through the engine (256 BIO events, 25 MOV events, SEC). Returns
+        (window index, RESULT word, the 38 features) when a window ended, else None."""
+        io = self.cfg["fe"]["io"]
+        w0 = self.cfg["fe"]["window"]
+        wr = self.hw.write
+        bio = [(w0 + 4 * io[FE_INPUTS[c]], np.asarray(block[k]).tolist()) for c, k in enumerate(SENSORS[:4])
+               if block.get(k) is not None]
+        mov = [(w0 + 4 * io[FE_INPUTS[4 + c]], np.asarray(block[k]).tolist()) for c, k in enumerate(SENSORS[4:])
+               if block.get(k) is not None]
+        for i in range(256):
+            for a, x in bio:
+                wr(a, x[i] & 0xFFFFFFFF)
+            self.fe_event(0)
+        for i in range(25):
+            for a, x in mov:
+                wr(a, x[i] & 0xFFFFFFFF)
+            self.fe_event(1)
+        return self._fe_window(self.fe_event(2))
+
+    def fe_flush(self):
+        """After the last second: the final window (no look-ahead second)."""
+        return self._fe_window(self.fe_event(3))
+
+    def fe_run_recording(self, raw: dict, n_win: int, use_fast: bool = True) -> dict:
+        """A whole recording from raw samples through the front end and the classifier in the fabric: soft reset,
+        engine restore, every sample, every window. Returns per window the fabric's features, score, decision and
+        alarm, and the engine's busy cycles."""
+        n_sec = min(len(raw[k]) // (256 if k in SENSORS[:4] else 25) for k in raw if k in SENSORS)
+        self.soft_reset()
+        self.fe_reset([k for k in raw if k in SENSORS])
+        nw = self.cfg["n_feature_words"]
+        wins = np.zeros(n_win + 2, np.uint32)
+        res = np.zeros(n_win + 2, np.uint32)
+        fw = np.zeros((n_win + 2, nw), np.uint32)
+        if use_fast and self._load_fast():
+            arrs = {k: np.ascontiguousarray(raw[k], dtype=np.int16) for k in SENSORS if k in raw}
+            io = np.array([self.cfg["fe"]["io"][n] for n in FE_INPUTS], dtype=np.uint32)
+            secs = np.zeros(2, np.float64)
+            st = np.zeros(1, np.uint32)
+            n = self.fast.sl_fe_run(*(arrs[k].ctypes.data if k in arrs else None for k in SENSORS), io.ctypes.data,
+                                    n_sec, nw, len(wins), wins.ctypes.data, res.ctypes.data, fw.ctypes.data,
+                                    secs.ctypes.data, st.ctypes.data)
+            if n < 0:
+                print(f"[seizelut] fast C path: feature engine timed out in second {-n - 1}; "
+                      "repeating with the Python path")
+                self.fast = False
+                out = self.fe_run_recording(raw, n_win, use_fast=False)
+                out["method"] = "python (C path timed out)"
+                return out
+            method, seconds, worst, last_st = "c", float(secs[0]), float(secs[1]), int(st[0])
+            feats = np.zeros((n, self.cfg["n_features"]), np.int16)
+            for i in range(n):
+                f = []
+                for v in fw[i].tolist():
+                    for x in (v & 0xFFFF, (v >> 16) & 0xFFFF):
+                        f.append(x - 0x10000 if x & 0x8000 else x)
+                feats[i] = f[: self.cfg["n_features"]]
+        else:
+            t0 = time.perf_counter()
+            worst, out = 0.0, []
+            for b in range(n_sec):
+                ti = time.perf_counter()
+                blk = {k: raw[k][b * 256:(b + 1) * 256] if k in SENSORS[:4] else raw[k][b * 25:(b + 1) * 25]
+                       for k in raw if k in SENSORS}
+                r = self.fe_second(blk)
+                if r is not None:
+                    out.append(r)
+                worst = max(worst, time.perf_counter() - ti)
+            r = self.fe_flush()
+            if r is not None:
+                out.append(r)
+            method, seconds = "python", time.perf_counter() - t0
+            last_st = self.read("FE_STATUS")
+            n = len(out)
+            for i, (w, rr, f) in enumerate(out):
+                wins[i], res[i] = w, rr
+            feats = np.array([f for _, _, f in out], dtype=np.int16).reshape(n, -1)
+        res = res[:n]
+        s = (res & 0xFF).astype(np.int16)
+        s[s > 127] -= 256
+        busy = self.read("FE_BUSYCYC")
+        return {"window": wins[:n].astype(np.int64), "feats": feats, "score": s.astype(np.int8),
+                "decision": ((res >> 8) & 1).astype(np.uint8), "alarm": ((res >> 9) & 1).astype(np.uint8),
+                "decision2": ((res >> 10) & 1).astype(np.uint8), "alarm2": ((res >> 11) & 1).astype(np.uint8),
+                "seconds": seconds, "worst_second_s": worst, "method": method, "signal_seconds": n_sec,
+                "engine_busy_cycles": busy, "engine_cycles_per_second": busy / max(1, n_sec),
+                "dropped_accesses": (last_st >> 8) & 0xFF, "fe_windows": self.read("FE_NWIN"),
+                "counters": self.counters()}
 
     # ---- built-in self-test
     def bist(self, timeout_s: float = 5.0) -> dict:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""SeizeLUT live demo: recorded patient signals stream second by second through the integer front end (C, on this
-computer's CPU) and the LUT classifier (in the KV260's FPGA fabric, or its software model), and a web dashboard on
-the laptop shows every stage as it happens.
+"""SeizeLUT live demo: recorded patient signals stream second by second through the integer front end and the LUT
+classifier, and a web dashboard on the laptop shows every stage as it happens. With the kit v6 bitstream (core
+version 3) both run in the KV260's FPGA fabric: the ARM only writes raw samples into the feature engine, which computes
+the features and hands them to the classifier; the C front end on the ARM runs alongside for the plots and as the
+reference every window's fabric features are compared with. Older bitstreams: front end in C on the ARM.
 
   Demo 1 (no extra parts):  sudo ... python3 seizelut_demo.py --demo 1     the board's own LEDs DS35/DS36 react
   Demo 2 (parts connected): sudo ... python3 seizelut_demo.py --demo 2     plus PMOD LEDs, buzzer and push button
@@ -35,6 +37,7 @@ BOARD = HERE.parent / "board"
 sys.path.insert(0, str(BOARD))
 sys.path.insert(0, str(BOARD / "frontend"))
 sys.path.insert(0, str(HERE))
+from seizelut_kv260 import decode_result  # noqa: E402
 
 BIO = ("eeg1", "eeg2", "ecg", "emg")
 MOTION = ("acc_x", "acc_y", "acc_z", "gyr_x", "gyr_y", "gyr_z")
@@ -77,6 +80,7 @@ class Engine(threading.Thread):
         self.last_tick = 0.0
         self.names = [f["name"] for f in model.thresholds["features"]]
         self.gate = model.head.get("artefact_gate", "none")
+        self.fabric = bool(getattr(args, "fabric_fe", False))     # front end in the fabric (core version 3)
 
     # ---- clients
     def subscribe(self) -> queue.Queue:
@@ -128,6 +132,8 @@ class Engine(threading.Thread):
         self.first_alarm = None
         self.ff_to = None
         self.core.soft_reset()
+        if self.fabric:
+            self.core.fe_reset([k for k in raw if k in BIO + MOTION])
         self.apply_op()
         self.phase = "warmup"
         self.playing = False
@@ -151,14 +157,20 @@ class Engine(threading.Thread):
         raw = self.seg["raw"]
         blk = {k: v[b * 256:(b + 1) * 256] if k in BIO else v[b * 25:(b + 1) * 25] for k, v in raw.items()}
         w, X, art, viz = self.stream.push(blk)
+        fr = None
+        if self.fabric:                      # the same second through the feature engine and classifier in the fabric
+            t0 = time.perf_counter()
+            fr = self.core.fe_second(blk)
+            self.rtt.append(time.perf_counter() - t0)
         self.pos += 1
         wins = []
-        if w is not None:
-            wins.append(self.classify(w, X, art))
+        if w is not None or fr is not None:
+            wins.append(self.classify(w, X, art, fr))
         if self.pos >= self.seg["n"]:        # last second: the final window has no look-ahead block
             w, X, art = self.stream.flush()
-            if w is not None:
-                wins.append(self.classify(w, X, art))
+            fr = self.core.fe_flush() if self.fabric else None
+            if w is not None or fr is not None:
+                wins.append(self.classify(w, X, art, fr))
             self.phase = "ended"
             self.playing = False
             self.ended_pending = True
@@ -174,14 +186,29 @@ class Engine(threading.Thread):
                 "prev": [[x["t_end"], x["score"], x["dec"], x["alarm"], sum(x["art"]), x["truth"], x["thr"]]
                          for x in wins[:-1]]}
 
-    def classify(self, w: int, X: np.ndarray, art: np.ndarray) -> dict:
+    def classify(self, w, X, art, fr=None) -> dict:
+        """One window. fr = (window, RESULT, features) from the fabric front end (core version 3): the fabric has
+        already computed and classified this window; its features must equal the C front end's. Without fr the C
+        front end's features are written into the classifier (older cores)."""
         model, core = self.model, self.core
+        fe_ok = True
+        if X is None:                           # the fabric ended a window that the C front end did not
+            w_f, res, f_fab = fr
+            w, X, art, fe_ok = int(w_f), np.zeros(len(self.col_all), np.int64), np.zeros(2, np.uint8), False
+            X[self.col] = f_fab
         f = X[self.col]                         # the 38 classifier inputs, in register order
         a = int(art[0]) | (int(art[1]) << 1)
-        t0 = time.perf_counter()
-        s, d, al = core.classify(f, a)
-        rtt = time.perf_counter() - t0
-        res = core.read("RESULT")
+        if fr is not None:
+            w_f, res, f_fab = fr
+            s, d, al = decode_result(res)[:3]
+            fe_ok = fe_ok and int(w_f) == int(w) and np.array_equal(np.asarray(f_fab, np.int64), f.astype(np.int64))
+            rtt = self.rtt[-1] if self.rtt else 0.0
+        else:
+            t0 = time.perf_counter()
+            s, d, al = core.classify(f, a)
+            rtt = time.perf_counter() - t0
+            res = core.read("RESULT")
+            self.rtt.append(rtt)
         d2, al2 = (res >> 10) & 1, (res >> 11) & 1
         bits, luts = core.debug_taps()
         # software model of the same window, same history
@@ -202,10 +229,9 @@ class Engine(threading.Thread):
         self.hist_p.append(sd2)
         sa2 = int(sum(self.hist_p) >= k_p)
         ok = (s == int(S[0]) and d == sd and al == sa and d2 == sd2 and al2 == sa2
-              and np.array_equal(bits, B[0]) and np.array_equal(luts, L[0]))
+              and np.array_equal(bits, B[0]) and np.array_equal(luts, L[0]) and fe_ok)
         self.n_win += 1
         self.n_match += int(ok)
-        self.rtt.append(rtt)
         dec, alarm = (d2, al2) if opp else (d, al)
         thr = thr_p if opp else self.frozen_thr
         t_end = w + 2
@@ -234,6 +260,7 @@ class Engine(threading.Thread):
                 "bits": "".join("1" if x else "0" for x in bits), "luts": "".join("1" if x else "0" for x in luts),
                 "score": int(s), "dec": int(dec), "alarm": int(alarm), "thr": int(thr), "k": int(k_p if opp else self.core.cfg["k"]),
                 "frozen": [int(d), int(al)], "prog": [int(d2), int(al2)], "ok": bool(ok),
+                "fe": "fabric" if fr is not None else "arm", "fe_ok": bool(fe_ok),
                 "n_win": self.n_win, "n_match": self.n_match, "rtt_us": round(rtt * 1e6, 1),
                 "truth": tr, "hist": list(self.hist_p if opp else self.hist_f)}
 
@@ -490,6 +517,8 @@ def main() -> int:
     ap.add_argument("--board-button", action="store_true", help="use the board's FWUEN button as the patient button")
     ap.add_argument("--no-buzzer", action="store_true")
     ap.add_argument("--buzzer-active-low", action="store_true", help="for buzzer modules that beep when I/O is low")
+    ap.add_argument("--fe", choices=("auto", "fabric", "arm"), default="auto",
+                    help="where the front end runs: auto = in the fabric when the core has the feature engine (kit v6)")
     args = ap.parse_args()
 
     from seizelut_kv260 import SeizeLUT
@@ -529,6 +558,14 @@ def main() -> int:
     else:
         core = SeizeLUT("emu")
         label = "Software model of the FPGA core" + (f" ({note})" if note else "")
+    has_fe = core.has_fabric_fe()
+    if args.fe == "fabric" and not has_fe:
+        print("--fe fabric needs the kit v6 bitstream (core version 3 with the feature engine)")
+        return 2
+    args.fabric_fe = has_fe and args.fe != "arm"
+    if args.fabric_fe:
+        label += ("; front end (feature engine) and classifier both in the fabric" if backend == "fpga"
+                  else "; feature-engine path (front end + classifier) emulated")
     segs = json.loads((HERE / "segments" / "index.json").read_text())
 
     leds = None
@@ -548,6 +585,7 @@ def main() -> int:
     spec_names = [x.strip().strip('"') for x in names.replace("\n", " ").split(",") if x.strip()]
     assert len(spec_names) == fe._lib().fe_n_features(), "feature name table"
     engine.col = [spec_names.index(n) for n in engine.names]
+    engine.col_all = spec_names
     btn_note = "off"
     if args.board_button:
         from board_io import BoardButton
@@ -569,7 +607,8 @@ def main() -> int:
             "features": feats, "n_bits": len(bits), "groups": model.head["groups"],
             "frozen_threshold": int(core.cfg["decision_threshold"]), "k": int(core.cfg["k"]),
             "n": int(core.cfg["n"]), "latency_cycles": int(core.cfg["latency_cycles"]), "clock_mhz": 100,
-            "pmod": core.cfg.get("pmod"), "default_segment": args.segment, "default_op": args.op}
+            "pmod": core.cfg.get("pmod"), "default_segment": args.segment, "default_op": args.op,
+            "frontend": "fabric" if args.fabric_fe else "arm"}
 
     def bye(*_):
         try:
@@ -588,6 +627,9 @@ def main() -> int:
     srv = ThreadingHTTPServer((args.host, args.port), make_handler(engine, info))
     srv.daemon_threads = True
     print(f"SeizeLUT live demo {args.demo}: {label}")
+    fe_where = ("feature engine in the FPGA fabric" if backend == "fpga" else "feature engine (emulated)") \
+        + " (checked against the C front end every window)" if args.fabric_fe else "C on the ARM"
+    print(f"  front end: {fe_where}")
     print(f"  platform: {info['platform']}; board LEDs: {led_note}; board button: {btn_note}")
     print(f"  open http://<this board's address>:{args.port} on the laptop "
           f"(rehearsal: http://localhost:{args.port}); Ctrl+C stops")

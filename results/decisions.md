@@ -122,6 +122,7 @@ Format: `D<n> | milestone | decision | why | evidence`.
 | D40 | **Secondary analysis after M6 (9 Nov), at the user's request: a detector that detects more seizures than the dataset paper's baselines at slightly fewer false alarms per hour, with post-ictal verification (N8).** Not part of the frozen M6 design; reported separately as a secondary analysis. Stage 1: the frozen n4_distill network at a sensitive threshold (k = 10, th1 = -7); stage 2: a LUT-native DWN verifier (50 LUTs, 24 inputs) on before/during/after windows of each candidate (128/16/64 s, decision delay 96 s). Settings chosen on the training folds only and committed in `results/tables/paper_points_prereg.json` before one test evaluation (`scripts/paper_points_test.py --final-test`), which needs the user's go-ahead. | user request; training-fold evidence below |
 | D41 | **N9 self-testing (12 Nov), at the user's request for a further novelty.** Hardware dependability of the deployed classifier, on the 96 training patients only (no test patient read): every single fault of the network part (3,200 truth-table bits, 292 comparator and 100 LUT-output stuck-at faults) applied to all 31.4 M training windows; a BIST vector set is judged by the decision-relevant faults it detects; the vectors are chosen from training windows to cover every observable fault (`scripts/fault_analysis.py`). The BIST ROM of core version 2 opens with them, and fault-injection registers let the board measure the coverage (kit v5). Also reported: the synthesised cost of the D40 verifier, retrained exactly as before the test evaluation. | user request; results below |
 | D42 | **N10 front end in the fabric (15-17 Nov), at the user's request ("so the whole detector is multiplier-free hardware").** The 38 features the classifier reads are computed in the FPGA by a microcoded feature engine (`src/hw/fe_engine.py`, `hw/kv260/rtl/fe_engine.v`): one 40-bit adder with two 5-bit shifters, register file and program in block RAM, filter coefficients as at most five signed powers of two, so no multiplier and no DSP. It must equal the C front end (itself bit-exact with `src/features/golden.py`) on every window; no model, threshold or feature changes. The ARM's role shrinks to moving raw samples. | user request; results below |
+| D43 | **Kit v6 (17 Nov): the whole detector in the fabric on the board, at the user's request ("do our whole project on board without the buzzer part").** The feature engine (D42) goes into the KV260 core (version 3) next to the classifier: the ARM writes raw samples into the engine's register file (FE window at 0x1000) and starts events; after each window the core copies the 38 features into the classifier's registers and classifies them. Board test step 9 and the demo use this path; the C front end on the ARM stays as the reference every window is compared with. No model, feature, threshold or split change. | user request; results below |
 
 Method results and keep/drop decisions are appended below as runs finish.
 
@@ -444,3 +445,22 @@ Method results and keep/drop decisions are appended below as runs finish.
   3 RAMB36 + 3 RAMB18; with the DWN (405 LUTs, Yosys) the whole detector is 1,202 LUTs, 556 FFs, 0 DSP and 4.5 BRAM36.
   Not yet in the board build (kit v5 still runs the C front end on the A53); no Vivado run of the engine yet. Paper:
   abstract, contribution (ii), front-end method, hardware section, limitations, conclusion and Table I updated.
+* **Kit v6 (17 Nov, D43).** Core version 3 (`src/hw/kv260.py`, `hw/kv260/rtl/seizelut_axi.v`): feature engine
+  (`rtl/fe_engine_inline.v`, the D42 engine with its program and initial register file as initial values, which
+  Vivado, Yosys, Icarus and Verilator all read), 8-KB AXI window (registers 0x000-0x1FF, engine register file at
+  0x1000), FE_CTRL / FE_STATUS / FE_CFG and counters, and a 40-cycle transfer of WIN_VALID, WIN_INDEX and the 38
+  features into the classifier with an automatic COMMIT. The end-to-end testbench (`sim/tb_seizelut_fe.v`,
+  `scripts/verify_kv260_fe.py`) found one bug before shipping: for one cycle after a SEC program the core reported
+  idle before the feature transfer started, so the next writes were dropped; the idle condition now includes that
+  cycle. After the fix, sub-097_run-10 (EEG only): all 424 windows' features, score, decision and alarm equal the
+  golden vectors, engine 787,614 busy cycles per second (as the engine alone), 7.9 ms of simulated bus time per
+  second of signal at 100 MHz, and the engine register file restored through the FE window reproduces the first 28
+  windows. Regression of the classifier path on the v6 core: 863,920 window checks and 3,592 fault cases pass
+  (Verilator, `results/simulation_verification.json`). Board software: driver (`fe_reset`, `fe_second`,
+  `fe_run_recording`), register emulator of the engine (via the C streaming front end), fast C path `sl_fe_run`
+  (checked against the emulator behind a memory window on the 3 raw recordings: all windows equal, event counts
+  exact), test step 9, demo with the front end in the fabric (emulated run: 947/947 windows identical); emulated
+  campaign steps 1-9 all pass (`results/board_campaign_emulated.json`). Vivado script: engine added, address range
+  forced to 8 KB if needed, utilisation of `u_fe` and an out-of-context run of the engine; dry run with stand-ins
+  for the Vivado commands completes. Step-by-step guide `hw/kv260/START_HERE.md`. Not yet run: Vivado on the v6
+  core and the board.

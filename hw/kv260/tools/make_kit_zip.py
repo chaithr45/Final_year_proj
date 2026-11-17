@@ -12,7 +12,7 @@ from pathlib import Path
 
 KIT = Path(__file__).resolve().parents[1]
 SKIP_DIRS = {"build", "out", "dist", "__pycache__", ".ipynb_checkpoints"}
-SKIP_FILES = {"libfastio.so"}
+SKIP_PATHS = {"board/libfastio.so", "board/frontend/libseizelut_fe.so"}
 
 
 def main() -> int:
@@ -27,11 +27,13 @@ def main() -> int:
     with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
         for p in sorted(KIT.rglob("*")):
             rel = p.relative_to(KIT)
-            if p.is_dir() or set(rel.parts) & SKIP_DIRS or p.name in SKIP_FILES:
+            if p.is_dir() or set(rel.parts) & SKIP_DIRS or rel.as_posix() in SKIP_PATHS:
                 continue
-            if rel.parts[:2] == ("board", "results") or rel.as_posix() == "board/frontend/libseizelut_fe.so":
+            if rel.parts[:2] == ("board", "results"):
                 continue
             if rel.parts[:2] == ("sim", "vectors") and p.name != "sub-097_run-10.hex":
+                continue
+            if rel.parts[:2] == ("sim", "fe_vectors") and not p.name.startswith("sub-097_run-10."):
                 continue
             zf.write(p, f"{root}/{rel.as_posix()}")
             n += 1

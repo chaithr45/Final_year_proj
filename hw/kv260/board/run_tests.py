@@ -15,8 +15,12 @@ Steps (each reported as PASS/FAIL, all numbers saved to results/kv260_results_<t
   6 power of the SOM (INA260 monitor): overlay idle versus the classifier running continuously (BIST loop)
   7 end to end from raw samples: the integer front end in C on the ARM (all 117 features, compared with the golden
     model) feeding the classifier in the fabric; time per hour of signal
-Options: --quick (3 short recordings), --backend emu (no board: emulated registers), --no-power, --power-seconds N,
-         --no-e2e
+  8 fault injection: every single fault through the fault registers, one self-test pass each (fault_campaign.py)
+  9 the whole detector in the fabric (core version 3, kit v6): raw samples written into the feature engine, which
+    computes the 38 features and hands them to the classifier; every window's features, score, decision and alarm
+    compared with the golden model; the engine's clock cycles per second of signal (lowest real-time clock)
+Options: --quick (3 short recordings; fault campaign on 400 faults), --backend emu (no board: emulated registers),
+         --no-power, --power-seconds N, --no-e2e, --no-faults, --no-fabric-fe
 """
 from __future__ import annotations
 
@@ -124,6 +128,7 @@ def main() -> int:
     ap.add_argument("--op2-k", type=int, default=10, help="programmable operating point: k of the last 10 decisions")
     ap.add_argument("--no-e2e", action="store_true", help="skip the end-to-end test from raw samples")
     ap.add_argument("--no-faults", action="store_true", help="skip the fault-injection campaign")
+    ap.add_argument("--no-fabric-fe", action="store_true", help="skip step 9 (front end in the fabric)")
     args = ap.parse_args()
 
     out = {"started": dt.datetime.now().isoformat(timespec="seconds"), "backend": args.backend,
@@ -285,6 +290,57 @@ def main() -> int:
                 step("8_fault_campaign", fc.get("pass", False), **{k: v for k, v in fc.items() if k != "pass"})
         except Exception as e:
             step("8_fault_campaign", False, error=f"{type(e).__name__}: {e}")
+    # 9 the whole detector in the fabric: raw samples -> feature engine -> classifier (core version 3)
+    if not args.no_fabric_fe:
+        try:
+            if not core.has_fabric_fe():
+                out["steps"]["9_detector_in_fabric"] = {"pass": True, "skipped": "the loaded core has no feature engine "
+                                                        "(version < 3: use the kit v6 bitstream)"}
+                print("[SKIP] 9_detector_in_fabric: the loaded core has no feature engine (version < 3)")
+            else:
+                print("9 whole detector in the fabric (raw samples -> feature engine -> classifier)")
+                spec_idx = [f["spec_index"] for f in core.cfg["features"]]
+                fab, ok9 = {}, True
+                for p in sorted((HERE / "raw").glob("*.npz")):
+                    rec = p.stem
+                    z = np.load(p)
+                    raw = {k: z[k] for k in z.files if k not in ("golden_features", "golden_art", "n_win")}
+                    n_win = int(z["n_win"])
+                    hw = core.fe_run_recording(raw, n_win, use_fast=not args.python_path)
+                    gold = z["golden_features"][:, spec_idx].astype(np.int16)
+                    v = np.load(vec_dir / f"{rec}.npz")
+                    n = len(hw["window"])
+                    idx_ok = n == n_win and bool((hw["window"] == np.arange(n_win)).all())
+                    feat_bad = int((hw["feats"] != gold).sum()) if idx_ok else -1
+                    out_bad = int(np.sum((hw["score"] != v["score"]) | (hw["decision"] != v["decision"])
+                                         | (hw["alarm"] != v["alarm"]))) if idx_ok else -1
+                    sw2 = model.run(gold, z["golden_art"], threshold=args.op2_threshold, k=args.op2_k)
+                    bad2 = int(np.sum((hw["decision2"] != sw2["decision"]) | (hw["alarm2"] != sw2["alarm"]))) if idx_ok else -1
+                    tp, fp, fn = paper_counts(v["y"].astype(np.int64), hw["alarm"]) if idx_ok else (0, 0, 0)
+                    ok_r = idx_ok and feat_bad == 0 and out_bad == 0 and bad2 == 0 and hw["dropped_accesses"] == 0 \
+                        and hw["fe_windows"] == n_win
+                    ok9 &= ok_r
+                    fab[rec] = {"windows": n_win, "windows_returned": n, "sensors": sorted(raw),
+                                "feature_mismatches": feat_bad, "output_mismatches": out_bad,
+                                "op2_mismatches": bad2, "dropped_accesses": hw["dropped_accesses"],
+                                "signal_seconds": hw["signal_seconds"], "wall_seconds": round(hw["seconds"], 3),
+                                "x_real_time": round(hw["signal_seconds"] / hw["seconds"], 1) if hw["seconds"] > 0 else None,
+                                "worst_second_ms": round(1e3 * hw["worst_second_s"], 3),
+                                "engine_busy_cycles": hw["engine_busy_cycles"],
+                                "engine_cycles_per_second": round(hw["engine_cycles_per_second"]),
+                                "tp": tp, "fp": fp, "fn": fn, "method": hw["method"], "pass": ok_r}
+                    print(f"    {rec}: {n}/{n_win} windows from {len(raw)} raw signals, feature mismatches {feat_bad}, "
+                          f"output mismatches {out_bad}+{bad2}, engine {hw['engine_cycles_per_second']:.0f} cycles per "
+                          f"second of signal, {fab[rec]['x_real_time']}x real time ({hw['method']})")
+                cyc = [r["engine_cycles_per_second"] for r in fab.values()]
+                step("9_detector_in_fabric", ok9, recordings=fab,
+                     windows=int(sum(r["windows"] for r in fab.values())),
+                     engine_cycles_per_second_max=max(cyc) if cyc else None,
+                     min_clock_mhz_for_real_time=round(max(cyc) / 1e6, 3) if cyc and max(cyc) else None,
+                     note="features computed by the feature engine in the fabric and classified there; the ARM only "
+                          "writes raw samples and starts events (FE_BUSYCYC counts the engine's busy cycles)")
+        except Exception as e:
+            step("9_detector_in_fabric", False, error=f"{type(e).__name__}: {e}")
     out["finished"] = dt.datetime.now().isoformat(timespec="seconds")
     out["all_pass"] = bool(ok_all)
     res_dir = HERE / "results"

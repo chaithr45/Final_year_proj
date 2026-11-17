@@ -1,16 +1,16 @@
 {
- "started": "2026-11-10T16:58:41",
+ "started": "2026-11-17T07:46:02",
  "backend": "emu",
  "host": "vm",
  "python": "3.13.18",
  "steps": {
   "1_identity": {
    "pass": true,
-   "load_s": 0.0,
+   "load_s": 0.01,
    "base": null,
    "id": "0x534C5554",
    "id_ok": true,
-   "version": 1,
+   "version": 3,
    "n_features": 38,
    "n_luts": 50,
    "latency_cycles": 3,
@@ -41,9 +41,9 @@
    "mismatches_vs_golden": 0,
    "mismatches_vs_software": 0,
    "programmable_path_mismatches": 0,
-   "hw_seconds": 16.09,
-   "hw_us_per_window": 37.25,
-   "sw_model_us_per_window": 1.77,
+   "hw_seconds": 24.66,
+   "hw_us_per_window": 57.09,
+   "sw_model_us_per_window": 1.95,
    "recordings": {
     "sub-097_run-02": {
      "windows": 68636,
@@ -61,8 +61,8 @@
      "op2_fp": 4,
      "op2_fn": 1,
      "counters_ok": true,
-     "seconds": 2.826,
-     "worst_window_ms": 2.585,
+     "seconds": 3.873,
+     "worst_window_ms": 7.065,
      "method": "python"
     },
     "sub-097_run-04": {
@@ -81,8 +81,8 @@
      "op2_fp": 4,
      "op2_fn": 2,
      "counters_ok": true,
-     "seconds": 3.055,
-     "worst_window_ms": 10.877,
+     "seconds": 4.407,
+     "worst_window_ms": 6.213,
      "method": "python"
     },
     "sub-097_run-05": {
@@ -101,8 +101,8 @@
      "op2_fp": 0,
      "op2_fn": 1,
      "counters_ok": true,
-     "seconds": 0.289,
-     "worst_window_ms": 1.422,
+     "seconds": 0.378,
+     "worst_window_ms": 1.516,
      "method": "python"
     },
     "sub-097_run-07": {
@@ -121,8 +121,8 @@
      "op2_fp": 0,
      "op2_fn": 6,
      "counters_ok": true,
-     "seconds": 1.529,
-     "worst_window_ms": 2.75,
+     "seconds": 2.408,
+     "worst_window_ms": 2.274,
      "method": "python"
     },
     "sub-097_run-09": {
@@ -141,8 +141,8 @@
      "op2_fp": 2,
      "op2_fn": 1,
      "counters_ok": true,
-     "seconds": 2.515,
-     "worst_window_ms": 1.597,
+     "seconds": 4.45,
+     "worst_window_ms": 8.663,
      "method": "python"
     },
     "sub-097_run-10": {
@@ -161,8 +161,8 @@
      "op2_fp": 0,
      "op2_fn": 1,
      "counters_ok": true,
-     "seconds": 0.016,
-     "worst_window_ms": 0.147,
+     "seconds": 0.023,
+     "worst_window_ms": 0.126,
      "method": "python"
     },
     "sub-098_run-03": {
@@ -181,8 +181,8 @@
      "op2_fp": 14,
      "op2_fn": 0,
      "counters_ok": true,
-     "seconds": 2.995,
-     "worst_window_ms": 3.172,
+     "seconds": 4.37,
+     "worst_window_ms": 6.809,
      "method": "python"
     },
     "sub-099_run-01": {
@@ -201,8 +201,8 @@
      "op2_fp": 1,
      "op2_fn": 2,
      "counters_ok": true,
-     "seconds": 2.538,
-     "worst_window_ms": 3.455,
+     "seconds": 4.243,
+     "worst_window_ms": 4.198,
      "method": "python"
     },
     "sub-099_run-02": {
@@ -221,8 +221,8 @@
      "op2_fp": 0,
      "op2_fn": 1,
      "counters_ok": true,
-     "seconds": 0.179,
-     "worst_window_ms": 0.391,
+     "seconds": 0.289,
+     "worst_window_ms": 1.543,
      "method": "python"
     },
     "sub-100_run-03": {
@@ -241,8 +241,8 @@
      "op2_fp": 0,
      "op2_fn": 1,
      "counters_ok": true,
-     "seconds": 0.147,
-     "worst_window_ms": 0.732,
+     "seconds": 0.221,
+     "worst_window_ms": 0.674,
      "method": "python"
     }
    }
@@ -265,6 +265,228 @@
     "sensitivity_mean_over_recordings": 0.1667,
     "false_alarms_per_hour_mean_over_recordings": 0.1198
    }
+  },
+  "7_end_to_end_raw": {
+   "pass": true,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 0.011,
+     "frontend_realtime_factor": 40299.2,
+     "classifier_fabric_s": 0.023,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 0.117,
+     "frontend_realtime_factor": 42333.0,
+     "classifier_fabric_s": 0.266,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "sensors": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "ecg",
+      "eeg1",
+      "eeg2",
+      "emg",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 0.129,
+     "frontend_realtime_factor": 29939.5,
+     "classifier_fabric_s": 0.218,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    }
+   }
+  },
+  "8_fault_campaign": {
+   "pass": true,
+   "faults_injected": 3592,
+   "hw_sw_mismatches": 0,
+   "seconds": 16.96,
+   "ms_per_fault": 4.722,
+   "bist_vectors": 1024,
+   "bist_selected_vectors": 255,
+   "bist_after_clearing_errors": 0,
+   "detected_all": {
+    "faults": 3592,
+    "detected": 3142,
+    "detected_pct": 87.47
+   },
+   "detected_observable": {
+    "faults": 3142,
+    "detected": 3142,
+    "detected_pct": 100.0
+   },
+   "detected_decision_9": {
+    "faults": 2890,
+    "detected": 2890,
+    "detected_pct": 100.0
+   },
+   "detected_decision_2": {
+    "faults": 3074,
+    "detected": 3074,
+    "detected_pct": 100.0
+   },
+   "detected_decision_-7": {
+    "faults": 3101,
+    "detected": 3101,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_9": {
+    "faults": 2063,
+    "detected": 2063,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_2": {
+    "faults": 2882,
+    "detected": 2882,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_-7": {
+    "faults": 3063,
+    "detected": 3063,
+    "detected_pct": 100.0
+   },
+   "by_kind": {
+    "tt": {
+     "faults": 3200,
+     "detected": 2750,
+     "detected_pct": 85.94
+    },
+    "sab0": {
+     "faults": 146,
+     "detected": 146,
+     "detected_pct": 100.0
+    },
+    "sab1": {
+     "faults": 146,
+     "detected": 146,
+     "detected_pct": 100.0
+    },
+    "sal0": {
+     "faults": 50,
+     "detected": 50,
+     "detected_pct": 100.0
+    },
+    "sal1": {
+     "faults": 50,
+     "detected": 50,
+     "detected_pct": 100.0
+    }
+   },
+   "undetected_relevant": []
+  },
+  "9_detector_in_fabric": {
+   "pass": true,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "windows_returned": 424,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 425,
+     "wall_seconds": 1.211,
+     "x_real_time": 350.9,
+     "worst_second_ms": 4.585,
+     "engine_busy_cycles": 0,
+     "engine_cycles_per_second": 0,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "python",
+     "pass": true
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "windows_returned": 4936,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 4937,
+     "wall_seconds": 15.019,
+     "x_real_time": 328.7,
+     "worst_second_ms": 10.041,
+     "engine_busy_cycles": 0,
+     "engine_cycles_per_second": 0,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "python",
+     "pass": true
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "windows_returned": 3854,
+     "sensors": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "ecg",
+      "eeg1",
+      "eeg2",
+      "emg",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 3855,
+     "wall_seconds": 13.76,
+     "x_real_time": 280.2,
+     "worst_second_ms": 12.639,
+     "engine_busy_cycles": 0,
+     "engine_cycles_per_second": 0,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "python",
+     "pass": true
+    }
+   },
+   "windows": 9214,
+   "engine_cycles_per_second_max": 0,
+   "min_clock_mhz_for_real_time": null,
+   "note": "features computed by the feature engine in the fabric and classified there; the ARM only writes raw samples and starts events (FE_BUSYCYC counts the engine's busy cycles)"
   }
  },
  "operating_points": {
@@ -277,6 +499,6 @@
    "k": 10
   }
  },
- "finished": "2026-11-10T16:58:59",
+ "finished": "2026-11-17T07:47:16",
  "all_pass": true
 }

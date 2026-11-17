@@ -22,7 +22,7 @@ analysis + coverage-selected BIST, N9).
 | KV260 kit v5 | done; built by the user with Vivado 2026.1 (timing met; DWN 398 LUT, 468 MHz) | `hw/kv260/`, `hw/kv260/measured/vivado_2026.1_kit_v5/`, `hw/kv260/dist/SeizeLUT_KV260_kit_v5.zip` |
 | Live demo (Demo 1 board LEDs, Demo 2 PMOD parts) | done | `hw/kv260/demo/DEMO.md`, `ORDER_NOW.md` |
 | Paper (6 pages, IEEE conf) | drafted; red `[board]` marks wait for the board run | `paper/main.tex`, `paper/tables/`, `paper/figures/` |
-| **Board run** | **pending (user)**: `run_tests.py` on the KV260 with the v5 bitstream; send `board/results/kv260_results_*.json` | kit README part C |
+| **Board run** | **pending (user)**: kit v6 (`hw/kv260/START_HERE.md`): Vivado build, then `board/run_board_tests.sh`; send `out.zip` and `seizelut_results.zip` | kit v6 guide |
 | **N10 front end in the fabric** | **RTL bit-exact, synthesised; paper and kit v6 next** (see below) | `src/hw/fe_engine.py` and friends |
 | Conferences | plan: EMBC 2027 (24 Jan 2027) or FCCM 2027 (17 Jan 2027), then BioCAS 2027 (~7 May) / NER (15 Mar) / AICAS (13 Apr) | chat answer of 15 Nov; verify dates |
 
@@ -65,6 +65,16 @@ Next steps (optional, in order):
 
 CI note (17 Nov): `test_set_device_only_touches_torch_models` failed on every push since 8 Nov (CatBoost is not in
 `requirements-ci.txt`); fixed in commit fcf9bc4. The `FPGA` branch (another session) needs the same commit.
+
+## Kit v6: the whole detector on the board (17 Nov, D43)
+Core version 3 holds the feature engine; the ARM writes raw samples, the fabric computes the features and classifies.
+Files: `src/hw/kv260.py` (generator; `python scripts/make_kv260_rtl.py`), `hw/kv260/rtl/fe_engine_inline.v`,
+`hw/kv260/sim/tb_seizelut_fe.v` + `scripts/verify_kv260_fe.py` (end to end through AXI), board driver
+`fe_*` methods + emulator + `fastio.c:sl_fe_run`, `run_tests.py` step 9, demo `--fe auto|fabric|arm`,
+`hw/kv260/START_HERE.md` (guide from zero), `board/run_board_tests.sh`, `board/pack_results.sh`.
+Kit zip: `python hw/kv260/tools/make_kit_zip.py --version v6` (dist/ is git-ignored).
+Pending: the user's Vivado build of v6 and the board run (send `out.zip` + `seizelut_results.zip`); then fill the
+paper's `[board]` marks (step 9 gives the measured engine cycles per second and the fabric's end-to-end check).
 
 ## How to resume quickly
 ```

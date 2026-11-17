@@ -28,6 +28,7 @@ def main() -> int:
     cfg = build(Path(args.export), Path(args.export) / "vectors", rtl, args.bist_run, bist_selected=sel)
     shutil.copy(rtl / "seizelut_regs.json", REPO / "hw/kv260/board/seizelut_regs.json")
     shutil.copy(rtl / "seizelut_bist_vectors.npz", REPO / "hw/kv260/board/seizelut_bist_vectors.npz")
+    shutil.copy(rtl / "fe/fe_ram.hex", REPO / "hw/kv260/board/fe_ram.hex")      # engine's initial register file
     print(cfg["bist"])
     return 0
 

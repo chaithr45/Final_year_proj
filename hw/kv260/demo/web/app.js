@@ -275,7 +275,11 @@ function drawPipe(now) {
   const fpgaLabel = S.info && S.info.backend === 'fpga' ? 'FPGA fabric · 100 MHz · 3 clock cycles per window'
     : 'FPGA core (emulated in software for this run)';
   const cpuLabel = S.info && S.info.platform.includes('no board') ? 'CPU of this computer · C code' : 'ARM Cortex-A53 · C code';
-  const groups = [[1, 2, cpuLabel, '#4fd8ff'], [3, 6, fpgaLabel, '#ff8a3d']];
+  const fab = S.info && S.info.frontend === 'fabric';
+  const fabLabel = S.info && S.info.backend === 'fpga'
+    ? 'FPGA fabric · feature engine + classifier · 100 MHz · no multiplier'
+    : 'FPGA core: feature engine + classifier (emulated in software for this run)';
+  const groups = fab ? [[1, 6, fabLabel, '#ff8a3d']] : [[1, 2, cpuLabel, '#4fd8ff'], [3, 6, fpgaLabel, '#ff8a3d']];
   for (const [a, b, lab, col] of groups) {
     const x = X(a) - 7 * d, x2 = X(b) + nw + 7 * d;
     g.strokeStyle = col + '88'; g.setLineDash([5 * d, 4 * d]); g.lineWidth = 1.2 * d;
@@ -681,8 +685,13 @@ async function start() {
   buildFeatures(); buildLuts(); buildControls(); buildChooser(); buildBoard();
   const onBoard = !S.info.platform.includes('no board');
   setChip('chipBoard', onBoard ? 'good' : 'warn', onBoard ? S.info.platform.replace('Xilinx ', '') : 'laptop rehearsal (no board)');
+  const fab = S.info.frontend === 'fabric';
   setChip('chipCore', S.info.backend === 'fpga' ? 'good' : 'warn',
-    S.info.backend === 'fpga' ? 'FPGA core · 100 MHz' : 'software model (no FPGA)');
+    S.info.backend === 'fpga' ? (fab ? 'front end + classifier in FPGA · 100 MHz' : 'FPGA core · 100 MHz')
+                              : (fab ? 'software model of front end + classifier' : 'software model (no FPGA)'));
+  if (fab) {
+    const r = $('stRtt'); if (r && r.previousElementSibling) r.previousElementSibling.textContent = 'fabric time per second';
+  }
   $('chipCore').title = S.info.backend_label;
   const es = new EventSource('/api/stream');
   let lostTimer = null;

@@ -101,6 +101,12 @@ def main() -> int:
            "power_design": power(o / "power.rpt"),
            "power_classifier_ooc": power(o / "ooc_classifier_power.rpt"),
            "power_u_cls_dynamic_w": power_of_cell(o / "power_hier.rpt", "u_cls"),
+           "fe_engine_in_design": utilization(o / "utilization_fe_engine.rpt"),
+           "power_u_fe_dynamic_w": power_of_cell(o / "power_hier.rpt", "u_fe"),
+           "fe_engine_out_of_context": {"utilization": utilization(o / "ooc_fe_engine_utilization.rpt"),
+                                        "timing": timing(o / "ooc_fe_engine_timing.rpt"),
+                                        "power": power(o / "ooc_fe_engine_power.rpt"),
+                                        "fmax_mhz": summ.get("ooc_fe_engine_fmax_mhz")},
            "baselines_out_of_context": {t: {"utilization": utilization(o / f"ooc_{t}_utilization.rpt"),
                                             "timing": timing(o / f"ooc_{t}_timing.rpt"),
                                             "power": power(o / f"ooc_{t}_power.rpt"),
@@ -108,8 +114,8 @@ def main() -> int:
                                         for t in ("treelut", "lgn")},
            "bitstream": (o / "seizelut.bit").exists(), "hwh": (o / "seizelut.hwh").exists()}
     (o / "build_results.json").write_text(json.dumps(res, indent=1))
-    print(json.dumps({k: res[k] for k in ("classifier_in_design", "classifier_out_of_context", "timing_design",
-                                          "power_design")}, indent=1))
+    print(json.dumps({k: res[k] for k in ("classifier_in_design", "classifier_out_of_context", "fe_engine_in_design",
+                                          "timing_design", "power_design")}, indent=1))
     print(f"written {o / 'build_results.json'}")
     return 0
 

@@ -7,7 +7,10 @@
 #          -nooc (skip the out-of-context runs), -nobaselines (out-of-context run of our classifier only,
 #          not of the TreeLUT and logic-gate-network baselines in rtl/baselines/).
 # Outputs in out/: seizelut.bit + seizelut.hwh (PYNQ overlay, same base name), seizelut.xsa,
-#   utilization*.rpt, timing_summary.rpt, power*.rpt, ooc_classifier_*.rpt, build_summary.txt, build.log copy.
+#   utilization*.rpt, timing_summary.rpt, power*.rpt, ooc_classifier_*.rpt, ooc_fe_engine_*.rpt, build_summary.txt.
+# Kit v6: the core (rtl/seizelut_axi.v, version 3) contains the feature engine (rtl/fe_engine_inline.v: the integer
+#   front end in the fabric, program and initial register file as initial values of its block RAMs) and has an 8 KB
+#   AXI4-Lite window (registers at 0x000, engine register file at 0x1000).
 # Tested design choices follow the official Kria-PYNQ KV260 base overlay: Zynq UltraScale+ PS with
 # M_AXI_HPM0_LPD (32 bit) at 100 MHz (pl_clk0), proc_sys_reset, interconnect, AXI4-Lite slave at 0x8000_0000.
 
@@ -75,7 +78,7 @@ create_project $proj [file join $build_dir $proj] -part $part -force
 if {$board ne ""} { set_property board_part $board [current_project] }
 set_property target_language Verilog [current_project]
 add_files -norecurse [list [file join $rtl_dir seizelut_axi.v] [file join $rtl_dir lutnet_classifier.v] \
-                           [file join $rtl_dir seizelut_bist_rom.v]]
+                           [file join $rtl_dir seizelut_bist_rom.v] [file join $rtl_dir fe_engine_inline.v]]
 set_property top seizelut_axi [current_fileset]
 add_files -fileset constrs_1 -norecurse [file join $script_dir kv260_pmod.xdc]
 update_compile_order -fileset sources_1
@@ -137,6 +140,10 @@ connect_bd_intf_net [get_bd_intf_pins $ps/M_AXI_HPM0_LPD] [get_bd_intf_pins $ic/
 connect_bd_intf_net [get_bd_intf_pins $ic/M00_AXI] [get_bd_intf_pins $core/s_axi]
 assign_bd_address
 foreach seg [get_bd_addr_segs -quiet -of_objects [get_bd_addr_spaces $ps/Data]] {
+    # the core decodes 8 KB (C_S_AXI_ADDR_WIDTH = 13): registers and the feature engine's register file at 0x1000
+    if {[string match -nocase "*seizelut*" [get_property NAME $seg]] && [get_property RANGE $seg] < 8192} {
+        if {[catch {set_property range 8K $seg} err]} { note "WARNING address range not set to 8K: $err" }
+    }
     note "address [get_property NAME $seg] offset=[get_property OFFSET $seg] range=[get_property RANGE $seg]"
 }
 validate_bd_design
@@ -172,7 +179,9 @@ report_utilization -file [file join $out_dir utilization.rpt]
 report_utilization -hierarchical -file [file join $out_dir utilization_hier.rpt]
 set cls [get_cells -hier -filter {NAME =~ */u_cls}]
 set wrap [get_cells -hier -filter {NAME =~ */seizelut_0/inst || NAME =~ */seizelut_0}]
+set fe [get_cells -hier -filter {NAME =~ */u_fe}]
 if {[llength $cls] > 0} { report_utilization -cells [lindex $cls 0] -file [file join $out_dir utilization_classifier.rpt] }
+if {[llength $fe] > 0} { report_utilization -cells [lindex $fe 0] -file [file join $out_dir utilization_fe_engine.rpt] }
 if {[llength $wrap] > 0} { report_utilization -cells [lindex $wrap 0] -file [file join $out_dir utilization_seizelut_core.rpt] }
 report_timing_summary -max_paths 10 -file [file join $out_dir timing_summary.rpt]
 report_power -file [file join $out_dir power.rpt]
@@ -189,6 +198,13 @@ if {[llength $cls] > 0} {
     note "classifier_carry_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == CARRY"]]"
     note "classifier_dsp_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == ARITHMETIC"]]"
     note "classifier_bram_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == BLOCKRAM"]]"
+}
+if {[llength $fe] > 0} {
+    set c [lindex $fe 0]
+    note "fe_engine_lut_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == LUT"]]"
+    note "fe_engine_ff_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == FLOP_LATCH"]]"
+    note "fe_engine_dsp_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == ARITHMETIC"]]"
+    note "fe_engine_bram_cells=[llength [get_cells -hier -filter "NAME =~ $c/* && PRIMITIVE_GROUP == BLOCKRAM"]]"
 }
 
 # ---------------------------------------------------------------- outputs (PYNQ needs .bit and .hwh with the same base name)
@@ -234,6 +250,10 @@ proc ooc_run {tag file top period} {
 if {$run_ooc} {
     # the classifier's cost: the plain module (no debug taps, no fault-injection inputs), as deployed
     ooc_run classifier [file join $rtl_dir lutnet_classifier_plain.v] lutnet_classifier_plain 2.5
+    # the front end in the fabric alone (feature engine with its program and register file in block RAM)
+    if {[catch {ooc_run fe_engine [file join $rtl_dir fe_engine_inline.v] fe_engine 2.5} err]} {
+        note "WARNING out-of-context run of the feature engine failed: $err"; catch {close_project}
+    }
     if {$run_baselines} {
         foreach {tag top} {treelut treelut_classifier lgn lgn_classifier} {
             set f [file join $rtl_dir baselines ${top}.v]

@@ -30,7 +30,8 @@ def main() -> int:
     build = KIT / "build/verilator"
     build.mkdir(parents=True, exist_ok=True)
     srcs = [KIT / "sim/tb_seizelut_axi.v"] + [KIT / "rtl" / f for f in
-                                              ("seizelut_axi.v", "lutnet_classifier.v", "seizelut_bist_rom.v")]
+                                              ("seizelut_axi.v", "lutnet_classifier.v", "seizelut_bist_rom.v",
+                                              "fe_engine_inline.v")]
     t0 = time.time()
     subprocess.run(["verilator", "--binary", "--timing", "-j", "4", "-Wno-fatal", "-Wno-lint", "-Wno-style",
                     "--top-module", "tb_seizelut_axi", "-Mdir", str(build), "-o", "tb", *map(str, srcs)],
@@ -65,8 +66,9 @@ def main() -> int:
         runs = dict(ex.map(run, jobs))
     window_checks = sum(r["windows"] for k, r in runs.items() if not r["fault_cases"])
     out = {"simulator": "Verilator (testbench sim/tb_seizelut_axi.v; the same testbench runs on Icarus Verilog 12)",
-           "rtl": "rtl/seizelut_axi.v (core version 2: PMOD I/O, debug taps, fault injection, coverage-selected BIST) "
-                  "+ rtl/lutnet_classifier.v + rtl/seizelut_bist_rom.v",
+           "rtl": "rtl/seizelut_axi.v (core version 3: PMOD I/O, debug taps, fault injection, coverage-selected BIST, "
+                  "feature engine) + rtl/lutnet_classifier.v + rtl/seizelut_bist_rom.v + rtl/fe_engine_inline.v; the "
+                  "front-end path is checked by scripts/verify_kv260_fe.py",
            "recordings": len(vecs), "windows_per_pass": window_checks // max(1, len(OPS)),
            "operating_points_programmable": [f"thr {t}, k {k}" for t, k in OPS], "window_checks": window_checks,
            "fault_cases": n_fi, "all_pass": all(r["pass"] for r in runs.values()),
