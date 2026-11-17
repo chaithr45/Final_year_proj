@@ -319,12 +319,16 @@ def test_hard_negative_retraining_keeps_distillation(tmp_path, monkeypatch):
 
 def test_set_device_only_touches_torch_models():
     """--device must not reach CatBoost or scikit-learn (the M6 run of both once crashed on it)."""
+    import importlib.util
+
     from seizelut.models.registry import build
     from seizelut.models.training import set_device
     for typ, params in (("catboost", {"iterations": 5}), ("rf", {"n_estimators": 5}), ("lgbm", {}), ("lr", {})):
         cfg = {"model": {"type": typ, "params": dict(params)}}
         set_device(cfg, "cpu")
         assert "device" not in cfg["model"]["params"]
+        if typ == "catboost" and importlib.util.find_spec("catboost") is None:
+            continue                     # CatBoost is not in requirements-ci.txt; the device check above still ran
         build(cfg["model"])
     cfg = {"model": {"type": "dwn", "params": {"layers": [8]}}}
     set_device(cfg, "cpu")
