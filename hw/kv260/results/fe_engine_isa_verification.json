@@ -11,9 +11,9 @@
   "sec_event": 992.2,
   "per_second_of_signal": 281263.0
  },
- "max_abs_value": 17179869184,
- "bits_needed_signed": 36,
- "datapath_bits": 48,
+ "max_abs_value": 1473511424,
+ "bits_needed_signed": 32,
+ "datapath_bits": 40,
  "runs": {
   "sub-097_run-02": {
    "seconds": 68637,
@@ -24,7 +24,7 @@
    "bad_features": [],
    "max_abs_value": 1473511424,
    "bad_ops": 0,
-   "seconds_sim": 54.5
+   "seconds_sim": 56.6
   },
   "sub-097_run-04": {
    "seconds": 76313,
@@ -35,7 +35,7 @@
    "bad_features": [],
    "max_abs_value": 1354235904,
    "bad_ops": 0,
-   "seconds_sim": 62.0
+   "seconds_sim": 64.3
   },
   "sub-097_run-05": {
    "seconds": 6466,
@@ -46,7 +46,7 @@
    "bad_features": [],
    "max_abs_value": 1288044544,
    "bad_ops": 0,
-   "seconds_sim": 5.1
+   "seconds_sim": 5.2
   },
   "sub-097_run-07": {
    "seconds": 41798,
@@ -57,7 +57,7 @@
    "bad_features": [],
    "max_abs_value": 1240072192,
    "bad_ops": 0,
-   "seconds_sim": 33.2
+   "seconds_sim": 35.7
   },
   "sub-097_run-09": {
    "seconds": 77153,
@@ -68,7 +68,7 @@
    "bad_features": [],
    "max_abs_value": 1300234240,
    "bad_ops": 0,
-   "seconds_sim": 63.5
+   "seconds_sim": 63.0
   },
   "sub-097_run-10": {
    "seconds": 425,
@@ -88,9 +88,9 @@
    "mismatch_windows": 0,
    "first_bad": null,
    "bad_features": [],
-   "max_abs_value": 17179869184,
+   "max_abs_value": 1381105664,
    "bad_ops": 0,
-   "seconds_sim": 72.5
+   "seconds_sim": 77.4
   },
   "sub-099_run-01": {
    "seconds": 75817,
@@ -99,9 +99,9 @@
    "mismatch_windows": 0,
    "first_bad": null,
    "bad_features": [],
-   "max_abs_value": 17179869184,
+   "max_abs_value": 1316356096,
    "bad_ops": 0,
-   "seconds_sim": 74.4
+   "seconds_sim": 77.1
   },
   "sub-099_run-02": {
    "seconds": 4937,
@@ -121,9 +121,9 @@
    "mismatch_windows": 0,
    "first_bad": null,
    "bad_features": [],
-   "max_abs_value": 17179869184,
+   "max_abs_value": 1073741824,
    "bad_ops": 0,
-   "seconds_sim": 3.9
+   "seconds_sim": 4.4
   }
  },
  "all_bit_exact": true

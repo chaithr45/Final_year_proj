@@ -1,0 +1,43 @@
+{
+ "tool": "Yosys (yowasp-yosys), read_verilog; synth_xilinx -family xcup -flatten -abc9; stat",
+ "feature_engine": {
+  "luts": 797,
+  "ffs": 102,
+  "carry4": 71,
+  "dsp": 0,
+  "ramb36": 3,
+  "ramb18": 3,
+  "bram36_equivalent": 4.5,
+  "cells": {
+   "BUFG": 1,
+   "CARRY4": 71,
+   "FDRE": 102,
+   "IBUF": 66,
+   "INV": 81,
+   "LUT2": 114,
+   "LUT3": 244,
+   "LUT4": 99,
+   "LUT5": 237,
+   "LUT6": 103,
+   "OBUF": 41,
+   "RAMB18E2": 3,
+   "RAMB36E2": 3
+  },
+  "rom_instructions": 2323,
+  "ram_words": 930,
+  "datapath_bits": 40
+ },
+ "classifier": {
+  "luts": 405,
+  "ffs": 454,
+  "dsp": 0,
+  "bram36_equivalent": 0
+ },
+ "whole_detector": {
+  "luts": 1202,
+  "ffs": 556,
+  "dsp": 0,
+  "bram36_equivalent": 4.5
+ },
+ "note": "luts counts LUT1-LUT6 cells as for the classifiers (INV not counted); the engine computes the 38 features the classifier reads from raw samples; no multiplier (coefficients are shift-add terms)"
+}

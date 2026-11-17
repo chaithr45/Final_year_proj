@@ -1,6 +1,6 @@
 # SeizeLUT: progress and hand-off (read this first if you continue the work)
 
-Last updated: 15 Nov 2026 (cloud session). Rules: `CLAUDE.md` (test patients, `--final-test`, no invented numbers,
+Last updated: 17 Nov 2026 (cloud session). Rules: `CLAUDE.md` (test patients, `--final-test`, no invented numbers,
 branch `claude/optimistic-heisenberg-ph0bvj`, commit trailers, keep model names out of files). Every decision and
 result: `results/decisions.md` (D1..D41 plus the dated bullets at the end).
 
@@ -23,7 +23,7 @@ analysis + coverage-selected BIST, N9).
 | Live demo (Demo 1 board LEDs, Demo 2 PMOD parts) | done | `hw/kv260/demo/DEMO.md`, `ORDER_NOW.md` |
 | Paper (6 pages, IEEE conf) | drafted; red `[board]` marks wait for the board run | `paper/main.tex`, `paper/tables/`, `paper/figures/` |
 | **Board run** | **pending (user)**: `run_tests.py` on the KV260 with the v5 bitstream; send `board/results/kv260_results_*.json` | kit README part C |
-| **N10 front end in the fabric** | **in progress** (see below) | `src/hw/fe_engine.py` and friends |
+| **N10 front end in the fabric** | **RTL bit-exact, synthesised; paper and kit v6 next** (see below) | `src/hw/fe_engine.py` and friends |
 | Conferences | plan: EMBC 2027 (24 Jan 2027) or FCCM 2027 (17 Jan 2027), then BioCAS 2027 (~7 May) / NER (15 Mar) / AICAS (13 Apr) | chat answer of 15 Nov; verify dates |
 
 ## N10: integer front end in the FPGA fabric (current work)
@@ -44,19 +44,25 @@ Done:
    ~2.4e11 (< 2^38), so a 40-bit datapath is safe for any input (plan: DW = 40, BIG = 2^30).
    `--tb` writes RTL testbench vectors to `hw/kv260/sim/fe_vectors/` (sub-097_run-10, sub-100_run-03).
 
+4. DW = 40 and BIG = 2^30 in `src/hw/fe_engine.py`; still bit-exact on all 431,960 windows.
+5. RTL `hw/kv260/rtl/fe_engine.v` (FSM fetch/read/exec, 3 cycles per instruction, single-port register file shared
+   with the host port) and testbench `hw/kv260/sim/tb_fe_engine.v` (includes `rtl/fe/fe_io.vh`).
+   `python scripts/verify_fe_rtl.py` builds it with Verilator and runs both vector recordings ->
+   `hw/kv260/results/fe_engine_rtl_verification.json` (sub-100_run-03, all sensors: 3,854 windows, 0 mismatches,
+   946,168 busy cycles per second of signal, so real time needs < 1 MHz; the kit clock is 100 MHz).
+6. Cost: `python scripts/synth_fe_engine.py` (Yosys) -> `results/tables/fe_engine_hw.json`: engine 797 LUT, 102 FF,
+   0 DSP, 3 RAMB36 + 3 RAMB18; whole detector (engine + DWN 405 LUT) 1,202 LUT, 556 FF, 0 DSP, 4.5 BRAM36.
+   D42 row added to `results/decisions.md` (result bullet still to add).
+
 Next steps (in order):
-4. Set DW = 40 and BIG = 2^30 in `src/hw/fe_engine.py`; rerun `python scripts/verify_fe_engine.py --tb` (must stay
-   bit-exact).
-5. Write `hw/kv260/rtl/fe_engine.v` (FSM fetch/read/exec, 3 cycles per instruction; ROM/RAM via $readmemh of
-   `rtl/fe/*.hex`; host write/read port when idle; start + entry; busy) and `hw/kv260/sim/tb_fe_engine.v` (reads
-   `fe_vectors/<rec>.samples.hex`, drives events, compares FEAT_0..37 with `<rec>.feats.hex`). Run with Verilator
-   (`--binary --timing`) on both recordings; expect 0 mismatches.
-6. Cost: Yosys `synth_xilinx -family xcup` on fe_engine (LUT/FF/BRAM/DSP = 0), Fmax not needed (any clock >=
-   ~0.85 MHz is real time at 3 cycles per instruction). Save `results/tables/fe_engine_hw.json`.
-7. Optional (kit v6): put the engine in front of the classifier in `seizelut_axi.v` (ARM writes raw samples, fabric
+7. Add the D42 result bullet to `results/decisions.md`; commit and push the N10 files (not `logs/`).
+8. Paper: whole detector cost (front end + classifier, 0 DSP, 4.5 BRAM36, bit-exact, < 1 MHz for real time) in
+   the abstract, contributions and hardware section; recompile (must stay 6 pages).
+9. Optional (kit v6): put the engine in front of the classifier in `seizelut_axi.v` (ARM writes raw samples, fabric
    computes features and classifies), board test step for end-to-end in the fabric; Vivado OOC run of the engine.
-8. Paper: add the result (whole detector LUT/BRAM, cycles per second, real-time clock) to the hardware section and
-   the abstract; decisions.md entry (D42); README/kit docs; commit.
+
+CI note (17 Nov): `test_set_device_only_touches_torch_models` failed on every push since 8 Nov (CatBoost is not in
+`requirements-ci.txt`); fixed in commit fcf9bc4. The `FPGA` branch (another session) needs the same commit.
 
 ## How to resume quickly
 ```
