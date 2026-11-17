@@ -1,0 +1,41 @@
+{
+ "what": "core version 3 (seizelut_axi.v with fe_engine_inline.v) driven through AXI4-Lite from raw samples: per window the 38 features in the feature registers, score, decision and alarm against the golden vectors; engine register file restored through the FE window and the first 30 s replayed",
+ "simulator": "Verilator",
+ "recordings": 2,
+ "windows": 4278,
+ "all_pass": true,
+ "runs": {
+  "sub-097_run-10": {
+   "seconds": 425,
+   "windows": 424,
+   "sensors_present": {
+    "ecg": 0,
+    "emg": 0,
+    "acc": 0,
+    "gyr": 0
+   },
+   "pass": true,
+   "windows_checked": 424,
+   "engine_busy_cycles_per_second": 787614,
+   "axi_us_per_second_of_signal": 7918,
+   "replay_windows_after_restore": 28,
+   "seconds_sim": 431.9
+  },
+  "sub-100_run-03": {
+   "seconds": 3855,
+   "windows": 3854,
+   "sensors_present": {
+    "ecg": 1,
+    "emg": 1,
+    "acc": 1,
+    "gyr": 1
+   },
+   "pass": true,
+   "windows_checked": 3854,
+   "engine_busy_cycles_per_second": 946168,
+   "axi_us_per_second_of_signal": 9523,
+   "replay_windows_after_restore": 28,
+   "seconds_sim": 4401.4
+  }
+ }
+}

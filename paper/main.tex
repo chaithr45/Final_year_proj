@@ -258,18 +258,21 @@ mismatches, time per fault.}
 \subsection{KV260 implementation}
 \begin{figure}[t]\centering
 \resizebox{\columnwidth}{!}{\input{figures/arch.tex}}
-\caption{SeizeLUT on the Kria KV260. The fault-injection registers and the self-test let the device check that the
-fabric still computes the validated classifier.}\label{fig:arch}
+\caption{SeizeLUT on the Kria KV260: the Arm cores only move raw samples; front end and classifier run in the fabric.
+The fault-injection registers and the self-test let the device check that the fabric still computes the validated
+classifier.}\label{fig:arch}
 \end{figure}
-On a Kria KV260 (Zynq UltraScale+ XCK26, Fig.~\ref{fig:arch}) the board build runs the integer front end in C on the Arm Cortex-A53 cores (the fabric engine is not yet in it) and the
-classifier runs in the fabric behind an AXI4-Lite interface at 100\,MHz, with a frozen and a programmable operating
-point, read-back of the 146 comparator bits and 50 LUT outputs, the BIST and fault injection. Verification before the
-board: the C front end, batch and second by second, reproduces all 117 features and both artefact flags of all
-431,960 windows of the 10 exported test recordings exactly; the core, driven through its registers as the board
-software drives it, reproduces score, decision, alarm, comparator bits and LUT outputs on all 431,960 windows at two
-operating points (863,920 window checks, Verilator), with a latency of 3 cycles. \PHASETWO{on-board replay of the
-431,960 windows, measured latency and throughput, front-end time per hour of signal on the A53, SOM power from the
-INA260 monitor.}
+On a Kria KV260 (Zynq UltraScale+ XCK26, Fig.~\ref{fig:arch}) the feature engine and the classifier run in the
+fabric behind an AXI4-Lite interface at 100\,MHz: the Arm Cortex-A53 cores only write raw samples into the engine's
+register file and start its events, and the core passes each finished window's features to the classifier. The core
+also has a frozen and a programmable operating point, read-back of the 146 comparator bits and 50 LUT outputs, the
+BIST and fault injection. Verification before the board: driven from raw samples through its registers, the whole
+core reproduces the features, score, decision and alarm of all 4,278 windows of an EEG-only and an all-sensor
+recording; fed with features, it reproduces score, decision, alarm, comparator bits and LUT outputs on all 431,960
+windows at two operating points (863,920 window checks), with a latency of 3 cycles (Verilator). The C front end,
+batch and second by second, reproduces all 117 features of all 431,960 windows and serves as the on-board reference.
+\PHASETWO{on-board replay, end-to-end check from raw samples, measured engine cycles and throughput, SOM power from
+the INA260 monitor.}
 
 \section{Discussion and Limitations}
 Accuracy per LUT favours the DWN by a wide margin, and the thermometer encoder, not the network, dominates its cost,

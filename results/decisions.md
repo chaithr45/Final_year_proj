@@ -455,12 +455,14 @@ Method results and keep/drop decisions are appended below as runs finish.
   cycle. After the fix, sub-097_run-10 (EEG only): all 424 windows' features, score, decision and alarm equal the
   golden vectors, engine 787,614 busy cycles per second (as the engine alone), 7.9 ms of simulated bus time per
   second of signal at 100 MHz, and the engine register file restored through the FE window reproduces the first 28
-  windows. Regression of the classifier path on the v6 core: 863,920 window checks and 3,592 fault cases pass
+  windows. sub-100_run-03 (all sensors): all 3,854 windows equal, engine 946,168 busy cycles per second, 9.5 ms of
+  bus time per second of signal, restore and replay equal (`hw/kv260/results/fe_core_verification.json`; 4,278
+  windows in all). Regression of the classifier path on the v6 core: 863,920 window checks and 3,592 fault cases pass
   (Verilator, `results/simulation_verification.json`). Board software: driver (`fe_reset`, `fe_second`,
   `fe_run_recording`), register emulator of the engine (via the C streaming front end), fast C path `sl_fe_run`
   (checked against the emulator behind a memory window on the 3 raw recordings: all windows equal, event counts
   exact), test step 9, demo with the front end in the fabric (emulated run: 947/947 windows identical); emulated
   campaign steps 1-9 all pass (`results/board_campaign_emulated.json`). Vivado script: engine added, address range
   forced to 8 KB if needed, utilisation of `u_fe` and an out-of-context run of the engine; dry run with stand-ins
-  for the Vivado commands completes. Step-by-step guide `hw/kv260/START_HERE.md`. Not yet run: Vivado on the v6
-  core and the board.
+  for the Vivado commands completes. Step-by-step guide `hw/kv260/START_HERE.md`. Paper: KV260 paragraph and Fig. 3
+  show the engine in the fabric (still 6 pages). Not yet run: Vivado on the v6 core and the board.
