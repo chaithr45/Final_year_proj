@@ -31,7 +31,7 @@ MOV_BAND = 12.5
 def level(f: dict):
     if f["status"] == "pending":
         raise SystemExit("spec_limits.json has unconfirmed limits: run confirm_full.py --jobs stepdown first")
-    if f["status"] == "none tolerated":
+    if f["status"] in ("none tolerated", "off"):     # "off": backed off past the mildest level (combined_backoff.py)
         return None
     return f["limit"]
 
@@ -45,7 +45,7 @@ def impair_for(mod: str, fams: dict, gain_sign: int) -> tuple[dict, list[str]]:
         if f is None:
             return None
         v = level(f)
-        if v is None:
+        if v is None and f["status"] == "none tolerated":
             excluded.append(f"{mod}/{k}")
         return v
     bio = mod != "mov"

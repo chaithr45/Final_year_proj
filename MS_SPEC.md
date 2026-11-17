@@ -200,6 +200,9 @@ kit, ARM driver, board build.
    modalities at their limits at once) is run on the subset and on the full training set with the same D-MS10 test.
    If it fails, the limits that move the features most (mechanism table, step 6) are backed off one grid step at a
    time, most-moving first, until the combined point passes. The spec table reports the combined point.
+   Details of the back-off (measure of movement, re-ranking, gain signs) pinned in LOG L21 after the subset
+   preview failed (F1 -0.072 / -0.085), before any back-off run: `python ms/py/combined_backoff.py --models <seed-0
+   fold models>` (subset), then `--data full`.
 8. In-fabric emulator: Verilog block plus Python golden model, Verilator word-for-word check, then board runs of the
    subset at selected points (D-MS6).
 
