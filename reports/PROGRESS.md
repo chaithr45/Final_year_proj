@@ -52,14 +52,16 @@ Done:
    946,168 busy cycles per second of signal, so real time needs < 1 MHz; the kit clock is 100 MHz).
 6. Cost: `python scripts/synth_fe_engine.py` (Yosys) -> `results/tables/fe_engine_hw.json`: engine 797 LUT, 102 FF,
    0 DSP, 3 RAMB36 + 3 RAMB18; whole detector (engine + DWN 405 LUT) 1,202 LUT, 556 FF, 0 DSP, 4.5 BRAM36.
-   D42 row added to `results/decisions.md` (result bullet still to add).
+   D42 row added to `results/decisions.md`.
+7. D42 result bullet in `results/decisions.md`. Program check rerun on all 10 recordings with per-recording
+   instruction counts: worst 315,389 instructions = 946,167 cycles per second (sub-100_run-03).
+8. Paper updated (abstract, contribution ii, method, hardware section, limitations, conclusion, Table I cost
+   column): still 6 pages, 0 overfull boxes.
 
-Next steps (in order):
-7. Add the D42 result bullet to `results/decisions.md`; commit and push the N10 files (not `logs/`).
-8. Paper: whole detector cost (front end + classifier, 0 DSP, 4.5 BRAM36, bit-exact, < 1 MHz for real time) in
-   the abstract, contributions and hardware section; recompile (must stay 6 pages).
-9. Optional (kit v6): put the engine in front of the classifier in `seizelut_axi.v` (ARM writes raw samples, fabric
-   computes features and classifies), board test step for end-to-end in the fabric; Vivado OOC run of the engine.
+Next steps (optional, in order):
+9. Kit v6: put the engine in front of the classifier in `seizelut_axi.v` (ARM writes raw samples, fabric computes
+   features and classifies), board test step for end-to-end in the fabric; Vivado OOC run of the engine (LUT/BRAM,
+   Fmax, power) to replace the Yosys-only cost; arch figure (`paper/figures/arch.tex`) then shows the engine.
 
 CI note (17 Nov): `test_set_device_only_touches_torch_models` failed on every push since 8 Nov (CatBoost is not in
 `requirements-ci.txt`); fixed in commit fcf9bc4. The `FPGA` branch (another session) needs the same commit.
@@ -68,6 +70,7 @@ CI note (17 Nov): `test_set_device_only_touches_torch_models` failed on every pu
 ```
 cd /home/user/Final_year_proj
 python scripts/verify_fe_engine.py --quick         # engine program vs C front end, 2 recordings, ~5 s
+python scripts/verify_fe_rtl.py --rec sub-097_run-10   # engine RTL (Verilator), ~2 min; all-sensor run ~20 min
 python scripts/verify_kv260_rtl.py --quick         # KV260 core + 3,592 fault cases (Verilator)
 python -m pytest -q tests/test_kv260.py tests/test_hw.py
 cd paper && latexmk -pdf main.tex                   # paper (6 pages)

@@ -27,9 +27,11 @@ false alarms per hour (published SVM: 71.1\,\% at 11.0), and the whole cascade f
 classifier is a set of truth tables, every single hardware fault can be enumerated: of 3,592 single faults, 2,890
 change at least one clinical decision on 8,714 hours of training data, a built-in self-test fed with 1,024
 consecutive recorded windows detects only 50.7\,\% of them, and 255 test vectors selected for coverage detect all of
-them; the on-chip self-test takes 10.3\,\textmu s. On a Kria KV260 the classifier runs in the fabric behind an AXI4-Lite interface with fault
-injection, and the integer front end runs on the Arm cores; the design is verified bit-exact on 431,960 windows at
-two operating points and on every injected fault.
+them; the on-chip self-test takes 10.3\,\textmu s. A microcoded shift-add engine computes the 38 features the
+classifier reads in the fabric, so the whole detector, front end included, is multiplier-free hardware of 1,202 LUTs
+and 4.5 block RAMs that keeps up with the sensors at 0.95\,MHz. On a Kria KV260 the classifier runs behind an
+AXI4-Lite interface with fault injection; the design is verified bit-exact on 431,960 windows at two operating
+points and on every injected fault.
 \end{abstract}
 
 \section{Introduction}
@@ -56,7 +58,8 @@ judged by its clinical effect.
 \textbf{Contributions.} (i)~The first LUT-native seizure detector and the first benchmark of LUT-native models (DWN,
 logic-gate network, TreeLUT) against standard machine learning on the official SeizeIT2 split with SzCORE event
 scoring \cite{dan2024szcore}, with distillation from a tree ensemble to cut false alarms and modality dropout for
-missing sensors. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG and motion. (iii)~A fully
+missing sensors. (ii)~A bit-exact, multiplier-free integer front end for bte-EEG, ECG, EMG and motion, and a
+microcoded engine that computes it in the fabric, so the whole detector is multiplier-free hardware. (iii)~A fully
 LUT-native post-ictal verification cascade that detects more seizures than the dataset paper's SVM at a slightly lower
 false-alarm rate, in about 1,200 LUTs. (iv)~\emph{Self-testing}: an exhaustive single-fault analysis of the deployed
 classifier on 8,714 hours of data, a coverage-driven choice of on-chip test vectors that detects every
@@ -97,7 +100,9 @@ powers of two and second-order error feedback. Every second, 2-s windows give pe
 magnitude, line length, mobility, zero crossings, extrema and band magnitudes; ECG heart rate and RR variability in
 the log domain; EMG magnitude, line length, zero crossings and a band ratio; accelerometer and gyroscope magnitude,
 jerk, activity and band magnitude; presence bits; and, for most features, the difference from a causal 64-s average:
-117 features without a multiplier or divider.
+117 features without a multiplier or divider. For the fabric, a microcoded accumulator machine computes the 38
+features the classifier reads, sample by sample: one 40-bit adder with two 5-bit shifters, a register file and a
+2,323-instruction program in block RAM, and 3 cycles per instruction.
 
 \subsection{Thermometer encoding and DWN}
 Each of the 40 selected features (gain ranking of a LightGBM model inside each training set) is compared with 8
@@ -202,6 +207,11 @@ the 118,975 training candidates, so the complete two-stage detector costs about 
 KV260 design the whole core (AXI4-Lite interface, BIST with its vector ROM in 9 block RAMs, fault injection, debug
 taps, demo I/O) uses 1,908 LUTs and the full design 2,345 LUTs, 2.0\,\% of the device; timing closes at 100\,MHz
 with 3.3\,ns of setup slack. The fault-injection and debug logic, needed only in test builds, adds 298 LUTs (Yosys).
+The feature engine needs 797 LUTs, 102 flip-flops, 4.5 block RAMs and no DSP (Yosys), so front end and DWN together
+take 1,202 LUTs, 556 flip-flops and no multiplier. Its program equals the C front end on all 431,960 windows
+(instruction-level simulation), and its RTL, fed sample by sample, on all 4,278 windows of an EEG-only and an
+all-sensor recording (Verilator). It needs at most 0.95 million cycles per second of signal, so it runs in real
+time at 1\,MHz, a hundredth of the KV260 clock.
 
 \begin{table}[t]\centering
 \caption{Cost of the LUT-native classifiers (XCK26; input registers, comparators, network, score, decision and alarm
@@ -251,7 +261,7 @@ mismatches, time per fault.}
 \caption{SeizeLUT on the Kria KV260. The fault-injection registers and the self-test let the device check that the
 fabric still computes the validated classifier.}\label{fig:arch}
 \end{figure}
-On a Kria KV260 (Zynq UltraScale+ XCK26, Fig.~\ref{fig:arch}) the integer front end runs in C on the Arm Cortex-A53 cores and the
+On a Kria KV260 (Zynq UltraScale+ XCK26, Fig.~\ref{fig:arch}) the board build runs the integer front end in C on the Arm Cortex-A53 cores (the fabric engine is not yet in it) and the
 classifier runs in the fabric behind an AXI4-Lite interface at 100\,MHz, with a frozen and a programmable operating
 point, read-back of the 146 comparator bits and 50 LUT outputs, the BIST and fault injection. Verification before the
 board: the C front end, batch and second by second, reproduces all 117 features and both artefact flags of all
@@ -267,12 +277,14 @@ as also measured by \cite{mecik2025thermo}; it also dominates the verifier's cos
 Self-testing is cheap for LUT networks because their fault space is small and their behaviour is exactly computable,
 which a weighted network with thousands of multipliers does not offer. The analysis covers single faults in the
 network part (comparator outputs, truth tables, LUT outputs), not the adder tree, the AXI logic or the comparator
-constants, and relevance is measured on training data. Focal seizures remain mostly undetected, consistent with the
+constants, and relevance is measured on training data. The fabric front end is verified in simulation and costed by
+synthesis, not yet measured on the board. Focal seizures remain mostly undetected, consistent with the
 clinical evidence \cite{beniczky2021guideline}. Results come from retrospective recordings of one dataset.
 
 \section{Conclusion}
 A 50-LUT weightless network on integer multimodal features detects seizures across patients without multipliers in
-398 LUTs, reaching an event-F1 of 0.248 with 0.8 false alarms per day on 29 held-out patients, and a two-stage
+398 LUTs, reaching an event-F1 of 0.248 with 0.8 false alarms per day on 29 held-out patients; with its front end
+in the fabric the whole detector needs 1,202 LUTs and no multiplier, and a two-stage
 version in about 1,200 LUTs detects more seizures than the dataset paper's SVM. Its truth tables make complete fault
 analysis possible: 255 selected self-test vectors detect every single fault that changes a decision, and the device can run them after every window.
 

@@ -11,6 +11,8 @@
   "sec_event": 992.2,
   "per_second_of_signal": 281263.0
  },
+ "instructions_per_second_worst_recording": 315389,
+ "cycles_per_second_worst_recording": 946167,
  "max_abs_value": 1473511424,
  "bits_needed_signed": 32,
  "datapath_bits": 40,
@@ -24,7 +26,8 @@
    "bad_features": [],
    "max_abs_value": 1473511424,
    "bad_ops": 0,
-   "seconds_sim": 56.6
+   "instructions_per_second": 262597,
+   "seconds_sim": 51.6
   },
   "sub-097_run-04": {
    "seconds": 76313,
@@ -35,7 +38,8 @@
    "bad_features": [],
    "max_abs_value": 1354235904,
    "bad_ops": 0,
-   "seconds_sim": 64.3
+   "instructions_per_second": 262518,
+   "seconds_sim": 56.6
   },
   "sub-097_run-05": {
    "seconds": 6466,
@@ -46,7 +50,8 @@
    "bad_features": [],
    "max_abs_value": 1288044544,
    "bad_ops": 0,
-   "seconds_sim": 5.2
+   "instructions_per_second": 262516,
+   "seconds_sim": 5.0
   },
   "sub-097_run-07": {
    "seconds": 41798,
@@ -57,7 +62,8 @@
    "bad_features": [],
    "max_abs_value": 1240072192,
    "bad_ops": 0,
-   "seconds_sim": 35.7
+   "instructions_per_second": 262638,
+   "seconds_sim": 30.3
   },
   "sub-097_run-09": {
    "seconds": 77153,
@@ -68,7 +74,8 @@
    "bad_features": [],
    "max_abs_value": 1300234240,
    "bad_ops": 0,
-   "seconds_sim": 63.0
+   "instructions_per_second": 262527,
+   "seconds_sim": 58.0
   },
   "sub-097_run-10": {
    "seconds": 425,
@@ -79,7 +86,8 @@
    "bad_features": [],
    "max_abs_value": 1323827200,
    "bad_ops": 0,
-   "seconds_sim": 0.3
+   "instructions_per_second": 262537,
+   "seconds_sim": 0.4
   },
   "sub-098_run-03": {
    "seconds": 76569,
@@ -90,7 +98,8 @@
    "bad_features": [],
    "max_abs_value": 1381105664,
    "bad_ops": 0,
-   "seconds_sim": 77.4
+   "instructions_per_second": 313268,
+   "seconds_sim": 69.4
   },
   "sub-099_run-01": {
    "seconds": 75817,
@@ -101,7 +110,8 @@
    "bad_features": [],
    "max_abs_value": 1316356096,
    "bad_ops": 0,
-   "seconds_sim": 77.1
+   "instructions_per_second": 315229,
+   "seconds_sim": 69.4
   },
   "sub-099_run-02": {
    "seconds": 4937,
@@ -112,7 +122,8 @@
    "bad_features": [],
    "max_abs_value": 344457216,
    "bad_ops": 0,
-   "seconds_sim": 4.2
+   "instructions_per_second": 262507,
+   "seconds_sim": 3.9
   },
   "sub-100_run-03": {
    "seconds": 3855,
@@ -123,7 +134,8 @@
    "bad_features": [],
    "max_abs_value": 1073741824,
    "bad_ops": 0,
-   "seconds_sim": 4.4
+   "instructions_per_second": 315389,
+   "seconds_sim": 3.6
   }
  },
  "all_bit_exact": true

@@ -1,0 +1,43 @@
+{
+ "what": "fe_engine.v (Verilator, cycle accurate) fed sample by sample through its host port; 38 classifier features of every window compared with the C front end",
+ "rom_instructions": 2323,
+ "ram_words": 930,
+ "datapath_bits": 40,
+ "cycles_per_instruction": 3,
+ "worst_busy_cycles_per_second": 946168,
+ "min_clock_mhz_real_time": 0.946,
+ "note": "busy cycles exclude host writes and reads; the KV260 fabric clock (100 MHz) leaves a margin of about 106x",
+ "all_bit_exact": true,
+ "runs": {
+  "sub-097_run-10": {
+   "seconds": 425,
+   "windows_expected": 424,
+   "sensors_present": {
+    "ecg": 0,
+    "emg": 0,
+    "acc": 0,
+    "gyr": 0
+   },
+   "windows_checked": 424,
+   "bit_exact": true,
+   "busy_cycles": 334736283,
+   "busy_cycles_per_second": 787614,
+   "seconds_sim": 112.4
+  },
+  "sub-100_run-03": {
+   "seconds": 3855,
+   "windows_expected": 3854,
+   "sensors_present": {
+    "ecg": 1,
+    "emg": 1,
+    "acc": 1,
+    "gyr": 1
+   },
+   "windows_checked": 3854,
+   "bit_exact": true,
+   "busy_cycles": 3647479431,
+   "busy_cycles_per_second": 946168,
+   "seconds_sim": 1172.6
+  }
+ }
+}

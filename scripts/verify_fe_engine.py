@@ -99,7 +99,9 @@ def main() -> int:
         cols = [order[c] for c in np.nonzero((res[:n_out] != gold[:n_out]).any(0))[0]][:6]
         out[rec] = {"seconds": n_sec, "windows": int(n_out), "windows_expected": n_win, "mismatch_windows": int(len(bad)),
                     "first_bad": int(bad[0]) if len(bad) else None, "bad_features": cols,
-                    "max_abs_value": int(mx), "bad_ops": lib.fe_bad_op(h), "seconds_sim": round(time.time() - t0, 1)}
+                    "max_abs_value": int(mx), "bad_ops": lib.fe_bad_op(h),
+                    "instructions_per_second": round(float(ev.sum()) / max(1, n_sec)),
+                    "seconds_sim": round(time.time() - t0, 1)}
         print(rec, out[rec], flush=True)
         if len(bad):
             w = bad[0]
@@ -132,7 +134,10 @@ def main() -> int:
                        "features of every window", "recordings": len(recs), "windows": int(sum(r["windows"] for r in out.values())),
                "mismatch_windows": int(sum(r["mismatch_windows"] for r in out.values())),
                "rom_instructions": prog["n_rom"], "ram_registers": prog["n_ram"],
-               "instructions_mean": per_s, "max_abs_value": int(maxabs),
+               "instructions_mean": per_s,
+               "instructions_per_second_worst_recording": max(r["instructions_per_second"] for r in out.values()),
+               "cycles_per_second_worst_recording": 3 * max(r["instructions_per_second"] for r in out.values()),
+               "max_abs_value": int(maxabs),
                "bits_needed_signed": int(maxabs).bit_length() + 1, "datapath_bits": prog["dw"], "runs": out}
     summary["all_bit_exact"] = summary["mismatch_windows"] == 0 and all(r["windows"] == r["windows_expected"] for r in out.values())
     (REPO / "hw/kv260/results/fe_engine_isa_verification.json").write_text(json.dumps(summary, indent=1))
