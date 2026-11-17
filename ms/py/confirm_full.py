@@ -30,7 +30,7 @@ import pickle
 import sys
 import time
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
 from pathlib import Path
 
 import numpy as np
@@ -50,6 +50,10 @@ import grids                                    # noqa: E402
 import subset_fe as FE                          # noqa: E402
 from sweep import K, TH, compile_job            # noqa: E402
 
+# Peak memory of one process() call grows with the recording: 1.79 GB at 5.5 h and 5.96 GB at 24.2 h (measured
+# 17 Nov, LOG L22). Recordings are scheduled longest first and only while the estimated peaks fit --mem-gb (the bash
+# cgroup of the cloud session is limited to 14.3 GB; four 24-h recordings at once were killed by the OOM killer).
+MEM_BASE_GB, MEM_PER_H_GB = 0.6, 0.24
 RAW = REPO / "data/raw/ds005873"
 TMP = REPO / "cache/ms/tmp"
 FEAT = REPO / "cache/features/int"
@@ -104,6 +108,23 @@ def limit_jobs(seeds: list[int]) -> list[dict]:
                 if f["status"] == "limit":
                     names.append(next(x["name"] for x in lv if not x["tolerated"]))
     return jobs_by_name(names, seeds)
+
+
+def run_hours(runs: list[str]) -> dict:
+    """Recording length in hours from the feature cache (cached in cache/ms/confirm/run_hours.json)."""
+    p = REPO / "cache/ms/confirm/run_hours.json"
+    h = json.loads(p.read_text()) if p.exists() else {}
+    for k in runs:
+        if k not in h:
+            with np.load(FEAT / f"{k}.npz") as d:
+                h[k] = float(d["duration_s"]) / 3600
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(h))
+    return h
+
+
+def mem_est(hours: float) -> float:
+    return MEM_BASE_GB + MEM_PER_H_GB * hours
 
 
 def process(idx: int, run_key: str, jobs: list[dict]) -> dict:
@@ -199,6 +220,7 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--limit-runs", type=int, default=None, help="first N recordings only (quick checks)")
     ap.add_argument("--tag", default=None)
+    ap.add_argument("--mem-gb", type=float, default=11.0, help="budget for the summed peak-memory estimates")
     args = ap.parse_args()
     extra = {"limits": lambda: limit_jobs(args.seeds), "clean": list,
              "stepdown": lambda: stepdown_jobs(args.seeds),
@@ -227,19 +249,35 @@ def main() -> int:
             if r.get("job_sigs") == sig:
                 done[r["run"]] = r
     todo = [(i, k) for i, k in enumerate(runs) if k not in done]
-    print(f"{len(jobs)} jobs (incl. clean), {len(runs)} recordings, {len(todo)} to do, {args.workers} workers",
-          flush=True)
+    print(f"{len(jobs)} jobs (incl. clean), {len(runs)} recordings, {len(todo)} to do, {args.workers} workers, "
+          f"memory budget {args.mem_gb:g} GB", flush=True)
+    hours = run_hours([k for _, k in todo])
+    pending = sorted(todo, key=lambda t: (-hours[t[1]], t[1]))       # longest first
+    running, used, n = {}, 0.0, 0
     with ProcessPoolExecutor(args.workers, initializer=_init, initargs=(args.models,)) as pool, \
             open(log, "a") as fh:
-        futs = {pool.submit(process, i, k, jobs): k for i, k in todo}
-        for n, f in enumerate(as_completed(futs), 1):
-            r = f.result()
-            r["job_sigs"] = sig
-            fh.write(json.dumps(r) + "\n"); fh.flush()
-            done[r["run"]] = r
-            if n % 20 == 0 or n == len(todo):
-                print(f"  {n}/{len(todo)} {r['run']} {r['seconds']} s clean_equal_cache {r['clean_equal_cache']}",
-                      flush=True)
+        while pending or running:
+            while pending and len(running) < args.workers:
+                pick = next((t for t in pending if used + mem_est(hours[t[1]]) <= args.mem_gb), None)
+                if pick is None:
+                    if running:
+                        break
+                    pick = pending[0]                 # nothing running: the longest one runs alone
+                pending.remove(pick)
+                running[pool.submit(process, pick[0], pick[1], jobs)] = pick
+                used += mem_est(hours[pick[1]])
+            fin, _ = wait(running, return_when=FIRST_COMPLETED)
+            for f in fin:
+                _, k = running.pop(f)
+                used -= mem_est(hours[k])
+                r = f.result()
+                r["job_sigs"] = sig
+                fh.write(json.dumps(r) + "\n"); fh.flush()
+                done[r["run"]] = r
+                n += 1
+                if n % 20 == 0 or n == len(todo):
+                    print(f"  {n}/{len(todo)} {r['run']} {r['hours']:.1f} h {r['seconds']} s clean_equal_cache "
+                          f"{r['clean_equal_cache']}", flush=True)
     rows = [done[k] for k in runs]
     bad = [r["run"] for r in rows if not r["clean_equal_cache"]]
     summ = summarise(rows, jobs)
