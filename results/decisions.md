@@ -466,3 +466,17 @@ Method results and keep/drop decisions are appended below as runs finish.
   forced to 8 KB if needed, utilisation of `u_fe` and an out-of-context run of the engine; dry run with stand-ins
   for the Vivado commands completes. Step-by-step guide `hw/kv260/START_HERE.md`. Paper: KV260 paragraph and Fig. 3
   show the engine in the fabric (still 6 pages). Not yet run: Vivado on the v6 core and the board.
+* **First board run of kit v6 (19 Nov, user's KV260, Kria-PYNQ; read from the console, results JSON to follow).**
+  Quick run first stopped at step 4: the driver wrote soft reset and clear counters in one CTRL write, which the
+  core ignores for the counters (fixed in the driver, commit ae9eb02; no rebuild). Full campaign after the fix:
+  ALL TESTS PASSED. Step 1 core version 3; step 2 BIST 1024/1024 in 1,028 cycles; step 3 latency 3 cycles;
+  step 4 all 431,960 windows of the 10 recordings 0 mismatches against golden, software model and the
+  programmable path (C path, 3.22 us per window over AXI); step 5 frozen point 1/19 seizures and 0 false alarms in
+  119.99 h, programmable point (threshold 2, k 10) 3/19 and 25 false alarms (as predicted by simulation); step 6
+  SOM power 3.069 W idle (std 0.023) and 3.074 W with the classifier and BIST running continuously (difference
+  5 mW, within the sensor's noise); step 7 front end in C on the A53, 0 feature and 0 output mismatches on the 3
+  raw recordings, 3,390-4,080x real time; step 8 all 3,592 single faults injected, 0 hardware/software mismatches,
+  87.9 s; step 9 whole detector in the fabric, 9,214 windows from raw samples, 0 feature and 0 output mismatches,
+  engine 787,615 / 787,521 / 946,168 busy cycles per second of signal (simulation: 787,614 and 946,168 for the
+  two simulated recordings), 102-124x real time from the A53 over AXI. The board's clock showed 9 Nov (no RTC
+  sync without network); file names carry that date.
