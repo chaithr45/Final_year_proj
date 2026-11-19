@@ -492,3 +492,8 @@ Method results and keep/drop decisions are appended below as runs finish.
   hierarchy of the full design reports 1,341 LUTs (cross-boundary optimisation in the full design; not
   investigated). Vectorless dynamic power at 100 MHz: u_fe 11 mW, u_cls 8 mW (low confidence). Paper: all `[board]`
   marks filled (fault campaign, KV260 paragraph) and the hardware paragraph updated to the v6 design; 6 pages.
+* **Demo 2 on the board (19 Nov).** With the kit v6 bitstream, the PMOD red ALARM LED (B1, 220 ohm) and a plain
+  buzzer through a BC547 (B2, 1 kohm) work: the pin test lights B1 and sounds B2, and
+  `demo2_components.sh --autoplay --speed 4` raises the alarm on the seizure segment with the front end and the
+  classifier in the fabric (user's report). A buzzer without its + leg on 3.3 V stays silent (wiring note for the
+  guide).
