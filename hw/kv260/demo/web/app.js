@@ -617,6 +617,10 @@ function onMsg(m) {
     case 'event':
       if (m.kind === 'button') {
         S.events.push(m); toast(`<b>Patient button pressed</b> (${m.source}) at ${fmtMS(m.t - S.seg.watch_from_s)}`);
+      } else if (m.kind === 'doctor_ack') {
+        toast(`<b>Doctor acknowledged</b> the alarm on the phone ${m.time || ''}: on the way.`, 'good');
+      } else if (m.kind === 'doctor_alert') {
+        toast(`<b>Doctor notified</b> (ESP32): ${m.title}`);
       } else if (m.kind === 'alarm_end') {
         // the banner follows the window results
       } else if (m.kind === 'alarm') {

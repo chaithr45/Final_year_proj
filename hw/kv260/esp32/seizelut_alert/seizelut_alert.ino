@@ -23,6 +23,8 @@ const char *WIFI_PASS = "change-me";           // Settings > Personal Hotspot > 
 const char *NTFY_TOPIC = "seizelut-change-me-7c3f9a";  // a long random name; subscribe to it in the ntfy app
 const char *BED = "Bed 1";                     // shown when the board sends nothing (backup alarm)
 const long TZ_OFFSET_S = 19800;                // India: UTC+5:30
+const char *CALL_NUMBER = "+910000000000";     // one-tap call from the alert page (nurse station or emergency team)
+const char *PLAN = "Rescue plan: not set. Ask the treating doctor to write it here.";  // the patient's emergency plan
 
 const int ALARM_PIN = 27;                      // PMOD B1
 const int HB_PIN = 26;                         // PMOD B3 (optional)
@@ -35,6 +37,9 @@ String lastJson = "null";                      // the last message from the boar
 String lastEvent = "", lastTitle = "", lastBody = "", lastTime = "";
 unsigned long lastMsgMs = 0, lastStartMs = 0, lastUpdatePushMs = 0, pinHighSinceMs = 0, lastHbMs = 0;
 bool pinAlarm = false, backupSent = false, hbLevel = false;
+bool alarmActive = false, acked = false;       // an alarm event is open; the doctor tapped "On my way"
+String ackTime = "";
+unsigned long lastPushMs = 0;
 int lastPushCode = 0;
 String lastPushWhat = "none";
 
@@ -88,9 +93,13 @@ void sendPush() {
   http.addHeader("Title", pushTitle);
   http.addHeader("Priority", String(pushPriority));
   http.addHeader("Tags", pushTags);
+  String ip = WiFi.localIP().toString();         // buttons in the notification (phone on the same hotspot)
+  http.addHeader("Actions", String("http, On my way, http://") + ip + "/ack, method=POST, clear=true; "
+                 "view, Open live page, http://" + ip + "/");
   http.setTimeout(8000);
   lastPushCode = http.POST(pushBody + "\n(" + nowText() + ")");
   lastPushWhat = pushTitle;
+  lastPushMs = millis();
   http.end();
   Serial.printf("# push %d: %s\n", lastPushCode, pushTitle.c_str());
 }
@@ -103,14 +112,15 @@ void handleLine(const String &js) {
   lastTime = nowText(); lastMsgMs = millis();
   unsigned long now = millis();
   if (ev == "start") {
-    lastStartMs = now; lastUpdatePushMs = now;
+    lastStartMs = now; lastUpdatePushMs = now; alarmActive = true; acked = false; ackTime = "";
     queuePush(lastTitle, lastBody, 5, "rotating_light");
   } else if (ev == "update") {
-    if (now - lastUpdatePushMs >= 60000UL) {   // the page updates every 15 s; the phone at most once a minute
-      lastUpdatePushMs = now;
-      queuePush(lastTitle, lastBody, 4, "warning");
-    }
+    // page only; the phone is reminded once a minute until someone acknowledges (see loop)
+  } else if (ev == "escalate") {
+    alarmActive = true;                         // 2 min and 5 min: always pushed, even after an acknowledgement
+    queuePush(lastTitle, lastBody, 5, jsonString(js, "level") == "emergency" ? "sos" : "warning");
   } else if (ev == "end") {
+    alarmActive = false;
     queuePush(lastTitle, lastBody, 3, "white_check_mark");
   } else if (ev == "button") {
     queuePush(lastTitle, lastBody, 4, "raising_hand");
@@ -123,22 +133,33 @@ void handleLine(const String &js) {
 const char PAGE[] PROGMEM = R"rawliteral(<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>SeizeLUT alert</title>
 <style>
-:root{--bg:#0b1020;--card:#141b31;--ink:#e8eeff;--mut:#93a0c0;--red:#ff3049;--ok:#2bd67b}
+:root{--bg:#0b1020;--card:#141b31;--ink:#e8eeff;--mut:#93a0c0;--red:#ff3049;--amb:#ffb21f;--ok:#2bd67b}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,system-ui,sans-serif}
-#top{padding:22px 16px;text-align:center;font-weight:800;font-size:26px;background:#123524}
-#top.alarm{background:var(--red);animation:fl 1s infinite}@keyframes fl{50%{background:#7a0f1d}}
-#sub{color:var(--mut);font-size:14px;text-align:center;margin:8px 16px}
+#top{padding:18px 16px 14px;text-align:center;background:#123524}
+#top b{display:block;font-size:26px;font-weight:800}#top span{font-size:15px;opacity:.9}
+#top.alarm{background:var(--red);animation:fl 1s infinite}#top.long{background:#b5520d;animation:fl 1s infinite}
+#top.emergency{background:#8a001a;animation:fl .5s infinite}@keyframes fl{50%{filter:brightness(.6)}}
+#sub{color:var(--mut);font-size:13px;text-align:center;margin:8px 16px}
 .card{background:var(--card);margin:12px 16px;border-radius:12px;padding:14px 16px}
+#danger{display:none;background:#5a0f1c;border:2px solid var(--red);font-weight:700}
+.acts{display:flex;gap:10px;margin:12px 16px}.acts>*{flex:1;text-align:center;padding:14px 8px;border-radius:12px;
+ font-size:17px;font-weight:700;text-decoration:none;color:#fff;border:0}
+#ack{background:#1f6f43}#ack.done{background:#2a3a66;font-weight:500}#call{background:#2a3a66}
 .row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #222b47}
 .row:last-child{border-bottom:0}.k{color:var(--mut);min-width:96px}.v{text-align:right}
-button{display:block;margin:12px auto;padding:10px 18px;border-radius:10px;border:0;background:#2a3a66;color:#fff;font-size:15px}
+h3{margin:0 0 8px;font-size:15px;color:var(--mut);font-weight:600}ol{margin:0;padding-left:20px}li{margin:4px 0}
+#snd{display:block;margin:10px auto 0;padding:9px 16px;border-radius:10px;border:0;background:#2a3a66;color:#fff}
 #log div{color:var(--mut);font-size:13px;padding:3px 0}.note{color:var(--mut);font-size:12px;text-align:center;margin:10px 16px 24px}
 </style></head><body>
-<div id="top">MONITORING</div><div id="sub">connecting...</div>
+<div id="top"><b id="lvl">MONITORING</b><span id="timer"></span></div>
+<div id="sub">connecting...</div>
+<div class="card" id="danger"></div>
+<div class="acts"><button id="ack">On my way</button><a id="call" href="#">Call</a></div>
 <button id="snd">Tap once to enable the alarm sound</button>
-<div class="card" id="det">
+<div class="card">
 <div class="row"><span class="k">Patient</span><span class="v" id="bed">-</span></div>
 <div class="row"><span class="k">Alarm</span><span class="v" id="dur">-</span></div>
+<div class="row"><span class="k">Alarms</span><span class="v" id="clu">-</span></div>
 <div class="row"><span class="k">1 Heart rate</span><span class="v" id="hr">-</span></div>
 <div class="row"><span class="k">2 Movement</span><span class="v" id="mov">-</span></div>
 <div class="row"><span class="k">3 Muscle (EMG)</span><span class="v" id="emg">-</span></div>
@@ -147,34 +168,63 @@ button{display:block;margin:12px auto;padding:10px 18px;border-radius:10px;borde
 <div class="row"><span class="k">Patient button</span><span class="v" id="aware">-</span></div>
 <div class="row"><span class="k">Sensors</span><span class="v" id="sens">-</span></div>
 </div>
-<div class="card"><div class="k" style="margin-bottom:6px">Events</div><div id="log"></div></div>
+<div class="card"><h3>Patient's emergency plan</h3><div id="plan">-</div></div>
+<div class="card"><h3>Seizure first aid (general guidance)</h3><ol>
+<li>Note the time; stay with the patient.</li>
+<li>Keep them safe: move hard objects away, cushion the head.</li>
+<li>Nothing in the mouth; do not hold them down.</li>
+<li>When the jerking stops, turn them on their side and check breathing.</li>
+<li>Emergency help if it lasts over 5 minutes, another seizure follows, breathing is difficult or there is an injury.</li>
+</ol></div>
+<div class="card"><h3>Events</h3><div id="log"></div></div>
 <div class="note">Measured signs from the SeizeLUT detector for the doctor, not a diagnosis.</div>
 <script>
-let ac=null,last='',alarmOn=false;
-document.getElementById('snd').onclick=()=>{ac=new (window.AudioContext||window.webkitAudioContext)();beep();
- document.getElementById('snd').textContent='Alarm sound on';};
-function beep(){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;
+let ac=null,last='',recvAt=0,dur0=0;
+const $=id=>document.getElementById(id);
+$('snd').onclick=()=>{ac=new (window.AudioContext||window.webkitAudioContext)();beep();$('snd').textContent='Alarm sound on';};
+$('ack').onclick=async()=>{try{await fetch('/ack',{method:'POST'});}catch(e){}tick();};
+function beep(f){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f||880;
  o.connect(g);g.connect(ac.destination);g.gain.value=0.2;o.start();o.stop(ac.currentTime+0.25);}
-function set(id,v){document.getElementById(id).textContent=(v===undefined||v===null||v==='')?'-':v;}
+function set(id,v){$(id).textContent=(v===undefined||v===null||v==='')?'-':v;}
+function mmss(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 async function tick(){
  try{const s=await (await fetch('/state')).json();const m=s.last||{};
-  const on=s.alarm_pin||(m.event==='start'||m.event==='update');
-  const top=document.getElementById('top');
-  top.textContent=on?'SEIZURE ALARM':'MONITORING';top.className=on?'alarm':'';
-  set('sub',(s.fpga_alive?'FPGA running':'FPGA heartbeat not seen')+' | Wi-Fi '+s.rssi+' dBm | last push: '+s.push+' | '+s.time);
-  set('bed',m.bed);set('dur',m.event==='end'?('ended after '+m.dur_s+' s'):(m.dur_s!==undefined?(m.dur_s+' s, detector '+(m.conf||'')):(s.alarm_pin?'FPGA alarm signal (no details yet)':'-')));
-  set('hr',m.hr_text);set('mov',m.mov_text);set('emg',m.emg_text);set('eeg',m.eeg_text);set('hint',m.hint);
-  set('aware',m.aware===undefined?'-':(m.aware?'pressed (aware)':'not pressed'));set('sens',m.sensors);
+  const open=s.alarm_active||(s.alarm_pin&&m.event!=='end');
   const key=(m.event||'')+(m.dur_s||'')+s.last_time;
-  if(m.event&&key!==last){last=key;const d=document.createElement('div');d.textContent=s.last_time+'  '+(m.title||m.event);
-   const L=document.getElementById('log');L.insertBefore(d,L.firstChild);}
-  if(on){beep();if(navigator.vibrate)navigator.vibrate(300);}
+  if(m.event&&key!==last){last=key;recvAt=Date.now();dur0=m.dur_s||0;
+   const d=document.createElement('div');d.textContent=s.last_time+'  '+(m.title||m.event);$('log').insertBefore(d,$('log').firstChild);}
+  const dur=open?dur0+(Date.now()-recvAt)/1000:dur0;
+  const lvl=!open?'':dur>=300?'emergency':dur>=120?'long':'alarm';
+  $('top').className=lvl;
+  $('lvl').textContent=lvl==='emergency'?'EMERGENCY: over 5 min':lvl==='long'?'LONG SEIZURE ALARM':open?'SEIZURE ALARM':'MONITORING';
+  $('timer').textContent=open?('alarm for '+mmss(dur)+(lvl==='emergency'?' - follow the emergency plan':'')):(m.event==='end'?'last alarm ended after '+mmss(m.dur_s):'');
+  const dg=m.danger||[];$('danger').style.display=(open&&dg.length)?'block':'none';$('danger').textContent='Check now: '+dg.join('; ');
+  $('ack').textContent=s.acked?('Acknowledged '+s.ack_time):'On my way';$('ack').className=s.acked?'done':'';
+  $('call').href='tel:'+s.call;$('call').textContent='Call '+s.call;set('plan',s.plan);
+  set('sub',(s.fpga_alive?'FPGA running':'FPGA heartbeat not seen')+' | Wi-Fi '+s.rssi+' dBm | last push: '+s.push+' | '+s.time);
+  set('bed',m.bed);set('dur',m.event==='end'?('ended after '+m.dur_s+' s'):(m.dur_s!==undefined?('detector '+(m.conf||'')):(s.alarm_pin?'FPGA alarm signal (no details yet)':'-')));
+  set('clu',m.cluster);set('hr',m.hr_text);set('mov',m.mov_text);set('emg',m.emg_text);set('eeg',m.eeg_text);set('hint',m.hint);
+  set('aware',m.aware===undefined?'-':(m.aware?'pressed (aware)':'not pressed'));set('sens',m.sensors);
+  if(open&&!s.acked){beep(lvl==='emergency'?1320:880);if(navigator.vibrate)navigator.vibrate(300);}
  }catch(e){set('sub','ESP32 not reachable');}
 }
 setInterval(tick,1000);tick();
 </script></body></html>)rawliteral";
 
 void handleRoot() { server.send_P(200, "text/html", PAGE); }
+
+// "On my way": from the page or from the notification's button
+void handleAck() {
+  if (!acked) {
+    acked = true;
+    ackTime = nowText();
+    Serial.print("{\"event\":\"ack\",\"time\":\"");   // back to the board (dashboard and console)
+    Serial.print(ackTime.c_str());
+    Serial.print("\"}\n");
+  }
+  server.send(200, "text/html", "<meta name=viewport content='width=device-width'><h2>Acknowledged</h2>"
+              "<p>The alarm page shows that you are on the way.</p><p><a href='/'>Open the live page</a></p>");
+}
 
 void handleState() {
   String s = "{\"alarm_pin\":";
@@ -188,6 +238,11 @@ void handleState() {
   s += ",\"push\":\"" + push + "\"";
   s += ",\"time\":\"" + nowText() + "\"";
   s += ",\"last_time\":\"" + lastTime + "\"";
+  s += ",\"alarm_active\":"; s += alarmActive ? "true" : "false";
+  s += ",\"acked\":"; s += acked ? "true" : "false";
+  s += ",\"ack_time\":\"" + ackTime + "\"";
+  s += ",\"call\":\"" + String(CALL_NUMBER) + "\"";
+  s += ",\"plan\":\"" + String(PLAN) + "\"";
   s += ",\"last\":" + lastJson + "}";
   server.send(200, "application/json", s);
 }
@@ -209,6 +264,7 @@ void setup() {
   configTime(TZ_OFFSET_S, 0, "pool.ntp.org", "time.google.com");
   server.on("/", handleRoot);
   server.on("/state", handleState);
+  server.on("/ack", handleAck);
   server.begin();
   Serial.print("# SeizeLUT alert ready, page: http://");
   Serial.println(WiFi.localIP());
@@ -235,6 +291,9 @@ void loop() {
   }
   bool hb = digitalRead(HB_PIN);
   if (hb != hbLevel) { hbLevel = hb; lastHbMs = now; }
+  if (!pushPending && alarmActive && !acked && lastPushMs && now - lastPushMs >= 60000UL) {
+    queuePush(String("REMINDER (not acknowledged): ") + lastTitle, lastBody, 5, "rotating_light");
+  }
   if (pushPending) sendPush();
   server.handleClient();
   static unsigned long lastTry = 0;

@@ -13,6 +13,10 @@ engine in the fabric); nothing is a diagnosis.
   4 muscle: EMG power vs before
   5 brain: EEG line length vs before, and whether slow (delta/theta) or fast (beta) activity rose most
   plus: patient button (pressed = the patient was aware enough to press it), sensors worn, alarm end and duration.
+For acting at once: danger flags (heart rate above 150 or below 40 bpm, ECG unreadable for 5 s: check pulse and
+breathing by hand), escalation messages when the alarm has lasted 2 min and 5 min (5 min: emergency, the ILAE 2015
+time point t1 for status epilepticus in convulsive seizures) and every minute after, the number of alarms in the
+last hour (clusters), and the doctor's acknowledgement coming back from the ESP32 ({"event": "ack"}).
 
 "Before" is the 60 s ending 30 s before the alarm started; "now" is the last 10 s. An alarm that stops and
 restarts within 30 s is the same event (the end message waits for 30 s without alarm). Messages are one JSON object per
@@ -56,6 +60,8 @@ class AlertBuilder:
         self.peak_hr = None
         self.aware = False
         self.last_update = None
+        self.next_esc = None
+        self.starts: deque = deque(maxlen=50)        # alarm start times (cluster count)
 
     def _col(self, rows, name):
         return np.array([r[self.ix[name]] for r in rows], dtype=np.float64)
@@ -87,6 +93,14 @@ class AlertBuilder:
             s["hr_text"] = (f"{round(hb)} -> {round(hn)} bpm ({'+' if rise >= 0 else ''}{rise:.0f} %), {flag}"
                             if hb else f"{round(hn)} bpm, {flag}")
             self.peak_hr = max(self.peak_hr or 0, hn)
+        danger = []
+        if hn is not None and hn > 150:
+            danger.append(f"very fast heart rate ({hn:.0f} bpm)")
+        if hn is not None and hn < 40:
+            danger.append(f"very slow heart rate ({hn:.0f} bpm)")
+        if pres["ecg"] and all(r[self.ix["ecg_quality_bad"]] for r in rows[-5:]):
+            danger.append("ECG unreadable for 5 s: check pulse and breathing by hand")
+        s["danger"] = danger
         # 3 movement
         mk = "mov_acc" if pres["mov_acc"] else "mov_gyr" if pres["mov_gyr"] else None
         if mk:
@@ -123,6 +137,8 @@ class AlertBuilder:
             self.last_on = t_rec
         if alarm and not self.active:
             self.active, self.t0, self.peak_hr, self.aware, self.last_update = True, t_rec, None, False, t_rec
+            self.next_esc = t_rec + 120
+            self.starts.append(t_rec)
             return self._msg("start", t_rec, n_sz_luts, n_luts_group)
         if self.active and not alarm and t_rec - self.last_on >= self.hold_s:   # quiet for hold_s: event over
             self.active = False
@@ -133,6 +149,11 @@ class AlertBuilder:
                     f"Patient button: {'pressed' if self.aware else 'not pressed'}\nNow: {s['mov_text']}")
             return {"event": "end", "bed": self.bed, "dur_s": round(d), "title": f"Alarm ended - {self.bed}",
                     "body": body, **s}
+        if self.active and alarm and t_rec >= self.next_esc:      # 2 min, 5 min, then every minute (alarm on)
+            d = t_rec - self.t0
+            self.next_esc = self.t0 + (300 if d < 300 else 60 * (int(d // 60) + 1))
+            self.last_update = t_rec
+            return self._msg("escalate", t_rec, n_sz_luts, n_luts_group)
         if self.active and t_rec - self.last_update >= self.update_s:
             self.last_update = t_rec
             return self._msg("update", t_rec, n_sz_luts, n_luts_group)
@@ -144,17 +165,35 @@ class AlertBuilder:
                 "body": "The patient pressed the button (aware enough to press it)." if self.active
                 else "The patient pressed the button (no alarm on)."}
 
+    def cluster(self, t_rec: float) -> tuple[int, str]:
+        n = sum(1 for t in self.starts if t_rec - t <= 3600)
+        nth = {1: "1st", 2: "2nd", 3: "3rd"}.get(n, f"{n}th")
+        return n, (f"{nth} alarm in the last hour" + (" (cluster)" if n >= 2 else ""))
+
     def _msg(self, ev: str, t_rec: float, n_sz: int, n_grp: int) -> dict:
         s = self.signs()
         d = t_rec - self.t0
-        title = f"SEIZURE ALARM - {self.bed}" if ev == "start" else f"Seizure alarm ongoing ({d:.0f} s) - {self.bed}"
-        body = (f"Detector: {n_sz} of {n_grp} seizure units active; alarm for {d:.0f} s\n"
+        level = "emergency" if d >= 300 else "long" if d >= 120 else "alarm"
+        n1h, ctext = self.cluster(t_rec)
+        if ev == "escalate" and level == "emergency":
+            title = f"EMERGENCY: seizure alarm over {int(d // 60)} min - {self.bed}"
+            head = ("Alarm on for 5 min or more (the seizure began before the alarm). Treat as an emergency "
+                    "(status epilepticus time point, ILAE 2015) and follow the patient's rescue plan.\n")
+        elif ev == "escalate":
+            title = f"Long seizure alarm (over 2 min) - {self.bed}"
+            head = "Alarm on for 2 min. Be ready to start the emergency plan at 5 min.\n"
+        else:
+            title = f"SEIZURE ALARM - {self.bed}" if ev == "start" else f"Seizure alarm ongoing ({d:.0f} s) - {self.bed}"
+            head = ""
+        if s["danger"]:
+            head = "!! " + "; ".join(s["danger"]) + "\n" + head
+        body = (head + f"Detector: {n_sz} of {n_grp} seizure units active; alarm for {d:.0f} s; {ctext}\n"
                 f"1 Heart rate: {s['hr_text']}\n2 Movement: {s['mov_text']}\n3 Muscle (EMG): {s['emg_text']}\n"
                 f"4 Brain (EEG): {s['eeg_text']}\n5 Pattern hint: {s['hint']}\n"
                 f"Patient button: {'pressed' if self.aware else 'not pressed'}. Sensors: {s['sensors']}.\n"
                 "Measured signs for the doctor, not a diagnosis.")
         return {"event": ev, "bed": self.bed, "dur_s": round(d), "conf": f"{n_sz}/{n_grp}", "aware": self.aware,
-                "title": title, "body": body, **s}
+                "level": level, "alarms_1h": n1h, "cluster": ctext, "title": title, "body": body, **s}
 
 
 class Esp32Link:
@@ -186,6 +225,25 @@ class Esp32Link:
     @property
     def ok(self) -> bool:
         return self.fd is not None
+
+    def read_lines(self) -> list[dict]:
+        """Messages coming back from the ESP32 (the doctor's acknowledgement); its debug lines start with '#'."""
+        if self.fd is None:
+            return []
+        try:
+            self._rx = getattr(self, "_rx", b"") + os.read(self.fd, 4096)
+        except (BlockingIOError, OSError):
+            return []
+        out = []
+        while b"\n" in self._rx:
+            line, self._rx = self._rx.split(b"\n", 1)
+            line = line.strip()
+            if line.startswith(b"{"):
+                try:
+                    out.append(json.loads(line))
+                except ValueError:
+                    pass
+        return out
 
     def send(self, msg: dict) -> bool:
         if self.fd is None:
@@ -223,9 +281,23 @@ if __name__ == "__main__":       # test the chain board -> ESP32 -> phone with a
               "hint": "motor pattern likely (strong movement)"}
     body = ("TEST MESSAGE - no patient.\n1 Heart rate: 72 -> 118 bpm (+64 %), fast\n2 Movement: strong movement (x4.8)\n"
             "3 Muscle (EMG): increased (x2.1)\n4 Brain (EEG): strong change, slow waves\n5 Pattern hint: motor pattern likely")
-    link.send({"event": "start", "dur_s": 0, "title": f"TEST seizure alarm - {a.bed}", "body": body, **common})
-    print("sent: TEST alarm start; the phone should ring now. Ending it in 20 s...")
-    time.sleep(20)
-    link.send({"event": "end", "dur_s": 20, "title": f"TEST alarm ended - {a.bed}",
-               "body": "TEST MESSAGE - no patient. Alarm ended after 20 s.", **common})
+    link.send({"event": "start", "dur_s": 0, "level": "alarm", "alarms_1h": 2,
+               "cluster": "2nd alarm in the last hour (cluster)", "danger": [],
+               "title": f"TEST seizure alarm - {a.bed}", "body": body, **common})
+    print("sent: TEST alarm start; the phone should ring now (tap 'On my way' to acknowledge)")
+    time.sleep(15)
+    link.send({"event": "escalate", "dur_s": 300, "level": "emergency", "alarms_1h": 2,
+               "cluster": "2nd alarm in the last hour (cluster)",
+               "danger": ["very fast heart rate (156 bpm)"],
+               "title": f"TEST EMERGENCY: seizure alarm over 5 min - {a.bed}",
+               "body": "TEST MESSAGE - no patient.\n!! very fast heart rate (156 bpm)\nAlarm on for 5 min or more. "
+                       "Treat as an emergency and follow the patient's rescue plan.", **common})
+    print("sent: TEST emergency escalation (5 min)")
+    for _ in range(30):
+        for m in link.read_lines():
+            if m.get("event") == "ack":
+                print(f"ACK received from the ESP32: the doctor is on the way ({m.get('time', '')})")
+        time.sleep(0.5)
+    link.send({"event": "end", "dur_s": 330, "level": "alarm", "danger": [], "title": f"TEST alarm ended - {a.bed}",
+               "body": "TEST MESSAGE - no patient. Alarm ended after 330 s.", **common})
     print("sent: TEST alarm end")

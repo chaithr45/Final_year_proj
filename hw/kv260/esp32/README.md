@@ -15,6 +15,19 @@ The notification also shows the alarm duration, how many of the 25 "seizure" loo
 patient pressed the button, and which sensors are worn. An "alarm ended" message follows when the alarm has been
 quiet for 30 s.
 
+**So the doctor can act at once:**
+
+| Feature | What happens |
+|---|---|
+| Escalation | at 2 min of alarm "Long seizure alarm"; at 5 min "EMERGENCY: seizure alarm over 5 min", then every minute. Five minutes is the ILAE 2015 time point for treating a convulsive seizure as status epilepticus; the seizure started before the alarm, so the real duration is longer |
+| Danger flags | heart rate above 150 or below 40 bpm, or ECG unreadable for 5 s: "Check now: ..." in red at the top (check pulse and breathing by hand) |
+| On my way | a button in the notification and on the page; the page shows "Acknowledged 14:33:05" and the board's dashboard shows it too |
+| Reminders | until someone taps "On my way", the phone is reminded every minute |
+| Call | one tap calls the number set in the sketch (nurse station or emergency team) |
+| Emergency plan | the patient's rescue plan, written in the sketch by the treating doctor, shown on the page |
+| Clusters | "2nd alarm in the last hour (cluster)" |
+| First aid | the general seizure first-aid steps on the page (time it, keep safe, nothing in the mouth, recovery position, when to call for help) |
+
 **What the pattern hint is worth:** on the training patients the 2.6-fold threshold was chosen on patients 1-48 and
 then agreed with the doctors' motor / non-motor labels in 64 % of cases (balanced accuracy) on patients 49-96
 (`results/tables/alert_signs.json`). It is a hint for the doctor, not a seizure type. All values are measurements,
@@ -53,6 +66,8 @@ buzzer stay as they are; GPIO 27 is simply a second wire from B1.
    * `WIFI_PASS` = the hotspot password
    * `NTFY_TOPIC` = the topic from step 2.3 (exactly)
    * `BED` = for example `"Bed 1"`
+   * `CALL_NUMBER` = the number the page's Call button dials (nurse station or emergency team)
+   * `PLAN` = the patient's emergency plan as written by the treating doctor (no names)
 4. Plug the ESP32 into the PC. **Tools > Board > esp32 > ESP32 Dev Module**, **Tools > Port** = the new COM port.
    Click **Upload** (arrow). If it waits at `Connecting....`, hold the ESP32's **BOOT** button until it starts.
 5. Check: keep the iPhone's Personal Hotspot screen open; within a few seconds the iPhone shows one connected device.
@@ -71,7 +86,8 @@ buzzer stay as they are; GPIO 27 is simply a second wire from B1.
    ```
    cd ~/seizelut_kv260_v6/demo && sudo bash -c 'source /etc/profile.d/pynq_venv.sh && python3 doctor_alert.py --bed "Bed 1"'
    ```
-   The iPhone rings with "TEST seizure alarm - Bed 1", and 20 s later "TEST alarm ended".
+   The iPhone rings with "TEST seizure alarm - Bed 1" (tap **On my way**: the board prints "ACK received"), 15 s
+   later "TEST EMERGENCY: seizure alarm over 5 min" with a danger flag, then "TEST alarm ended".
 4. Run the demo as before; it finds the ESP32 by itself (the start-up text says `doctor notification: ESP32 on
    /dev/ttyUSB0`):
    ```

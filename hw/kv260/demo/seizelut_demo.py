@@ -263,6 +263,8 @@ class Engine(threading.Thread):
             msg = builder.window(X, alarm, int(np.sum(luts[g0:g1])), g1 - g0, float(t_end))
             if msg is not None:
                 link.send(msg)
+                if msg["event"] in ("start", "escalate"):
+                    self.send({"type": "event", "kind": "doctor_alert", "title": msg["title"]})
         return {"w": w, "t_end": t_end, "f": f.tolist(), "art": [int(art[0]), int(art[1])],
                 "bits": "".join("1" if x else "0" for x in bits), "luts": "".join("1" if x else "0" for x in luts),
                 "score": int(s), "dec": int(dec), "alarm": int(alarm), "thr": int(thr), "k": int(k_p if opp else self.core.cfg["k"]),
@@ -309,6 +311,11 @@ class Engine(threading.Thread):
                 m["warm"] = [self.pos, self.watch]
         if getattr(self, "rtt", None):
             m["rtt_us"] = round(float(np.median(self.rtt)) * 1e6, 1)
+        if self.alert is not None:          # the doctor's acknowledgement, coming back from the ESP32
+            for r in self.alert[1].read_lines():
+                if r.get("event") == "ack":
+                    print(f"  doctor acknowledged the alarm ({r.get('time', '')})", flush=True)
+                    self.send({"type": "event", "kind": "doctor_ack", "time": r.get("time", "")})
         return m
 
     # ---- commands

@@ -510,3 +510,12 @@ Method results and keep/drop decisions are appended below as runs finish.
   cross-head channel chosen per recording, so no left/right claim is made. Tested here: messages through a
   pseudo-terminal on the emulated demo (start, 15-s updates, end after 30 s quiet), sketch syntax with stand-in
   Arduino headers, phone page with Playwright; not yet on the ESP32 itself.
+* **Doctor alert: features for acting at once (19 Nov, user request).** Escalation at 2 min and 5 min of alarm
+  (5 min = ILAE 2015 time point t1 for convulsive status epilepticus; the text says the seizure began before the
+  alarm) and every minute after, only while the alarm is on; danger flags (heart rate > 150 or < 40 bpm, ECG
+  unreadable 5 s: check pulse and breathing by hand); alarm clusters (alarms in the last hour); "On my way"
+  acknowledgement from the notification (ntfy action) or the page, sent back to the board (dashboard toast);
+  reminders every minute until acknowledged; one-tap call; the patient's emergency plan and general seizure first
+  aid on the page. Tested here: synthetic 7-min alarm (escalations at 2, 5, 6, 7 min, none after the alarm stops,
+  second alarm counted as a cluster), emulated demo with an acknowledgement through a pseudo-terminal, sketch syntax
+  with stand-in headers, page rendering. Not yet on the ESP32 hardware.
