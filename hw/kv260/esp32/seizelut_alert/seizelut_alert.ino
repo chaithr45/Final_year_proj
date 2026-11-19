@@ -133,51 +133,52 @@ void handleLine(const String &js) {
 const char PAGE[] PROGMEM = R"rawliteral(<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>SeizeLUT alert</title>
 <style>
-:root{--bg:#0b1020;--card:#141b31;--ink:#e8eeff;--mut:#93a0c0;--red:#ff3049;--amb:#ffb21f;--ok:#2bd67b}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px -apple-system,system-ui,sans-serif}
-#top{padding:18px 16px 14px;text-align:center;background:#123524}
-#top b{display:block;font-size:26px;font-weight:800}#top span{font-size:15px;opacity:.9}
-#top.alarm{background:var(--red);animation:fl 1s infinite}#top.long{background:#b5520d;animation:fl 1s infinite}
-#top.emergency{background:#8a001a;animation:fl .5s infinite}@keyframes fl{50%{filter:brightness(.6)}}
-#sub{color:var(--mut);font-size:13px;text-align:center;margin:8px 16px}
-.card{background:var(--card);margin:12px 16px;border-radius:12px;padding:14px 16px}
-#danger{display:none;background:#5a0f1c;border:2px solid var(--red);font-weight:700}
-.acts{display:flex;gap:10px;margin:12px 16px}.acts>*{flex:1;text-align:center;padding:14px 8px;border-radius:12px;
- font-size:17px;font-weight:700;text-decoration:none;color:#fff;border:0}
-#ack{background:#1f6f43}#ack.done{background:#2a3a66;font-weight:500}#call{background:#2a3a66}
-.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #222b47}
-.row:last-child{border-bottom:0}.k{color:var(--mut);min-width:96px}.v{text-align:right}
-h3{margin:0 0 8px;font-size:15px;color:var(--mut);font-weight:600}ol{margin:0;padding-left:20px}li{margin:4px 0}
-#snd{display:block;margin:10px auto 0;padding:9px 16px;border-radius:10px;border:0;background:#2a3a66;color:#fff}
-#log div{color:var(--mut);font-size:13px;padding:3px 0}.note{color:var(--mut);font-size:12px;text-align:center;margin:10px 16px 24px}
+:root{--bg:#0b1020;--card:#141b31;--ink:#f2f5ff;--mut:#93a0c0;--red:#e0233c;--amb:#e8930c;--grn:#1f9d55;--gry:#3a4462}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px -apple-system,system-ui,sans-serif}
+#top{padding:16px 16px 12px;text-align:center;background:#16452c}
+#top .st{font-size:34px;font-weight:900;letter-spacing:.5px}#top .bt{font-size:20px;font-weight:700;margin-top:2px}
+#top.alarm,#top.long{background:var(--red);animation:fl 1s infinite}#top.emergency{background:#7d0016;animation:fl .45s infinite}
+#top.ended{background:#3a4462}@keyframes fl{50%{filter:brightness(.62)}}
+#act{margin:12px;padding:16px 14px;border-radius:14px;background:#ffd23f;color:#111;font-size:23px;font-weight:900;
+ text-align:center;line-height:1.2;display:none}
+#danger{margin:0 12px 12px;padding:12px 14px;border-radius:12px;background:#4d0010;border:3px solid var(--red);
+ font-size:18px;font-weight:800;display:none}
+.acts{display:flex;gap:10px;margin:0 12px 12px}.acts>*{flex:1;text-align:center;padding:16px 6px;border-radius:14px;
+ font-size:19px;font-weight:800;text-decoration:none;color:#fff;border:0}
+#ack{background:var(--grn)}#ack.done{background:#2a3a66;font-weight:600;font-size:16px}#call{background:#2a3a66}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 12px 10px}
+.tile{border-radius:14px;padding:12px;background:var(--gry);min-height:86px}
+.tile .n{font-size:14px;opacity:.9}.tile .w{font-size:24px;font-weight:900;margin-top:4px}.tile .x{font-size:14px;opacity:.9}
+.red{background:var(--red)}.amber{background:var(--amb)}.green{background:var(--grn)}.grey{background:var(--gry)}
+#info{margin:0 14px 8px;color:var(--mut);font-size:15px;text-align:center}
+details{background:var(--card);margin:8px 12px;border-radius:12px;padding:12px 14px}summary{font-weight:700;font-size:16px}
+#detail{white-space:pre-wrap;font-size:15px;line-height:1.45;margin-top:8px}ol{margin:8px 0 0;padding-left:20px}li{margin:4px 0;font-size:15px}
+#snd{display:block;margin:4px auto 8px;padding:8px 14px;border-radius:10px;border:0;background:#2a3a66;color:#fff;font-size:14px}
+#log div{color:var(--mut);font-size:13px;padding:2px 0}.note{color:var(--mut);font-size:12px;text-align:center;margin:10px 14px 22px}
 </style></head><body>
-<div id="top"><b id="lvl">MONITORING</b><span id="timer"></span></div>
-<div id="sub">connecting...</div>
-<div class="card" id="danger"></div>
+<div id="top"><div class="st" id="st">MONITORING</div><div class="bt" id="bt">&nbsp;</div></div>
+<div id="act"></div>
+<div id="danger"></div>
 <div class="acts"><button id="ack">On my way</button><a id="call" href="#">Call</a></div>
-<button id="snd">Tap once to enable the alarm sound</button>
-<div class="card">
-<div class="row"><span class="k">Patient</span><span class="v" id="bed">-</span></div>
-<div class="row"><span class="k">Alarm</span><span class="v" id="dur">-</span></div>
-<div class="row"><span class="k">Alarms</span><span class="v" id="clu">-</span></div>
-<div class="row"><span class="k">1 Heart rate</span><span class="v" id="hr">-</span></div>
-<div class="row"><span class="k">2 Movement</span><span class="v" id="mov">-</span></div>
-<div class="row"><span class="k">3 Muscle (EMG)</span><span class="v" id="emg">-</span></div>
-<div class="row"><span class="k">4 Brain (EEG)</span><span class="v" id="eeg">-</span></div>
-<div class="row"><span class="k">5 Pattern hint</span><span class="v" id="hint">-</span></div>
-<div class="row"><span class="k">Patient button</span><span class="v" id="aware">-</span></div>
-<div class="row"><span class="k">Sensors</span><span class="v" id="sens">-</span></div>
+<div class="tiles">
+<div class="tile" id="t_heart"><div class="n">Heart rate</div><div class="w">-</div><div class="x"></div></div>
+<div class="tile" id="t_shaking"><div class="n">Shaking</div><div class="w">-</div><div class="x"></div></div>
+<div class="tile" id="t_muscle"><div class="n">Muscle tension</div><div class="w">-</div><div class="x"></div></div>
+<div class="tile" id="t_brain"><div class="n">Brain activity</div><div class="w">-</div><div class="x"></div></div>
 </div>
-<div class="card"><h3>Patient's emergency plan</h3><div id="plan">-</div></div>
-<div class="card"><h3>Seizure first aid (general guidance)</h3><ol>
+<div id="info"></div>
+<button id="snd">Tap once to enable the alarm sound</button>
+<details id="dplan"><summary>Emergency plan</summary><div id="plan" style="margin-top:8px">-</div></details>
+<details><summary>First aid steps</summary><ol>
 <li>Note the time; stay with the patient.</li>
-<li>Keep them safe: move hard objects away, cushion the head.</li>
+<li>Move hard objects away, cushion the head.</li>
 <li>Nothing in the mouth; do not hold them down.</li>
-<li>When the jerking stops, turn them on their side and check breathing.</li>
-<li>Emergency help if it lasts over 5 minutes, another seizure follows, breathing is difficult or there is an injury.</li>
-</ol></div>
-<div class="card"><h3>Events</h3><div id="log"></div></div>
-<div class="note">Measured signs from the SeizeLUT detector for the doctor, not a diagnosis.</div>
+<li>When the jerking stops: turn on the side, check breathing.</li>
+<li>Call emergency help if over 5 min, another seizure, breathing difficulty or injury.</li>
+</ol></details>
+<details><summary>More details</summary><div id="detail">-</div><div id="sub" style="color:#93a0c0;font-size:13px;margin-top:8px"></div></details>
+<details><summary>Events</summary><div id="log"></div></details>
+<div class="note">Measured signs from the SeizeLUT detector, not a diagnosis.</div>
 <script>
 let ac=null,last='',recvAt=0,dur0=0;
 const $=id=>document.getElementById(id);
@@ -185,8 +186,8 @@ $('snd').onclick=()=>{ac=new (window.AudioContext||window.webkitAudioContext)();
 $('ack').onclick=async()=>{try{await fetch('/ack',{method:'POST'});}catch(e){}tick();};
 function beep(f){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f||880;
  o.connect(g);g.connect(ac.destination);g.gain.value=0.2;o.start();o.stop(ac.currentTime+0.25);}
-function set(id,v){$(id).textContent=(v===undefined||v===null||v==='')?'-':v;}
 function mmss(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function tile(k,v){const e=$('t_'+k);v=v||['-','grey',''];e.className='tile '+v[1];e.querySelector('.w').textContent=v[0];e.querySelector('.x').textContent=v[2]||'';}
 async function tick(){
  try{const s=await (await fetch('/state')).json();const m=s.last||{};
   const open=s.alarm_active||(s.alarm_pin&&m.event!=='end');
@@ -194,19 +195,24 @@ async function tick(){
   if(m.event&&key!==last){last=key;recvAt=Date.now();dur0=m.dur_s||0;
    const d=document.createElement('div');d.textContent=s.last_time+'  '+(m.title||m.event);$('log').insertBefore(d,$('log').firstChild);}
   const dur=open?dur0+(Date.now()-recvAt)/1000:dur0;
-  const lvl=!open?'':dur>=300?'emergency':dur>=120?'long':'alarm';
+  const lvl=open?(dur>=300?'emergency':dur>=120?'long':'alarm'):(m.event==='end'?'ended':'');
   $('top').className=lvl;
-  $('lvl').textContent=lvl==='emergency'?'EMERGENCY: over 5 min':lvl==='long'?'LONG SEIZURE ALARM':open?'SEIZURE ALARM':'MONITORING';
-  $('timer').textContent=open?('alarm for '+mmss(dur)+(lvl==='emergency'?' - follow the emergency plan':'')):(m.event==='end'?'last alarm ended after '+mmss(m.dur_s):'');
-  const dg=m.danger||[];$('danger').style.display=(open&&dg.length)?'block':'none';$('danger').textContent='Check now: '+dg.join('; ');
-  $('ack').textContent=s.acked?('Acknowledged '+s.ack_time):'On my way';$('ack').className=s.acked?'done':'';
-  $('call').href='tel:'+s.call;$('call').textContent='Call '+s.call;set('plan',s.plan);
-  set('sub',(s.fpga_alive?'FPGA running':'FPGA heartbeat not seen')+' | Wi-Fi '+s.rssi+' dBm | last push: '+s.push+' | '+s.time);
-  set('bed',m.bed);set('dur',m.event==='end'?('ended after '+m.dur_s+' s'):(m.dur_s!==undefined?('detector '+(m.conf||'')):(s.alarm_pin?'FPGA alarm signal (no details yet)':'-')));
-  set('clu',m.cluster);set('hr',m.hr_text);set('mov',m.mov_text);set('emg',m.emg_text);set('eeg',m.eeg_text);set('hint',m.hint);
-  set('aware',m.aware===undefined?'-':(m.aware?'pressed (aware)':'not pressed'));set('sens',m.sensors);
+  $('st').textContent=lvl==='emergency'?'EMERGENCY':lvl==='long'?'LONG SEIZURE':open?'SEIZURE':lvl==='ended'?'SEIZURE STOPPED':'MONITORING';
+  $('bt').innerHTML=(m.bed||'')+(open?' &middot; '+mmss(dur):(lvl==='ended'?' &middot; lasted '+mmss(m.dur_s):'&nbsp;'));
+  let act=m.action||'';if(open&&!m.action)act='FPGA ALARM: GO TO THE PATIENT NOW';
+  if(open&&lvl==='emergency'&&!(m.danger||[]).length)act='OVER 5 MIN: START EMERGENCY PLAN';
+  $('act').style.display=(open||lvl==='ended')&&act?'block':'none';$('act').textContent=act;
+  const dg=m.danger||[];$('danger').style.display=(open&&dg.length)?'block':'none';$('danger').textContent='CHECK NOW: '+dg.join('; ');
+  $('ack').textContent=s.acked?('On the way since '+s.ack_time):'On my way';$('ack').className=s.acked?'done':'';
+  $('call').href='tel:'+s.call;$('call').textContent='Call';
+  const T=m.tiles||{};['heart','shaking','muscle','brain'].forEach(k=>tile(k,T[k]));
+  const info=[];if((m.alarms_1h||0)>=2)info.push(m.cluster);if(m.aware)info.push('patient pressed the button (aware)');
+  $('info').textContent=info.join(' · ');
+  $('plan').textContent=s.plan;if(lvl==='emergency')$('dplan').open=true;
+  $('detail').textContent=m.detail||'-';
+  $('sub').textContent=(s.fpga_alive?'FPGA running':'FPGA heartbeat not seen')+' | Wi-Fi '+s.rssi+' dBm | last push: '+s.push+' | '+s.time;
   if(open&&!s.acked){beep(lvl==='emergency'?1320:880);if(navigator.vibrate)navigator.vibrate(300);}
- }catch(e){set('sub','ESP32 not reachable');}
+ }catch(e){$('info').textContent='ESP32 not reachable';}
 }
 setInterval(tick,1000);tick();
 </script></body></html>)rawliteral";

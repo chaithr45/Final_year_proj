@@ -14,7 +14,7 @@ engine in the fabric); nothing is a diagnosis.
   5 brain: EEG line length vs before, and whether slow (delta/theta) or fast (beta) activity rose most
   plus: patient button (pressed = the patient was aware enough to press it), sensors worn, alarm end and duration.
 For acting at once: danger flags (heart rate above 150 or below 40 bpm, ECG unreadable for 5 s: check pulse and
-breathing by hand), escalation messages when the alarm has lasted 2 min and 5 min (5 min: emergency, the ILAE 2015
+breathing by hand, only when the patient is not shaking, since shaking itself spoils the ECG), escalation messages when the alarm has lasted 2 min and 5 min (5 min: emergency, the ILAE 2015
 time point t1 for status epilepticus in convulsive seizures) and every minute after, the number of alarms in the
 last hour (clusters), and the doctor's acknowledgement coming back from the ESP32 ({"event": "ack"}).
 
@@ -98,8 +98,6 @@ class AlertBuilder:
             danger.append(f"very fast heart rate ({hn:.0f} bpm)")
         if hn is not None and hn < 40:
             danger.append(f"very slow heart rate ({hn:.0f} bpm)")
-        if pres["ecg"] and all(r[self.ix["ecg_quality_bad"]] for r in rows[-5:]):
-            danger.append("ECG unreadable for 5 s: check pulse and breathing by hand")
         s["danger"] = danger
         # 3 movement
         mk = "mov_acc" if pres["mov_acc"] else "mov_gyr" if pres["mov_gyr"] else None
@@ -113,6 +111,10 @@ class AlertBuilder:
                          else "little movement (non-motor pattern possible)")
         else:
             s["mov_ratio"], s["mov_text"], s["hint"] = None, "motion sensor not worn", "no movement data"
+        # an unreadable ECG is expected while the patient shakes; without shaking it may mean trouble
+        shaking = s["mov_ratio"] is not None and s["mov_ratio"] >= MOTOR_RATIO
+        if pres["ecg"] and not shaking and all(r[self.ix["ecg_quality_bad"]] for r in rows[-5:]):
+            s["danger"].append("ECG unreadable for 5 s without shaking: check pulse and breathing by hand")
         # 4 muscle
         if pres["emg"]:
             r = _ratio(np.median(self._col(now, "emg_mav")), np.median(self._col(before, "emg_mav")))
@@ -144,11 +146,14 @@ class AlertBuilder:
             self.active = False
             s = self.signs()
             d = self.last_on - self.t0 + 1
-            body = (f"Alarm ended after {d:.0f} s.\nPeak heart rate: "
-                    f"{'n/a' if self.peak_hr is None else f'{self.peak_hr:.0f} bpm'}\n"
-                    f"Patient button: {'pressed' if self.aware else 'not pressed'}\nNow: {s['mov_text']}")
-            return {"event": "end", "bed": self.bed, "dur_s": round(d), "title": f"Alarm ended - {self.bed}",
-                    "body": body, **s}
+            tl = self.tiles(s)
+            act = self.action("end", "alarm", s, tl)
+            peak = "n/a" if self.peak_hr is None else f"{self.peak_hr:.0f} bpm"
+            body = f"{act}\nLasted {self.mmss(d)} (alarm time). Peak heart {peak}"
+            return {"event": "end", "bed": self.bed, "dur_s": round(d), "level": "ended", "action": act,
+                    "tiles": {k: list(v) for k, v in tl.items()}, "title": f"Seizure stopped {self.bed}",
+                    "body": body, "detail": f"Peak heart rate {peak}. Now: {s['mov_text']}; heart {s['hr_text']}.",
+                    "aware": self.aware, **s}
         if self.active and alarm and t_rec >= self.next_esc:      # 2 min, 5 min, then every minute (alarm on)
             d = t_rec - self.t0
             self.next_esc = self.t0 + (300 if d < 300 else 60 * (int(d // 60) + 1))
@@ -170,30 +175,73 @@ class AlertBuilder:
         nth = {1: "1st", 2: "2nd", 3: "3rd"}.get(n, f"{n}th")
         return n, (f"{nth} alarm in the last hour" + (" (cluster)" if n >= 2 else ""))
 
+    @staticmethod
+    def tiles(s: dict) -> dict:
+        """One word and a colour (red / amber / green / grey) per sign, for reading at a glance."""
+        hr = s.get("hr")
+        if hr is None:
+            heart = ("N/A", "grey", "")
+        else:
+            now = hr[1]
+            heart = (("VERY HIGH" if now > 150 else "VERY LOW"), "red", f"{now} bpm") if now > 150 or now < 40 else \
+                (("HIGH", "amber", f"{now} bpm") if "fast" in s["hr_text"] else ("NORMAL", "green", f"{now} bpm"))
+        r = s.get("mov_ratio")
+        shake = ("N/A", "grey", "") if r is None else (("STRONG", "red", f"x{r}") if r >= MOTOR_RATIO else
+                                                     ("SOME", "amber", f"x{r}") if r >= 1.5 else ("LITTLE", "green", f"x{r}"))
+        r = s.get("emg_ratio")
+        muscle = ("N/A", "grey", "") if r is None else (("HIGH", "amber", f"x{r}") if r >= 2 else ("NORMAL", "green", f"x{r}"))
+        r = s["eeg_ratio"]
+        brain = ("HIGH", "red", f"x{r}") if r >= 1.5 else ("MILD", "amber", f"x{r}")
+        return {"heart": heart, "shaking": shake, "muscle": muscle, "brain": brain}
+
+    def action(self, ev: str, level: str, s: dict, tiles: dict) -> str:
+        """The single instruction shown first: what to do now."""
+        if ev == "end":
+            return "SEIZURE STOPPED: CHECK BREATHING, TURN ON SIDE"
+        if s["danger"]:
+            return "CHECK BREATHING AND PULSE NOW"
+        if level == "emergency":
+            return "OVER 5 MIN: START EMERGENCY PLAN"
+        if level == "long":
+            return "OVER 2 MIN: GET EMERGENCY PLAN READY"
+        if tiles["shaking"][0] == "STRONG":
+            return f"GO TO {self.bed.upper()} NOW: PROTECT FROM INJURY"
+        return f"GO TO {self.bed.upper()} NOW"
+
+    @staticmethod
+    def mmss(d: float) -> str:
+        d = max(0, int(round(d)))
+        return f"{d // 60}:{d % 60:02d}"
+
+    def _short(self, tl: dict) -> str:
+        return (f"Heart {tl['heart'][2] or ''} {tl['heart'][0]} | Shaking {tl['shaking'][0]} | "
+                f"Brain {tl['brain'][0]}").replace("  ", " ")
+
     def _msg(self, ev: str, t_rec: float, n_sz: int, n_grp: int) -> dict:
         s = self.signs()
         d = t_rec - self.t0
         level = "emergency" if d >= 300 else "long" if d >= 120 else "alarm"
         n1h, ctext = self.cluster(t_rec)
-        if ev == "escalate" and level == "emergency":
-            title = f"EMERGENCY: seizure alarm over {int(d // 60)} min - {self.bed}"
-            head = ("Alarm on for 5 min or more (the seizure began before the alarm). Treat as an emergency "
-                    "(status epilepticus time point, ILAE 2015) and follow the patient's rescue plan.\n")
-        elif ev == "escalate":
-            title = f"Long seizure alarm (over 2 min) - {self.bed}"
-            head = "Alarm on for 2 min. Be ready to start the emergency plan at 5 min.\n"
+        tl = self.tiles(s)
+        act = self.action(ev, level, s, tl)
+        if level == "emergency":
+            title = f"EMERGENCY {self.bed}: seizure over {int(d // 60)} min"
+        elif level == "long":
+            title = f"LONG SEIZURE {self.bed}: over 2 min"
         else:
-            title = f"SEIZURE ALARM - {self.bed}" if ev == "start" else f"Seizure alarm ongoing ({d:.0f} s) - {self.bed}"
-            head = ""
-        if s["danger"]:
-            head = "!! " + "; ".join(s["danger"]) + "\n" + head
-        body = (head + f"Detector: {n_sz} of {n_grp} seizure units active; alarm for {d:.0f} s; {ctext}\n"
-                f"1 Heart rate: {s['hr_text']}\n2 Movement: {s['mov_text']}\n3 Muscle (EMG): {s['emg_text']}\n"
-                f"4 Brain (EEG): {s['eeg_text']}\n5 Pattern hint: {s['hint']}\n"
-                f"Patient button: {'pressed' if self.aware else 'not pressed'}. Sensors: {s['sensors']}.\n"
-                "Measured signs for the doctor, not a diagnosis.")
+            title = f"SEIZURE {self.bed}" + ("" if ev == "start" else f" ({self.mmss(d)})")
+        lines = [act, self._short(tl)]
+        if n1h >= 2:
+            lines.append(f"{ctext[:3]} seizure this hour")
+        # the long version, for the page's details section
+        detail = (f"Detector {n_sz}/{n_grp}; alarm for {self.mmss(d)}; {ctext}\n"
+                  f"Heart rate: {s['hr_text']}\nMovement: {s['mov_text']}\nMuscle (EMG): {s['emg_text']}\n"
+                  f"Brain (EEG): {s['eeg_text']}\nPattern hint: {s['hint']}\n"
+                  f"Patient button: {'pressed' if self.aware else 'not pressed'}. Sensors: {s['sensors']}.")
         return {"event": ev, "bed": self.bed, "dur_s": round(d), "conf": f"{n_sz}/{n_grp}", "aware": self.aware,
-                "level": level, "alarms_1h": n1h, "cluster": ctext, "title": title, "body": body, **s}
+                "level": level, "alarms_1h": n1h, "cluster": ctext, "action": act,
+                "tiles": {k: list(v) for k, v in tl.items()}, "title": title, "body": "\n".join(lines),
+                "detail": detail, **s}
 
 
 class Esp32Link:
@@ -275,29 +323,30 @@ if __name__ == "__main__":       # test the chain board -> ESP32 -> phone with a
         raise SystemExit(f"ESP32 not found: {link.error}")
     print(f"ESP32 on {link.port}; waiting 3 s (opening the port may reset it)")
     time.sleep(3.0)
-    common = {"bed": a.bed, "conf": "15/25", "aware": False, "sensors": "EEG ECG EMG ACC",
-              "hr_text": "72 -> 118 bpm (+64 %), fast", "mov_text": "strong movement (x4.8 vs before)",
-              "emg_text": "increased (x2.1 vs before)", "eeg_text": "strong change (x2.6 vs before), mostly slow waves",
-              "hint": "motor pattern likely (strong movement)"}
-    body = ("TEST MESSAGE - no patient.\n1 Heart rate: 72 -> 118 bpm (+64 %), fast\n2 Movement: strong movement (x4.8)\n"
-            "3 Muscle (EMG): increased (x2.1)\n4 Brain (EEG): strong change, slow waves\n5 Pattern hint: motor pattern likely")
-    link.send({"event": "start", "dur_s": 0, "level": "alarm", "alarms_1h": 2,
-               "cluster": "2nd alarm in the last hour (cluster)", "danger": [],
-               "title": f"TEST seizure alarm - {a.bed}", "body": body, **common})
+    bed = a.bed.upper()
+    tiles = {"heart": ["HIGH", "amber", "118 bpm"], "shaking": ["STRONG", "red", "x4.8"],
+             "muscle": ["HIGH", "amber", "x2.1"], "brain": ["HIGH", "red", "x2.6"]}
+    common = {"bed": a.bed, "conf": "15/25", "aware": False, "sensors": "EEG ECG EMG ACC", "alarms_1h": 2,
+              "cluster": "2nd alarm in the last hour (cluster)", "detail": "TEST MESSAGE - no patient."}
+    link.send({"event": "start", "dur_s": 0, "level": "alarm", "danger": [], "tiles": tiles,
+               "action": f"GO TO {bed} NOW: PROTECT FROM INJURY", "title": f"TEST SEIZURE {a.bed}",
+               "body": f"TEST - GO TO {bed} NOW: PROTECT FROM INJURY\nHeart 118 bpm HIGH | Shaking STRONG | Brain HIGH\n"
+                       "2nd seizure this hour", **common})
     print("sent: TEST alarm start; the phone should ring now (tap 'On my way' to acknowledge)")
     time.sleep(15)
-    link.send({"event": "escalate", "dur_s": 300, "level": "emergency", "alarms_1h": 2,
-               "cluster": "2nd alarm in the last hour (cluster)",
-               "danger": ["very fast heart rate (156 bpm)"],
-               "title": f"TEST EMERGENCY: seizure alarm over 5 min - {a.bed}",
-               "body": "TEST MESSAGE - no patient.\n!! very fast heart rate (156 bpm)\nAlarm on for 5 min or more. "
-                       "Treat as an emergency and follow the patient's rescue plan.", **common})
-    print("sent: TEST emergency escalation (5 min)")
+    tiles2 = dict(tiles, heart=["VERY HIGH", "red", "156 bpm"])
+    link.send({"event": "escalate", "dur_s": 300, "level": "emergency", "danger": ["very fast heart rate (156 bpm)"],
+               "tiles": tiles2, "action": "CHECK BREATHING AND PULSE NOW",
+               "title": f"TEST EMERGENCY {a.bed}: seizure over 5 min",
+               "body": "TEST - CHECK BREATHING AND PULSE NOW\nHeart 156 bpm VERY HIGH | Shaking STRONG | Brain HIGH\n"
+                       "2nd seizure this hour", **common})
+    print("sent: TEST emergency (over 5 min)")
     for _ in range(30):
         for m in link.read_lines():
             if m.get("event") == "ack":
                 print(f"ACK received from the ESP32: the doctor is on the way ({m.get('time', '')})")
         time.sleep(0.5)
-    link.send({"event": "end", "dur_s": 330, "level": "alarm", "danger": [], "title": f"TEST alarm ended - {a.bed}",
-               "body": "TEST MESSAGE - no patient. Alarm ended after 330 s.", **common})
+    link.send({"event": "end", "dur_s": 330, "level": "ended", "danger": [], "tiles": tiles2,
+               "action": "SEIZURE STOPPED: CHECK BREATHING, TURN ON SIDE", "title": f"TEST seizure stopped {a.bed}",
+               "body": "TEST - SEIZURE STOPPED: CHECK BREATHING, TURN ON SIDE\nLasted 5:30 (alarm time)", **common})
     print("sent: TEST alarm end")

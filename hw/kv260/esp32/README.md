@@ -15,6 +15,23 @@ The notification also shows the alarm duration, how many of the 25 "seizure" loo
 patient pressed the button, and which sensors are worn. An "alarm ended" message follows when the alarm has been
 quiet for 30 s.
 
+**Made to be read in two seconds.** The notification is three short lines, for example
+
+```
+SEIZURE Bed 3
+GO TO BED 3 NOW: PROTECT FROM INJURY
+Heart 120 bpm HIGH | Shaking STRONG | Brain HIGH
+```
+
+and the page shows, from the top: the status and a running timer, one yellow instruction (what to do now), the
+"On my way" and "Call" buttons, and four coloured tiles (red = act, amber = watch, green = normal): heart rate,
+shaking, muscle tension, brain activity. The emergency plan, first-aid steps, exact numbers and event list are folded
+below and open with a tap (the emergency plan opens by itself after 5 minutes). The instruction is chosen in this
+order: CHECK BREATHING AND PULSE NOW (danger flag) > OVER 5 MIN: START EMERGENCY PLAN > OVER 2 MIN: GET EMERGENCY PLAN
+READY > GO TO BED X NOW: PROTECT FROM INJURY (strong shaking) > GO TO BED X NOW; when it ends: SEIZURE STOPPED: CHECK
+BREATHING, TURN ON SIDE. An unreadable ECG counts as a danger flag only when the patient is not shaking (shaking
+itself spoils the ECG), so the strongest instruction is not shown for nothing.
+
 **So the doctor can act at once:**
 
 | Feature | What happens |

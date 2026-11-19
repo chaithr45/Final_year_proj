@@ -519,3 +519,9 @@ Method results and keep/drop decisions are appended below as runs finish.
   aid on the page. Tested here: synthetic 7-min alarm (escalations at 2, 5, 6, 7 min, none after the alarm stops,
   second alarm counted as a cluster), emulated demo with an acknowledgement through a pseudo-terminal, sketch syntax
   with stand-in headers, page rendering. Not yet on the ESP32 hardware.
+* **Doctor alert made glanceable (19 Nov, user request: "easy to understand, very little time").** Notification =
+  title + one instruction + one status line ("Heart 120 bpm HIGH | Shaking STRONG | Brain HIGH"); page = status and
+  timer, one instruction (fixed priority: danger > over 5 min > over 2 min > strong shaking > go now; after the end
+  "check breathing, turn on side"), two buttons, four colour tiles; plan, first aid, numbers and events folded.
+  The "ECG unreadable" danger flag now needs the patient not to be shaking (in the emulated seizure it fired during
+  convulsive movement only). Re-tested on the emulated demo and rendered at iPhone size.
