@@ -175,10 +175,10 @@ class _EmuBackend:
         elif off == r["CTRL"]:
             if v & 1:
                 self.hist.clear(); self.hist2.clear(); self.valid = 0
-            if v & 2:
+            if v & 2 and not v & 1:     # as the RTL: the soft-reset branch has priority over 'clear counters'
                 self.seq = self.nwin = self.ndec = self.nalarm = self.ndec2 = self.nalarm2 = 0
-                if self.fe is not None:
-                    self.fe.nwin = 0
+            if v & 2 and self.fe is not None:
+                self.fe.nwin = 0
             if v & 4:
                 self._run_bist()
         elif off == r["COMMIT"]:
@@ -408,8 +408,11 @@ class SeizeLUT:
 
     def soft_reset(self, clear_counters: bool = True) -> None:
         """Reset the classifier history (and counters). On AXI a read may overtake an earlier write, so wait
-        until the reset is visible before anything reads the result counter."""
-        self.write("CTRL", 0x1 | (0x2 if clear_counters else 0))
+        until the reset is visible before anything reads the result counter. The core ignores 'clear counters'
+        when it comes in the same write as 'soft reset' (the reset branch has priority), so two writes."""
+        self.write("CTRL", 0x1)
+        if clear_counters:
+            self.write("CTRL", 0x2)
         time.sleep(0.001)
         if clear_counters:
             for _ in range(10000):

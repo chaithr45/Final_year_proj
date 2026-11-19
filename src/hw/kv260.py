@@ -13,7 +13,8 @@ The wrapper is plain Verilog-2001 in one clock domain (the AXI clock, 100 MHz on
 Register map (byte offsets, 32-bit registers):
   0x000 ID        RO  0x534C5554 ("SLUT")
   0x004 INFO      RO  {latency[7:0], n_luts[7:0], n_features[7:0], version[7:0]}
-  0x008 CTRL      RW  bit0 soft reset (pulse), bit1 clear counters (pulse), bit2 BIST start (pulse), bit3 BIST loop
+  0x008 CTRL      RW  bit0 soft reset (pulse), bit1 clear counters (pulse), bit2 BIST start (pulse), bit3 BIST loop;
+                      bit1 is ignored when written together with bit0: write them one after the other
   0x00C STATUS    RO  bit0 result valid, bit1 BIST busy, bit2 BIST done, bit3 BIST pass (last completed pass)
   0x010 COMMIT    WO  bits[1:0] EEG artefact flags; classifies the feature registers once
   0x014 RESULT    RO  [7:0] score (two's complement), [8] decision, [9] alarm, [15] valid, [31:16] result count
