@@ -1,6 +1,7 @@
 % SeizeLUT: self-testing, multiplier-free LUT-native seizure detection on SeizeIT2, implemented on a Kria KV260.
 % Every number in this file comes from a file in results/ produced by a committed script.
-% \PHASETWO{...} marks hardware results measured on the user's Vivado build and KV260 board (pending).
+% \PHASETWO{...} marked hardware results pending the board; the KV260 run of 19 Nov 2026 filled them
+% (hw/kv260/measured/kv260_board_kit_v6/).
 \documentclass[conference]{IEEEtran}
 \usepackage{amsmath,amssymb,graphicx,booktabs,xcolor,cite,multirow,tikz}
 \usetikzlibrary{positioning,fit}
@@ -203,15 +204,15 @@ LUTs and 454 flip-flops with no DSP or block RAM, 6.7 times fewer LUTs than Tree
 logic-gate network, and it is also the fastest: 468\,MHz against 294 and 154\,MHz. With default switching activity
 Vivado estimates 17\,mW of dynamic power at 400\,MHz for it, against 88 and 523\,mW. The post-ictal verifier, with
 24-bit comparators on window sums, needs 799 LUTs (Yosys); integer and floating-point verifiers agree on 99.998\,\% of
-the 118,975 training candidates, so the complete two-stage detector costs about 1,200 LUTs and no multiplier. In the
-KV260 design the whole core (AXI4-Lite interface, BIST with its vector ROM in 9 block RAMs, fault injection, debug
-taps, demo I/O) uses 1,908 LUTs and the full design 2,345 LUTs, 2.0\,\% of the device; timing closes at 100\,MHz
-with 3.3\,ns of setup slack. The fault-injection and debug logic, needed only in test builds, adds 298 LUTs (Yosys).
-The feature engine needs 797 LUTs, 102 flip-flops, 4.5 block RAMs and no DSP (Yosys), so front end and DWN together
-take 1,202 LUTs, 556 flip-flops and no multiplier. Its program equals the C front end on all 431,960 windows
-(instruction-level simulation), and its RTL, fed sample by sample, on all 4,278 windows of an EEG-only and an
-all-sensor recording (Verilator). It needs at most 0.95 million cycles per second of signal, so it runs in real
-time at 1\,MHz, a hundredth of the KV260 clock.
+the 118,975 training candidates, so the complete two-stage detector costs about 1,200 LUTs and no multiplier. The
+feature engine needs 804 LUTs, 101 flip-flops, 4.5 block RAMs and no DSP (Vivado out of context, 234\,MHz; Yosys:
+797 LUTs), so front end and DWN together take 1,202 LUTs and no multiplier. Its program equals the C front end on all
+431,960 windows (instruction-level simulation), and its RTL, fed sample by sample, on all 4,278 windows of an
+EEG-only and an all-sensor recording (Verilator). It needs at most 0.95 million cycles per second of signal, so it
+runs in real time at 1\,MHz, a hundredth of the KV260 clock. In the KV260 design the whole core (feature engine,
+classifier, AXI4-Lite interface, BIST with its vector ROM, fault injection, debug taps, demo I/O) uses 3,356 LUTs and
+13.5 block RAMs, and the full design 3,796 LUTs (3.2\,\% of the device) and no DSP; timing closes at 100\,MHz with
+3.5\,ns of setup slack. The fault-injection and debug logic, needed only in test builds, adds 298 LUTs (Yosys).
 
 \begin{table}[t]\centering
 \caption{Cost of the LUT-native classifiers (XCK26; input registers, comparators, network, score, decision and alarm
@@ -246,8 +247,8 @@ reach 82.2\,\%. The 255 coverage-selected windows detect all observable faults, 
 operating point. They now open the BIST ROM, which runs 1,024 vectors in 1,028 cycles (10.3\,\textmu s at 100\,MHz),
 so the device can test itself after every one-second window at a duty cycle of 0.001\,\%. In simulation, each of the
 3,592 faults injected through the fault registers gives exactly the BIST error count and first failing vector that
-the software model predicts. \PHASETWO{the same campaign on the KV260: faults injected, detected, hardware/software
-mismatches, time per fault.}
+the software model predicts. On the KV260 the same campaign injected all 3,592 faults through the registers in
+88\,s: hardware and software agreed on every fault, and the BIST detected all 2,890 decision-relevant ones.
 
 \begin{figure}[t]\centering
 \includegraphics[width=\columnwidth]{figures/fault_coverage.pdf}
@@ -271,8 +272,12 @@ core reproduces the features, score, decision and alarm of all 4,278 windows of 
 recording; fed with features, it reproduces score, decision, alarm, comparator bits and LUT outputs on all 431,960
 windows at two operating points (863,920 window checks), with a latency of 3 cycles (Verilator). The C front end,
 batch and second by second, reproduces all 117 features of all 431,960 windows and serves as the on-board reference.
-\PHASETWO{on-board replay, end-to-end check from raw samples, measured engine cycles and throughput, SOM power from
-the INA260 monitor.}
+On the board (Kria-PYNQ) the BIST passed (1,024 of 1,024 in 1,028 cycles), the latency was 3 cycles, and all 431,960
+windows replayed through the registers matched at both operating points. From raw samples, the fabric front end and
+classifier reproduced the features and outputs of all 9,214 windows of three recordings; the engine was busy for
+exactly the simulated number of cycles (at most 946,168 per second of signal), and the Arm cores fed it 102--124
+times faster than real time. The SOM drew 3.069\,W idle and 3.074\,W with the classifier fed one window per clock, a
+difference within the sensor's noise.
 
 \section{Discussion and Limitations}
 Accuracy per LUT favours the DWN by a wide margin, and the thermometer encoder, not the network, dominates its cost,

@@ -4,7 +4,7 @@
 \caption{Hardware seizure detectors as reported by each work. PS: patient-specific training or calibration; PI:
 patient-independent, scored on held-out patients. Detection metrics differ between works (event-, epoch- or
 sample-based) and are not directly comparable. $^\ddagger$From the comparison table of \cite{shin2022neuraltree};
-n.r.: not reported; $^\S$Yosys, feature engine and classifier in the fabric, 0 DSP, 4.5 BRAM; $^\ast$Vivado vectorless estimate (17\,mW dynamic at 400\,MHz, one window per clock); Faults: share of decision-relevant single faults detected by the self-test.}\label{tab:prior}
+n.r.: not reported; $^\S$feature engine and classifier in the fabric, out of context (Vivado and Yosys), 0 DSP, 4.5 BRAM; $^\ast$Vivado vectorless estimate (17\,mW dynamic at 400\,MHz, one window per clock); Faults: share of decision-relevant single faults detected by the self-test.}\label{tab:prior}
 \setlength{\tabcolsep}{2.0pt}\scriptsize
 \begin{tabular}{lllllllc}\toprule
 Work & Platform & Data (patients), eval. & Inputs & Detection (as reported) & Cost & Energy/inf. & Faults \\ \midrule

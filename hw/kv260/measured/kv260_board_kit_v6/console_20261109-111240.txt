@@ -1,0 +1,14 @@
+[PASS] 1_identity: load_s=5.65, base=0x80000000, id=0x534C5554, id_ok=True, version=3, n_features=38, n_luts=50, latency_cycles=3, info_ok=True
+[PASS] 1_register_rw: 
+[PASS] 2_bist: pass=True, vectors=1024, ok=1024, errors=0, cycles=1028, windows_per_cycle=0.9961089494163424, first_error=None, clock_mhz=100.0, windows_per_second_at_100mhz=99610895
+[PASS] 3_latency: cycles=3, ns_at_100mhz=30
+Traceback (most recent call last):
+  File "/home/ubuntu/seizelut_kv260_v6/board/run_tests.py", line 355, in <module>
+    raise SystemExit(main())
+  File "/home/ubuntu/seizelut_kv260_v6/board/run_tests.py", line 179, in main
+    hw = core.run_recording(feats, art, use_fast=not args.python_path)
+  File "/home/ubuntu/seizelut_kv260_v6/board/seizelut_kv260.py", line 526, in run_recording
+    self.soft_reset()
+  File "/home/ubuntu/seizelut_kv260_v6/board/seizelut_kv260.py", line 419, in soft_reset
+    raise TimeoutError("soft reset not visible")
+TimeoutError: soft reset not visible

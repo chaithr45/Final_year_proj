@@ -1,0 +1,45 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Thu Nov 19 10:42:46 2026
+| Host         : Chaithr running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file C:/seizelut_kv260_v6/out/utilization_hier.rpt
+| Design       : seizelut_bd_wrapper
+| Device       : xck26-sfvc784-2LV-c
+| Speed File   : -2LV
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++--------------------------------------------+-----------------------------------------------+------------+------------+---------+------+------+--------+--------+------+------------+
+|                  Instance                  |                     Module                    | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | URAM | DSP Blocks |
++--------------------------------------------+-----------------------------------------------+------------+------------+---------+------+------+--------+--------+------+------------+
+| seizelut_bd_wrapper                        |                                         (top) |       3796 |       3795 |       0 |    1 | 3428 |     13 |      1 |    0 |          0 |
+|   (seizelut_bd_wrapper)                    |                                         (top) |          0 |          0 |       0 |    0 |    0 |      0 |      0 |    0 |          0 |
+|   seizelut_bd_i                            |                                   seizelut_bd |       3796 |       3795 |       0 |    1 | 3428 |     13 |      1 |    0 |          0 |
+|     axi_ic                                 |                          seizelut_bd_axi_ic_0 |        426 |        426 |       0 |    0 |  431 |      0 |      0 |    0 |          0 |
+|       inst                                 |                                       bd_2679 |        426 |        426 |       0 |    0 |  431 |      0 |      0 |    0 |          0 |
+|         sc_ul                              |                               bd_2679_sc_ul_0 |        426 |        426 |       0 |    0 |  431 |      0 |      0 |    0 |          0 |
+|           inst                             |                       sc_ultralite_v1_0_1_top |        426 |        426 |       0 |    0 |  431 |      0 |      0 |    0 |          0 |
+|             gen_axi_full_nxm.sasd_inst     |                 sc_ultralite_v1_0_1_sasd_lite |        426 |        426 |       0 |    0 |  429 |      0 |      0 |    0 |          0 |
+|               (gen_axi_full_nxm.sasd_inst) |                 sc_ultralite_v1_0_1_sasd_lite |        142 |        142 |       0 |    0 |  274 |      0 |      0 |    0 |          0 |
+|               gen_read.arctrl_mux          |   sc_ultralite_v1_0_1_mux_hot__parameterized5 |        136 |        136 |       0 |    0 |   13 |      0 |      0 |    0 |          0 |
+|               gen_write.awctrl_mux         | sc_ultralite_v1_0_1_mux_hot__parameterized5_1 |         69 |         69 |       0 |    0 |   13 |      0 |      0 |    0 |          0 |
+|     seizelut_0                             |                      seizelut_bd_seizelut_0_0 |       3356 |       3356 |       0 |    0 | 2964 |     13 |      1 |    0 |          0 |
+|       inst                                 |                                  seizelut_axi |       3356 |       3356 |       0 |    0 | 2964 |     13 |      1 |    0 |          0 |
+|         (inst)                             |                                  seizelut_axi |       1038 |       1038 |       0 |    0 | 2261 |      0 |      0 |    0 |          0 |
+|         u_bist_rom                         |                             seizelut_bist_rom |        195 |        195 |       0 |    0 |    0 |      9 |      0 |    0 |          0 |
+|         u_cls                              |                             lutnet_classifier |        785 |        785 |       0 |    0 |  602 |      0 |      0 |    0 |          0 |
+|         u_fe                               |                                     fe_engine |       1341 |       1341 |       0 |    0 |  101 |      4 |      1 |    0 |          0 |
++--------------------------------------------+-----------------------------------------------+------------+------------+---------+------+------+--------+--------+------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

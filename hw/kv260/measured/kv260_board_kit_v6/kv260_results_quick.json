@@ -1,0 +1,356 @@
+{
+ "started": "2026-11-09T11:17:00",
+ "backend": "pynq",
+ "host": "kria",
+ "python": "3.10.12",
+ "steps": {
+  "1_identity": {
+   "pass": true,
+   "load_s": 4.45,
+   "base": "0x80000000",
+   "id": "0x534C5554",
+   "id_ok": true,
+   "version": 3,
+   "n_features": 38,
+   "n_luts": 50,
+   "latency_cycles": 3,
+   "info_ok": true
+  },
+  "1_register_rw": {
+   "pass": true
+  },
+  "2_bist": {
+   "pass": true,
+   "vectors": 1024,
+   "ok": 1024,
+   "errors": 0,
+   "cycles": 1028,
+   "windows_per_cycle": 0.9961089494163424,
+   "first_error": null,
+   "clock_mhz": 100.0,
+   "windows_per_second_at_100mhz": 99610895
+  },
+  "3_latency": {
+   "pass": true,
+   "cycles": 3,
+   "ns_at_100mhz": 30
+  },
+  "4_replay_bit_exact": {
+   "pass": true,
+   "windows": 9214,
+   "mismatches_vs_golden": 0,
+   "mismatches_vs_software": 0,
+   "programmable_path_mismatches": 0,
+   "hw_seconds": 0.03,
+   "hw_us_per_window": 3.25,
+   "sw_model_us_per_window": 15.61,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "hours": 0.11777777777777777,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.001,
+     "worst_window_ms": 0.036,
+     "method": "c"
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "hours": 1.0705555555555555,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.013,
+     "worst_window_ms": 0.087,
+     "method": "c"
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "hours": 1.3711111111111112,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.016,
+     "worst_window_ms": 0.098,
+     "method": "c"
+    }
+   }
+  },
+  "5_detection_metrics": {
+   "pass": true,
+   "recordings": 3,
+   "hours": 2.56,
+   "frozen_operating_point": {
+    "seizures": 3,
+    "detected": 0,
+    "false_alarms": 0,
+    "sensitivity_mean_over_recordings": 0.0,
+    "false_alarms_per_hour_mean_over_recordings": 0.0
+   },
+   "programmable_operating_point": {
+    "seizures": 3,
+    "detected": 0,
+    "false_alarms": 0,
+    "sensitivity_mean_over_recordings": 0.0,
+    "false_alarms_per_hour_mean_over_recordings": 0.0
+   }
+  },
+  "6_power": {
+   "pass": true,
+   "sensor": "ina260_u14",
+   "idle_w": 3.0711055276381916,
+   "idle_std_w": 0.05114629364019725,
+   "classifier_running_w": 3.0737688442211057,
+   "running_std_w": 0.011386986820904346,
+   "delta_w": 0.002663316582914188,
+   "bist_passes_during_measurement": 1993265,
+   "bist_errors_during_measurement": 0,
+   "note": "running = classifier + self-test streaming one window per clock (100 MHz), an upper bound on the activity of real-time use (one window per second)"
+  },
+  "7_end_to_end_raw": {
+   "pass": true,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 6.23,
+     "frontend_realtime_factor": 68.1,
+     "classifier_fabric_s": 0.001,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 1.217,
+     "frontend_realtime_factor": 4056.1,
+     "classifier_fabric_s": 0.016,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "sensors": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "ecg",
+      "eeg1",
+      "eeg2",
+      "emg",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 1.139,
+     "frontend_realtime_factor": 3382.8,
+     "classifier_fabric_s": 0.012,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    }
+   }
+  },
+  "8_fault_campaign": {
+   "pass": true,
+   "faults_injected": 400,
+   "hw_sw_mismatches": 0,
+   "seconds": 10.07,
+   "ms_per_fault": 25.183,
+   "bist_vectors": 1024,
+   "bist_selected_vectors": 255,
+   "bist_after_clearing_errors": 0,
+   "detected_all": {
+    "faults": 400,
+    "detected": 354,
+    "detected_pct": 88.5
+   },
+   "detected_observable": {
+    "faults": 354,
+    "detected": 354,
+    "detected_pct": 100.0
+   },
+   "detected_decision_9": {
+    "faults": 315,
+    "detected": 315,
+    "detected_pct": 100.0
+   },
+   "detected_decision_2": {
+    "faults": 345,
+    "detected": 345,
+    "detected_pct": 100.0
+   },
+   "detected_decision_-7": {
+    "faults": 352,
+    "detected": 352,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_9": {
+    "faults": 184,
+    "detected": 184,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_2": {
+    "faults": 322,
+    "detected": 322,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_-7": {
+    "faults": 350,
+    "detected": 350,
+    "detected_pct": 100.0
+   },
+   "by_kind": {
+    "tt": {
+     "faults": 400,
+     "detected": 354,
+     "detected_pct": 88.5
+    }
+   },
+   "undetected_relevant": []
+  },
+  "9_detector_in_fabric": {
+   "pass": true,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "windows_returned": 424,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 425,
+     "wall_seconds": 3.44,
+     "x_real_time": 123.5,
+     "worst_second_ms": 8.161,
+     "engine_busy_cycles": 334736283,
+     "engine_cycles_per_second": 787615,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "c",
+     "pass": true
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "windows_returned": 4936,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 4937,
+     "wall_seconds": 39.964,
+     "x_real_time": 123.5,
+     "worst_second_ms": 8.204,
+     "engine_busy_cycles": 3887991768,
+     "engine_cycles_per_second": 787521,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "c",
+     "pass": true
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "windows_returned": 3854,
+     "sensors": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "ecg",
+      "eeg1",
+      "eeg2",
+      "emg",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 3855,
+     "wall_seconds": 37.638,
+     "x_real_time": 102.4,
+     "worst_second_ms": 15.034,
+     "engine_busy_cycles": 3647479431,
+     "engine_cycles_per_second": 946168,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "c",
+     "pass": true
+    }
+   },
+   "windows": 9214,
+   "engine_cycles_per_second_max": 946168,
+   "min_clock_mhz_for_real_time": 0.946,
+   "note": "features computed by the feature engine in the fabric and classified there; the ARM only writes raw samples and starts events (FE_BUSYCYC counts the engine's busy cycles)"
+  }
+ },
+ "operating_points": {
+  "frozen": {
+   "threshold": 9,
+   "k": 10
+  },
+  "programmable": {
+   "threshold": 2,
+   "k": 10
+  }
+ },
+ "finished": "2026-11-09T11:19:30",
+ "all_pass": true
+}

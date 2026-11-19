@@ -1,0 +1,516 @@
+{
+ "started": "2026-11-09T11:24:21",
+ "backend": "pynq",
+ "host": "kria",
+ "python": "3.10.12",
+ "steps": {
+  "1_identity": {
+   "pass": true,
+   "load_s": 4.44,
+   "base": "0x80000000",
+   "id": "0x534C5554",
+   "id_ok": true,
+   "version": 3,
+   "n_features": 38,
+   "n_luts": 50,
+   "latency_cycles": 3,
+   "info_ok": true
+  },
+  "1_register_rw": {
+   "pass": true
+  },
+  "2_bist": {
+   "pass": true,
+   "vectors": 1024,
+   "ok": 1024,
+   "errors": 0,
+   "cycles": 1028,
+   "windows_per_cycle": 0.9961089494163424,
+   "first_error": null,
+   "clock_mhz": 100.0,
+   "windows_per_second_at_100mhz": 99610895
+  },
+  "3_latency": {
+   "pass": true,
+   "cycles": 3,
+   "ns_at_100mhz": 30
+  },
+  "4_replay_bit_exact": {
+   "pass": true,
+   "windows": 431960,
+   "mismatches_vs_golden": 0,
+   "mismatches_vs_software": 0,
+   "programmable_path_mismatches": 0,
+   "hw_seconds": 1.39,
+   "hw_us_per_window": 3.22,
+   "sw_model_us_per_window": 15.31,
+   "recordings": {
+    "sub-097_run-02": {
+     "windows": 68636,
+     "hours": 19.065555555555555,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 4,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.221,
+     "worst_window_ms": 0.092,
+     "method": "c"
+    },
+    "sub-097_run-04": {
+     "windows": 76312,
+     "hours": 21.197777777777777,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 3,
+     "tp": 0,
+     "fp": 0,
+     "fn": 3,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 1,
+     "op2_fp": 4,
+     "op2_fn": 2,
+     "counters_ok": true,
+     "seconds": 0.246,
+     "worst_window_ms": 0.063,
+     "method": "c"
+    },
+    "sub-097_run-05": {
+     "windows": 6465,
+     "hours": 1.7958333333333334,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.021,
+     "worst_window_ms": 0.035,
+     "method": "c"
+    },
+    "sub-097_run-07": {
+     "windows": 41797,
+     "hours": 11.610277777777778,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 6,
+     "tp": 0,
+     "fp": 0,
+     "fn": 6,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 6,
+     "counters_ok": true,
+     "seconds": 0.135,
+     "worst_window_ms": 0.064,
+     "method": "c"
+    },
+    "sub-097_run-09": {
+     "windows": 77152,
+     "hours": 21.43111111111111,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 2,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.248,
+     "worst_window_ms": 0.064,
+     "method": "c"
+    },
+    "sub-097_run-10": {
+     "windows": 424,
+     "hours": 0.11777777777777777,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.001,
+     "worst_window_ms": 0.003,
+     "method": "c"
+    },
+    "sub-098_run-03": {
+     "windows": 76568,
+     "hours": 21.26888888888889,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 1,
+     "fp": 0,
+     "fn": 0,
+     "alarm_windows": 26,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 1,
+     "op2_fp": 14,
+     "op2_fn": 0,
+     "counters_ok": true,
+     "seconds": 0.247,
+     "worst_window_ms": 0.056,
+     "method": "c"
+    },
+    "sub-099_run-01": {
+     "windows": 75816,
+     "hours": 21.06,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 3,
+     "tp": 0,
+     "fp": 0,
+     "fn": 3,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 1,
+     "op2_fp": 1,
+     "op2_fn": 2,
+     "counters_ok": true,
+     "seconds": 0.245,
+     "worst_window_ms": 0.06,
+     "method": "c"
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "hours": 1.3711111111111112,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.016,
+     "worst_window_ms": 0.057,
+     "method": "c"
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "hours": 1.0705555555555555,
+     "mismatch_vs_golden": 0,
+     "mismatch_vs_software": 0,
+     "bit_exact": true,
+     "seizures": 1,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "alarm_windows": 0,
+     "op2_mismatch_vs_software": 0,
+     "op2_tp": 0,
+     "op2_fp": 0,
+     "op2_fn": 1,
+     "counters_ok": true,
+     "seconds": 0.012,
+     "worst_window_ms": 0.037,
+     "method": "c"
+    }
+   }
+  },
+  "5_detection_metrics": {
+   "pass": true,
+   "recordings": 10,
+   "hours": 119.99,
+   "frozen_operating_point": {
+    "seizures": 19,
+    "detected": 1,
+    "false_alarms": 0,
+    "sensitivity_mean_over_recordings": 0.1,
+    "false_alarms_per_hour_mean_over_recordings": 0.0
+   },
+   "programmable_operating_point": {
+    "seizures": 19,
+    "detected": 3,
+    "false_alarms": 25,
+    "sensitivity_mean_over_recordings": 0.1667,
+    "false_alarms_per_hour_mean_over_recordings": 0.1198
+   }
+  },
+  "6_power": {
+   "pass": true,
+   "sensor": "ina260_u14",
+   "idle_w": 3.069195979899497,
+   "idle_std_w": 0.02323261343868815,
+   "classifier_running_w": 3.0743216080402007,
+   "running_std_w": 0.013795661938096301,
+   "delta_w": 0.005125628140703498,
+   "bist_passes_during_measurement": 1992429,
+   "bist_errors_during_measurement": 0,
+   "note": "running = classifier + self-test streaming one window per clock (100 MHz), an upper bound on the activity of real-time use (one window per second)"
+  },
+  "7_end_to_end_raw": {
+   "pass": true,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 0.106,
+     "frontend_realtime_factor": 4016.8,
+     "classifier_fabric_s": 0.001,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 1.21,
+     "frontend_realtime_factor": 4080.4,
+     "classifier_fabric_s": 0.016,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "sensors": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "ecg",
+      "eeg1",
+      "eeg2",
+      "emg",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "frontend_arm_s": 1.137,
+     "frontend_realtime_factor": 3389.9,
+     "classifier_fabric_s": 0.012,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1
+    }
+   }
+  },
+  "8_fault_campaign": {
+   "pass": true,
+   "faults_injected": 3592,
+   "hw_sw_mismatches": 0,
+   "seconds": 87.88,
+   "ms_per_fault": 24.464,
+   "bist_vectors": 1024,
+   "bist_selected_vectors": 255,
+   "bist_after_clearing_errors": 0,
+   "detected_all": {
+    "faults": 3592,
+    "detected": 3142,
+    "detected_pct": 87.47
+   },
+   "detected_observable": {
+    "faults": 3142,
+    "detected": 3142,
+    "detected_pct": 100.0
+   },
+   "detected_decision_9": {
+    "faults": 2890,
+    "detected": 2890,
+    "detected_pct": 100.0
+   },
+   "detected_decision_2": {
+    "faults": 3074,
+    "detected": 3074,
+    "detected_pct": 100.0
+   },
+   "detected_decision_-7": {
+    "faults": 3101,
+    "detected": 3101,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_9": {
+    "faults": 2063,
+    "detected": 2063,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_2": {
+    "faults": 2882,
+    "detected": 2882,
+    "detected_pct": 100.0
+   },
+   "detected_alarm_-7": {
+    "faults": 3063,
+    "detected": 3063,
+    "detected_pct": 100.0
+   },
+   "by_kind": {
+    "tt": {
+     "faults": 3200,
+     "detected": 2750,
+     "detected_pct": 85.94
+    },
+    "sab0": {
+     "faults": 146,
+     "detected": 146,
+     "detected_pct": 100.0
+    },
+    "sab1": {
+     "faults": 146,
+     "detected": 146,
+     "detected_pct": 100.0
+    },
+    "sal0": {
+     "faults": 50,
+     "detected": 50,
+     "detected_pct": 100.0
+    },
+    "sal1": {
+     "faults": 50,
+     "detected": 50,
+     "detected_pct": 100.0
+    }
+   },
+   "undetected_relevant": []
+  },
+  "9_detector_in_fabric": {
+   "pass": true,
+   "recordings": {
+    "sub-097_run-10": {
+     "windows": 424,
+     "windows_returned": 424,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 425,
+     "wall_seconds": 3.44,
+     "x_real_time": 123.6,
+     "worst_second_ms": 8.124,
+     "engine_busy_cycles": 334736283,
+     "engine_cycles_per_second": 787615,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "c",
+     "pass": true
+    },
+    "sub-099_run-02": {
+     "windows": 4936,
+     "windows_returned": 4936,
+     "sensors": [
+      "eeg1",
+      "eeg2"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 4937,
+     "wall_seconds": 39.965,
+     "x_real_time": 123.5,
+     "worst_second_ms": 8.225,
+     "engine_busy_cycles": 3887991768,
+     "engine_cycles_per_second": 787521,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "c",
+     "pass": true
+    },
+    "sub-100_run-03": {
+     "windows": 3854,
+     "windows_returned": 3854,
+     "sensors": [
+      "acc_x",
+      "acc_y",
+      "acc_z",
+      "ecg",
+      "eeg1",
+      "eeg2",
+      "emg",
+      "gyr_x",
+      "gyr_y",
+      "gyr_z"
+     ],
+     "feature_mismatches": 0,
+     "output_mismatches": 0,
+     "op2_mismatches": 0,
+     "dropped_accesses": 0,
+     "signal_seconds": 3855,
+     "wall_seconds": 37.633,
+     "x_real_time": 102.4,
+     "worst_second_ms": 9.927,
+     "engine_busy_cycles": 3647479431,
+     "engine_cycles_per_second": 946168,
+     "tp": 0,
+     "fp": 0,
+     "fn": 1,
+     "method": "c",
+     "pass": true
+    }
+   },
+   "windows": 9214,
+   "engine_cycles_per_second_max": 946168,
+   "min_clock_mhz_for_real_time": 0.946,
+   "note": "features computed by the feature engine in the fabric and classified there; the ARM only writes raw samples and starts events (FE_BUSYCYC counts the engine's busy cycles)"
+  }
+ },
+ "operating_points": {
+  "frozen": {
+   "threshold": 9,
+   "k": 10
+  },
+  "programmable": {
+   "threshold": 2,
+   "k": 10
+  }
+ },
+ "finished": "2026-11-09T11:28:15",
+ "all_pass": true
+}

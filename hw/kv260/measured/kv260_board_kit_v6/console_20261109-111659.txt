@@ -1,0 +1,25 @@
+[PASS] 1_identity: load_s=4.45, base=0x80000000, id=0x534C5554, id_ok=True, version=3, n_features=38, n_luts=50, latency_cycles=3, info_ok=True
+[PASS] 1_register_rw: 
+[PASS] 2_bist: pass=True, vectors=1024, ok=1024, errors=0, cycles=1028, windows_per_cycle=0.9961089494163424, first_error=None, clock_mhz=100.0, windows_per_second_at_100mhz=99610895
+[PASS] 3_latency: cycles=3, ns_at_100mhz=30
+    sub-097_run-10: 424 windows, mismatches 0+0, frozen: 0/1 seizures, 0 false alarms; programmable: 0/1, 0; 0.00 s (c)
+    sub-100_run-03: 3854 windows, mismatches 0+0, frozen: 0/1 seizures, 0 false alarms; programmable: 0/1, 0; 0.01 s (c)
+    sub-099_run-02: 4936 windows, mismatches 0+0, frozen: 0/1 seizures, 0 false alarms; programmable: 0/1, 0; 0.02 s (c)
+[PASS] 4_replay_bit_exact: windows=9214, mismatches_vs_golden=0, mismatches_vs_software=0, programmable_path_mismatches=0, hw_seconds=0.03, hw_us_per_window=3.25, sw_model_us_per_window=15.61
+[PASS] 5_detection_metrics: recordings=3, hours=2.56
+    frozen operating point: 0/3 seizures, 0 false alarms
+    programmable operating point: 0/3 seizures, 0 false alarms
+[PASS] 6_power: sensor=ina260_u14, idle_w=3.0711055276381916, idle_std_w=0.05114629364019725, classifier_running_w=3.0737688442211057, running_std_w=0.011386986820904346, delta_w=0.002663316582914188, bist_passes_during_measurement=1993265, bist_errors_during_measurement=0, note=running = classifier + self-test streaming one window per clock (100 MHz), an upper bound on the activity of real-time use (one window per second)
+    sub-097_run-10: 424 windows from 2 raw signals, feature mismatches 0, output mismatches 0, front end 6.23 s (68x real time)
+    sub-099_run-02: 4936 windows from 2 raw signals, feature mismatches 0, output mismatches 0, front end 1.22 s (4056x real time)
+    sub-100_run-03: 3854 windows from 10 raw signals, feature mismatches 0, output mismatches 0, front end 1.14 s (3383x real time)
+[PASS] 7_end_to_end_raw: 
+8 fault-injection campaign (every single fault, one self-test pass each)
+[PASS] 8_fault_campaign: faults_injected=400, hw_sw_mismatches=0, seconds=10.07, ms_per_fault=25.183, bist_vectors=1024, bist_selected_vectors=255, bist_after_clearing_errors=0
+9 whole detector in the fabric (raw samples -> feature engine -> classifier)
+    sub-097_run-10: 424/424 windows from 2 raw signals, feature mismatches 0, output mismatches 0+0, engine 787615 cycles per second of signal, 123.5x real time (c)
+    sub-099_run-02: 4936/4936 windows from 2 raw signals, feature mismatches 0, output mismatches 0+0, engine 787521 cycles per second of signal, 123.5x real time (c)
+    sub-100_run-03: 3854/3854 windows from 10 raw signals, feature mismatches 0, output mismatches 0+0, engine 946168 cycles per second of signal, 102.4x real time (c)
+[PASS] 9_detector_in_fabric: windows=9214, engine_cycles_per_second_max=946168, min_clock_mhz_for_real_time=0.946, note=features computed by the feature engine in the fabric and classified there; the ARM only writes raw samples and starts events (FE_BUSYCYC counts the engine's busy cycles)
+
+ALL TESTS PASSED; results: /home/ubuntu/seizelut_kv260_v6/board/results/kv260_results_20261109-111930_pynq.json

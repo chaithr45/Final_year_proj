@@ -480,3 +480,15 @@ Method results and keep/drop decisions are appended below as runs finish.
   engine 787,615 / 787,521 / 946,168 busy cycles per second of signal (simulation: 787,614 and 946,168 for the
   two simulated recordings), 102-124x real time from the A53 over AXI. The board's clock showed 9 Nov (no RTC
   sync without network); file names carry that date.
+* **Board and Vivado results of kit v6 filed (19 Nov).** `hw/kv260/measured/kv260_board_kit_v6/` (results JSON of
+  the full and quick campaigns, console logs) and `hw/kv260/measured/vivado_2026.1_kit_v6/` (reports,
+  `build_results.json`). The JSON confirms the console: the engine's total busy cycles on the board equal the
+  simulation's exactly (334,736,283 for sub-097_run-10, 3,647,479,431 for sub-100_run-03). Fault campaign: 3,142 of
+  3,592 faults detected (all observable ones), 2,890 of 2,890 decision-relevant at the frozen threshold. Vivado
+  2026.1: timing met at 100 MHz (WNS +3.500 ns, WHS +0.017 ns), 8-KB address range assigned; full design 3,796 LUTs
+  (3.2 %), 3,428 FFs, 13.5 BRAM tiles, 0 DSP; core 3,356 LUTs, 2,964 FFs; classifier in the design 785 LUTs (with
+  fault injection and taps). Feature engine out of context (2.5-ns constraint): 804 LUTs, 101 FFs, 4.5 BRAM tiles,
+  0 DSP, Fmax 233.9 MHz, so engine + DWN (398) = 1,202 LUTs, the same total as Yosys (797 + 405). The `u_fe`
+  hierarchy of the full design reports 1,341 LUTs (cross-boundary optimisation in the full design; not
+  investigated). Vectorless dynamic power at 100 MHz: u_fe 11 mW, u_cls 8 mW (low confidence). Paper: all `[board]`
+  marks filled (fault campaign, KV260 paragraph) and the hardware paragraph updated to the v6 design; 6 pages.
