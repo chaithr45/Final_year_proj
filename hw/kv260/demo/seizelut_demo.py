@@ -81,6 +81,7 @@ class Engine(threading.Thread):
         self.names = [f["name"] for f in model.thresholds["features"]]
         self.gate = model.head.get("artefact_gate", "none")
         self.fabric = bool(getattr(args, "fabric_fe", False))     # front end in the fabric (core version 3)
+        self.alert = None          # (AlertBuilder, Esp32Link): doctor notification through an ESP32 (doctor_alert.py)
 
     # ---- clients
     def subscribe(self) -> queue.Queue:
@@ -256,6 +257,12 @@ class Engine(threading.Thread):
             self.last_alarm_end = t_end
             self.send({"type": "event", "kind": "alarm_end", "t": t_end})
         self.alarm_on = alarm
+        if self.alert is not None:          # doctor notification: alarm start, updates, end (ESP32 over USB)
+            builder, link = self.alert
+            g0, g1 = self.model.head["groups"]["seizure"]
+            msg = builder.window(X, alarm, int(np.sum(luts[g0:g1])), g1 - g0, float(t_end))
+            if msg is not None:
+                link.send(msg)
         return {"w": w, "t_end": t_end, "f": f.tolist(), "art": [int(art[0]), int(art[1])],
                 "bits": "".join("1" if x else "0" for x in bits), "luts": "".join("1" if x else "0" for x in luts),
                 "score": int(s), "dec": int(dec), "alarm": int(alarm), "thr": int(thr), "k": int(k_p if opp else self.core.cfg["k"]),
@@ -343,6 +350,8 @@ class Engine(threading.Thread):
         elif cmd == "button":
             t = self.pos if self.seg else 0
             ev = {"kind": "button", "t": t, "source": c.get("source", "screen")}
+            if self.alert is not None:
+                self.alert[1].send(self.alert[0].button(float(t)))
             if self.seg:
                 self.events.append(ev)
             self.send({"type": "event", **ev})
@@ -517,6 +526,9 @@ def main() -> int:
     ap.add_argument("--board-button", action="store_true", help="use the board's FWUEN button as the patient button")
     ap.add_argument("--no-buzzer", action="store_true")
     ap.add_argument("--buzzer-active-low", action="store_true", help="for buzzer modules that beep when I/O is low")
+    ap.add_argument("--esp32", default="auto",
+                    help="doctor notification: ESP32 serial port (auto = first /dev/ttyUSB* or /dev/ttyACM*; off)")
+    ap.add_argument("--bed", default="Bed 1", help="patient location shown in the doctor's notification (no names)")
     ap.add_argument("--fe", choices=("auto", "fabric", "arm"), default="auto",
                     help="where the front end runs: auto = in the fabric when the core has the feature engine (kit v6)")
     args = ap.parse_args()
@@ -586,6 +598,14 @@ def main() -> int:
     assert len(spec_names) == fe._lib().fe_n_features(), "feature name table"
     engine.col = [spec_names.index(n) for n in engine.names]
     engine.col_all = spec_names
+    from doctor_alert import AlertBuilder, Esp32Link
+    link = Esp32Link(args.esp32)
+    esp_note = f"ESP32 on {link.port}" if link.ok else f"off ({link.error or 'disabled'})"
+    if link.ok:
+        engine.alert = (AlertBuilder(spec_names, bed=args.bed), link)
+        time.sleep(2.0)            # opening the port may reset the ESP32
+        link.send({"event": "hello", "bed": args.bed, "title": f"SeizeLUT connected - {args.bed}",
+                   "body": "Detector running on the KV260; you will be notified of alarms."})
     btn_note = "off"
     if args.board_button:
         from board_io import BoardButton
@@ -631,6 +651,7 @@ def main() -> int:
         + " (checked against the C front end every window)" if args.fabric_fe else "C on the ARM"
     print(f"  front end: {fe_where}")
     print(f"  platform: {info['platform']}; board LEDs: {led_note}; board button: {btn_note}")
+    print(f"  doctor notification: {esp_note}")
     print(f"  open http://<this board's address>:{args.port} on the laptop "
           f"(rehearsal: http://localhost:{args.port}); Ctrl+C stops")
     try:

@@ -497,3 +497,16 @@ Method results and keep/drop decisions are appended below as runs finish.
   `demo2_components.sh --autoplay --speed 4` raises the alarm on the seizure segment with the front end and the
   classifier in the fabric (user's report). A buzzer without its + leg on 3.3 V stays silent (wiring note for the
   guide).
+* **Doctor alert through an ESP32 (19 Nov, user request).** On an alarm the board sends five measured details to
+  an ESP32 on the breadboard (USB serial; the FPGA's alarm pin B1 to GPIO 27 as a backup), which pushes an iPhone
+  notification (ntfy) and serves a live page (`hw/kv260/demo/doctor_alert.py`, `hw/kv260/esp32/`). Details: heart
+  rate before/now, movement, EMG and EEG change vs the 60 s ending 30 s before the alarm, and a motor/non-motor
+  hint. The detector itself cannot name a seizure type, so only measured signs are reported. Hint check on the
+  training patients only (`scripts/alert_signs_analysis.py`, `results/tables/alert_signs.json`; 692 annotated
+  seizures, test patients not read): movement ratio (first 30 s vs before) median 4.8 for motor and 1.04 for
+  non-motor seizures; heart-rate rise median 17 % vs 8 %; threshold 2.59 chosen on patients 1-48 (motor recall
+  0.754, non-motor 0.805) gives 0.482 and 0.789 on patients 49-96 (balanced accuracy 0.636); movement-or-EMG and
+  active-fraction rules were no better (0.625, 0.634). The two EEG inputs are one behind-the-ear and one
+  cross-head channel chosen per recording, so no left/right claim is made. Tested here: messages through a
+  pseudo-terminal on the emulated demo (start, 15-s updates, end after 30 s quiet), sketch syntax with stand-in
+  Arduino headers, phone page with Playwright; not yet on the ESP32 itself.
