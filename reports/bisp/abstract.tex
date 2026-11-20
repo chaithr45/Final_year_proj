@@ -1,0 +1,27 @@
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\markboth{Abstract}{}
+
+Epileptic seizures are often missed by patients and carers, and a wearable detector must run for days on a small
+battery while it can be trusted to compute what was validated. We built SeizeLUT, a seizure detector whose classifier
+is a Differentiable Weightless Neural Network (DWN) of 50 six-input lookup tables (LUTs) that map one-to-one onto
+FPGA LUTs, fed by a bit-exact integer front end for behind-the-ear EEG, ECG, EMG and motion that needs no multiplier.
+
+On the official split of the SeizeIT2 dataset (125 patients, 11,626 hours), every design choice was made by
+cross-validation on the 96 training patients, and the frozen detector was scored once on the 29 held-out test
+patients: event-F1 $0.248 \pm 0.016$ with 0.8 false alarms per day, above a TreeLUT model, a logic-gate network, an
+INT8 network and the ChronoNet baseline, in 398 FPGA LUTs with no DSP block. A two-stage version that confirms each
+alarm against the post-ictal period detects 73.3\,\% of seizures at 10.9 false alarms per hour, against 71.1\,\% at
+11.0 for the dataset paper's SVM.
+
+Because the classifier is a set of truth tables, every single hardware fault (3,592 of them) can be enumerated and
+judged by its clinical effect on 8,714 hours of training data. 255 test vectors chosen for coverage detect every
+fault that changes a decision, and the on-chip self-test runs them in 10.3\,\textmu s. A microcoded shift-add engine
+computes the features in the FPGA fabric, so the whole detector, front end included, is multiplier-free hardware of
+1,202 LUTs that keeps up with the sensors at under 1\,MHz.
+
+The complete system runs on an AMD Kria KV260 board. All nine board tests pass: the self-test, the replay of 431,960
+one-second windows with no mismatch, all 3,592 injected faults detected exactly as predicted, and raw signals through
+the front end and classifier in the fabric with every feature and decision equal to the software. A live demo drives
+an alarm LED and a buzzer, and an ESP32 sends the doctor a push notification with the measured heart rate, movement,
+muscle and brain activity, an action to take, and escalation after 2 and 5 minutes.

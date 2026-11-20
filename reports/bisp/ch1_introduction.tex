@@ -1,0 +1,85 @@
+\chapter{Introduction}\label{ch:intro}
+
+\section{Motivation}
+
+\begin{itemize}
+\item Epilepsy affected an estimated 45.9 million people in 2016 \cite{gbd2019epilepsy}. Patients often miss their own
+  seizures, so diaries undercount them \cite{elger2018underreporting}, and tonic-clonic seizures carry a risk of sudden
+  death \cite{ryvlin2013mortemus}.
+\item Wearables are recommended today only for tonic-clonic seizures \cite{beniczky2021guideline}; for focal seizures
+  (822 of the 883 in SeizeIT2) false alarms are the main obstacle \cite{swinnen2026seizeit2}.
+\item Behind-the-ear EEG with ECG, EMG and motion is a discreet alternative \cite{vandecasteele2020bte,vandecasteele2021ecg};
+  SeizeIT2 \cite{bhagubai2025seizeit2} provides 125 patients recorded with such a wearable.
+\item A wearable detector must run for days on a small battery. Multiplications dominate the cost of neural networks
+  in hardware, while an FPGA's basic element is a 6-input lookup table (LUT). \emph{LUT-native} networks
+  \cite{bacellar2024dwn,petersen2022dlgn,umuroglu2020logicnets} are built from exactly this element.
+\item A medical device must also not fail silently: a hardware fault in the classifier turns into missed seizures or
+  false alarms, and an alarm is only useful if the right person can act on it quickly.
+\end{itemize}
+
+\section{Problem Statement and Objectives}
+
+\begin{quote}
+\itshape Can a LUT-native network, fed by integer features from behind-the-ear EEG, ECG, EMG and motion, detect
+seizures in unseen patients as well as the published SeizeIT2 baselines, as multiplier-free hardware that can test
+itself, run on a real FPGA board, and alert a doctor?
+\end{quote}
+
+\begin{table}[H]
+\centering\small
+\caption{Objectives and their status.}\label{tab:objectives}
+\begin{tabularx}{\textwidth}{@{}cLP{42mm}@{}}
+\toprule
+\textbf{\#} & \textbf{Objective} & \textbf{Status}\\
+\midrule
+1 & Audit SeizeIT2 and reproduce its published baselines & Done\\
+2 & Integer-only, bit-exact multimodal feature pipeline & Done\\
+3 & Compare LUT-native, tree and multiplier-based models on accuracy and hardware cost & Done\\
+4 & Extend the LUT network for wearables (distillation, missing sensors, post-ictal verification) & Done\\
+5 & Evaluate the frozen design once on the 29 held-out test patients & Done\\
+6 & Self-testing: complete single-fault analysis and an on-chip test that detects every relevant fault & Done, measured on the board\\
+7 & Front end and classifier in the FPGA fabric; KV260 implementation & Done, all 9 board tests pass\\
+8 & Live demo with alarm LED and buzzer & Done on the board\\
+9 & Doctor alert through an ESP32 (phone notification and live page) & Built and tested in emulation; ESP32 hardware test pending\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Contributions}
+
+\begin{itemize}
+\item The first LUT-native seizure detector, and the first benchmark of LUT-family models (DWN, logic-gate network,
+  TreeLUT) against standard machine learning on SeizeIT2 with event-level clinical scoring.
+\item A bit-exact, multiplier-free integer front end, and a microcoded engine that computes it in the FPGA fabric:
+  the whole detector is 1,202 LUTs with no multiplier.
+\item Distillation from a tree ensemble into the LUT network (false alarms per day from 2.4 to 0.9) and a LUT-native
+  post-ictal verification stage that detects more seizures than the dataset paper's SVM.
+\item \emph{Self-testing}: every one of the 3,592 single faults of the classifier judged by its effect on decisions,
+  and 255 selected test vectors that detect all decision-relevant faults; verified fault by fault on the board.
+\item A complete Kria KV260 implementation with a nine-step board test campaign, a live demo, and a doctor alert
+  that tells the doctor what to do.
+\item An independent reproduction of the SeizeIT2 ChronoNet baseline, including a protocol with no test information.
+\end{itemize}
+
+\section{Team}
+
+\begin{table}[H]
+\centering\small
+\caption{Project team.}\label{tab:team}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Name} & \textbf{Roll number}\\
+\midrule
+\studentA & \rollA\\
+\studentB & \rollB\\
+\studentC & \rollC\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Organisation of the Report}
+
+Chapter~\ref{ch:lit} reviews the literature, Chapter~\ref{ch:method} the dataset and method, Chapter~\ref{ch:results}
+the detection results, Chapter~\ref{ch:hw} the FPGA hardware, self-test and board results, Chapter~\ref{ch:alert} the
+doctor alert, Chapter~\ref{ch:challenges} the challenges, and Chapter~\ref{ch:concl} the conclusions, the publication
+plan and future work.

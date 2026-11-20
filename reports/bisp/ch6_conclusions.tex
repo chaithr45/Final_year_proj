@@ -1,0 +1,51 @@
+\chapter{Conclusions, Publication Plan and Future Work}\label{ch:concl}
+
+\section{Conclusions}
+
+\begin{itemize}
+\item \textbf{A complete multiplier-free detector:} a 50-LUT weightless network on integer multimodal features
+  reaches an event-F1 of 0.248 with 0.8 false alarms per day on 29 held-out patients; with its front end in the
+  fabric the whole detector needs 1,202 LUTs and no multiplier.
+\item \textbf{Accuracy per LUT:} above TreeLUT at a seventh of its LUTs, above the logic-gate network, the INT8 network
+  and ChronoNet; level with random forest and CatBoost; below LightGBM, which needs about 30,000 LUTs.
+\item \textbf{Above the dataset paper's SVM} at its false-alarm rate with post-ictal verification (73.3\,\% against
+  71.1\,\% of seizures).
+\item \textbf{Self-testing:} all 3,592 single faults analysed; 255 selected vectors detect every fault that changes a
+  decision; confirmed fault by fault on the board.
+\item \textbf{Working hardware:} all nine board tests pass on the KV260; the cycle counts on the board equal the
+  simulation exactly; the live demo drives an alarm LED and a buzzer.
+\item \textbf{Doctor alert:} a phone notification that says what to do, with escalation and acknowledgement.
+\item \textbf{Limits:} focal seizures are still mostly missed, as in the clinical literature
+  \cite{beniczky2021guideline}; results come from retrospective recordings of one dataset; the ESP32 alert still has to
+  be tested on the ESP32 itself.
+\end{itemize}
+
+\section{Publication Plan}
+
+A 6-page paper with all results, including the board measurements, is ready. The best-fitting venues and their
+deadlines (official conference pages, checked on 20 November 2026):
+
+\begin{table}[H]
+\centering\small
+\caption{Candidate conferences.}\label{tab:venues}
+\begin{tabularx}{\textwidth}{@{}lP{38mm}L@{}}
+\toprule
+\textbf{Conference} & \textbf{Deadline} & \textbf{Fit}\\
+\midrule
+IEEE EMBC 2027 & full paper 24 Jan 2027 & biomedical engineering; new limit of 4 pages + 1 page of references, so the paper must
+  be shortened\\
+IEEE/ACM FCCM 2027 & abstract 10 Jan, paper 17 Jan 2027 & FPGA hardware: the self-testing and the fabric front end\\
+IEEE BioCAS 2027 & abstract 7 May 2027 (Oslo, 14--16 Oct 2027) & biomedical circuits and systems: the best overall fit
+  for the whole system\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Future Work}
+
+\begin{itemize}
+\item Test the doctor alert on the ESP32 with a real phone; measure the time from seizure alarm to notification.
+\item Detect more focal seizures, the main clinical gap.
+\item Prospective recordings with the board worn by volunteers, and a battery-powered low-power FPGA.
+\item Run the self-test periodically in the field and react to a failed test.
+\end{itemize}

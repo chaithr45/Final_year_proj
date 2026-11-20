@@ -1,0 +1,180 @@
+\chapter{Literature Review}\label{ch:lit}
+
+The survey covers 79 references in four areas. Each was checked against its published record; numbers are as reported
+in the cited abstracts.
+
+\section{Epilepsy and Wearable Seizure Detection}\label{sec:lit-clinical}\label{sec:lit-wearable}
+
+\begin{itemize}
+\item \textbf{Clinical need.} Seizures are classified by onset and awareness \cite{fisher2017ilae}; unaware patients
+  under-report them \cite{elger2018underreporting}; the ILAE--IFCN guideline recommends wearables only for tonic-clonic
+  seizures \cite{beniczky2021guideline}.
+\item \textbf{Devices.} EMG, wristband and multimodal devices detect convulsive seizures well
+  \cite{leijten2018review,beniczky2018emg,onorati2017empatica,regalia2019empatica,naganur2022meta}; focal seizures
+  remain open.
+\item \textbf{Behind-the-ear EEG (SeizeIT).} Two behind-the-ear channels detect seizures \cite{vandecasteele2020bte};
+  ECG adds 8--11\,\% sensitivity \cite{vandecasteele2021ecg,bhagubai2023ecg}; tree ensembles won the 2023 challenge
+  \cite{bhagubai2024challenge}; SeizeIT2 released 125 patients \cite{bhagubai2025seizeit2}; a 192-adult validation
+  reached precision 0.004 before review \cite{swinnen2026seizeit2}; ECG-only \cite{reintjes2025ecg} and complex-valued
+  multimodal \cite{su2026cmepinet} detectors also use SeizeIT2.
+\item \textbf{Fusion.} Adding EMG and motion mainly removes false alarms \cite{zhang2024tcs}; only one work handles a
+  missing modality \cite{zhang2024cyclic}.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Wearable and multimodal seizure detection studies (results as reported).}\label{tab:lit-wearable}
+\begin{tabularx}{\textwidth}{@{}P{30mm}cP{22mm}P{22mm}LL@{}}
+\toprule
+\textbf{Work} & \textbf{Year} & \textbf{Signals} & \textbf{Seizures} & \textbf{Result} & \textbf{Gap for our problem}\\
+\midrule
+Beniczky et al. \cite{beniczky2018emg} & 2018 & EMG & tonic-clonic & $>$90\,\% sensitivity & convulsive only\\
+Onorati et al. \cite{onorati2017empatica} & 2017 & EDA + ACC & convulsive & 94.55\,\%, 0.2 FA/day & convulsive only\\
+Naganur et al. \cite{naganur2022meta} & 2022 & meta-analysis & tonic-clonic & 0.91, 2.1 FA/24\,h & focal not solved\\
+Vandecasteele et al. \cite{vandecasteele2020bte} & 2020 & bte-EEG & focal & 64.1\,\%, 2.8 FP/24\,h (patient-independent) & EEG only\\
+Vandecasteele et al. \cite{vandecasteele2021ecg} & 2021 & bte-EEG + ECG & focal & +8--11\,\% sensitivity with ECG & software only\\
+Bhagubai et al. \cite{bhagubai2024challenge} & 2024 & bte-EEG & challenge & tree ensemble won & no hardware budget\\
+Zhang et al. \cite{zhang2024tcs} & 2024 & EEG + EMG + ACC & tonic-clonic & 90.9\,\%, 0.1 FP/24\,h & tonic-clonic only\\
+Swinnen et al. \cite{swinnen2026seizeit2} & 2026 & SeizeIT2 wearable & focal, 192 adults & 0.73 at precision 0.004 & false alarms\\
+BrainFuseNet \cite{ingolfsson2024brainfusenet} & 2024 & EEG + PPG + ACC & -- & 64.28\,\%, 0.21 FP/h, MCU & multipliers, no ECG/EMG\\
+Zhang et al. \cite{zhang2024cyclic} & 2024 & EEG + EMG & -- & -- & large transformer\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Detection Algorithms and Evaluation}\label{sec:lit-alg}
+
+\begin{itemize}
+\item \textbf{Feature-based models} work well but are often patient-specific \cite{shoeb2010icml}; tree ensembles are
+  strongest on SeizeIT data \cite{alhussaini2023seizft,huang2023lightweight}.
+\item \textbf{Deep models} (ChronoNet \cite{roy2019chrononet}, EEGNet \cite{lawhern2018eegnet}, EEGWaveNet
+  \cite{thuwajit2022eegwavenet}, graph and transformer models \cite{tang2022gnnssl,wu2025seizuretransformer,yang2023biot})
+  are large and multiplier-based; ChronoNet trained on SeizeIT1 reached 15.2\,\% sensitivity on SeizeIT2
+  \cite{huang2023lightweight}.
+\item \textbf{Imperfect labels}: weak supervision, MIL, noisy-label training and distillation
+  \cite{saab2020weak,isaev2020mil,shama2026bundl,zheng2023kdgnn} motivate our extensions N4 and N5.
+\item \textbf{Evaluation} varies between papers and corpora \cite{ziyabari2017metrics,shah2018tusz}; SzCORE standardises event metrics
+  \cite{dan2024szcore}; in a blind benchmark the best event-F1 was 43\,\% \cite{dan2025szcorechallenge}; subject leakage
+  inflates results \cite{brookshire2024leakage}.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering\small
+\caption{Seizure detection algorithms and evaluation frameworks (results as reported).}\label{tab:lit-alg}
+\begin{tabularx}{\textwidth}{@{}P{30mm}cP{25mm}P{20mm}LL@{}}
+\toprule
+\textbf{Work} & \textbf{Year} & \textbf{Method} & \textbf{Data} & \textbf{Result} & \textbf{Gap for our problem}\\
+\midrule
+Shoeb \& Guttag \cite{shoeb2010icml} & 2010 & patient-specific SVM & CHB-MIT & 96\,\% of seizures, 2 FD/24\,h & patient-specific, scalp\\
+SeizFt \cite{alhussaini2023seizft} & 2023 & features + CatBoost & SeizeIT1/2 & ICASSP 2023 winner & EEG only, no hardware cost\\
+Huang et al. \cite{huang2023lightweight} & 2023 & random forest; ChronoNet & SeizeIT1/2 & RF 73.6\,\%; ChronoNet 15.2\,\% & EEG only\\
+ChronoNet \cite{roy2019chrononet} & 2019 & CNN + GRU & TUH abnormal & benchmark at the time & large, multipliers\\
+EEGWaveNet \cite{thuwajit2022eegwavenet} & 2022 & multiscale CNN & CHB-MIT, TUSZ & better subject-independent & scalp, float CNN\\
+Tang et al. \cite{tang2022gnnssl} & 2022 & self-supervised GNN & TUSZ & AUROC 0.875 & needs full montage\\
+Shama \& Venkataraman \cite{shama2026bundl} & 2026 & noisy-label training & TUH, CHB-MIT & robust to label noise & scalp EEG\\
+Zheng et al. \cite{zheng2023kdgnn} & 2023 & distilled GNN & TUSZ & competitive with 2 channels & float student\\
+SzCORE \cite{dan2024szcore} & 2024 & evaluation framework & scalp EEG & standard event metrics & not for wearables\\
+SzCORE challenge \cite{dan2025szcorechallenge} & 2025 & blind benchmark & 65 subjects & best event-F1 43\,\% & scalp EEG\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{LUT-Native, Weightless and Logic Networks}\label{sec:lit-lut}
+
+\begin{itemize}
+\item \textbf{Weightless networks} replace weighted sums with memory lookups \cite{aleksander1984wisard,susskind2022bthowen,susskind2023uleen};
+  the \textbf{DWN} made LUT contents and input mapping trainable by gradient descent \cite{bacellar2024dwn}, later applied to
+  activity recognition and control \cite{bacellar2025nanoml,kresse2025dwc}.
+\item \textbf{Logic-gate networks} learn 2-input gates \cite{petersen2022dlgn,petersen2024convdlgn,ruttgers2026lightdlgn};
+  a recurrent version exists for language \cite{buhrer2025rdlgn}.
+\item \textbf{LUT networks for FPGAs}: LUTNet, LogicNets, PolyLUT, NeuraLUT, AmigoLUT, ReducedLUT and TreeLUT
+  \cite{wang2019lutnet,umuroglu2020logicnets,andronic2023polylut,andronic2024neuralut,weng2025amigolut,cassidy2025reducedlut,khataei2025treelut}.
+\item \textbf{The encoder} can dominate the cost of small DWNs \cite{mecik2025thermo}; in our final network it is 776 of
+  895 LUTs.
+\item \textbf{Biosignals}: ECG \cite{mommen2026ecg} and EEG classification \cite{dharia2026eeglgn}; the only weightless
+  seizure work is a 4-patient study \cite{deaguiar2015wisard}.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering\small
+\caption{LUT-native, weightless and logic networks (results as reported).}\label{tab:lit-lut}
+\begin{tabularx}{\textwidth}{@{}P{30mm}cP{27mm}P{22mm}LL@{}}
+\toprule
+\textbf{Work} & \textbf{Year} & \textbf{Model} & \textbf{Domain} & \textbf{Hardware / result} & \textbf{Gap}\\
+\midrule
+WiSARD \cite{aleksander1984wisard} & 1984 & RAM-node WNN & images & -- & no gradient training\\
+ULEEN \cite{susskind2023uleen} & 2023 & weightless & MLPerf Tiny & 7.1$\times$ energy eff.\ vs FINN & no biosignals\\
+DWN \cite{bacellar2024dwn} & 2024 & differentiable LUT6 net & tabular & FPGA, MCU & stateless, no events\\
+nanoML HAR \cite{bacellar2025nanoml} & 2025 & DWN & inertial HAR & 56--104\,nJ / sample & single modality\\
+LGN \cite{petersen2022dlgn} & 2022 & 2-input logic gates & images & $>$1\,M images/s (CPU) & no biosignals\\
+Recurrent LGN \cite{buhrer2025rdlgn} & 2025 & stateful logic gates & translation & -- & no hardware\\
+LogicNets \cite{umuroglu2020logicnets} & 2020 & sparse quantised LUT net & jet tagging & $<$15\,ns latency & tiny fan-in\\
+NeuraLUT \cite{andronic2024neuralut} & 2024 & dense sub-nets in LUTs & jet tagging & 4.3$\times$ lower latency & static\\
+TreeLUT \cite{khataei2025treelut} & 2025 & quantised GBDT & tabular & 4--101$\times$ lower area-delay & per window\\
+Mecik \& Kumm \cite{mecik2025thermo} & 2025 & DWN generator & jet tagging & encoder up to 3.2$\times$ LUTs & --\\
+Mommen et al. \cite{mommen2026ecg} & 2026 & LGN, LUT network & ECG arrhythmia & 2.0--3.0k LUTs, 5--7\,mW & single modality\\
+Dharia et al. \cite{dharia2026eeglgn} & 2026 & LGN & EEG & embedded CPU & no FPGA, no seizures\\
+de Aguiar et al. \cite{deaguiar2015wisard} & 2015 & WiSARD & seizure anticipation & -- & 4 patients, accuracy only\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Hardware Seizure Detectors}\label{sec:lit-hw}
+
+\begin{itemize}
+\item \textbf{ASICs} reach nJ--\textmu J per decision with SVMs and trees
+  \cite{verma2010micro,altaf2015jssc,altaf2016tbcas,huang2020jssc,shoaran2018jetcas,shin2022neuraltree}.
+\item \textbf{FPGAs}: SVM, line-length and spiking-network detectors
+  \cite{wang2018access,elhosary2019tbcas,razi2022tbcas,vittimberga2025sensors,busia2025fpga}; the closest to ours is an SNN
+  on a small iCE40 \cite{busia2025fpga}.
+\item \textbf{Microcontrollers}: e-Glass, EEGformer, BrainFuseNet \cite{sopic2018eglass,busia2024eegformer,ingolfsson2024brainfusenet} and low-power EEG platforms \cite{kartsch2019biowolf,ingolfsson2022artifact};
+  efficient-inference tools: BNNs, FINN, INT8 quantisation, hls4ml
+  \cite{hubara2016bnn,umuroglu2017finn,jacob2018quant,duarte2018hls4ml}.
+\item Nearly all use EEG only, per-patient training and epoch-level metrics; none maps the classifier into LUTs.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Hardware seizure detectors (results as reported; units differ between papers).}\label{tab:lit-hw}
+\begin{tabularx}{\textwidth}{@{}P{25mm}@{\hspace{4pt}}c@{\hspace{4pt}}P{17mm}P{16mm}P{22mm}LL@{}}
+\toprule
+\textbf{Work} & \textbf{Year} & \textbf{Platform} & \textbf{Signals} & \textbf{Hardware} & \textbf{Detection} & \textbf{Gap}\\
+\midrule
+Verma et al. \cite{verma2010micro} & 2010 & ASIC & scalp EEG & 9\,\textmu J / feature vector & classifier off-chip & EEG only\\
+Bin Altaf et al. \cite{altaf2015jssc} & 2015 & ASIC & scalp EEG & 2.73\,\textmu J / class. & 95.7\,\% (epoch) & per patient\\
+Shoaran et al. \cite{shoaran2018jetcas} & 2018 & ASIC & iEEG & 41.2\,nJ / class. & F1 87.9\,\% & implant\\
+NeuralTree \cite{shin2022neuraltree} & 2022 & ASIC & EEG, iEEG & 0.227\,\textmu J / class. & 95.6\,\% (EEG) & neural only\\
+Wang et al. \cite{wang2018access} & 2018 & FPGA (Zynq) & scalp EEG & 380\,mW & 98.4\,\%, 0.356 FD/h & per patient\\
+Farhang Razi \& Schmid \cite{razi2022tbcas} & 2022 & FPGA (Cyclone V) & iEEG & 0.49\,mW dynamic & 100\,\% sens. & implant\\
+Busia et al. \cite{busia2025fpga} & 2025 & FPGA (iCE40) & scalp EEG & 4.55\,nJ / inference & 0.3 FP/h & EEG only\\
+e-Glass \cite{sopic2018eglass} & 2018 & MCU & scalp EEG & 2.71 days / charge & 93.8\,\% (epoch) & EEG only\\
+EEGformer \cite{busia2024eegformer} & 2024 & MCU & scalp EEG & 0.31\,mJ / inference & 73\,\%, 0.15 FP/h & multipliers\\
+BrainFuseNet \cite{ingolfsson2024brainfusenet} & 2024 & MCU & EEG, PPG, ACC & 0.11\,mJ / inference & 0.21 FP/h & no ECG/EMG\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\clearpage
+\section{Research Gaps}\label{sec:lit-gaps}
+
+\begin{xltabular}{\textwidth}{@{}cP{45mm}LL@{}}
+\caption{Research gaps and how this project addresses them.}\label{tab:lit-gaps}\\
+\toprule
+\textbf{\#} & \textbf{Gap} & \textbf{Evidence} & \textbf{How this project addresses it}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{\#} & \textbf{Gap} & \textbf{Evidence} & \textbf{How this project addresses it}\\
+\midrule
+\endhead
+\small 1 & \small No LUT-native (weightless, logic-gate or LUT) seizure detector exists & \small LUT networks are benchmarked on images, physics and tabular data; the only weightless seizure work is a 4-patient study \cite{deaguiar2015wisard} & \small First benchmark of DWN, LGN, TreeLUT and LogicNets-style networks for seizure detection, on SeizeIT2\\
+\small 2 & \small Hardware detectors use EEG alone, although fusion is the most consistent way to cut false alarms & \small \cite{vandecasteele2021ecg,zhang2024tcs}; Section~\ref{sec:lit-hw} & \small Integer features from behind-the-ear EEG, ECG, EMG and motion in one bit-exact front end\\
+\small 3 & \small Missing sensors are rarely handled; LUT networks never & \small \cite{zhang2024cyclic}; Section~\ref{sec:lit-lut} & \small Presence bits, modality dropout, gated and late fusion, missing-sensor tests (N6)\\
+\small 4 & \small The encoder's hardware cost is ignored, although it dominates small LUT networks & \small \cite{mecik2025thermo}; our estimate: about 850 of 960 LUTs & \small Cost model that counts every comparator; comparator-budgeted and learned encoders (N2)\\
+\small 5 & \small LUT networks are stateless; seizures unfold over tens of seconds & \small \cite{buhrer2025rdlgn} & \small A stateful DWN with state bits fed back every second (N1)\\
+\small 6 & \small Results are patient-specific, leak between training and test, or use incomparable metrics & \small \cite{brookshire2024leakage,ziyabari2017metrics,dan2025szcorechallenge} & \small Patient-wise cross-validation, a locked test set used once, SzCORE metrics with the paper's metrics alongside\\
+\small 7 & \small Small models learn from noisy labels and from larger models only in floating point & \small \cite{shama2026bundl,zheng2023kdgnn} & \small Noise-robust and multiple-instance losses (N5) and distillation from LightGBM (N4) into a LUT network\\
+\small 8 & \small Detectors are black boxes & \small Section~\ref{sec:lit-lut} & \small Tracing alarms to the inputs read by each LUT (N7)\\
+\small 9 & \small Published wearable baselines are not independently reproduced & \small Section~\ref{sec:lit-wearable} & \small Independent reproduction of the SeizeIT2 ChronoNet baseline, with and without test-patient information\\
+\bottomrule
+\end{xltabular}

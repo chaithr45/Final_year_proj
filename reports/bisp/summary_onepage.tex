@@ -1,0 +1,78 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=13mm,top=11mm,bottom=11mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{booktabs,tabularx,array,enumitem,xcolor}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}\setlength{\parskip}{2pt}
+\setlist{nosep,leftmargin=12pt,topsep=1pt}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\definecolor{ok}{HTML}{1f7a45}\definecolor{warn}{HTML}{a15c00}
+\newcommand{\sect}[1]{\vspace{3pt}{\large\bfseries #1}\par\vspace{1pt}}
+\begin{document}
+{\LARGE\bfseries SeizeLUT}\hfill{\small BISP project, Dept.\ of ECE, NIT Warangal, November 2026}\par
+{\large A self-testing, multiplier-free seizure detector on an FPGA, with doctor alerts}\par
+{\small Akshara Bonam (23ECB0A11) \quad Sai Chaithr (23ECB0A20) \quad Sowjanya (23ECB0A22)}\par
+\vspace{2pt}\hrule\vspace{3pt}
+
+\textbf{In one line:} behind-the-ear EEG, ECG, EMG and motion go into an FPGA that computes the features and
+classifies every second with 50 lookup tables (no multiplier, 1,202 LUTs in all), tests its own hardware, raises an
+alarm LED and buzzer, and an ESP32 tells the doctor what to do.
+
+\sect{What is done (all numbers measured)}
+\begin{tabularx}{\textwidth}{@{}P{38mm}L@{}}
+\toprule
+\textbf{Detection} & SeizeIT2, 125 patients, 11,626\,h; design fixed on 96 training patients, scored once on 29
+held-out patients: event-F1 0.248, \textbf{0.8 false alarms per day}; above TreeLUT, logic-gate network, INT8 network and
+ChronoNet; two-stage version 73.3\,\% of seizures at 10.9 FA/h vs 71.1\,\% at 11.0 for the dataset paper's SVM\\
+\textbf{Hardware cost} & classifier 398 LUTs, 468\,MHz, 0 DSP (6.7$\times$ fewer LUTs than TreeLUT, 13.2$\times$ fewer than a
+logic-gate network); with the front end in the fabric \textbf{1,202 LUTs, no multiplier}, real time below 1\,MHz\\
+\textbf{Self-testing (novelty)} & all 3,592 single hardware faults analysed on 8,714\,h; 255 selected test vectors detect
+\textbf{every fault that changes a decision} (a normal test: 50.7\,\%); self-test takes 10.3\,\textmu s\\
+\textbf{Board (Kria KV260)} & \textcolor{ok}{\textbf{all 9 board tests pass}}: 431,960 windows with 0 mismatches, all 3,592
+injected faults as predicted, front end + classifier in the fabric equal to software on 9,214 windows; engine cycles
+on the board equal simulation exactly; timing met at 100\,MHz; 3.2\,\% of the chip\\
+\textbf{Demo} & live dashboard; red alarm LED and buzzer driven by the FPGA (working on the board)\\
+\textbf{Doctor alert (ESP32)} & iPhone push + live page: one instruction (e.g.\ GO TO BED 3 NOW), heart / shaking /
+muscle / brain tiles, escalation at 2 and 5 min, ``On my way'', call button. \textcolor{warn}{Tested in emulation; ESP32
+hardware test pending}\\
+\textbf{Paper} & 6-page IEEE paper with prior-work comparison and board results, ready\\
+\bottomrule
+\end{tabularx}
+
+\sect{How good is it}
+\begin{tabularx}{\textwidth}{@{}P{38mm}L@{}}
+\textbf{Novelty: strong} & to our knowledge the first LUT-native seizure detector and the first complete fault analysis of a seizure
+classifier, with a self-test proven on the board; the whole detector as multiplier-free hardware\\
+\textbf{Evidence: strong} & strict patient split with sealed test patients; real board measurements, not only
+simulation; a published baseline reproduced, including a protocol flaw in it\\
+\textbf{Honest weaknesses} & LightGBM is more accurate (0.308) but needs about 30,000 LUTs; focal seizures still mostly
+missed (as in the clinical literature); one retrospective dataset; doctor alert not yet tested on the ESP32\\
+\textbf{Overall} & a complete system from data to working hardware, publishable at a good IEEE biomedical-circuits
+conference; strong material for master's applications\\
+\end{tabularx}
+
+\sect{Where to submit (deadlines from the official pages, checked 20 Nov 2026)}
+\begin{tabularx}{\textwidth}{@{}P{34mm}P{40mm}L@{}}
+\toprule
+\textbf{Conference} & \textbf{Deadline} & \textbf{Why / what to do}\\
+\midrule
+\textbf{1. IEEE EMBC 2027} (first choice) & full paper \textbf{24 Jan 2027}; decision 16 Apr & the IEEE EMBS flagship
+conference; wearable detection fits; \textbf{new limit 4 pages + 1 page of references}: shorten the 6-page paper\\
+\textbf{2. IEEE BioCAS 2027} (if EMBC rejects) & abstract \textbf{7 May 2027}; Oslo, 14--16 Oct & biomedical circuits and
+systems: best fit for the whole system; comes after the EMBC decision, so no double submission\\
+IEEE/ACM FCCM 2027 (hardware option) & abstract 10 Jan, paper 17 Jan 2027 & FPGA-focused; would compete with EMBC on
+dates, so choose one of the two\\
+\bottomrule
+\end{tabularx}
+{\small Never submit the same paper to two conferences at the same time.}
+
+\sect{Next steps}
+\begin{enumerate}[leftmargin=14pt]
+\item Test the ESP32 alert with a real iPhone; film the full demo (alarm LED, buzzer, phone notification).
+\item Shorten the paper to 4 pages + references for EMBC; ask the guide to review; submit before 24 January 2027.
+\item Fill the guide's name, the certificates and signatures in the BISP report.
+\end{enumerate}
+\end{document}

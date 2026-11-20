@@ -1,0 +1,59 @@
+\chapter{Challenges Faced and How They Were Addressed}\label{ch:challenges}
+
+\begin{xltabular}{\textwidth}{@{}P{17mm}P{40mm}LL@{}}
+\caption{The main problems and their solutions.}\label{tab:challenges}\\
+\toprule
+\textbf{Area} & \textbf{Challenge} & \textbf{What happened} & \textbf{Solution}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Area} & \textbf{Challenge} & \textbf{What happened} & \textbf{Solution}\\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\small Data & \small Files differ from the documentation & \small 256 Hz not 250 Hz; 883 not 886 seizures; no centre
+or age labels & \small Full audit first; design follows the files\\
+\small Data & \small 126 GB, no local disk or GPU & \small Dataset too large for the server & \small Stream, extract,
+delete: only 3.5 GB of features kept\\
+\small Data & \small Silent download truncation & \small 9 recordings cut short (one EEG file: 12 of 16,363 windows) &
+\small Size checks; re-extracted; 3 runs repeated\\
+\small Data & \small Official artefact rule & \small Flags 69\,\% of normal behind-the-ear windows & \small Flags used
+as input bits; gating chosen on training folds\\
+\small Baseline & \small ChronoNet only partly reproduced & \small 74.5\,\% vs 84.2\,\% detected & \small Literal port
+(identical on 900 test cases); gap reported as measured\\
+\small Baseline & \small Released code tunes on the test patients & \small Best epoch picked on the evaluation
+patients & \small Clean run with no test information as our reference\\
+\small Baseline & \small SVM features unavailable & \small Defined in a paper we could not access & \small Open;
+requested for Phase II\\
+\small Hardware & \small Rounding noise in integer filters & \small Error 140 LSB, larger than the signal (61 LSB) &
+\small Error feedback: 0.7 LSB\\
+\small Hardware & \small Heart rate needs a division & \small $60/\mathrm{RR}$ & \small $\log_2(\mathrm{RR})$: no
+division or multiplication\\
+\small Hardware & \small Verilog disagreed with software & \small Thresholds beyond a feature's bit width & \small
+Generator fixed: 0 mismatches\\
+\small Compute & \small 6 GB laptop GPU; CUDA-only library & \small DWN could not run on the CPU server & \small
+PyTorch re-implementation, unit-tested against the kernel\\
+\small Compute & \small Interrupted runs; out of memory & \small Lost folds; a sampler used 13.9 GB & \small Resumable
+runs; new sampler peaks at 3.1 GB\\
+\small ML & \small Seizures are 0.123\,\% of the time & \small Accuracy is meaningless & \small Event scoring per
+patient; balanced sampling; false-alarm budget\\
+\small ML & \small \textbf{Weak early results} & \small First network: event-F1 0.148, 7.0 false alarms/day & \small
+N7 showed heart rate was ignored; new feature selection: 0.208, 2.3/day\\
+\small ML & \small Bugs in comparisons & \small Wrong feature set; distillation lost on retraining & \small Found in
+run records; shared training code, tests, runs repeated\\
+\small FPGA & \small Front end needs many multipliers & \small Dozens of filters per window & \small Microcoded
+shift-add engine: 804 LUTs, no DSP\\
+\small FPGA & \small Engine and bus raced each other & \small For one clock cycle the core reported idle before the
+feature transfer, writes were lost & \small Found by the end-to-end testbench before the build; idle condition fixed\\
+\small Board & \small Counters not cleared on the board & \small Reset and clear in one write; the emulator hid it &
+\small Two separate writes; emulator now copies the hardware\\
+\small Board & \small No network for the board & \small Board has no Wi-Fi; phone hotspot only & \small Kit copied with
+a USB drive; tests need no network\\
+\small Demo & \small LED always on, buzzer silent & \small Wires on the wrong end of the PMOD connector; buzzer (+) not
+on 3.3\,V & \small Pin test script; wiring table in the guide\\
+\small Alert & \small Too much information for a doctor in a hurry & \small Long text with numbers & \small One
+instruction, four colour tiles, three-line notification\\
+\small Alert & \small False ``check breathing'' during shaking & \small Shaking spoils the ECG & \small ECG flag only
+without shaking\\
+\end{xltabular}
