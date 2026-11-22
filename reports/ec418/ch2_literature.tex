@@ -1,27 +1,59 @@
 \chapter{LITERATURE REVIEW}\label{ch:lit}
 
-The survey covers 79 references in four areas. Each was checked against its published record; numbers are as reported
-in the cited abstracts.
+This chapter reviews the work on which the project builds and against which it is compared. It covers seven themes:
+the clinical need for seizure detection, wearable and multimodal detectors, the SeizeIT programme and its datasets,
+detection algorithms, evaluation practice, networks built from lookup tables, and hardware implementations of seizure
+detectors. The survey covers 79 references. Each was matched against its published record, and numbers are quoted as
+reported in the cited abstracts. Each theme ends with a summary table, and Section~\ref{sec:lit-gaps} lists the
+research gaps that the project addresses.
 
-\section{Epilepsy and Wearable Seizure Detection}\label{sec:lit-clinical}\label{sec:lit-wearable}
+\section{Epilepsy and the Clinical Need for Seizure Detection}\label{sec:lit-clinical}
 
-\begin{itemize}
-\item \textbf{Clinical need.} Seizures are classified by onset and awareness \cite{fisher2017ilae}; unaware patients
-  under-report them \cite{elger2018underreporting}; the ILAE--IFCN guideline recommends wearables only for tonic-clonic
-  seizures \cite{beniczky2021guideline}.
-\item \textbf{Devices.} EMG, wristband and multimodal devices detect convulsive seizures well
-  \cite{leijten2018review,beniczky2018emg,onorati2017empatica,regalia2019empatica,naganur2022meta}; focal seizures
-  remain open.
-\item \textbf{Behind-the-ear EEG (SeizeIT).} Two behind-the-ear channels detect seizures \cite{vandecasteele2020bte};
-  ECG adds 8--11\,\% sensitivity \cite{vandecasteele2021ecg,bhagubai2023ecg}; tree ensembles won the 2023 challenge
-  \cite{bhagubai2024challenge}; SeizeIT2 released 125 patients \cite{bhagubai2025seizeit2}; a 192-adult validation
-  reached precision 0.004 before review \cite{swinnen2026seizeit2}; ECG-only \cite{reintjes2025ecg} and complex-valued
-  multimodal \cite{su2026cmepinet} detectors also use SeizeIT2.
-\item \textbf{Fusion.} Adding EMG and motion mainly removes false alarms \cite{zhang2024tcs}; only one work handles a
-  missing modality \cite{zhang2024cyclic}.
-\end{itemize}
+Epilepsy is one of the most common chronic neurological disorders: the Global Burden of Disease study estimated 45.9
+million people with active epilepsy in 2016, an age-standardised prevalence of 621.5 per 100,000
+\cite{gbd2019epilepsy}. The International League Against Epilepsy (ILAE) classifies seizures by their onset (focal,
+generalised or unknown) and, for focal seizures, by whether awareness is kept \cite{fisher2017ilae}. This distinction
+matters for detection: a focal seizure with impaired awareness may produce little movement, while a focal-to-bilateral
+tonic-clonic seizure produces strong muscle activity.
 
-\begin{table}[htbp]
+Seizure counts are the basis of treatment decisions, yet they are unreliable. Elger and Hoppe identify lack of
+awareness that a seizure has occurred as the primary cause of under-reporting, and call for ambulatory long-term
+detection that combines heart-rate and movement measures \cite{elger2018underreporting}. Unattended seizures are also
+dangerous: in the MORTEMUS study of 147 epilepsy monitoring units, the incidence of sudden unexpected death in epilepsy
+(SUDEP) was 5.1 per 1000 patient-years, and in the recorded cases terminal cardiorespiratory dysfunction followed a
+generalised tonic-clonic seizure \cite{ryvlin2013mortemus}. The ILAE--IFCN clinical practice guideline therefore
+recommends clinically validated wearable devices for tonic-clonic seizures, especially in unsupervised patients, but
+does not recommend their clinical use for other seizure types, for which the evidence is insufficient
+\cite{beniczky2021guideline}. Detecting focal seizures with a wearable, the target of this project, is therefore an
+open clinical problem.
+
+\section{Wearable and Multimodal Seizure Detection}\label{sec:lit-wearable}
+
+Most validated wearables detect convulsive seizures from movement or muscle activity. A wearable surface-EMG device on
+the arm detected tonic-clonic seizures with a sensitivity above 90\,\% and a latency within 30\,s in a prospective
+three-centre study of 71 patients \cite{beniczky2018emg}. Empatica wristbands combining electrodermal activity and
+accelerometry reached a sensitivity of 94.55\,\% at 0.2 false alarms per day for convulsive seizures in 69 patients
+\cite{onorati2017empatica}. A review of multimodal detection found sensitivities between 4 and 100\,\% and 0.25 to 20
+false detections per 8\,h, with the best results for tonic-clonic seizures \cite{leijten2018review}, and a 2022
+meta-analysis of 28 studies pooled a tonic-clonic sensitivity of 0.91 at 2.1 false alarms per 24\,h while reporting
+focal-seizure sensitivities from 31.1 to 93.1\,\% \cite{naganur2022meta}. These devices work for convulsive seizures,
+but movement and skin signals carry little information about non-motor focal seizures.
+
+Brain signals are needed for focal seizures, and behind-the-ear (bte) EEG makes them wearable. Vandecasteele et al.
+showed that two bte channels allow visual seizure annotation (sensitivity 65.7\,\%) and automated detection, with a
+patient-independent detector reaching 64.1\,\% at 2.8 false positives per 24\,h \cite{vandecasteele2020bte}. Adding
+ECG to bte-EEG raised the sensitivity by 11 and 8 percentage points at the same false-alarm rate in two of three
+databases \cite{vandecasteele2021ecg}, and in a semi-automated setting ECG cut the false detections from 6.5 to 2.4
+per day \cite{bhagubai2023ecg}. Fusion has the same effect for tonic-clonic seizures: on 27 SeizeIT2 participants, EEG
+alone reached 100\,\% sensitivity at 10.3 false positives per 24\,h, while EEG, EMG and accelerometry together reached
+90.9\,\% at 0.1 \cite{zhang2024tcs}. Missing sensors are rarely handled; the only seizure work found on this problem is
+a cyclic transformer that learns from paired EEG and EMG and is tested on EEG alone \cite{zhang2024cyclic}. The
+closest edge-oriented multimodal detector, BrainFuseNet, fuses four EEG channels with photoplethysmography and
+accelerometry on a microcontroller and reaches 64.28\,\% sample sensitivity at 0.21 false positives per hour
+\cite{ingolfsson2024brainfusenet}; it uses multiply-accumulate arithmetic and no ECG or EMG. Table~\ref{tab:lit-wearable}
+summarises these studies.
+
+\begin{table}[H]
 \centering\small
 \caption{Wearable and multimodal seizure detection studies (results as reported)}\label{tab:lit-wearable}
 \begin{tabularx}{\textwidth}{|P{30mm}|c|P{22mm}|P{22mm}|L|L|}
@@ -42,23 +74,48 @@ Zhang et al. \cite{zhang2024cyclic} & 2024 & EEG + EMG & -- & -- & large transfo
 \end{tabularx}
 \end{table}
 
-\section{Detection Algorithms and Evaluation}\label{sec:lit-alg}
+\section{The SeizeIT Programme and the SeizeIT2 Dataset}\label{sec:lit-seizeit}
 
-\begin{itemize}
-\item \textbf{Feature-based models} work well but are often patient-specific \cite{shoeb2010icml}; tree ensembles are
-  strongest on SeizeIT data \cite{alhussaini2023seizft,huang2023lightweight}.
-\item \textbf{Deep models} (ChronoNet \cite{roy2019chrononet}, EEGNet \cite{lawhern2018eegnet}, EEGWaveNet
-  \cite{thuwajit2022eegwavenet}, graph and transformer models \cite{tang2022gnnssl,wu2025seizuretransformer,yang2023biot})
-  are large and multiplier-based; ChronoNet trained on SeizeIT1 reached 15.2\,\% sensitivity on SeizeIT2
-  \cite{huang2023lightweight}.
-\item \textbf{Imperfect labels}: weak supervision, MIL, noisy-label training and distillation
-  \cite{saab2020weak,isaev2020mil,shama2026bundl,zheng2023kdgnn} motivate our extensions N4 and N5.
-\item \textbf{Evaluation} varies between papers and corpora \cite{ziyabari2017metrics,shah2018tusz}; SzCORE standardises event metrics
-  \cite{dan2024szcore}; in a blind benchmark the best event-F1 was 43\,\% \cite{dan2025szcorechallenge}; subject leakage
-  inflates results \cite{brookshire2024leakage}.
-\end{itemize}
+The SeizeIT projects record patients with the Sensor Dot wearable (Byteflies), which carries bte-EEG, ECG, EMG, an
+accelerometer and a gyroscope. SeizeIT1 (42 patients with focal epilepsy) was the training set of the 2023 ICASSP
+wearable-EEG grand challenge, which was evaluated on recordings from the wearable itself; the winning method was a
+feature-based tree ensemble, and the organisers named the lack of training data as the main obstacle
+\cite{bhagubai2024challenge}. The winning entry, SeizFt, used hand-crafted features, Fourier-transform-surrogate
+augmentation and a CatBoost ensemble \cite{alhussaini2023seizft}.
 
-\begin{table}[htbp]
+SeizeIT2 \cite{bhagubai2025seizeit2} is the first open dataset of wearable recordings from patients with focal
+epilepsy: 125 patients from five European epilepsy monitoring units, more than 11,000 hours and 883 focal seizures
+annotated on video-EEG, with a proposed training and validation split, benchmark methods (an SVM and ChronoNet) and
+evaluation metrics. It is the dataset of this project. A multicentre validation of the same device in 192 adults with
+616 focal seizures shows why false alarms are the main problem: the algorithm alone reached a sensitivity of 0.73 but
+a precision of only 0.004, and expert review was needed to raise the precision to 0.83 \cite{swinnen2026seizeit2}.
+Other SeizeIT2 studies use ECG-only anomaly detection \cite{reintjes2025ecg} or a complex-valued multimodal network
+\cite{su2026cmepinet}; none of them reports a hardware implementation.
+
+\section{Seizure Detection Algorithms}\label{sec:lit-alg}
+
+\textbf{Feature-based models.} Classical detectors compute features such as band power and line length and feed them
+to a classifier. Shoeb and Guttag's patient-specific SVM detected 96\,\% of 173 test seizures with a median of two false
+detections per 24\,h on the CHB-MIT scalp dataset, but it needs seizures of the same patient for training
+\cite{shoeb2010icml}. On SeizeIT data, tree ensembles have been the strongest: besides SeizFt
+\cite{alhussaini2023seizft}, a random forest on band-power features reached a sensitivity of 73.6\,\% when trained on
+SeizeIT1 and tested on SeizeIT2 \cite{huang2023lightweight}.
+
+\textbf{Deep models.} ChronoNet stacks multi-scale one-dimensional convolutions and gated recurrent units and was
+designed for abnormal-EEG identification \cite{roy2019chrononet}; it is one of the two SeizeIT2 baselines. Trained on
+SeizeIT1, it reached only 15.2\,\% sensitivity on SeizeIT2 data \cite{huang2023lightweight}. Compact convolutional
+networks such as EEGNet \cite{lawhern2018eegnet} and EEGWaveNet \cite{thuwajit2022eegwavenet}, graph networks
+\cite{tang2022gnnssl} and transformers \cite{wu2025seizuretransformer,yang2023biot} improve results on scalp EEG, but
+they rely on full electrode montages, large models and floating-point multiplications, which do not fit a
+battery-powered two-channel wearable.
+
+\textbf{Imperfect labels.} Seizure annotations have uncertain onsets and offsets. Weak supervision on clinical
+annotations \cite{saab2020weak}, attention-based multiple-instance learning \cite{isaev2020mil}, noise-aware training
+\cite{shama2026bundl} and distillation from a large teacher into a few-channel student \cite{zheng2023kdgnn} address
+this, but only for floating-point models. They motivate our distillation and noise-robust training experiments
+(extensions N4 and N5). Table~\ref{tab:lit-alg} summarises the algorithms.
+
+\begin{table}[H]
 \centering\small
 \caption{Seizure detection algorithms and evaluation frameworks (results as reported)}\label{tab:lit-alg}
 \begin{tabularx}{\textwidth}{|P{30mm}|c|P{25mm}|P{20mm}|L|L|}
@@ -79,23 +136,45 @@ SzCORE challenge \cite{dan2025szcorechallenge} & 2025 & blind benchmark & 65 sub
 \end{tabularx}
 \end{table}
 
-\section{LUT-Native, Weightless and Logic Networks}\label{sec:lit-lut}
+\section{Evaluation Practice}\label{sec:lit-eval}
 
-\begin{itemize}
-\item \textbf{Weightless networks} replace weighted sums with memory lookups \cite{aleksander1984wisard,susskind2022bthowen,susskind2023uleen};
-  the \textbf{DWN} made LUT contents and input mapping trainable by gradient descent \cite{bacellar2024dwn}, later applied to
-  activity recognition and control \cite{bacellar2025nanoml,kresse2025dwc}.
-\item \textbf{Logic-gate networks} learn 2-input gates \cite{petersen2022dlgn,petersen2024convdlgn,ruttgers2026lightdlgn};
-  a recurrent version exists for language \cite{buhrer2025rdlgn}.
-\item \textbf{LUT networks for FPGAs}: LUTNet, LogicNets, PolyLUT, NeuraLUT, AmigoLUT, ReducedLUT and TreeLUT
-  \cite{wang2019lutnet,umuroglu2020logicnets,andronic2023polylut,andronic2024neuralut,weng2025amigolut,cassidy2025reducedlut,khataei2025treelut}.
-\item \textbf{The encoder} can dominate the cost of small DWNs \cite{mecik2025thermo}; in our final network it is 776 of
-  895 LUTs.
-\item \textbf{Biosignals}: ECG \cite{mommen2026ecg} and EEG classification \cite{dharia2026eeglgn}; the only weightless
-  seizure work is a 4-patient study \cite{deaguiar2015wisard}.
-\end{itemize}
+Published numbers are hard to compare because scoring differs: epoch-based and any-overlap scoring give different
+results for the same system \cite{ziyabari2017metrics}, and many works report sample-level sensitivity or specificity
+instead of detected seizures and false alarms per day. The SzCORE framework standardises event-based scoring for
+seizure detection \cite{dan2024szcore}. In its first blind benchmark on 65 subjects and 4,360 hours of EEG, the best
+event-F1 was 43\,\%, and the organisers reported a gap between published and blind-test performance
+\cite{dan2025szcorechallenge}. A second source of optimism is data leakage: most surveyed deep-learning EEG studies mix
+data of the same subject between training and test sets, which can greatly overestimate performance on new subjects
+\cite{brookshire2024leakage}. Large public corpora such as TUSZ \cite{shah2018tusz} are scalp recordings, not
+wearable ones. This project therefore uses SzCORE event scoring, patient-wise cross-validation and a test set used only
+once.
 
-\begin{table}[htbp]
+\section{Lookup-Table Native, Weightless and Logic Networks}\label{sec:lit-lut}
+
+\textbf{Weightless networks} replace weighted sums with memory lookups. WiSARD stored binary patterns in RAM nodes
+without gradient training \cite{aleksander1984wisard}; BTHOWeN and ULEEN made weightless networks smaller and more
+energy-efficient for edge inference \cite{susskind2022bthowen,susskind2023uleen}. The Differentiable Weightless Neural
+Network (DWN) made both the table contents and the input mapping trainable by gradient descent and reported better
+latency, throughput, energy and area than earlier models on FPGAs and microcontrollers \cite{bacellar2024dwn}. DWNs
+have since been applied to inertial activity recognition at 56--104\,nJ per sample \cite{bacellar2025nanoml} and to
+continuous control \cite{kresse2025dwc}. The DWN is the model family used in this project.
+
+\textbf{Logic-gate networks} learn a network of two-input Boolean gates; the discretised networks classify more than a
+million images per second on one CPU core \cite{petersen2022dlgn}, with convolutional, lighter and recurrent variants
+\cite{petersen2024convdlgn,ruttgers2026lightdlgn,buhrer2025rdlgn}. \textbf{LUT networks for FPGAs}, including LUTNet,
+LogicNets, PolyLUT, NeuraLUT, AmigoLUT and ReducedLUT, map sparse quantised neurons onto FPGA lookup tables and reach
+latencies of tens of nanoseconds \cite{wang2019lutnet,umuroglu2020logicnets,andronic2023polylut,andronic2024neuralut,weng2025amigolut,cassidy2025reducedlut};
+TreeLUT maps boosted decision trees onto LUTs with a 4--101$\times$ lower area-delay product than recent LUT networks
+\cite{khataei2025treelut}. Mecik and Kumm showed that the thermometer encoder of a DWN can raise its LUT count by up to
+3.2$\times$ and dominates the cost of small networks \cite{mecik2025thermo}, a cost most papers leave out.
+
+These networks have been tested mostly on images, tabular data and particle physics. The closest biosignal works are
+inter-patient ECG arrhythmia classification with logic-gate and LUT networks \cite{mommen2026ecg} and logic-gate
+networks for EEG classification on an embedded CPU \cite{dharia2026eeglgn}. The only weightless seizure work found is a
+WiSARD study of seizure anticipation in four patients, reported as accuracy only \cite{deaguiar2015wisard}.
+Table~\ref{tab:lit-lut} summarises this family.
+
+\begin{table}[H]
 \centering\small
 \caption{LUT-native, weightless and logic networks (results as reported)}\label{tab:lit-lut}
 \begin{tabularx}{\textwidth}{|P{30mm}|c|P{27mm}|P{22mm}|L|L|}
@@ -119,21 +198,29 @@ de Aguiar et al. \cite{deaguiar2015wisard} & 2015 & WiSARD & seizure anticipatio
 \end{tabularx}
 \end{table}
 
-\section{Hardware Seizure Detectors}\label{sec:lit-hw}
+\section{Hardware Implementations of Seizure Detectors}\label{sec:lit-hw}
 
-\begin{itemize}
-\item \textbf{ASICs} reach nJ--\textmu J per decision with SVMs and trees
-  \cite{verma2010micro,altaf2015jssc,altaf2016tbcas,huang2020jssc,shoaran2018jetcas,shin2022neuraltree}.
-\item \textbf{FPGAs}: SVM, line-length and spiking-network detectors
-  \cite{wang2018access,elhosary2019tbcas,razi2022tbcas,vittimberga2025sensors,busia2025fpga}; the closest to ours is an SNN
-  on a small iCE40 \cite{busia2025fpga}.
-\item \textbf{Microcontrollers}: e-Glass, EEGformer, BrainFuseNet \cite{sopic2018eglass,busia2024eegformer,ingolfsson2024brainfusenet} and low-power EEG platforms \cite{kartsch2019biowolf,ingolfsson2022artifact};
-  efficient-inference tools: BNNs, FINN, INT8 quantisation, hls4ml
-  \cite{hubara2016bnn,umuroglu2017finn,jacob2018quant,duarte2018hls4ml}.
-\item Nearly all use EEG only, per-patient training and epoch-level metrics; none maps the classifier into LUTs.
-\end{itemize}
+\textbf{ASICs} give the lowest energy per decision. Verma et al. integrated EEG acquisition with spectral feature
+extraction at 9\,\textmu J per feature vector \cite{verma2010micro}; patient-specific SVM classifiers reached
+2.73 and 1.83\,\textmu J per classification \cite{altaf2015jssc,altaf2016tbcas}; boosted decision trees for
+intracranial EEG reached 41.2\,nJ per classification \cite{shoaran2018jetcas}; and NeuralTree classifies 256 channels
+at 0.227\,\textmu J per classification \cite{shin2022neuraltree}. \textbf{FPGA} detectors include an STFT and SVM
+design on a Zynq at 380\,mW \cite{wang2018access}, on-chip SVM training \cite{elhosary2019tbcas}, a low-power
+patient-specific design for intracranial EEG at 0.49\,mW dynamic power \cite{razi2022tbcas}, further FPGA designs
+\cite{vittimberga2025sensors}, and, closest to our work, a spiking neural network on a small FPGA that needs 4.55\,nJ per
+inference and reaches 0.3 false positives per hour on CHB-MIT \cite{busia2025fpga}. \textbf{Microcontroller} systems
+include e-Glass, which runs for 2.71 days on one charge \cite{sopic2018eglass}, the EEGformer transformer at 0.31\,mJ
+per inference \cite{busia2024eegformer}, BrainFuseNet \cite{ingolfsson2024brainfusenet} and low-power EEG platforms
+\cite{kartsch2019biowolf,ingolfsson2022artifact}. Generic tools for efficient inference, such as binarised networks,
+FINN, integer-only quantisation and hls4ml \cite{hubara2016bnn,umuroglu2017finn,jacob2018quant,duarte2018hls4ml},
+reduce but do not remove multiplications.
 
-\begin{table}[htbp]
+Across these works, almost all detectors use EEG alone, many are trained per patient, and results are reported as
+epoch or sample accuracy rather than detected seizures and false alarms per day. None of the surveyed detectors builds
+its classifier from FPGA lookup tables, and none of them reports how the classifier hardware is checked for faults
+during use. Table~\ref{tab:lit-hw} summarises them.
+
+\begin{table}[H]
 \centering\footnotesize
 \caption{Hardware seizure detectors (results as reported; units differ between papers)}\label{tab:lit-hw}
 \begin{tabularx}{\textwidth}{|P{25mm}|@{\hspace{4pt}}c@{\hspace{4pt}}|P{17mm}|P{16mm}|P{22mm}|L|L|}
@@ -154,8 +241,13 @@ BrainFuseNet \cite{ingolfsson2024brainfusenet} & 2024 & MCU & EEG, PPG, ACC & 0.
 \end{tabularx}
 \end{table}
 
-\clearpage
 \section{Research Gaps}\label{sec:lit-gaps}
+
+The survey shows that (i) focal seizures remain the open clinical problem, and false alarms are what stops wearable
+detectors from being used; (ii) multimodal fusion is the most consistent way to cut false alarms, but hardware
+detectors use EEG alone; (iii) LUT-native networks are among the most efficient models for FPGAs but have never been
+used for seizure detection; and (iv) evaluation practice varies so much that results are rarely comparable.
+Table~\ref{tab:lit-gaps} lists the specific gaps and how this project addresses them.
 
 \begin{xltabular}{\textwidth}{|c|P{45mm}|L|L|}
 \caption{Research gaps and how this project addresses them}\label{tab:lit-gaps}\\

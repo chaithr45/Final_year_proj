@@ -129,10 +129,10 @@ s.addNotes("Introduce the team and the one-line idea: a seizure detector built f
 // ================================================================ 2 Index
 s = content("Introduction", "CONTENTS", "Index", "What This Presentation Covers", null, "Walk through the five parts of the talk.");
 const cols = [
-  ["01", "Introduction", [["Problem Statement", "3"], ["Objectives", "4"], ["Literature Survey", "5–6"]]],
-  ["02", "System Design", [["How It Works", "7"], ["System Architecture", "8"], ["Hardware Setup", "9"], ["Dataset", "10"]]],
-  ["03", "Methodology", [["Signal Chain", "11"], ["Features and LUT Network", "12"], ["Evaluation Protocol", "13"], ["Classifier in Hardware", "14"], ["Self-Test Design", "15"]]],
-  ["04", "Results", [["Verification", "16"], ["Test Patients", "17"], ["Base Paper", "18–19"], ["FPGA on Kria KV260", "20–22"], ["Live Demonstration", "23–24"]]],
+  ["01", "Introduction", [["Problem Statement", "3"], ["Objectives", "4"], ["Literature Survey", "5–7"]]],
+  ["02", "System Design", [["How It Works", "8"], ["System Architecture", "9"], ["Hardware Setup", "10"], ["Dataset", "11"]]],
+  ["03", "Methodology", [["Signal Chain", "12"], ["Features and LUT Network", "13"], ["Evaluation Protocol", "14"], ["Classifier in Hardware", "15"], ["Self-Test Design", "16"]]],
+  ["04", "Results", [["Verification", "17"], ["Test Patients", "18"], ["Base Paper", "19–20"], ["FPGA on Kria KV260", "21–23"], ["Live Demonstration", "24–25"]]],
 ];
 cols.forEach((c, i) => {
   const x = X0 + i * 3.07, w = 2.75;
@@ -147,7 +147,7 @@ cols.forEach((c, i) => {
   });
 });
 s.addShape(pres.shapes.RECTANGLE, { x: X0, y: 5.5, w: W, h: 0.8, fill: { color: PANEL }, line: { color: PANEL }, objectName: "Index band" });
-[["05", "Limitations", "25", 1.0], ["06", "Conclusion and Future Work", "26", 4.6], ["", "References", "27", 9.4]].forEach((b, i) => {
+[["05", "Limitations", "26", 1.0], ["06", "Conclusion and Future Work", "27", 4.6], ["", "References", "28–29", 9.4]].forEach((b, i) => {
   txt(s, [{ text: b[0] ? b[0] + "  " : "", options: { color: HX.orange, bold: true } }, { text: b[1], options: { color: HX.navy, bold: true } }, { text: "   " + b[2], options: { color: HX.grey } }], { x: X0 + b[3] - 0.7, y: 5.5, w: 4.4, h: 0.8, fontSize: 16, valign: "middle", objectName: "Index band item " + (i + 1) });
 });
 
@@ -182,31 +182,45 @@ numRows(s, [
 ], 1.95, 0.66, "Objective");
 
 // ================================================================ 5 Literature 1
-s = content("Introduction", "SEIZELUT · LITERATURE SURVEY   ·   1 OF 2", "Literature Survey", "Wearable Seizure Detection", "Behind-the-ear EEG works, extra sensors cut false alarms, but published detectors are large software models",
+s = content("Introduction", "SEIZELUT · LITERATURE SURVEY   ·   1 OF 3", "Literature Survey", "Wearable Seizure Detection", "Behind-the-ear EEG works, extra sensors cut false alarms, but published detectors are large software models",
   "Results are as reported in the cited papers.");
 table(s, [
   ["Ref.", "Work", "What it showed", "What we take from it"],
   ["[6]", "Vandecasteele et al., 2020: behind-the-ear EEG", "64.1 % of focal seizures, 2.8 false alarms per 24 h, patient-independent", "Two discreet EEG channels"],
   ["[7]", "Vandecasteele et al., 2021: bte-EEG + ECG", "ECG adds 8–11 % sensitivity", "Fuse the heart signal"],
-  ["[22]", "Zhang et al., 2024: EEG + EMG + motion", "90.9 %, 0.1 false alarms per 24 h, tonic-clonic seizures", "EMG and motion remove false alarms"],
+  ["[18]", "Zhang et al., 2024: EEG + EMG + motion", "90.9 %, 0.1 false alarms per 24 h, tonic-clonic seizures", "EMG and motion remove false alarms"],
   ["[8], [5]", "Bhagubai et al., 2025; Swinnen et al., 2026: SeizeIT2", "125 patients released; a 192-adult validation reached precision 0.004", "Our dataset; false alarms are the problem"],
-  ["[28], [27]", "ChronoNet, 2019; Huang et al., 2023", "CNN + GRU; trained on SeizeIT1 it reached 15.2 % on SeizeIT2", "The published baseline we reproduce"],
+  ["[27], [26]", "ChronoNet, 2019; Huang et al., 2023", "CNN + GRU; trained on SeizeIT1 it reached 15.2 % on SeizeIT2", "The published baseline we reproduce"],
 ], { x: X0, y: 2.05, w: W, colW: [1.1, 3.6, 4.2, 2.99] });
 panelNote(s, 5.75, "RESEARCH GAP", "Hardware seizure detectors use EEG alone, and none builds its classifier from FPGA lookup tables.", 0.55, "Gap");
 
 // ================================================================ 6 Literature 2
-s = content("Introduction", "SEIZELUT · LITERATURE SURVEY   ·   2 OF 2", "Literature Survey", "LUT Networks and Hardware", "Networks made of lookup tables are tiny and fast, but were never used for seizures",
+s = content("Introduction", "SEIZELUT · LITERATURE SURVEY   ·   2 OF 3", "Literature Survey", "LUT-Native Networks", "Networks made of lookup tables are tiny and fast, but were never used for seizures",
   "The DWN is the model family we build on; TreeLUT and logic-gate networks are compared in our results.");
 table(s, [
   ["Ref.", "Work", "What it showed", "What we take from it"],
   ["[9]", "Bacellar et al., 2024: Differentiable Weightless Networks", "LUT contents and input mapping trained by gradient descent; runs on FPGA and MCU", "Our classifier"],
   ["[10], [11]", "Logic-gate networks, 2022; LogicNets, 2020", "Learned 2-input gates; sparse LUT networks with < 15 ns latency", "Compared alternatives"],
-  ["[56]", "TreeLUT, 2025: quantised boosted trees in LUTs", "4–101× lower area-delay than neural networks", "Compared baseline"],
-  ["[57]", "Mecik and Kumm, 2025: DWN on FPGA", "The thermometer encoder can cost up to 3.2× the LUTs", "We count every comparator"],
-  ["[71]", "Busia et al., 2025: spiking network on an iCE40 FPGA", "4.55 nJ per inference, 0.3 false alarms per hour, EEG only", "Closest FPGA detector"],
-  ["[60]", "de Aguiar et al., 2015: WiSARD", "Seizure anticipation in 4 patients, accuracy only", "Only earlier weightless seizure work"],
+  ["[55]", "TreeLUT, 2025: quantised boosted trees in LUTs", "4–101× lower area-delay than neural networks", "Compared baseline"],
+  ["[56]", "Mecik and Kumm, 2025: DWN on FPGA", "The thermometer encoder can cost up to 3.2× the LUTs", "We count every comparator"],
+  ["[69]", "Busia et al., 2025: spiking network on an iCE40 FPGA", "4.55 nJ per inference, 0.3 false alarms per hour, EEG only", "Closest FPGA detector"],
+  ["[59]", "de Aguiar et al., 2015: WiSARD", "Seizure anticipation in 4 patients, accuracy only", "Only earlier weightless seizure work"],
 ], { x: X0, y: 2.05, w: W, colW: [1.1, 3.9, 4.2, 2.69] });
 panelNote(s, 5.75, "RESEARCH GAP", "No LUT-native seizure detector exists, and LUT networks were never tested on multimodal biosignals.", 0.55, "Gap");
+
+// ================================================================ 6b Literature 3
+s = content("Introduction", "SEIZELUT · LITERATURE SURVEY   ·   3 OF 3", "Literature Survey", "Hardware Seizure Detectors", "Chips, FPGAs and microcontrollers detect seizures at nJ to mJ per decision, almost always from EEG alone",
+  "Results are as reported; units differ between papers, so the numbers are not directly comparable.");
+table(s, [
+  ["Ref.", "Work", "What it showed", "Limitation for our problem"],
+  ["[60]", "Verma et al., 2010: EEG acquisition ASIC", "On-chip spectral features at 9 µJ per feature vector", "Classifier off-chip"],
+  ["[61], [62]", "Bin Altaf et al., 2015–16: SVM ASICs", "2.73 and 1.83 µJ per classification", "Trained per patient, EEG only"],
+  ["[63]", "Shoaran et al., 2018: boosted-tree ASIC", "41.2 nJ per classification on intracranial EEG", "Implant, not wearable"],
+  ["[65]", "Wang et al., 2018: STFT + SVM on a Zynq FPGA", "98.4 %, 0.356 false detections per hour, 380 mW", "Per patient, EEG only"],
+  ["[69]", "Busia et al., 2025: spiking network on FPGA", "4.55 nJ per inference, 0.3 false positives per hour", "EEG only, not LUT-native"],
+  ["[70], [71]", "e-Glass, 2018; EEGformer, 2024: microcontrollers", "2.71 days per charge; 73 % at 0.15 false positives per hour", "Multipliers, EEG only"],
+], { x: X0, y: 2.05, w: W, colW: [1.1, 3.9, 4.2, 2.69] });
+panelNote(s, 5.75, "RESEARCH GAP", "No surveyed detector builds its classifier from FPGA lookup tables or checks its classifier for hardware faults in use.", 0.55, "Gap");
 
 // ================================================================ 7 How it works
 pres.addSection({ title: "System Design" });
@@ -318,7 +332,7 @@ s = content("Methodology", "SEIZELUT · METHOD", "Methodology", "Evaluation Prot
 numRows(s, [
   ["Patient-wise folds", "5-fold cross-validation on the 96 training patients for every design choice."],
   ["Sealed test set", "29 test patients (sub-097 to sub-125) scored once after the freeze, 5 seeds, every access logged."],
-  ["Event scoring", "SzCORE [40]: sensitivity, precision and event-F1 per patient, and false alarms per 24 h."],
+  ["Event scoring", "SzCORE [37]: sensitivity, precision and event-F1 per patient, and false alarms per 24 h."],
   ["Operating points", "Chosen on the training folds: best event-F1, and most seizures with at most 1 false alarm per hour."],
   ["Statistics", "Paired Wilcoxon test per patient; a change is kept only if p < 0.05 in its favour."],
 ], 2.0, 0.78, "Protocol");
@@ -516,10 +530,9 @@ txt(s, [
 txt(s, "SeizeLUT is a course prototype for research, not a medical device.", { x: X0, y: 6.3, w: W, h: 0.3, fontSize: 12, color: GREY, objectName: "Disclaimer" });
 
 // ================================================================ 27 References
-s = content("Conclusion", "REFERENCES", "References", "Numbered as in the Report", null, "Only the references cited on these slides; the full list of 79 is in the report.");
-const used = ["gbd2019epilepsy", "elger2018underreporting", "beniczky2021guideline", "swinnen2026seizeit2", "vandecasteele2020bte", "vandecasteele2021ecg", "bhagubai2025seizeit2", "bacellar2024dwn", "petersen2022dlgn", "umuroglu2020logicnets", "zhang2024tcs", "huang2023lightweight", "roy2019chrononet", "dan2024szcore", "khataei2025treelut", "mecik2025thermo", "deaguiar2015wisard", "busia2025fpga"];
+const used = ["gbd2019epilepsy", "elger2018underreporting", "beniczky2021guideline", "swinnen2026seizeit2", "vandecasteele2020bte", "vandecasteele2021ecg", "bhagubai2025seizeit2", "bacellar2024dwn", "petersen2022dlgn", "umuroglu2020logicnets", "zhang2024tcs", "huang2023lightweight", "roy2019chrononet", "dan2024szcore", "khataei2025treelut", "mecik2025thermo", "deaguiar2015wisard", "busia2025fpga", "verma2010micro", "altaf2015jssc", "altaf2016tbcas", "shoaran2018jetcas", "wang2018access", "sopic2018eglass", "busia2024eegformer"];
 function shortRef(t) {
-  t = t.replace(/\.?1em plus 0\.5em minus 0\.4em/g, ". ").replace(/\\'a/g, "á").replace(/'a/g, "á").replace(/ \[Online\]\. Available: \S+/, "").replace(/\s+/g, " ");
+  t = t.replace(/\$\$/g, "µ").replace(/\$/g, "").replace(/\.?1em plus 0\.5em minus 0\.4em/g, ". ").replace(/\\'a/g, "á").replace(/'a/g, "á").replace(/ \[Online\]\. Available: \S+/, "").replace(/\s+/g, " ");
   const q = t.indexOf("“");
   let auth = t.slice(0, q).trim().replace(/,$/, "");
   const parts = auth.split(/,\s*|\s+and\s+/).filter(Boolean);
@@ -527,9 +540,13 @@ function shortRef(t) {
   return (auth + ", " + t.slice(q)).replace(/,\s*,/g, ",");
 }
 const refs = used.map((k) => [REFS[k][0], shortRef(REFS[k][1])]).sort((a, b) => a[0] - b[0]);
-const half = Math.ceil(refs.length / 2);
-[refs.slice(0, half), refs.slice(half)].forEach((col, ci) => {
-  s.addText(col.map((r, i) => ({ text: `[${r[0]}]  ${r[1]}`, options: { breakLine: i < col.length - 1 } })), { x: X0 + ci * 6.08, y: 1.7, w: 5.8, h: 4.95, fontSize: 10, color: INK, paraSpaceAfter: 5, margin: 0, valign: "top", isTextBox: true, objectName: "References column " + (ci + 1) });
+const perSlide = Math.ceil(refs.length / 2);
+[refs.slice(0, perSlide), refs.slice(perSlide)].forEach((part, pi) => {
+  s = content("Conclusion", "REFERENCES   ·   " + (pi + 1) + " OF 2", "References", "Numbered as in the Report", null, "Only the references cited on these slides; the full list of 79 is in the report.");
+  const half = Math.ceil(part.length / 2);
+  [part.slice(0, half), part.slice(half)].forEach((col, ci) => {
+    s.addText(col.map((r, i) => ({ text: `[${r[0]}]  ${r[1]}`, options: { breakLine: i < col.length - 1 } })), { x: X0 + ci * 6.08, y: 1.7, w: 5.8, h: 4.95, fontSize: 11, color: INK, paraSpaceAfter: 6, margin: 0, valign: "top", isTextBox: true, objectName: "References column " + (ci + 1) });
+  });
 });
 
 // ================================================================ 28 Thank you

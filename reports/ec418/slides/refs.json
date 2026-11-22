@@ -48,15 +48,15 @@
 "R. S. Fisher, J. H. Cross, J. A. French, N. Higurashi, E. Hirsch, F. E. Jansen, L. Lagae, S. L. Mosh\\'e, J. Peltola, E. Roulet Perez, I. E. Scheffer, and S. M. Zuberi, “Operational classification of seizure types by the International League Against Epilepsy: Position paper of the ILAE commission for classification and terminology,” Epilepsia, vol. 58, no. 4, pp. 522–530, 2017."
 ],
 "leijten2018review": [
-13,
+15,
 "F. S. S. Leijten and Dutch TeleEpilepsy Consortium, “Multimodal seizure detection: A review,” Epilepsia, vol. 59, no. S1, pp. 42–47, 2018."
 ],
 "beniczky2018emg": [
-14,
+13,
 "S. Beniczky, I. Conradsen, O. Henning, M. Fabricius, and P. Wolf, “Automated real-time detection of tonic-clonic seizures using a wearable EMG device,” Neurology, vol. 90, no. 5, pp. e428–e434, 2018."
 ],
 "onorati2017empatica": [
-15,
+14,
 "F. Onorati, G. Regalia, C. Caborni, M. Migliorini, D. Bender, M.-Z. Poh, C. Frazier, E. Kovitch Thropp, E. D. Mynatt, J. Bidwell, R. Mai, W. C. LaFrance, Jr., A. S. Blum, D. Friedman, T. Loddenkemper, F. Mohammadpour-Touserkani, C. Reinsberger, S. Tognetti, and R. W. Picard, “Multicenter clinical assessment of improved wearable multimodal convulsive seizure detectors,” Epilepsia, vol. 58, no. 11, pp. 1870–1879, 2017."
 ],
 "regalia2019empatica": [
@@ -64,35 +64,35 @@
 "G. Regalia, F. Onorati, M. Lai, C. Caborni, and R. W. Picard, “Multimodal wrist-worn devices for seizure detection and advancing research: Focus on the Empatica wristbands,” Epilepsy Research, vol. 153, pp. 79–82, 2019."
 ],
 "naganur2022meta": [
-17,
+16,
 "V. Naganur, S. Sivathamboo, Z. Chen, S. Kusmakar, A. Antonic-Baker, T. J. O'Brien, and P. Kwan, “Automated seizure detection with noninvasive wearable devices: A systematic review and meta-analysis,” Epilepsia, vol. 63, pp. 1930–1941, 2022."
 ],
 "bhagubai2023ecg": [
-18,
+17,
 "M. Bhagubai, K. Vandecasteele, L. Swinnen, J. Macea, C. Chatzichristos, M. De Vos, and W. Van Paesschen, “The power of ECG in semi-automated seizure detection in addition to two-channel behind-the-ear EEG,” Bioengineering, vol. 10, no. 4, p. 491, 2023."
 ],
 "bhagubai2024challenge": [
-19,
+21,
 "M. Bhagubai, L. Swinnen, E. Cleeren, W. Van Paesschen, M. De Vos, and C. Chatzichristos, “Towards automated seizure detection with wearable EEG – grand challenge,” IEEE Open Journal of Signal Processing, vol. 5, pp. 717–724, 2024."
 ],
 "reintjes2025ecg": [
-20,
+23,
 "C. Reintjes, J. F. Hagenbeck, M. Ballo, T. Rahlmeier, S. M. Wolf, and D. Schoder, “ECG-based detection of epileptic seizures in real-world wearable settings: Insights from the SeizeIT2 dataset,” Sensors, vol. 25, no. 24, p. 7687, 2025."
 ],
 "su2026cmepinet": [
-21,
+24,
 "T. Su, H. Zhu, S. Chen, and H. Wang, “CMEpiNet: Complex-valued multimodal epilepsy detection network model,” Sensors, 2026."
 ],
 "zhang2024tcs": [
-22,
+18,
 "J. Zhang, L. Swinnen, C. Chatzichristos, V. Broux, R. Proost, K. Jansen, B. Mahler, N. Zabler, N. Epitashvilli, M. D\\\"umpelmann, A. Schulze-Bonhage, E. Schriewer, U. Ermis, S. Wolking, F. Linke, Y. Weber, M. Symmonds, A. Sen, A. Biondi, M. P. Richardson, A. Sulaiman I, A. I. Silva, F. Sales, G. V\\'ertes, W. Van Paesschen, and M. De Vos, “Multimodal wearable EEG, EMG and accelerometry measurements improve the accuracy of tonic-clonic seizure detection,” Physiological Measurement, vol. 45, no. 6, 2024."
 ],
 "zhang2024cyclic": [
-23,
+19,
 "J. Zhang, L. Swinnen, C. Chatzichristos, W. Van Paesschen, and M. De Vos, “Learning robust representations of tonic-clonic seizures with cyclic transformer,” IEEE Journal of Biomedical and Health Informatics, vol. 28, no. 6, pp. 3721–3731, 2024."
 ],
 "ingolfsson2024brainfusenet": [
-24,
+20,
 "T. M. Ingolfsson, X. Wang, U. Chakraborty, S. Benatti, A. Bernini, P. Ducouret, P. Ryvlin, S. Beniczky, L. Benini, and A. Cossettini, “BrainFuseNet: Enhancing wearable seizure detection through EEG-PPG-accelerometer sensor fusion and efficient edge deployment,” IEEE Transactions on Biomedical Circuits and Systems, vol. 18, no. 4, pp. 720–733, 2024."
 ],
 "shoeb2010icml": [
@@ -100,155 +100,155 @@
 "A. Shoeb and J. Guttag, “Application of machine learning to epileptic seizure detection,” in Proceedings of the 27th International Conference on Machine Learning (ICML), 2010, pp. 975–982. [Online]. Available: https://archive.physionet.org/pn6/chbmit/shoeb-icml-2010.pdf"
 ],
 "alhussaini2023seizft": [
-26,
+22,
 "I. Al-Hussaini and C. S. Mitchell, “SeizFt: Interpretable machine learning for seizure detection using wearables,” Bioengineering, vol. 10, no. 8, p. 918, 2023."
 ],
 "huang2023lightweight": [
-27,
+26,
 "B. Huang, A. Abtahi, and A. Aminifar, “Lightweight machine learning for seizure detection on wearable devices,” in IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), 2023. [Online]. Available: https://portal.research.lu.se/en/publications/lightweight-machine-learning-for-seizure-detection-on-wearable-de/"
 ],
 "roy2019chrononet": [
-28,
+27,
 "S. Roy, I. Kiral-Kornek, and S. Harrer, “ChronoNet: A deep recurrent neural network for abnormal EEG identification,” in Artificial Intelligence in Medicine (AIME 2019), ser. Lecture Notes in Computer Science, vol. 11526.1em plus 0.5em minus 0.4emSpringer, 2019."
 ],
 "lawhern2018eegnet": [
-29,
+28,
 "V. J. Lawhern, A. J. Solon, N. R. Waytowich, S. M. Gordon, C. P. Hung, and B. J. Lance, “EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces,” Journal of Neural Engineering, vol. 15, no. 5, p. 056013, 2018."
 ],
 "thuwajit2022eegwavenet": [
-30,
+29,
 "P. Thuwajit, P. Rangpong, P. Sawangjai, P. Autthasan, R. Chaisaen, N. Banluesombatkul, P. Boonchit, N. Tatsaringkansakul, T. Sudhawiyangkul, and T. Wilaiprasitporn, “EEGWaveNet: Multiscale CNN-based spatiotemporal feature extraction for EEG seizure detection,” IEEE Transactions on Industrial Informatics, vol. 18, no. 8, pp. 5547–5557, 2022."
 ],
 "tang2022gnnssl": [
-31,
+30,
 "S. Tang, J. Dunnmon, K. K. Saab, X. Zhang, Q. Huang, F. Dubost, D. Rubin, and C. Lee-Messer, “Self-supervised graph neural networks for improved electroencephalographic seizure analysis,” in International Conference on Learning Representations (ICLR), 2022. [Online]. Available: https://openreview.net/forum?id=k9bx1EfHI_-"
 ],
 "wu2025seizuretransformer": [
-32,
+31,
 "K. Wu, Z. Zhao, and B. Yener, “SeizureTransformer: Scaling U-Net with transformer for simultaneous time-step level seizure detection from long EEG recordings,” 2025."
 ],
 "yang2023biot": [
-33,
+32,
 "C. Yang, M. B. Westover, and J. Sun, “BIOT: Biosignal transformer for cross-data learning in the wild,” in Advances in Neural Information Processing Systems (NeurIPS), vol. 36, 2023."
 ],
 "saab2020weak": [
-34,
+33,
 "K. Saab, J. Dunnmon, C. R\\'e, D. Rubin, and C. Lee-Messer, “Weak supervision as an efficient approach for automated seizure detection in electroencephalography,” npj Digital Medicine, vol. 3, 2020."
 ],
 "isaev2020mil": [
-35,
+34,
 "D. Y. Isaev, D. Tchapyjnikov, C. M. Cotten, D. Tanaka, N. Martinez, M. Bertran, G. Sapiro, and D. Carlson, “Attention-based network for weak labels in neonatal seizure detection,” in Proceedings of the 5th Machine Learning for Healthcare Conference, ser. Proceedings of Machine Learning Research, vol. 126, 2020, pp. 479–507. [Online]. Available: https://proceedings.mlr.press/v126/isaev20a.html"
 ],
 "shama2026bundl": [
-36,
+35,
 "D. M. Shama and A. Venkataraman, “Bayesian uncertainty-aware deep learning with noisy labels: Tackling annotation ambiguity in EEG seizure detection,” PLOS ONE, vol. 21, no. 6, 2026."
 ],
 "zheng2023kdgnn": [
-37,
+36,
 "Q. Zheng, A. Venkitaraman, S. Petravic, and P. Frossard, “Knowledge distillation with graph neural networks for epileptic seizure detection,” in Machine Learning and Knowledge Discovery in Databases (ECML PKDD 2023), ser. Lecture Notes in Computer Science.1em plus 0.5em minus 0.4emSpringer, 2023, pp. 547–563."
 ],
 "ziyabari2017metrics": [
-38,
+39,
 "S. Ziyabari, V. Shah, M. Golmohammadi, I. Obeid, and J. Picone, “Objective evaluation metrics for automatic classification of EEG events,” 2017."
 ],
 "shah2018tusz": [
-39,
+41,
 "V. Shah, E. von Weltin, S. Lopez, J. R. McHugh, L. Veloso, M. Golmohammadi, I. Obeid, and J. Picone, “The Temple University Hospital seizure detection corpus,” Frontiers in Neuroinformatics, 2018."
 ],
 "dan2024szcore": [
-40,
+37,
 "J. Dan, U. Pale, A. Amirshahi, W. Cappelletti, T. M. Ingolfsson, X. Wang, A. Cossettini, A. Bernini, L. Benini, S. Beniczky, D. Atienza, and P. Ryvlin, “SzCORE: Seizure community open-source research evaluation framework for the validation of electroencephalography-based automated seizure detection algorithms,” Epilepsia, 2024."
 ],
 "dan2025szcorechallenge": [
-41,
+38,
 "J. Dan, A. Shahbazinia, C. Kechris, and D. Atienza, “SzCORE as a benchmark: report from the seizure detection challenge at the 2025 AI in epilepsy and neurological disorders conference,” 2025."
 ],
 "brookshire2024leakage": [
-42,
+40,
 "G. Brookshire, J. Kasper, N. M. Blauch, Y. C. Wu, R. Glatt, D. A. Merrill, S. Gerrol, K. J. Yoder, C. Quirk, and C. Lucero, “Data leakage in deep learning studies of translational EEG,” Frontiers in Neuroscience, vol. 18, p. 1373515, 2024."
 ],
 "aleksander1984wisard": [
-43,
+42,
 "I. Aleksander, W. V. Thomas, and P. A. Bowden, “WISARD$$a radical step forward in image recognition,” Sensor Review, vol. 4, no. 3, pp. 120–124, 1984."
 ],
 "susskind2022bthowen": [
-44,
+43,
 "Z. Susskind, A. Arora, I. D. S. Miranda, L. A. Q. Villon, R. F. Katopodis, L. S. de Ara\\'ujo, D. L. C. Dutra, P. M. V. Lima, F. M. G. Franca, M. Breternitz Jr., and L. K. John, “Weightless neural networks for efficient edge inference,” in Proceedings of the International Conference on Parallel Architectures and Compilation Techniques (PACT '22).1em plus 0.5em minus 0.4emACM, 2022, pp. 279–290."
 ],
 "susskind2023uleen": [
-45,
+44,
 "Z. Susskind, A. Arora, I. D. S. Miranda, A. T. L. Bacellar, L. A. Q. Villon, R. F. Katopodis, L. S. de Ara\\'ujo, D. L. C. Dutra, P. M. V. Lima, F. M. G. Franca, M. Breternitz Jr., and L. K. John, “ULEEN: A novel architecture for ultra low-energy edge neural networks,” ACM Transactions on Architecture and Code Optimization, vol. 20, no. 4, p. 61, 2023."
 ],
 "bacellar2025nanoml": [
-46,
+45,
 "A. T. L. Bacellar, M. P. Jadhao, S. Nag, P. M. V. Lima, F. M. G. Franca, and L. K. John, “nanoML for human activity recognition,” in tinyML Research Symposium, 2025."
 ],
 "kresse2025dwc": [
-47,
+46,
 "F. Kresse and C. H. Lampert, “Differentiable weightless controllers: Learning logic circuits for continuous control,” 2025."
 ],
 "petersen2024convdlgn": [
-48,
+47,
 "F. Petersen, H. Kuehne, C. Borgelt, J. Welzel, and S. Ermon, “Convolutional differentiable logic gate networks,” in Advances in Neural Information Processing Systems (NeurIPS), vol. 37, 2024."
 ],
 "ruttgers2026lightdlgn": [
-49,
+48,
 "L. R\\\"uttgers, T. Aczel, A. Plesner, and R. Wattenhofer, “Light differentiable logic gate networks,” in International Conference on Learning Representations (ICLR), 2026."
 ],
 "buhrer2025rdlgn": [
-50,
+49,
 "S. B\\\"uhrer, A. Plesner, T. Aczel, and R. Wattenhofer, “Recurrent deep differentiable logic gate networks,” 2025."
 ],
 "wang2019lutnet": [
-51,
+50,
 "E. Wang, J. J. Davis, P. Y. K. Cheung, and G. A. Constantinides, “LUTNet: Rethinking inference in FPGA soft logic,” in IEEE 27th Annual International Symposium on Field-Programmable Custom Computing Machines (FCCM), 2019, pp. 26–34."
 ],
 "andronic2023polylut": [
-52,
+51,
 "M. Andronic and G. A. Constantinides, “PolyLUT: Learning piecewise polynomials for ultra-low latency FPGA LUT-based inference,” in International Conference on Field Programmable Technology (ICFPT), 2023, pp. 60–68."
 ],
 "andronic2024neuralut": [
-53,
+52,
 "–––, “NeuraLUT: Hiding neural network density in boolean synthesizable functions,” in 34th International Conference on Field-Programmable Logic and Applications (FPL), 2024, pp. 140–148."
 ],
 "weng2025amigolut": [
-54,
+53,
 "O. Weng, M. Andronic, D. Zuberi, J. Chen, C. Geniesse, G. A. Constantinides, N. Tran, N. J. Fraser, J. M. Duarte, and R. Kastner, “Greater than the sum of its LUTs: Scaling up LUT-based neural networks with AmigoLUT,” in Proceedings of the 2025 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '25).1em plus 0.5em minus 0.4emACM, 2025, pp. 25–35."
 ],
 "cassidy2025reducedlut": [
-55,
+54,
 "O. Cassidy, M. Andronic, S. Coward, and G. A. Constantinides, “ReducedLUT: Table decomposition with “don't care” conditions,” in Proceedings of the 2025 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '25).1em plus 0.5em minus 0.4emACM, 2025, pp. 36–42."
 ],
 "khataei2025treelut": [
-56,
+55,
 "A. Khataei and K. Bazargan, “TreeLUT: An efficient alternative to deep neural networks for inference acceleration using gradient boosted decision trees,” in Proceedings of the 2025 ACM/SIGDA International Symposium on Field Programmable Gate Arrays (FPGA '25).1em plus 0.5em minus 0.4emACM, 2025."
 ],
 "mecik2025thermo": [
-57,
+56,
 "M. Mecik and M. Kumm, “Implementation and analysis of thermometer encoding in DWN FPGA accelerators,” in Asilomar Conference on Signals, Systems, and Computers, 2025."
 ],
 "mommen2026ecg": [
-58,
+57,
 "W. Mommen, L. Keuninckx, P. Detterer, A. Colpaert, and P. Wambacq, “Inter-patient ECG arrhythmia classification with LGNs and LUTNs,” 2026."
 ],
 "dharia2026eeglgn": [
-59,
+58,
 "S. Dharia, S. Smith, and C. Valderrama, “Differentiable logic gate networks for low-latency EEG classification on edge devices,” in Proceedings of the 39th Canadian Conference on Artificial Intelligence, ser. Proceedings of Machine Learning Research, vol. 318.1em plus 0.5em minus 0.4emPMLR, 2026, pp. 377–391. [Online]. Available: https://proceedings.mlr.press/v318/dharia26a.html"
 ],
 "deaguiar2015wisard": [
-60,
+59,
 "K. de Aguiar, F. M. G. Franca, V. C. Barbosa, and C. A. D. Teixeira, “Early detection of epilepsy seizures based on a weightless neural network,” in 37th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), 2015, pp. 4470–4474."
 ],
 "verma2010micro": [
-61,
+60,
 "N. Verma, A. Shoeb, J. Bohorquez, J. Dawson, J. Guttag, and A. P. Chandrakasan, “A micro-power EEG acquisition SoC with integrated feature extraction processor for a chronic seizure detection system,” IEEE Journal of Solid-State Circuits, vol. 45, no. 4, pp. 804–816, 2010."
 ],
 "altaf2015jssc": [
-62,
+61,
 "M. A. Bin Altaf, C. Zhang, and J. Yoo, “A 16-channel patient-specific seizure onset and termination detection SoC with impedance-adaptive transcranial electrical stimulator,” IEEE Journal of Solid-State Circuits, vol. 50, no. 11, pp. 2728–2740, 2015."
 ],
 "altaf2016tbcas": [
-63,
+62,
 "M. A. Bin Altaf and J. Yoo, “A 1.83 $$J/classification, 8-channel, patient-specific epileptic seizure classification SoC using a non-linear support vector machine,” IEEE Transactions on Biomedical Circuits and Systems, vol. 10, 2016."
 ],
 "huang2020jssc": [
@@ -256,63 +256,63 @@
 "S.-A. Huang, K.-C. Chang, H.-H. Liou, and C.-H. Yang, “A 1.9-mW SVM processor with on-chip active learning for epileptic seizure control,” IEEE Journal of Solid-State Circuits, vol. 55, no. 2, pp. 452–464, 2020."
 ],
 "shoaran2018jetcas": [
-65,
+63,
 "M. Shoaran, B. Allahgholizadeh Haghi, M. Taghavi, M. Farivar, and A. Emami-Neyestanak, “Energy-efficient classification for resource-constrained biomedical applications,” IEEE Journal on Emerging and Selected Topics in Circuits and Systems, vol. 8, no. 4, pp. 693–707, 2018."
 ],
 "shin2022neuraltree": [
-66,
+64,
 "U. Shin, C. Ding, B. Zhu, Y. Vyza, A. Trouillet, E. Revol, S. Lacour, and M. Shoaran, “NeuralTree: A 256-channel 0.227-$$J/class versatile neural activity classification and closed-loop neuromodulation SoC,” IEEE Journal of Solid-State Circuits, vol. 57, no. 11, pp. 3243–3257, 2022."
 ],
 "wang2018access": [
-67,
+65,
 "H. Wang, W. Shi, and C.-S. Choy, “Hardware design of real time epileptic seizure detection based on STFT and SVM,” IEEE Access, 2018."
 ],
 "elhosary2019tbcas": [
-68,
+66,
 "H. Elhosary, M. H. Zakhari, M. A. Elgammal, M. A. Abd El Ghany, K. N. Salama, and H. Mostafa, “Low-power hardware implementation of a support vector machine training and classification for neural seizure detection,” IEEE Transactions on Biomedical Circuits and Systems, vol. 13, no. 6, pp. 1324–1337, 2019."
 ],
 "razi2022tbcas": [
-69,
+67,
 "K. Farhang Razi and A. Schmid, “Epileptic seizure detection with patient-specific feature and channel selection for low-power applications,” IEEE Transactions on Biomedical Circuits and Systems, vol. 16, no. 4, pp. 626–635, 2022."
 ],
 "vittimberga2025sensors": [
-70,
+68,
 "A. Vittimberga, G. Nicolini, and G. Scotti, “Real-time multi-channel epileptic seizure detection exploiting an ultra-low-complexity algorithm–hardware co-design approach,” Sensors, vol. 25, no. 22, p. 6889, 2025."
 ],
 "busia2025fpga": [
-71,
+69,
 "P. Busia, G. Leone, A. Matticola, L. Raffo, and P. Meloni, “Wearable epilepsy seizure detection on FPGA with spiking neural networks,” IEEE Transactions on Biomedical Circuits and Systems, vol. 19, no. 6, 2025."
 ],
 "sopic2018eglass": [
-72,
+70,
 "D. Sopic, A. Aminifar, and D. Atienza, “e-Glass: A wearable system for real-time detection of epileptic seizures,” in 2018 IEEE International Symposium on Circuits and Systems (ISCAS), 2018."
 ],
 "busia2024eegformer": [
-73,
+71,
 "P. Busia, A. Cossettini, T. M. Ingolfsson, S. Benatti, A. Burrello, V. J. B. Jung, M. Scherer, M. A. Scrugli, A. Bernini, P. Ducouret, P. Ryvlin, P. Meloni, and L. Benini, “Reducing false alarms in wearable seizure detection with EEGformer: A compact transformer model for MCUs,” IEEE Transactions on Biomedical Circuits and Systems, vol. 18, no. 3, pp. 608–621, 2024."
 ],
 "kartsch2019biowolf": [
-74,
+72,
 "V. Kartsch, G. Tagliavini, M. Guermandi, S. Benatti, D. Rossi, and L. Benini, “BioWolf: A sub-10-mW 8-channel advanced brain–computer interface platform with a nine-core processor and BLE connectivity,” IEEE Transactions on Biomedical Circuits and Systems, vol. 13, no. 5, pp. 893–906, 2019."
 ],
 "ingolfsson2022artifact": [
-75,
+73,
 "T. M. Ingolfsson, A. Cossettini, S. Benatti, and L. Benini, “Energy-efficient tree-based EEG artifact detection,” in 44th Annual International Conference of the IEEE Engineering in Medicine & Biology Society (EMBC), 2022, pp. 3723–3728."
 ],
 "hubara2016bnn": [
-76,
+74,
 "I. Hubara, M. Courbariaux, D. Soudry, R. El-Yaniv, and Y. Bengio, “Binarized neural networks,” in Advances in Neural Information Processing Systems 29 (NIPS 2016), 2016, pp. 4107–4115."
 ],
 "umuroglu2017finn": [
-77,
+75,
 "Y. Umuroglu, N. J. Fraser, G. Gambardella, M. Blott, P. Leong, M. Jahre, and K. Vissers, “FINN: A framework for fast, scalable binarized neural network inference,” in Proceedings of the 2017 ACM/SIGDA International Symposium on Field-Programmable Gate Arrays (FPGA '17).1em plus 0.5em minus 0.4emACM, 2017, pp. 65–74."
 ],
 "jacob2018quant": [
-78,
+76,
 "B. Jacob, S. Kligys, B. Chen, M. Zhu, M. Tang, A. Howard, H. Adam, and D. Kalenichenko, “Quantization and training of neural networks for efficient integer-arithmetic-only inference,” in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018, pp. 2704–2713."
 ],
 "duarte2018hls4ml": [
-79,
+77,
 "J. Duarte, S. Han, P. Harris, S. Jindariani, E. Kreinar, B. Kreis, J. Ngadiuba, M. Pierini, R. Rivera, N. Tran, and Z. Wu, “Fast inference of deep neural networks in FPGAs for particle physics,” Journal of Instrumentation, vol. 13, no. 07, p. P07027, 2018."
 ]
 }

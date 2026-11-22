@@ -30,6 +30,10 @@
 \setlength{\parskip}{6pt}
 \setlength{\parindent}{0pt}
 \renewcommand{\arraystretch}{1.25}
+\usepackage{etoolbox}
+\AtBeginEnvironment{table}{\setstretch{1.05}}
+\AtBeginEnvironment{xltabular}{\setstretch{1.05}}
+\AtBeginEnvironment{longtable}{\setstretch{1.05}}
 \newcolumntype{L}{>{\raggedright\arraybackslash}X}
 \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
 \setlist{itemsep=2pt,topsep=4pt}
