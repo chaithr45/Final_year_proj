@@ -6147,8 +6147,8 @@
      "modality": "emg",
      "family": "mains50",
      "label": "mains 50 Hz",
-     "status": "pending",
-     "limit": null,
+     "status": "limit",
+     "limit": 1.0,
      "limit_unit": "uV",
      "first_failing": null,
      "non_monotonic": [],
@@ -6292,9 +6292,17 @@
      ],
      "subset_status": "beyond grid",
      "subset_limit": 1000.0,
-     "pending": "emg_mains50_1uV",
-     "note": null,
+     "pending": null,
+     "note": "stepped down 3 grid step(s) from the subset limit 1000",
      "full": {
+      "emg_mains50_1uV": {
+       "tolerated": true,
+       "d_f1": -0.004971395650824828,
+       "d_fp24": 0.011215944821615587,
+       "wilcoxon_p": 0.4235963177660037,
+       "marginal": true,
+       "file": "confirm_stepdown_4bce6535.json"
+      },
       "emg_mains50_10uV": {
        "tolerated": false,
        "d_f1": -0.012670150960313042,
@@ -6649,8 +6657,8 @@
      "modality": "emg",
      "family": "white",
      "label": "white noise",
-     "status": "pending",
-     "limit": null,
+     "status": "limit",
+     "limit": 2.0,
      "limit_unit": "uVrms",
      "first_failing": null,
      "non_monotonic": [],
@@ -6910,9 +6918,17 @@
      ],
      "subset_status": "beyond grid",
      "subset_limit": 16.0,
-     "pending": "emg_white_2uVrms",
-     "note": null,
+     "pending": null,
+     "note": "stepped down 3 grid step(s) from the subset limit 16",
      "full": {
+      "emg_white_2uVrms": {
+       "tolerated": true,
+       "d_f1": 0.0037089290111109174,
+       "d_fp24": -0.01049895963716263,
+       "wilcoxon_p": 0.9482184788590907,
+       "marginal": false,
+       "file": "confirm_stepdown_4bce6535.json"
+      },
       "emg_white_4uVrms": {
        "tolerated": false,
        "d_f1": -0.010569796351056648,

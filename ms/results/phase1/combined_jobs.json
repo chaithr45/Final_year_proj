@@ -1,22 +1,20 @@
 {
- "what": "combined spec point, MS_SPEC.md step 7b (preview from the subset limits)",
- "source": "tolerance.json",
- "excluded_none_tolerated": [
-  "ecg/lp"
- ],
+ "what": "combined spec point, MS_SPEC.md step 7b, back-off step 0 (LOG L21)",
+ "source": "spec_limits.json",
+ "step": 0,
  "jobs": [
   {
-   "name": "combined_preview_gain+",
+   "name": "combined_gain+",
    "seed": 0,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": 0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -25,13 +23,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 819.2,
@@ -49,20 +47,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -73,17 +71,17 @@
    }
   },
   {
-   "name": "combined_preview_gain+",
+   "name": "combined_gain+",
    "seed": 1,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": 0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -92,13 +90,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 819.2,
@@ -116,20 +114,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -140,17 +138,17 @@
    }
   },
   {
-   "name": "combined_preview_gain+",
+   "name": "combined_gain+",
    "seed": 2,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": 0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -159,13 +157,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 819.2,
@@ -183,20 +181,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -207,17 +205,17 @@
    }
   },
   {
-   "name": "combined_preview_gain+",
+   "name": "combined_gain+",
    "seed": 3,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": 0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -226,13 +224,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 819.2,
@@ -250,20 +248,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -274,17 +272,17 @@
    }
   },
   {
-   "name": "combined_preview_gain+",
+   "name": "combined_gain+",
    "seed": 4,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": 0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -293,13 +291,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 819.2,
@@ -317,20 +315,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -341,17 +339,17 @@
    }
   },
   {
-   "name": "combined_preview_gain-",
+   "name": "combined_gain-",
    "seed": 0,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": -0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -360,13 +358,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
      "offset": 819.2,
@@ -384,20 +382,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -408,17 +406,17 @@
    }
   },
   {
-   "name": "combined_preview_gain-",
+   "name": "combined_gain-",
    "seed": 1,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": -0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -427,13 +425,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
      "offset": 819.2,
@@ -451,20 +449,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -475,17 +473,17 @@
    }
   },
   {
-   "name": "combined_preview_gain-",
+   "name": "combined_gain-",
    "seed": 2,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": -0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -494,13 +492,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
      "offset": 819.2,
@@ -518,20 +516,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -542,17 +540,17 @@
    }
   },
   {
-   "name": "combined_preview_gain-",
+   "name": "combined_gain-",
    "seed": 3,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": -0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -561,13 +559,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
      "offset": 819.2,
@@ -585,20 +583,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
@@ -609,17 +607,17 @@
    }
   },
   {
-   "name": "combined_preview_gain-",
+   "name": "combined_gain-",
    "seed": 4,
    "impair": {
     "eeg": {
      "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "clip": 2048.0,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": -0.05,
-     "offset": 7372.8,
-     "drift_rms": 100.0,
+     "offset": 4915.2,
+     "drift_rms": 10.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -628,13 +626,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 100.0
     },
     "ecg": {
      "lsb": 32.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.8020075313873368,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
      "offset": 819.2,
@@ -652,20 +650,20 @@
     "emg": {
      "lsb": 256.0,
      "clip": 1024.0,
-     "white_density": 1.6040150627746737,
+     "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
-     "offset": 7372.8,
+     "offset": 4915.2,
      "drift_rms": 1000.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
-      1000.0,
+      1.0,
       0.0,
       0.0,
       0.0,
       10.0
      ],
-     "hp_hz": 1.0,
+     "hp_hz": 0.5,
      "lp_hz": 70.0
     },
     "mov": {
