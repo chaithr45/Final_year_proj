@@ -1,18 +1,17 @@
 {
- "what": "combined spec point, MS_SPEC.md step 7b, back-off step 0 (LOG L21)",
+ "what": "combined spec point, MS_SPEC.md step 7b, back-off step 22 (LOG L21)",
  "source": "spec_limits.json",
- "step": 0,
+ "step": 22,
  "jobs": [
   {
-   "name": "combined_gain+",
+   "name": "combined_b22_gain+",
    "seed": 0,
    "impair": {
     "eeg": {
-     "lsb": 32.0,
+     "lsb": 4.0,
      "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.05,
+     "white_density": 0.1002509414234171,
+     "pink_corner_hz": 3.0,
      "offset": 4915.2,
      "drift_rms": 10.0,
      "drift_tau_s": 64.0,
@@ -23,13 +22,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 0.5,
+     "hp_hz": 0.1,
      "lp_hz": 100.0
     },
     "ecg": {
-     "lsb": 32.0,
+     "lsb": 16.0,
      "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 819.2,
@@ -40,18 +39,18 @@
       0.0,
       0.0,
       0.0,
-      10.0
+      1.0
      ],
      "hp_hz": 0.3
     },
     "emg": {
-     "lsb": 256.0,
+     "lsb": 16.0,
      "clip": 1024.0,
      "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
      "gain_err": 0.5,
      "offset": 4915.2,
-     "drift_rms": 1000.0,
+     "drift_rms": 100.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -64,290 +63,21 @@
      "lp_hz": 70.0
     },
     "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
+     "lsb": 8.0,
+     "white_density": 0.282842712474619,
      "gain_err": 0.5
     }
    }
   },
   {
-   "name": "combined_gain+",
-   "seed": 1,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": 0.5
-    }
-   }
-  },
-  {
-   "name": "combined_gain+",
-   "seed": 2,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": 0.5
-    }
-   }
-  },
-  {
-   "name": "combined_gain+",
-   "seed": 3,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": 0.5
-    }
-   }
-  },
-  {
-   "name": "combined_gain+",
-   "seed": 4,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": 0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": 0.5
-    }
-   }
-  },
-  {
-   "name": "combined_gain-",
+   "name": "combined_b22_gain-",
    "seed": 0,
    "impair": {
     "eeg": {
-     "lsb": 32.0,
+     "lsb": 4.0,
      "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.05,
+     "white_density": 0.1002509414234171,
+     "pink_corner_hz": 3.0,
      "offset": 4915.2,
      "drift_rms": 10.0,
      "drift_tau_s": 64.0,
@@ -358,13 +88,13 @@
       0.0,
       1.0
      ],
-     "hp_hz": 0.5,
+     "hp_hz": 0.1,
      "lp_hz": 100.0
     },
     "ecg": {
-     "lsb": 32.0,
+     "lsb": 16.0,
      "clip": 1024.0,
-     "white_density": 0.8020075313873368,
+     "white_density": 0.4010037656936684,
      "pink_corner_hz": 30.0,
      "gain_err": -0.5,
      "offset": 819.2,
@@ -375,18 +105,18 @@
       0.0,
       0.0,
       0.0,
-      10.0
+      1.0
      ],
      "hp_hz": 0.3
     },
     "emg": {
-     "lsb": 256.0,
+     "lsb": 16.0,
      "clip": 1024.0,
      "white_density": 0.2005018828468342,
      "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
+     "gain_err": -0.2,
      "offset": 4915.2,
-     "drift_rms": 1000.0,
+     "drift_rms": 100.0,
      "drift_tau_s": 64.0,
      "mains_peak": [
       1.0,
@@ -399,276 +129,8 @@
      "lp_hz": 70.0
     },
     "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": -0.1
-    }
-   }
-  },
-  {
-   "name": "combined_gain-",
-   "seed": 1,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": -0.1
-    }
-   }
-  },
-  {
-   "name": "combined_gain-",
-   "seed": 2,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": -0.1
-    }
-   }
-  },
-  {
-   "name": "combined_gain-",
-   "seed": 3,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
-     "gain_err": -0.1
-    }
-   }
-  },
-  {
-   "name": "combined_gain-",
-   "seed": 4,
-   "impair": {
-    "eeg": {
-     "lsb": 32.0,
-     "clip": 2048.0,
-     "white_density": 0.4010037656936684,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.05,
-     "offset": 4915.2,
-     "drift_rms": 10.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 100.0
-    },
-    "ecg": {
-     "lsb": 32.0,
-     "clip": 1024.0,
-     "white_density": 0.8020075313873368,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 819.2,
-     "drift_rms": 100.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      10.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.3
-    },
-    "emg": {
-     "lsb": 256.0,
-     "clip": 1024.0,
-     "white_density": 0.2005018828468342,
-     "pink_corner_hz": 30.0,
-     "gain_err": -0.5,
-     "offset": 4915.2,
-     "drift_rms": 1000.0,
-     "drift_tau_s": 64.0,
-     "mains_peak": [
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      10.0
-     ],
-     "hp_hz": 0.5,
-     "lp_hz": 70.0
-    },
-    "mov": {
-     "lsb": 16.0,
-     "white_density": 0.565685424949238,
+     "lsb": 8.0,
+     "white_density": 0.282842712474619,
      "gain_err": -0.1
     }
    }

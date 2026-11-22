@@ -1,0 +1,2202 @@
+{
+ "rule": "MS_SPEC step 7b, LOG L21",
+ "data": "subset",
+ "preview": false,
+ "status": "passed",
+ "final_step": 22,
+ "final_state": {
+  "eeg/clip": 1,
+  "eeg/drift": 0,
+  "eeg/gain+": -1,
+  "eeg/gain-": -1,
+  "eeg/hp": 1,
+  "eeg/lp": 0,
+  "eeg/lsb": 3,
+  "eeg/mains250": 0,
+  "eeg/mains50": 0,
+  "eeg/offset": 2,
+  "eeg/pink": 1,
+  "eeg/white": 2,
+  "ecg/clip": 2,
+  "ecg/drift": 1,
+  "ecg/gain+": 3,
+  "ecg/gain-": 3,
+  "ecg/hp": 2,
+  "ecg/lsb": 5,
+  "ecg/mains250": 0,
+  "ecg/mains50": 1,
+  "ecg/offset": 0,
+  "ecg/pink": 3,
+  "ecg/white": 4,
+  "emg/clip": 2,
+  "emg/drift": 1,
+  "emg/gain+": 3,
+  "emg/gain-": 2,
+  "emg/hp": 3,
+  "emg/lp": 1,
+  "emg/lsb": 5,
+  "emg/mains250": 1,
+  "emg/mains50": 0,
+  "emg/offset": 2,
+  "emg/pink": 3,
+  "emg/white": 3,
+  "mov/gain+": 3,
+  "mov/gain-": 1,
+  "mov/lsb": 2,
+  "mov/white": 0
+ },
+ "steps": [
+  {
+   "step": 0,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "eeg_gain_-0.05",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_32uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_4uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_256uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_gain+": {
+     "seeds": 5,
+     "f1": 0.27556134090930573,
+     "fp_per_24h": 1.0470371745576519,
+     "d_f1": -0.06650404624133593,
+     "d_fp24": 0.28959189331069635,
+     "tolerated": false
+    },
+    "combined_gain-": {
+     "seeds": 5,
+     "f1": 0.2611525455225727,
+     "fp_per_24h": 0.5925666866878949,
+     "d_f1": -0.08091284162806894,
+     "d_fp24": -0.16487859455906062,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/lsb",
+    "from": "eeg_lsb_32uV",
+    "flips_per_window": 11.69027226884596,
+    "to": "eeg_lsb_16uV",
+    "ranking_top5": [
+     [
+      11.69027226884596,
+      "eeg/lsb",
+      "eeg_lsb_32uV"
+     ],
+     [
+      4.160172252143885,
+      "eeg/white",
+      "eeg_white_4uVrms"
+     ],
+     [
+      3.723678505426509,
+      "emg/lsb",
+      "emg_lsb_256uV"
+     ],
+     [
+      3.086900365238188,
+      "eeg/gain-",
+      "eeg_gain_-0.05"
+     ],
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "eeg_gain_-0.05",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_16uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_4uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_256uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b1_gain+": {
+     "seeds": 5,
+     "f1": 0.28741298915186475,
+     "fp_per_24h": 1.1479245747237194,
+     "d_f1": -0.054652397998776914,
+     "d_fp24": 0.3904792934767639,
+     "tolerated": false
+    },
+    "combined_b1_gain-": {
+     "seeds": 5,
+     "f1": 0.26173660151680606,
+     "fp_per_24h": 0.5962677873128092,
+     "d_f1": -0.08032878563383561,
+     "d_fp24": -0.16117749393414638,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/lsb",
+    "from": "eeg_lsb_16uV",
+    "flips_per_window": 4.852981320746936,
+    "to": "eeg_lsb_8uV",
+    "ranking_top5": [
+     [
+      4.852981320746936,
+      "eeg/lsb",
+      "eeg_lsb_16uV"
+     ],
+     [
+      4.160172252143885,
+      "eeg/white",
+      "eeg_white_4uVrms"
+     ],
+     [
+      3.723678505426509,
+      "emg/lsb",
+      "emg_lsb_256uV"
+     ],
+     [
+      3.086900365238188,
+      "eeg/gain-",
+      "eeg_gain_-0.05"
+     ],
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "eeg_gain_-0.05",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_4uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_256uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b2_gain+": {
+     "seeds": 5,
+     "f1": 0.2874767117854895,
+     "fp_per_24h": 1.0468339837814171,
+     "d_f1": -0.05458867536515216,
+     "d_fp24": 0.2893887025344616,
+     "tolerated": false
+    },
+    "combined_b2_gain-": {
+     "seeds": 5,
+     "f1": 0.265039394277563,
+     "fp_per_24h": 0.6561545876194821,
+     "d_f1": -0.07702599287307865,
+     "d_fp24": -0.10129069362747345,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/white",
+    "from": "eeg_white_4uVrms",
+    "flips_per_window": 4.160172252143885,
+    "to": "eeg_white_2uVrms",
+    "ranking_top5": [
+     [
+      4.160172252143885,
+      "eeg/white",
+      "eeg_white_4uVrms"
+     ],
+     [
+      3.723678505426509,
+      "emg/lsb",
+      "emg_lsb_256uV"
+     ],
+     [
+      3.086900365238188,
+      "eeg/gain-",
+      "eeg_gain_-0.05"
+     ],
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ],
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 3,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "eeg_gain_-0.05",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_256uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b3_gain+": {
+     "seeds": 5,
+     "f1": 0.2829228006862238,
+     "fp_per_24h": 1.1415842451249485,
+     "d_f1": -0.05914258646441789,
+     "d_fp24": 0.38413896387799296,
+     "tolerated": false
+    },
+    "combined_b3_gain-": {
+     "seeds": 5,
+     "f1": 0.2661956473081725,
+     "fp_per_24h": 0.7043259812710172,
+     "d_f1": -0.07586973984246914,
+     "d_fp24": -0.05311929997593834,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "emg/lsb",
+    "from": "emg_lsb_256uV",
+    "flips_per_window": 3.723678505426509,
+    "to": "emg_lsb_128uV",
+    "ranking_top5": [
+     [
+      3.723678505426509,
+      "emg/lsb",
+      "emg_lsb_256uV"
+     ],
+     [
+      3.086900365238188,
+      "eeg/gain-",
+      "eeg_gain_-0.05"
+     ],
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ],
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ],
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 4,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "eeg_gain_-0.05",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_128uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b4_gain+": {
+     "seeds": 5,
+     "f1": 0.2925783230643492,
+     "fp_per_24h": 1.1279732976045838,
+     "d_f1": -0.04948706408629244,
+     "d_fp24": 0.3705280163576282,
+     "tolerated": false
+    },
+    "combined_b4_gain-": {
+     "seeds": 5,
+     "f1": 0.264258800969318,
+     "fp_per_24h": 0.8109683852637033,
+     "d_f1": -0.07780658618132369,
+     "d_fp24": 0.05352310401674776,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "emg/lsb",
+    "from": "emg_lsb_128uV",
+    "flips_per_window": 3.181584481479646,
+    "to": "emg_lsb_64uV",
+    "ranking_top5": [
+     [
+      3.181584481479646,
+      "emg/lsb",
+      "emg_lsb_128uV"
+     ],
+     [
+      3.086900365238188,
+      "eeg/gain-",
+      "eeg_gain_-0.05"
+     ],
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ],
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ],
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 5,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "eeg_gain_-0.05",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_64uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b5_gain+": {
+     "seeds": 5,
+     "f1": 0.2929563396556011,
+     "fp_per_24h": 1.0777471588837604,
+     "d_f1": -0.04910904749504058,
+     "d_fp24": 0.32030187763680484,
+     "tolerated": false
+    },
+    "combined_b5_gain-": {
+     "seeds": 5,
+     "f1": 0.2675090824327723,
+     "fp_per_24h": 0.7126191751834956,
+     "d_f1": -0.07455630471786934,
+     "d_fp24": -0.044826106063459936,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/gain-",
+    "from": "eeg_gain_-0.05",
+    "flips_per_window": 3.086900365238188,
+    "to": "off",
+    "ranking_top5": [
+     [
+      3.086900365238188,
+      "eeg/gain-",
+      "eeg_gain_-0.05"
+     ],
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ],
+     [
+      2.6165823718532097,
+      "emg/lsb",
+      "emg_lsb_64uV"
+     ],
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ],
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 6,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "eeg_gain_+0.05",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_64uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b6_gain+": {
+     "seeds": 5,
+     "f1": 0.2929563396556011,
+     "fp_per_24h": 1.0777471588837604,
+     "d_f1": -0.04910904749504058,
+     "d_fp24": 0.32030187763680484,
+     "tolerated": false
+    },
+    "combined_b6_gain-": {
+     "seeds": 5,
+     "f1": 0.26435055718749917,
+     "fp_per_24h": 0.959119888385145,
+     "d_f1": -0.0777148299631425,
+     "d_fp24": 0.2016746071381894,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/gain+",
+    "from": "eeg_gain_+0.05",
+    "flips_per_window": 3.0839498038026587,
+    "to": "off",
+    "ranking_top5": [
+     [
+      3.0839498038026587,
+      "eeg/gain+",
+      "eeg_gain_+0.05"
+     ],
+     [
+      2.6165823718532097,
+      "emg/lsb",
+      "emg_lsb_64uV"
+     ],
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ],
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ],
+     [
+      2.088841971278258,
+      "eeg/white",
+      "eeg_white_2uVrms"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 7,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_64uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b7_gain+": {
+     "seeds": 5,
+     "f1": 0.2835210218589589,
+     "fp_per_24h": 1.054594509457606,
+     "d_f1": -0.058544365291682776,
+     "d_fp24": 0.2971492282106504,
+     "tolerated": false
+    },
+    "combined_b7_gain-": {
+     "seeds": 5,
+     "f1": 0.26435055718749917,
+     "fp_per_24h": 0.959119888385145,
+     "d_f1": -0.0777148299631425,
+     "d_fp24": 0.2016746071381894,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "emg/lsb",
+    "from": "emg_lsb_64uV",
+    "flips_per_window": 2.6165823718532097,
+    "to": "emg_lsb_32uV",
+    "ranking_top5": [
+     [
+      2.6165823718532097,
+      "emg/lsb",
+      "emg_lsb_64uV"
+     ],
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ],
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ],
+     [
+      2.088841971278258,
+      "eeg/white",
+      "eeg_white_2uVrms"
+     ],
+     [
+      2.060800141946829,
+      "mov/white",
+      "mov_white_2LSBrms"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 8,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_1000uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_32uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b8_gain+": {
+     "seeds": 5,
+     "f1": 0.2833985726241838,
+     "fp_per_24h": 0.9731936667735674,
+     "d_f1": -0.05866681452645789,
+     "d_fp24": 0.2157483855266119,
+     "tolerated": false
+    },
+    "combined_b8_gain-": {
+     "seeds": 5,
+     "f1": 0.27028505002649855,
+     "fp_per_24h": 0.8866431051814931,
+     "d_f1": -0.07178033712414311,
+     "d_fp24": 0.1291978239345376,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "emg/drift",
+    "from": "emg_drift_1000uVrms",
+    "flips_per_window": 2.278402937122025,
+    "to": "emg_drift_100uVrms",
+    "ranking_top5": [
+     [
+      2.278402937122025,
+      "emg/drift",
+      "emg_drift_1000uVrms"
+     ],
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ],
+     [
+      2.088841971278258,
+      "eeg/white",
+      "eeg_white_2uVrms"
+     ],
+     [
+      2.060800141946829,
+      "mov/white",
+      "mov_white_2LSBrms"
+     ],
+     [
+      1.9811378987620887,
+      "emg/lsb",
+      "emg_lsb_32uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 9,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_8uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_32uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b9_gain+": {
+     "seeds": 5,
+     "f1": 0.28875618915726986,
+     "fp_per_24h": 1.0129342370896488,
+     "d_f1": -0.053309197993371804,
+     "d_fp24": 0.25548895584269327,
+     "tolerated": false
+    },
+    "combined_b9_gain-": {
+     "seeds": 5,
+     "f1": 0.266881673098265,
+     "fp_per_24h": 0.923953784924038,
+     "d_f1": -0.07518371405237667,
+     "d_fp24": 0.16650850367708248,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/lsb",
+    "from": "eeg_lsb_8uV",
+    "flips_per_window": 2.2211363326820495,
+    "to": "eeg_lsb_4uV",
+    "ranking_top5": [
+     [
+      2.2211363326820495,
+      "eeg/lsb",
+      "eeg_lsb_8uV"
+     ],
+     [
+      2.088841971278258,
+      "eeg/white",
+      "eeg_white_2uVrms"
+     ],
+     [
+      2.060800141946829,
+      "mov/white",
+      "mov_white_2LSBrms"
+     ],
+     [
+      1.9811378987620887,
+      "emg/lsb",
+      "emg_lsb_32uV"
+     ],
+     [
+      1.9726015130165824,
+      "eeg/pink",
+      "eeg_pink_30Hz_white1uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 10,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_2uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_32uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b10_gain+": {
+     "seeds": 5,
+     "f1": 0.2993383890123403,
+     "fp_per_24h": 0.9963648005725652,
+     "d_f1": -0.042726998138301386,
+     "d_fp24": 0.23891951932560962,
+     "tolerated": false
+    },
+    "combined_b10_gain-": {
+     "seeds": 5,
+     "f1": 0.269024481453345,
+     "fp_per_24h": 0.9000301489354076,
+     "d_f1": -0.07304090569729665,
+     "d_fp24": 0.14258486768845202,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/white",
+    "from": "eeg_white_2uVrms",
+    "flips_per_window": 2.088841971278258,
+    "to": "eeg_white_1uVrms",
+    "ranking_top5": [
+     [
+      2.088841971278258,
+      "eeg/white",
+      "eeg_white_2uVrms"
+     ],
+     [
+      2.060800141946829,
+      "mov/white",
+      "mov_white_2LSBrms"
+     ],
+     [
+      1.9811378987620887,
+      "emg/lsb",
+      "emg_lsb_32uV"
+     ],
+     [
+      1.9726015130165824,
+      "eeg/pink",
+      "eeg_pink_30Hz_white1uV"
+     ],
+     [
+      1.7236793384478064,
+      "eeg/hp",
+      "eeg_hp_0.5Hz"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 11,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_32uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_2LSBrms"
+   },
+   "verdicts": {
+    "combined_b11_gain+": {
+     "seeds": 5,
+     "f1": 0.29549320566908,
+     "fp_per_24h": 0.9886339545736664,
+     "d_f1": -0.04657218148156167,
+     "d_fp24": 0.2311886733267109,
+     "tolerated": false
+    },
+    "combined_b11_gain-": {
+     "seeds": 5,
+     "f1": 0.26755609058394797,
+     "fp_per_24h": 0.9609120027097582,
+     "d_f1": -0.0745092965666937,
+     "d_fp24": 0.20346672146280265,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "mov/white",
+    "from": "mov_white_2LSBrms",
+    "flips_per_window": 2.060800141946829,
+    "to": "mov_white_1LSBrms",
+    "ranking_top5": [
+     [
+      2.060800141946829,
+      "mov/white",
+      "mov_white_2LSBrms"
+     ],
+     [
+      1.9811378987620887,
+      "emg/lsb",
+      "emg_lsb_32uV"
+     ],
+     [
+      1.9726015130165824,
+      "eeg/pink",
+      "eeg_pink_30Hz_white1uV"
+     ],
+     [
+      1.7236793384478064,
+      "eeg/hp",
+      "eeg_hp_0.5Hz"
+     ],
+     [
+      1.5674736838159373,
+      "mov/lsb",
+      "mov_lsb_16LSB"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 12,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_32uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b12_gain+": {
+     "seeds": 5,
+     "f1": 0.2984823355651234,
+     "fp_per_24h": 0.9913057299185807,
+     "d_f1": -0.043583051585518284,
+     "d_fp24": 0.23386044867162514,
+     "tolerated": false
+    },
+    "combined_b12_gain-": {
+     "seeds": 5,
+     "f1": 0.274659024902778,
+     "fp_per_24h": 0.9619628453870854,
+     "d_f1": -0.06740636224786367,
+     "d_fp24": 0.2045175641401299,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "emg/lsb",
+    "from": "emg_lsb_32uV",
+    "flips_per_window": 1.9811378987620887,
+    "to": "emg_lsb_16uV",
+    "ranking_top5": [
+     [
+      1.9811378987620887,
+      "emg/lsb",
+      "emg_lsb_32uV"
+     ],
+     [
+      1.9726015130165824,
+      "eeg/pink",
+      "eeg_pink_30Hz_white1uV"
+     ],
+     [
+      1.7236793384478064,
+      "eeg/hp",
+      "eeg_hp_0.5Hz"
+     ],
+     [
+      1.5674736838159373,
+      "mov/lsb",
+      "mov_lsb_16LSB"
+     ],
+     [
+      1.466279089624345,
+      "emg/gain-",
+      "emg_gain_-0.5"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 13,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_30Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b13_gain+": {
+     "seeds": 5,
+     "f1": 0.2995066229837731,
+     "fp_per_24h": 1.0264443934547671,
+     "d_f1": -0.042558764166868546,
+     "d_fp24": 0.2689991122078116,
+     "tolerated": false
+    },
+    "combined_b13_gain-": {
+     "seeds": 5,
+     "f1": 0.2764486230533262,
+     "fp_per_24h": 0.980610154533772,
+     "d_f1": -0.06561676409731548,
+     "d_fp24": 0.22316487328681645,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/pink",
+    "from": "eeg_pink_30Hz_white1uV",
+    "flips_per_window": 1.9726015130165824,
+    "to": "eeg_pink_10Hz_white1uV",
+    "ranking_top5": [
+     [
+      1.9726015130165824,
+      "eeg/pink",
+      "eeg_pink_30Hz_white1uV"
+     ],
+     [
+      1.7236793384478064,
+      "eeg/hp",
+      "eeg_hp_0.5Hz"
+     ],
+     [
+      1.5674736838159373,
+      "mov/lsb",
+      "mov_lsb_16LSB"
+     ],
+     [
+      1.466279089624345,
+      "emg/gain-",
+      "emg_gain_-0.5"
+     ],
+     [
+      1.4341998559706177,
+      "ecg/lsb",
+      "ecg_lsb_32uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 14,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.5Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_10Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b14_gain+": {
+     "seeds": 5,
+     "f1": 0.3040805497045093,
+     "fp_per_24h": 1.0734462228460444,
+     "d_f1": -0.03798483744613235,
+     "d_fp24": 0.31600094159908887,
+     "tolerated": false
+    },
+    "combined_b14_gain-": {
+     "seeds": 5,
+     "f1": 0.27800861054630366,
+     "fp_per_24h": 0.9603526957715737,
+     "d_f1": -0.064056776604338,
+     "d_fp24": 0.20290741452461813,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/hp",
+    "from": "eeg_hp_0.5Hz",
+    "flips_per_window": 1.7236793384478064,
+    "to": "eeg_hp_0.3Hz",
+    "ranking_top5": [
+     [
+      1.7236793384478064,
+      "eeg/hp",
+      "eeg_hp_0.5Hz"
+     ],
+     [
+      1.5674736838159373,
+      "mov/lsb",
+      "mov_lsb_16LSB"
+     ],
+     [
+      1.506455567962945,
+      "eeg/pink",
+      "eeg_pink_10Hz_white1uV"
+     ],
+     [
+      1.466279089624345,
+      "emg/gain-",
+      "emg_gain_-0.5"
+     ],
+     [
+      1.4341998559706177,
+      "ecg/lsb",
+      "ecg_lsb_32uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 15,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_10Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_16LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b15_gain+": {
+     "seeds": 5,
+     "f1": 0.3062851206572491,
+     "fp_per_24h": 1.0780746538744812,
+     "d_f1": -0.035780266493392554,
+     "d_fp24": 0.32062937262752567,
+     "tolerated": false
+    },
+    "combined_b15_gain-": {
+     "seeds": 5,
+     "f1": 0.2808981082419773,
+     "fp_per_24h": 1.0046808826437528,
+     "d_f1": -0.06116727890866436,
+     "d_fp24": 0.24723560139679723,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "mov/lsb",
+    "from": "mov_lsb_16LSB",
+    "flips_per_window": 1.5674736838159373,
+    "to": "mov_lsb_8LSB",
+    "ranking_top5": [
+     [
+      1.5674736838159373,
+      "mov/lsb",
+      "mov_lsb_16LSB"
+     ],
+     [
+      1.506455567962945,
+      "eeg/pink",
+      "eeg_pink_10Hz_white1uV"
+     ],
+     [
+      1.466279089624345,
+      "emg/gain-",
+      "emg_gain_-0.5"
+     ],
+     [
+      1.4341998559706177,
+      "ecg/lsb",
+      "ecg_lsb_32uV"
+     ],
+     [
+      1.3099744442949635,
+      "ecg/mains250",
+      "ecg_mains250_10uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 16,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_10Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b16_gain+": {
+     "seeds": 5,
+     "f1": 0.3079243853310677,
+     "fp_per_24h": 0.9925154032450539,
+     "d_f1": -0.03414100181957397,
+     "d_fp24": 0.2350701219980984,
+     "tolerated": false
+    },
+    "combined_b16_gain-": {
+     "seeds": 5,
+     "f1": 0.28033771921207845,
+     "fp_per_24h": 0.931275054770371,
+     "d_f1": -0.06172766793856321,
+     "d_fp24": 0.17382977352341544,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "eeg/pink",
+    "from": "eeg_pink_10Hz_white1uV",
+    "flips_per_window": 1.506455567962945,
+    "to": "eeg_pink_3Hz_white1uV",
+    "ranking_top5": [
+     [
+      1.506455567962945,
+      "eeg/pink",
+      "eeg_pink_10Hz_white1uV"
+     ],
+     [
+      1.466279089624345,
+      "emg/gain-",
+      "emg_gain_-0.5"
+     ],
+     [
+      1.4341998559706177,
+      "ecg/lsb",
+      "ecg_lsb_32uV"
+     ],
+     [
+      1.3099744442949635,
+      "ecg/mains250",
+      "ecg_mains250_10uV"
+     ],
+     [
+      1.2928777095579616,
+      "ecg/white",
+      "ecg_white_8uVrms"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 17,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_3Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.5",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b17_gain+": {
+     "seeds": 5,
+     "f1": 0.3042672425120954,
+     "fp_per_24h": 1.0129897145770423,
+     "d_f1": -0.03779814463854625,
+     "d_fp24": 0.2555444333300868,
+     "tolerated": false
+    },
+    "combined_b17_gain-": {
+     "seeds": 5,
+     "f1": 0.27421543155874345,
+     "fp_per_24h": 0.9762635713172025,
+     "d_f1": -0.06784995559189821,
+     "d_fp24": 0.218818290070247,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "emg/gain-",
+    "from": "emg_gain_-0.5",
+    "flips_per_window": 1.466279089624345,
+    "to": "emg_gain_-0.2",
+    "ranking_top5": [
+     [
+      1.466279089624345,
+      "emg/gain-",
+      "emg_gain_-0.5"
+     ],
+     [
+      1.4341998559706177,
+      "ecg/lsb",
+      "ecg_lsb_32uV"
+     ],
+     [
+      1.3099744442949635,
+      "ecg/mains250",
+      "ecg_mains250_10uV"
+     ],
+     [
+      1.2928777095579616,
+      "ecg/white",
+      "ecg_white_8uVrms"
+     ],
+     [
+      1.2891321125961568,
+      "eeg/hp",
+      "eeg_hp_0.3Hz"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 18,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_3Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_32uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.2",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b18_gain+": {
+     "seeds": 5,
+     "f1": 0.3042672425120954,
+     "fp_per_24h": 1.0129897145770423,
+     "d_f1": -0.03779814463854625,
+     "d_fp24": 0.2555444333300868,
+     "tolerated": false
+    },
+    "combined_b18_gain-": {
+     "seeds": 5,
+     "f1": 0.2892831963703416,
+     "fp_per_24h": 0.8913773756840191,
+     "d_f1": -0.05278219078030005,
+     "d_fp24": 0.13393209443706355,
+     "tolerated": false
+    }
+   },
+   "back_off": {
+    "family": "ecg/lsb",
+    "from": "ecg_lsb_32uV",
+    "flips_per_window": 1.4341998559706177,
+    "to": "ecg_lsb_16uV",
+    "ranking_top5": [
+     [
+      1.4341998559706177,
+      "ecg/lsb",
+      "ecg_lsb_32uV"
+     ],
+     [
+      1.3099744442949635,
+      "ecg/mains250",
+      "ecg_mains250_10uV"
+     ],
+     [
+      1.2928777095579616,
+      "ecg/white",
+      "ecg_white_8uVrms"
+     ],
+     [
+      1.2891321125961568,
+      "eeg/hp",
+      "eeg_hp_0.3Hz"
+     ],
+     [
+      1.2760682560990695,
+      "eeg/pink",
+      "eeg_pink_3Hz_white1uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 19,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_3Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_16uV",
+    "ecg/mains250": "ecg_mains250_10uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.2",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b19_gain+": {
+     "seeds": 5,
+     "f1": 0.3049087930485899,
+     "fp_per_24h": 1.0019608902506938,
+     "d_f1": -0.03715659410205174,
+     "d_fp24": 0.24451560900373825,
+     "tolerated": false
+    },
+    "combined_b19_gain-": {
+     "seeds": 5,
+     "f1": 0.31812602025132886,
+     "fp_per_24h": 0.827015917390139,
+     "d_f1": -0.02393936689931281,
+     "d_fp24": 0.06957063614318348,
+     "tolerated": true
+    }
+   },
+   "back_off": {
+    "family": "ecg/mains250",
+    "from": "ecg_mains250_10uV",
+    "flips_per_window": 1.3099744442949635,
+    "to": "ecg_mains250_1uV",
+    "ranking_top5": [
+     [
+      1.3099744442949635,
+      "ecg/mains250",
+      "ecg_mains250_10uV"
+     ],
+     [
+      1.2928777095579616,
+      "ecg/white",
+      "ecg_white_8uVrms"
+     ],
+     [
+      1.2891321125961568,
+      "eeg/hp",
+      "eeg_hp_0.3Hz"
+     ],
+     [
+      1.2760682560990695,
+      "eeg/pink",
+      "eeg_pink_3Hz_white1uV"
+     ],
+     [
+      1.2701808780794195,
+      "mov/gain+",
+      "mov_gain_+0.5"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 20,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_3Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_16uV",
+    "ecg/mains250": "ecg_mains250_1uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_8uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.2",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b20_gain+": {
+     "seeds": 5,
+     "f1": 0.31072430431864556,
+     "fp_per_24h": 0.9448789002453781,
+     "d_f1": -0.0313410828319961,
+     "d_fp24": 0.1874336189984226,
+     "tolerated": false
+    },
+    "combined_b20_gain-": {
+     "seeds": 5,
+     "f1": 0.31752338108996414,
+     "fp_per_24h": 0.8157600637190076,
+     "d_f1": -0.024542006060677524,
+     "d_fp24": 0.05831478247205202,
+     "tolerated": true
+    }
+   },
+   "back_off": {
+    "family": "ecg/white",
+    "from": "ecg_white_8uVrms",
+    "flips_per_window": 1.2928777095579616,
+    "to": "ecg_white_4uVrms",
+    "ranking_top5": [
+     [
+      1.2928777095579616,
+      "ecg/white",
+      "ecg_white_8uVrms"
+     ],
+     [
+      1.2891321125961568,
+      "eeg/hp",
+      "eeg_hp_0.3Hz"
+     ],
+     [
+      1.2760682560990695,
+      "eeg/pink",
+      "eeg_pink_3Hz_white1uV"
+     ],
+     [
+      1.2701808780794195,
+      "mov/gain+",
+      "mov_gain_+0.5"
+     ],
+     [
+      1.26815746934794,
+      "emg/lsb",
+      "emg_lsb_16uV"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 21,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.3Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_3Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_16uV",
+    "ecg/mains250": "ecg_mains250_1uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_4uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.2",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b21_gain+": {
+     "seeds": 5,
+     "f1": 0.30936427273030936,
+     "fp_per_24h": 1.0179089900382494,
+     "d_f1": -0.0327011144203323,
+     "d_fp24": 0.2604637087912939,
+     "tolerated": false
+    },
+    "combined_b21_gain-": {
+     "seeds": 5,
+     "f1": 0.3170260589959221,
+     "fp_per_24h": 0.8590823841127755,
+     "d_f1": -0.025039328154719542,
+     "d_fp24": 0.10163710286581995,
+     "tolerated": true
+    }
+   },
+   "back_off": {
+    "family": "eeg/hp",
+    "from": "eeg_hp_0.3Hz",
+    "flips_per_window": 1.2891321125961568,
+    "to": "eeg_hp_0.1Hz",
+    "ranking_top5": [
+     [
+      1.2891321125961568,
+      "eeg/hp",
+      "eeg_hp_0.3Hz"
+     ],
+     [
+      1.2760682560990695,
+      "eeg/pink",
+      "eeg_pink_3Hz_white1uV"
+     ],
+     [
+      1.2701808780794195,
+      "mov/gain+",
+      "mov_gain_+0.5"
+     ],
+     [
+      1.26815746934794,
+      "emg/lsb",
+      "emg_lsb_16uV"
+     ],
+     [
+      1.2640664184540875,
+      "mov/white",
+      "mov_white_1LSBrms"
+     ]
+    ]
+   }
+  },
+  {
+   "step": 22,
+   "levels": {
+    "eeg/clip": "eeg_clip_2048uV",
+    "eeg/drift": "eeg_drift_10uVrms",
+    "eeg/gain+": "off",
+    "eeg/gain-": "off",
+    "eeg/hp": "eeg_hp_0.1Hz",
+    "eeg/lp": "eeg_lp_100Hz",
+    "eeg/lsb": "eeg_lsb_4uV",
+    "eeg/mains250": "eeg_mains250_1uV",
+    "eeg/mains50": "eeg_mains50_1uV",
+    "eeg/offset": "eeg_offset_0.6C",
+    "eeg/pink": "eeg_pink_3Hz_white1uV",
+    "eeg/white": "eeg_white_1uVrms",
+    "ecg/clip": "ecg_clip_1024uV",
+    "ecg/drift": "ecg_drift_100uVrms",
+    "ecg/gain+": "ecg_gain_+0.5",
+    "ecg/gain-": "ecg_gain_-0.5",
+    "ecg/hp": "ecg_hp_0.3Hz",
+    "ecg/lsb": "ecg_lsb_16uV",
+    "ecg/mains250": "ecg_mains250_1uV",
+    "ecg/mains50": "ecg_mains50_10uV",
+    "ecg/offset": "ecg_offset_0.1C",
+    "ecg/pink": "ecg_pink_30Hz_white1uV",
+    "ecg/white": "ecg_white_4uVrms",
+    "emg/clip": "emg_clip_1024uV",
+    "emg/drift": "emg_drift_100uVrms",
+    "emg/gain+": "emg_gain_+0.5",
+    "emg/gain-": "emg_gain_-0.2",
+    "emg/hp": "emg_hp_0.5Hz",
+    "emg/lp": "emg_lp_70Hz",
+    "emg/lsb": "emg_lsb_16uV",
+    "emg/mains250": "emg_mains250_10uV",
+    "emg/mains50": "emg_mains50_1uV",
+    "emg/offset": "emg_offset_0.6C",
+    "emg/pink": "emg_pink_30Hz_white1uV",
+    "emg/white": "emg_white_2uVrms",
+    "mov/gain+": "mov_gain_+0.5",
+    "mov/gain-": "mov_gain_-0.1",
+    "mov/lsb": "mov_lsb_8LSB",
+    "mov/white": "mov_white_1LSBrms"
+   },
+   "verdicts": {
+    "combined_b22_gain+": {
+     "seeds": 5,
+     "f1": 0.31341706003208525,
+     "fp_per_24h": 0.8753528680498703,
+     "d_f1": -0.028648327118556416,
+     "d_fp24": 0.1179075868029148,
+     "tolerated": true
+    },
+    "combined_b22_gain-": {
+     "seeds": 5,
+     "f1": 0.31392368116582786,
+     "fp_per_24h": 0.84634825203772,
+     "d_f1": -0.028141705984813803,
+     "d_fp24": 0.08890297079076448,
+     "tolerated": true
+    }
+   }
+  }
+ ]
+}
