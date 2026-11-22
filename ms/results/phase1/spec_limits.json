@@ -6292,9 +6292,17 @@
      ],
      "subset_status": "beyond grid",
      "subset_limit": 1000.0,
-     "pending": "emg_mains50_10uV",
+     "pending": "emg_mains50_1uV",
      "note": null,
      "full": {
+      "emg_mains50_10uV": {
+       "tolerated": false,
+       "d_f1": -0.012670150960313042,
+       "d_fp24": -0.008433428308772584,
+       "wilcoxon_p": 0.08183930964952643,
+       "marginal": true,
+       "file": "confirm_stepdown_fbb8772d.json"
+      },
       "emg_mains50_100uV": {
        "tolerated": false,
        "d_f1": -0.022889499450048145,
@@ -6902,9 +6910,17 @@
      ],
      "subset_status": "beyond grid",
      "subset_limit": 16.0,
-     "pending": "emg_white_4uVrms",
+     "pending": "emg_white_2uVrms",
      "note": null,
      "full": {
+      "emg_white_4uVrms": {
+       "tolerated": false,
+       "d_f1": -0.010569796351056648,
+       "d_fp24": -0.053468925482052176,
+       "wilcoxon_p": 0.28431632106369775,
+       "marginal": true,
+       "file": "confirm_stepdown_fbb8772d.json"
+      },
       "emg_white_8uVrms": {
        "tolerated": false,
        "d_f1": -0.012611639849004458,
