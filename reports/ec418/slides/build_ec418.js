@@ -120,7 +120,7 @@ txt(s, [
   { text: "Sowjanya  ", options: { bold: true, color: HX.dark } }, { text: "23ECB0A22", options: { color: HX.ink } },
 ], { x: X0, y: 4.5, w: 4.3, h: 1.1, fontSize: 14, paraSpaceAfter: 4, objectName: "Team" });
 txt(s, "UNDER THE GUIDANCE OF", { x: 5.4, y: 4.15, w: 3, h: 0.26, fontSize: 12, bold: true, color: OR, charSpacing: 1, objectName: "Guide label" });
-txt(s, [{ text: "[Guide Name]", options: { bold: true, color: HX.dark, breakLine: true } }, { text: "[Designation], ECE", options: { color: HX.ink } }], { x: 5.4, y: 4.65, w: 3, h: 0.7, fontSize: 14, paraSpaceAfter: 4, objectName: "Guide" });
+txt(s, [{ text: "Prof. V Rama", options: { bold: true, color: HX.dark, breakLine: true } }, { text: "Associate Professor, ECE", options: { color: HX.ink } }], { x: 5.4, y: 4.65, w: 3, h: 0.7, fontSize: 14, paraSpaceAfter: 4, objectName: "Guide" });
 fit(s, "dashboard_rehearsal.png", 1440, 900, 8.55, 1.5, 4.06, 3.9, "Live dashboard of the detector showing signals, LUT votes and the alarm", "Dashboard image");
 s.addShape(pres.shapes.LINE, { x: X0, y: 6.76, w: W, h: 0, line: { color: LINE, width: 0.75 }, objectName: "Footer line" });
 txt(s, "1", { x: 12.11, y: 6.83, w: 0.5, h: 0.26, fontSize: 12, color: GREY, align: "right", objectName: "Page number" });
@@ -554,7 +554,7 @@ s = pres.addSlide({ masterName: "PLAIN", sectionTitle: "Conclusion" });
 txt(s, "Thank you", { x: X0, y: 2.6, w: 9, h: 1.0, fontSize: 44, bold: true, color: NAVY, valign: "middle", objectName: "Thank you" });
 txt(s, "Questions are welcome. We can show the live demo on the board.", { x: X0, y: 3.6, w: 9, h: 0.45, fontSize: 18, color: GREY, objectName: "Questions" });
 s.addShape(pres.shapes.LINE, { x: X0, y: 5.9, w: W, h: 0, line: { color: LINE, width: 0.75 }, objectName: "Thanks line" });
-txt(s, [{ text: "Guide  ", options: { bold: true, color: HX.navy } }, { text: "[Guide Name]", options: { color: HX.ink, breakLine: true } }, { text: "Project by  ", options: { bold: true, color: HX.navy } }, { text: "Akshara Bonam · Sai Chaithr · Sowjanya", options: { color: HX.ink } }], { x: X0, y: 6.05, w: W, h: 0.6, fontSize: 13, objectName: "Credits" });
+txt(s, [{ text: "Guide  ", options: { bold: true, color: HX.navy } }, { text: "Prof. V Rama", options: { color: HX.ink, breakLine: true } }, { text: "Project by  ", options: { bold: true, color: HX.navy } }, { text: "Akshara Bonam · Sai Chaithr · Sowjanya", options: { color: HX.ink } }], { x: X0, y: 6.05, w: W, h: 0.6, fontSize: 13, objectName: "Credits" });
 s.addNotes("Thank the panel and offer the live demo.");
 
 (async () => {
