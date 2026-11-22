@@ -221,6 +221,9 @@ def main() -> int:
     ap.add_argument("--limit-runs", type=int, default=None, help="first N recordings only (quick checks)")
     ap.add_argument("--tag", default=None)
     ap.add_argument("--mem-gb", type=float, default=11.0, help="budget for the summed peak-memory estimates")
+    ap.add_argument("--reserve-gb", type=float, default=1.8,
+                    help="memory kept back for each other free worker when picking a recording, so a long recording "
+                         "runs next to short ones instead of next to another long one with two cores idle (LOG L22)")
     args = ap.parse_args()
     extra = {"limits": lambda: limit_jobs(args.seeds), "clean": list,
              "stepdown": lambda: stepdown_jobs(args.seeds),
@@ -250,7 +253,7 @@ def main() -> int:
                 done[r["run"]] = r
     todo = [(i, k) for i, k in enumerate(runs) if k not in done]
     print(f"{len(jobs)} jobs (incl. clean), {len(runs)} recordings, {len(todo)} to do, {args.workers} workers, "
-          f"memory budget {args.mem_gb:g} GB", flush=True)
+          f"memory budget {args.mem_gb:g} GB, reserve {args.reserve_gb:g} GB per other free worker", flush=True)
     hours = run_hours([k for _, k in todo])
     pending = sorted(todo, key=lambda t: (-hours[t[1]], t[1]))       # longest first
     running, used, n = {}, 0.0, 0
@@ -258,7 +261,11 @@ def main() -> int:
             open(log, "a") as fh:
         while pending or running:
             while pending and len(running) < args.workers:
-                pick = next((t for t in pending if used + mem_est(hours[t[1]]) <= args.mem_gb), None)
+                free = args.workers - len(running) - 1          # other free workers after this pick
+                pick = next((t for t in pending
+                             if used + mem_est(hours[t[1]]) + free * args.reserve_gb <= args.mem_gb), None)
+                if pick is None:
+                    pick = next((t for t in pending if used + mem_est(hours[t[1]]) <= args.mem_gb), None)
                 if pick is None:
                     if running:
                         break
