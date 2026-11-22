@@ -1,0 +1,87 @@
+% appendices: "APPENDIX A: TITLE" headings, tables numbered A.1, B.1
+\cleardoublepage
+\refstepcounter{chapter}\label{app:build}
+\chapter*{APPENDIX A: BUILD INSTRUCTIONS AND SOURCE FILES}
+\addcontentsline{toc}{chapter}{APPENDIX A: BUILD INSTRUCTIONS AND SOURCE FILES}
+
+The bitstream is built with Vivado 2026.1 by \texttt{hw/kv260/vivado/build\_kv260.tcl}, which also writes the
+utilisation, timing and power reports. On the board (Ubuntu 22.04 with Kria-PYNQ), the kit folder is copied to the
+home directory and the test campaign is run with \texttt{bash run\_board\_tests.sh} (\texttt{--quick} for a one-minute
+check). The live demonstration with the LED and buzzer is started with \texttt{bash demo2\_components.sh --autoplay
+--speed 4}, and the doctor alert by adding \texttt{--bed "Bed 1"} once the ESP32 is connected. The ESP32 program is
+uploaded from the Arduino IDE (board: ESP32 Dev Module) after the Wi-Fi name, password and ntfy topic are set at the top
+of the sketch.
+
+\begin{table}[H]
+\centering\small
+\caption{Source files of the project}\label{tab:sourcefiles}
+\begin{tabularx}{\textwidth}{|P{62mm}|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{File}} & \multicolumn{1}{c|}{\textbf{Contents}}\\
+\hline
+\texttt{src/features/golden.py} & Integer front end (golden model)\\
+\hline
+\texttt{src/hw/fe\_engine.py}, \texttt{hw/kv260/rtl/fe\_engine.v} & Feature engine: program generator and RTL\\
+\hline
+\texttt{src/hw/kv260.py} & Generator of the KV260 core (classifier, self-test, fault injection, AXI)\\
+\hline
+\texttt{export/n4\_distill\_s0/} & Final model: thresholds, input mapping, 50 truth tables, score head, test vectors\\
+\hline
+\texttt{hw/kv260/sim/} & Testbenches and simulation scripts\\
+\hline
+\texttt{hw/kv260/vivado/build\_kv260.tcl} & Vivado build script\\
+\hline
+\texttt{hw/kv260/board/} & Driver, test campaign (steps 1--9), fault campaign, C front end\\
+\hline
+\texttt{hw/kv260/demo/} & Live dashboard, demo scripts, doctor-alert link\\
+\hline
+\texttt{hw/kv260/esp32/seizelut\_alert/} & ESP32 alert program\\
+\hline
+\texttt{results/decisions.md} & Every design decision with its evidence\\
+\hline
+\end{tabularx}
+\end{table}
+
+\cleardoublepage
+\refstepcounter{chapter}\label{app:results}
+\setcounter{table}{0}
+\chapter*{APPENDIX B: ALL MODELS ON THE 29 TEST PATIENTS}
+\addcontentsline{toc}{chapter}{APPENDIX B: ALL MODELS ON THE 29 TEST PATIENTS}
+
+\begin{table}[H]
+\centering\footnotesize
+\caption{Final evaluation of every model on the 29 test patients (5 seeds; SzCORE event metrics at the best-F1
+operating point; Paper: the base paper's sensitivity and false alarms per hour; $p$: paired Wilcoxon on per-patient
+event-F1 against LightGBM)}\label{tab:test-full}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Model}} & \textbf{AUROC} & \textbf{F1} & \textbf{Sens} & \textbf{Prec} & \textbf{FA/24\,h} &
+\textbf{Paper} & \textbf{Cost} & \textbf{$p$}\\
+\hline
+\textbf{DWN + distillation (final)} & 0.883 & \textbf{0.248} & 0.303 & 0.291 & 0.8 & 25.5\,\% / 0.02 & 895 LUTs & 0.039\\
+\hline
+DWN + modality dropout & 0.866 & 0.242 & 0.272 & 0.282 & 0.4 & 21.7\,\% / 0.01 & 951 LUTs & 0.035\\
+\hline
+DWN base & 0.875 & 0.172 & 0.340 & 0.156 & 2.7 & 29.2\,\% / 0.12 & 980 LUTs & 0.004\\
+\hline
+LightGBM & 0.877 & 0.308 & 0.331 & 0.396 & 0.6 & 26.8\,\% / 0.01 & 30,750 LUTs & --\\
+\hline
+XGBoost & 0.872 & 0.294 & 0.301 & 0.387 & 0.4 & 25.1\,\% / 0.01 & 48,295 LUTs & 0.29\\
+\hline
+CatBoost & 0.874 & 0.254 & 0.330 & 0.281 & 1.2 & 25.8\,\% / 0.04 & 27,720 LUTs & 0.026\\
+\hline
+Random forest & 0.858 & 0.246 & 0.245 & 0.305 & 0.2 & 22.4\,\% / 0.00 & 346,576 LUTs & 0.35\\
+\hline
+TreeLUT (5-bit leaves) & 0.858 & 0.233 & 0.292 & 0.296 & 1.0 & 25.1\,\% / 0.04 & 6,330 LUTs & 0.005\\
+\hline
+Logic-gate network & 0.865 & 0.191 & 0.291 & 0.186 & 1.4 & 23.1\,\% / 0.06 & 7,452 LUTs & 0.008\\
+\hline
+INT8 MLP & 0.788 & 0.155 & 0.249 & 0.163 & 1.7 & 21.8\,\% / 0.10 & 9,600 mult. & 0.005\\
+\hline
+Logistic regression & 0.814 & 0.123 & 0.255 & 0.096 & 5.1 & 23.0\,\% / 0.27 & 117 mult. & 0.0008\\
+\hline
+ChronoNet (clean, 1 seed) & -- & 0.027 & 0.790 & 0.015 & 106.3 & 67.1\,\% / 11.9 & CNN + GRU & --\\
+\hline
+\end{tabular}
+\end{table}

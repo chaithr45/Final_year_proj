@@ -1,0 +1,204 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------------------------------------------------------------- layout (EC418 BISP report format: A4, Times,
+% 12 pt, 1.5 line spacing, justified, page number at the bottom centre)
+\usepackage[a4paper,left=38mm,right=25mm,top=25mm,bottom=25mm,footskip=12mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathptmx}
+\renewcommand{\ttdefault}{pcr}
+\usepackage{setspace}
+\setstretch{1.45}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{xltabular}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage[labelfont=bf,labelsep=colon,font=small,justification=centering,singlelinecheck=true]{caption}
+\captionsetup[table]{position=top,skip=4pt}
+\captionsetup[figure]{skip=6pt}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{positioning,fit}
+\usepackage{cite}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\urlstyle{same}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+\renewcommand{\arraystretch}{1.25}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlist[itemize]{label=\textbullet,leftmargin=12mm}
+\setlist[enumerate]{leftmargin=12mm}
+
+% page number at the bottom centre only
+\pagestyle{plain}
+
+% chapter headings: "CHAPTER 1" / "INTRODUCTION", centred
+\titleformat{\chapter}[display]{\centering\bfseries\fontsize{16}{20}\selectfont}{CHAPTER \thechapter}{4pt}{}
+\titleformat{name=\chapter,numberless}[block]{\centering\bfseries\fontsize{16}{20}\selectfont}{}{0pt}{}
+\titlespacing*{\chapter}{0pt}{0pt}{18pt}
+\titleformat{\section}{\bfseries\fontsize{14}{17}\selectfont}{\thesection}{0.7em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+\titleformat{\subsection}{\bfseries\fontsize{12}{15}\selectfont}{\thesubsection}{0.7em}{}
+
+% contents, figures and tables lists in the course format
+\titlecontents{chapter}[0pt]{\addvspace{3pt}\bfseries}{CHAPTER \thecontentslabel:\ \ }{}{\titlerule*[0.4pc]{.}\contentspage}
+\titlecontents{section}[1.5em]{\addvspace{1pt}}{\thecontentslabel\ \ }{}{\titlerule*[0.4pc]{.}\contentspage}
+\titlecontents{figure}[0pt]{\addvspace{2pt}}{Figure \thecontentslabel\ \ }{}{\titlerule*[0.4pc]{.}\contentspage}
+\titlecontents{table}[0pt]{\addvspace{2pt}}{Table \thecontentslabel\ \ }{}{\titlerule*[0.4pc]{.}\contentspage}
+\setcounter{tocdepth}{1}
+\renewcommand{\contentsname}{TABLE OF CONTENTS}
+\renewcommand{\listfigurename}{LIST OF FIGURES}
+\renewcommand{\listtablename}{LIST OF TABLES}
+\renewcommand{\bibname}{REFERENCES}
+
+% grid tables (all cells ruled, as in the course format)
+\newcommand{\toprule}{\hline}
+\newcommand{\midrule}{\hline}
+\newcommand{\bottomrule}{\hline}
+
+\newcommand{\projtitle}{SeizeLUT: A Self-Testing, Multiplier-Free Seizure Detector on an FPGA with Doctor Alerts}
+\newcommand{\studentA}{Akshara Bonam}
+\newcommand{\rollA}{23ECB0A11}
+\newcommand{\studentB}{Sai Chaithr}
+\newcommand{\rollB}{23ECB0A20}
+\newcommand{\studentC}{Sowjanya}
+\newcommand{\rollC}{23ECB0A22}
+\newcommand{\guide}{[Guide Name]}
+\newcommand{\guidedesig}{[Designation]}
+\newcommand{\subdate}{[Date]}
+
+\begin{document}
+
+% ================================================================ title page
+\begin{titlepage}
+\centering\setstretch{1.0}
+\vspace*{4mm}
+{\fontsize{17}{21}\selectfont\bfseries SEIZELUT: A SELF-TESTING, MULTIPLIER-FREE SEIZURE DETECTOR ON AN FPGA WITH
+DOCTOR ALERTS\par}
+\vspace{8mm}
+{\large\itshape A Project Report\par}
+\vspace{1mm}
+submitted in partial fulfilment of the requirements of the course\par
+{\bfseries EC418 -- BISP\par}
+\vspace{4mm}
+in the degree of\par
+{\large\bfseries BACHELOR OF TECHNOLOGY\par}
+in\par
+{\large\bfseries ELECTRONICS AND COMMUNICATION ENGINEERING\par}
+\vspace{7mm}
+{\itshape Submitted by\par}
+\vspace{2mm}
+\begin{tabular}{@{}p{95mm}l@{}}
+\textbf{\studentA} & \textbf{\rollA}\\
+\textbf{\studentB} & \textbf{\rollB}\\
+\textbf{\studentC} & \textbf{\rollC}\\
+\end{tabular}\par
+\vspace{6mm}
+{\itshape Under the guidance of\par}
+\vspace{1mm}
+{\large\bfseries \guide\par}
+\guidedesig, Department of ECE\par
+\vspace{6mm}
+\includegraphics[width=24mm]{figures/nitw_logo.png}\par
+\vfill
+{\bfseries\large DEPARTMENT OF ELECTRONICS AND COMMUNICATION ENGINEERING\par}
+{\bfseries\large NATIONAL INSTITUTE OF TECHNOLOGY WARANGAL\par}
+Telangana -- 506004, India\par
+{\bfseries November 2026\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% ================================================================ certificate
+\chapter*{CERTIFICATE}
+\addcontentsline{toc}{chapter}{Certificate}
+This is to certify that the project report entitled \textbf{``\projtitle''} is a bonafide record of the work carried
+out by \textbf{\studentA\ (\rollA)}, \textbf{\studentB\ (\rollB)} and \textbf{\studentC\ (\rollC)} in partial
+fulfilment of the requirements of the course EC418 (BISP) of the Bachelor of Technology programme in Electronics and
+Communication Engineering, National Institute of Technology Warangal, during the academic year 2026--27, under my
+supervision and guidance.
+
+\vspace{30mm}
+\begin{flushright}
+\textbf{\guide}\\
+\guidedesig\\
+Department of ECE\\
+NIT Warangal\\
+\textit{(Project Guide)}
+\end{flushright}
+
+\vspace{12mm}
+Place: Warangal\\
+Date: \subdate
+
+% ================================================================ declaration
+\chapter*{DECLARATION}
+\addcontentsline{toc}{chapter}{Declaration}
+We hereby declare that the work presented in this project report entitled \textbf{``\projtitle''} is a record of our
+own work carried out under the guidance of \textbf{\guide}, \guidedesig, Department of Electronics and Communication
+Engineering, National Institute of Technology Warangal. The ideas and words of others have been adequately cited and
+referenced. We further declare that this work has not been submitted, in part or in full, for the award of any other
+degree or diploma, and that we have adhered to the principles of academic honesty and integrity and have not
+misrepresented or fabricated any data or source. An AI assistant was used to help write analysis code, check results
+and draft parts of the text; every number in this report comes from our saved experiment records, scripts and board
+measurements, and we take responsibility for the content.
+
+\vspace{12mm}
+\hspace*{8mm}\begin{tabular}{@{}p{95mm}l@{}}
+\textbf{\studentA} & \textbf{\rollA}\\
+\textbf{\studentB} & \textbf{\rollB}\\
+\textbf{\studentC} & \textbf{\rollC}\\
+\end{tabular}
+
+\vspace{12mm}
+Place: Warangal\\
+Date: \subdate
+
+% ================================================================ abstract and lists
+\input{abstract}
+
+\cleardoublepage
+\phantomsection
+\tableofcontents
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+\input{abbreviations}
+
+% ================================================================ chapters
+\cleardoublepage
+\pagenumbering{arabic}
+\input{ch1_introduction}
+\input{ch2_literature}
+\input{ch3_system}
+\input{ch4_method}
+\input{ch5_hardware}
+\input{ch6_results}
+\input{ch7_discussion}
+\input{ch8_conclusion}
+
+% ================================================================ references and appendices
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{References}
+{\small\setstretch{1.1}
+\bibliographystyle{IEEEtran}
+\bibliography{refs}}
+
+\appendix
+\input{appendix}
+
+\end{document}

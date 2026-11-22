@@ -1,0 +1,60 @@
+\chapter{INTRODUCTION}\label{ch:intro}
+
+\section{Background}
+
+Epilepsy affected an estimated 45.9 million people in 2016 \cite{gbd2019epilepsy}. Patients often miss their own
+seizures, so seizure diaries undercount them \cite{elger2018underreporting}, and tonic-clonic seizures carry a risk of
+sudden death \cite{ryvlin2013mortemus}. A wearable detector that recognises a seizure and calls for help could close
+this gap. Today wearables are recommended only for tonic-clonic seizures \cite{beniczky2021guideline}; for focal
+seizures, which are 822 of the 883 seizures in the SeizeIT2 dataset, false alarms are the main obstacle
+\cite{swinnen2026seizeit2}.
+
+Behind-the-ear EEG, together with ECG, EMG and motion sensors, is a discreet alternative to a full EEG cap
+\cite{vandecasteele2020bte,vandecasteele2021ecg}. The public SeizeIT2 dataset \cite{bhagubai2025seizeit2} provides
+125 patients recorded with such a wearable, with seizures annotated on hospital video-EEG.
+
+This project develops \textbf{SeizeLUT}, a seizure detector whose classifier is a Differentiable Weightless Neural
+Network (DWN) \cite{bacellar2024dwn} of 50 six-input lookup tables that map one-to-one onto the lookup tables (LUTs)
+of an FPGA. A bit-exact integer front end computes the features without any multiplier. The complete detector runs in
+the fabric of an AMD Kria KV260 board, tests itself, drives an alarm LED and a buzzer, and sends a doctor a push
+notification through an ESP32.
+
+\section{Motivation}
+
+A wearable detector must run for days on a small battery. Multiplications dominate the cost of neural networks in
+hardware, while the basic element of an FPGA is a 6-input lookup table. \emph{LUT-native} networks
+\cite{bacellar2024dwn,petersen2022dlgn,umuroglu2020logicnets} are built from exactly this element, so a trained model
+becomes hardware with no translation. A medical device must also not fail silently: a hardware fault in the classifier
+turns into missed seizures or false alarms, and a broken detector looks exactly like a quiet night. Finally, an alarm
+is only useful if the right person can act on it quickly.
+
+\section{Problem Statement}
+
+Design a seizure detector that uses integer features from behind-the-ear EEG, ECG, EMG and motion and a LUT-native
+network, detects seizures in unseen patients at least as well as the published SeizeIT2 baselines, runs as
+multiplier-free hardware on a real FPGA board, detects its own hardware faults, and alerts a doctor with information
+that can be acted on at once.
+
+\section{Objectives}
+
+\begin{enumerate}
+\item Audit the SeizeIT2 dataset and reproduce its published ChronoNet baseline.
+\item Build an integer-only, bit-exact multimodal feature pipeline with no multiplier and no division.
+\item Compare LUT-native, tree-based and multiplier-based models on accuracy and hardware cost, and extend the LUT
+  network for wearables (distillation, missing sensors, post-ictal verification).
+\item Evaluate the frozen design once on the 29 held-out test patients.
+\item Analyse every single hardware fault of the classifier and design an on-chip self-test that detects every fault
+  that can change a decision.
+\item Implement the front end and the classifier in the fabric of an AMD Kria KV260 and verify them on the board.
+\item Build a live demonstration with an alarm LED and a buzzer, and a doctor alert through an ESP32.
+\end{enumerate}
+
+\section{Scope and Limitations}
+
+\begin{itemize}
+\item All results are retrospective, on recorded signals of one public dataset; no patient wore our hardware.
+\item The test patients (sub-097 to sub-125) were used once, after the design was frozen.
+\item The board demonstration replays recorded test signals; the sensors themselves are not part of this project.
+\item The doctor alert was tested on an emulated board; the test on the ESP32 itself with a real phone is pending.
+\item SeizeLUT is a research prototype, not a medical device.
+\end{itemize}

@@ -1,0 +1,78 @@
+\chapter{DISCUSSION}\label{ch:discussion}
+
+\section{Accuracy per Lookup Table}
+
+The final DWN is not the most accurate model: LightGBM reaches an event-F1 of 0.308 against 0.248. But LightGBM needs
+about 30,800 LUTs, while the DWN needs 398 (and the whole detector 1,202). Among the models that can be built as small
+multiplier-free hardware, the DWN is the most accurate, and it is above TreeLUT at a seventh of its LUTs. Distillation
+from LightGBM was the most useful single change: it cut the false alarms from 2.4 to 0.9 per day on the training
+patients and carried part of the teacher's accuracy into 50 truth tables.
+
+\section{Self-Testing}
+
+Because the classifier is a set of truth tables, every single hardware fault can be listed and its clinical effect
+measured. This showed that the obvious test, replaying a block of recorded data, misses about half of the faults that
+change a decision, because many truth-table entries are used only by rare inputs. Choosing test windows for coverage
+closes this gap with 255 windows. The board campaign confirmed every prediction: all 3,592 injected faults behaved on
+the FPGA exactly as in the software model.
+
+\section{Challenges Faced}
+
+\begin{xltabular}{\textwidth}{|P{17mm}|P{38mm}|L|L|}
+\caption{The main problems and their solutions}\label{tab:challenges}\\
+\hline
+\multicolumn{1}{|c|}{\textbf{Area}} & \multicolumn{1}{c|}{\textbf{Challenge}} & \multicolumn{1}{c|}{\textbf{What happened}} & \multicolumn{1}{c|}{\textbf{Solution}}\\
+\hline
+\endfirsthead
+\hline
+\multicolumn{1}{|c|}{\textbf{Area}} & \multicolumn{1}{c|}{\textbf{Challenge}} & \multicolumn{1}{c|}{\textbf{What happened}} & \multicolumn{1}{c|}{\textbf{Solution}}\\
+\hline
+\endhead
+\small Data & \small Files differ from the documentation & \small 256 Hz not 250 Hz; 883 not 886 seizures; no centre
+or age labels & \small Full audit first; design follows the files\\ \hline
+\small Data & \small 126 GB, no local disk or GPU & \small Dataset too large for the server & \small Stream, extract,
+delete: only 3.5 GB of features kept\\ \hline
+\small Data & \small Silent download truncation & \small 9 recordings cut short & \small Size checks; re-extracted; 3
+runs repeated\\ \hline
+\small Baseline & \small ChronoNet only partly reproduced & \small 74.5\,\% vs 84.2\,\% detected & \small Literal port;
+gap reported as measured\\ \hline
+\small Baseline & \small Released code tunes on the test patients & \small Best epoch picked on the evaluation patients &
+\small Clean run with no test information as our reference\\ \hline
+\small Hardware & \small Rounding noise in integer filters & \small Error 140 LSB, larger than the signal (61 LSB) &
+\small Error feedback: 0.7 LSB\\ \hline
+\small Hardware & \small Heart rate needs a division & \small $60/\mathrm{RR}$ & \small $\log_2(\mathrm{RR})$: no division
+or multiplication\\ \hline
+\small Compute & \small 6 GB laptop GPU; CUDA-only library & \small DWN could not run on the CPU server & \small PyTorch
+re-implementation, unit-tested against the kernel\\ \hline
+\small ML & \small Seizures are 0.123\,\% of the time & \small Accuracy is meaningless & \small Event scoring per
+patient; balanced sampling; false-alarm budget\\ \hline
+\small ML & \small Weak early results & \small First network: event-F1 0.148, 7.0 false alarms per day & \small N7 showed
+heart rate was ignored; new feature selection: 0.208, 2.3 per day\\ \hline
+\small FPGA & \small Front end needs many multipliers & \small Dozens of filters per window & \small Microcoded shift-add
+engine: 804 LUTs, no DSP\\ \hline
+\small FPGA & \small Engine and bus raced each other & \small For one clock cycle the core reported idle before the
+feature transfer, and writes were lost & \small Found by the end-to-end testbench before the build; idle condition
+fixed\\ \hline
+\small Board & \small Counters not cleared on the board & \small Reset and clear in one write & \small Two separate
+writes\\ \hline
+\small Demo & \small LED always on, buzzer silent & \small Wires on the wrong end of the PMOD connector; buzzer (+) not
+on 3.3\,V & \small Pin test script; wiring table\\ \hline
+\small Alert & \small Too much information for a doctor in a hurry & \small Long text with numbers & \small One
+instruction, four colour tiles, three-line notification\\ \hline
+\small Alert & \small False ``check breathing'' during shaking & \small Shaking spoils the ECG & \small ECG flag only
+without shaking\\ \hline
+\end{xltabular}
+
+\section{Limitations}
+
+\begin{itemize}
+\item \textbf{Focal seizures:} at the default operating point the detector finds about one seizure in four, and focal
+  seizures are mostly missed, as in the clinical literature \cite{beniczky2021guideline}.
+\item \textbf{Retrospective data:} all results come from recordings of one dataset; no patient wore our hardware.
+\item \textbf{Two-stage detector:} the 73.3\,\% result needs a 96\,s decision delay and about 11 false alarms per
+  hour, so it suits seizure logging rather than instant alarms.
+\item \textbf{Self-adaptation:} label-free per-patient adaptation (N3) raised the false alarms from 6.8 to 10--40 per
+  day on the training patients and was not adopted.
+\item \textbf{Doctor alert:} tested in emulation only; the pattern hint matches the doctors' label in 64\,\% of
+  training seizures and is not a diagnosis.
+\end{itemize}

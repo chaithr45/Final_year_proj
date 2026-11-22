@@ -1,0 +1,155 @@
+\chapter{SYSTEM DESIGN AND HARDWARE IMPLEMENTATION}\label{ch:system}
+
+\section{Overall Architecture}
+
+Figure~\ref{fig:arch} shows the final system (kit v6). Raw signals arrive second by second. On the AMD Kria KV260 the
+Arm cores only move the raw samples into the FPGA; the feature engine and the classifier both run in the fabric. When
+the alarm turns on, the FPGA drives a red LED and a buzzer on a breadboard, and an ESP32 on the same breadboard sends
+a push notification to the doctor's phone. A laptop browser shows every stage of the detector live.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{\input{figures/arch.tex}}
+\caption{Block diagram of SeizeLUT on the Kria KV260, with the fault-injection registers and the self-test that let
+the device check that the fabric still computes the validated classifier}\label{fig:arch}
+\end{figure}
+
+\section{Hardware Components}
+
+\begin{table}[H]
+\centering\small
+\caption{Main hardware components}\label{tab:components}
+\begin{tabularx}{\textwidth}{|P{30mm}|P{50mm}|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Component}} & \multicolumn{1}{c|}{\textbf{Part / specification}} & \multicolumn{1}{c|}{\textbf{Function}}\\
+\hline
+FPGA board & AMD Kria KV260 (Zynq UltraScale+ XCK26: four Arm Cortex-A53 cores and FPGA fabric), Ubuntu 22.04 with Kria-PYNQ & Feature engine, classifier, self-test, fault injection, demo outputs\\
+\hline
+Alarm LED & Red LED with 220\,$\Omega$ resistor on PMOD B1 & Lights while the alarm is on\\
+\hline
+Buzzer & Buzzer switched by a BC547 transistor (1\,k$\Omega$ base resistor) on PMOD B2 & Sounds while the alarm is on\\
+\hline
+Alert module & ESP32 Dev Module, USB serial link to the board, alarm wire from PMOD B1 to GPIO\,27 & Push notification and live page on the doctor's phone\\
+\hline
+Phone & iPhone with the ntfy app; personal hotspot as the network & Receives the alert; ``On my way'' reply\\
+\hline
+Laptop & Web browser & Live dashboard of the detector\\
+\hline
+\end{tabularx}
+\end{table}
+
+The board runs the detector from recorded test-patient signals stored on it, second by second, exactly as it would
+from live sensors. The ESP32 is powered by the USB cable from the board, which also carries the alarm messages; the
+alarm wire is a backup that works even if the board's software stops.
+
+\section{Sensor Configuration}
+
+The detector uses the signals of the SeizeIT2 wearable (Table~\ref{tab:modalities}). The two EEG channels are one
+behind-the-ear channel and one cross-head channel, chosen per recording by the dataset. A presence bit per sensor
+tells the classifier when a sensor is missing.
+
+\begin{table}[H]
+\centering\small
+\caption{Signals recorded by the wearable (rates measured from the files)}\label{tab:modalities}
+\begin{tabular}{|l|l|c|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Signal}} & \multicolumn{1}{c|}{\textbf{Channels}} & \textbf{Rate}\\
+\hline
+Behind-the-ear EEG & 2 (left, right or cross-head) & 256 Hz\\
+\hline
+ECG & 1 & 256 Hz\\
+\hline
+EMG & 1 & 256 Hz\\
+\hline
+Motion & 3-axis accelerometer + 3-axis gyroscope & 25 Hz\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Board Software and Live Demonstration}
+
+\begin{itemize}
+\item \textbf{Driver and tests:} a Python driver (PYNQ) with a fast C path writes raw samples and reads results. One
+  script (\texttt{run\_board\_tests.sh}) runs nine tests and saves every number to a results file.
+\item \textbf{Dashboard:} recorded test-patient signals stream second by second through the board, and a laptop
+  browser shows the signals, features, comparator bits, LUT votes, score and alarm, with a check on every window that
+  the FPGA equals the software (Figure~\ref{fig:dashboard}, Chapter~\ref{ch:results}).
+\item \textbf{Breadboard:} the alarm LED, the buzzer and the ESP32 alarm wire are driven directly by the FPGA pins,
+  so they follow the hardware decision.
+\end{itemize}
+
+\begin{table}[H]
+\centering\small
+\caption{Breadboard wiring of the demonstration}\label{tab:wiring}
+\begin{tabularx}{\textwidth}{|P{30mm}|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{PMOD pin}} & \multicolumn{1}{c|}{\textbf{Connection}}\\
+\hline
+B1 & 220\,$\Omega$ to the red LED (long leg); short leg to ground; also ESP32 GPIO\,27\\
+\hline
+B2 & 1\,k$\Omega$ to the BC547 base; emitter to ground; collector to the buzzer ($-$)\\
+\hline
+B3 (optional) & ESP32 GPIO\,26 (second alarm wire)\\
+\hline
+3.3\,V & buzzer (+)\\
+\hline
+GND & ground rail, ESP32 GND\\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Doctor Alert with an ESP32}\label{sec:alert}
+
+\begin{itemize}
+\item \textbf{Board to ESP32:} the board sends one short message per event over USB serial (alarm start, updates
+  every 15\,s, escalations, end, patient button).
+\item \textbf{ESP32 to phone:} the ESP32 joins the phone's Wi-Fi hotspot, sends a push notification through the ntfy
+  service and serves a live alarm page on the same network.
+\item \textbf{Phone to board:} the doctor's ``On my way'' reaches the ESP32 and is sent back to the board, where the
+  dashboard shows it.
+\end{itemize}
+
+The detector answers ``seizure-like or not''; it was not trained to name a seizure type, so the alert reports only
+signs that the front end measures, compared with the minute before the alarm (Table~\ref{tab:signs}).
+
+\begin{table}[H]
+\centering\small
+\caption{The signs in the alert}\label{tab:signs}
+\begin{tabularx}{\textwidth}{|l|L|P{45mm}|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Sign}} & \multicolumn{1}{c|}{\textbf{Shown as}} & \multicolumn{1}{c|}{\textbf{Measured from}}\\
+\hline
+Heart rate & before and now, NORMAL / HIGH / VERY HIGH & ECG R-peak intervals\\
+\hline
+Shaking & LITTLE / SOME / STRONG & accelerometer (or gyroscope)\\
+\hline
+Muscle tension & NORMAL / HIGH & EMG power\\
+\hline
+Brain activity & MILD / HIGH, slow or fast waves & EEG line length and band power\\
+\hline
+Pattern hint & ``motor pattern likely'' or ``little movement'' & movement change\\
+\hline
+\end{tabularx}
+\end{table}
+
+Because the doctor has very little time, the alert is designed to be read in about two seconds:
+
+\begin{itemize}
+\item \textbf{Notification:} three lines, for example ``SEIZURE Bed 3 / GO TO BED 3 NOW: PROTECT FROM INJURY / Heart
+  120 bpm HIGH \textbar{} Shaking STRONG \textbar{} Brain HIGH''.
+\item \textbf{Page:} status and a running timer, one instruction, ``On my way'' and ``Call'' buttons, and four colour
+  tiles (red = act, amber = watch, green = normal); the emergency plan and first-aid steps are folded below.
+\item \textbf{One instruction}, the most urgent first: CHECK BREATHING AND PULSE NOW (heart rate above 150 or below
+  40\,bpm, or an unreadable ECG without shaking) $>$ OVER 5 MIN: START EMERGENCY PLAN $>$ OVER 2 MIN: GET EMERGENCY
+  PLAN READY $>$ GO TO BED NOW: PROTECT FROM INJURY (strong shaking) $>$ GO TO BED NOW. When it ends: SEIZURE STOPPED:
+  CHECK BREATHING, TURN ON SIDE.
+\item \textbf{Escalation} at 2 and 5 minutes of alarm, then every minute; five minutes is the ILAE time point for
+  treating a convulsive seizure as status epilepticus. \textbf{Reminders} every minute until someone taps ``On my
+  way''; \textbf{clusters} (``2nd seizure this hour'') are flagged; only a bed name is sent, never a patient name.
+\end{itemize}
+
+The movement-based pattern hint was checked against the doctors' motor and non-motor labels of the 702 seizures of
+the training patients only. In the first 30\,s movement rose 4.8-fold (median) in motor seizures and 1.04-fold in
+non-motor seizures. A threshold (2.6-fold) chosen on patients 1--48 matched the doctors' label on patients 49--96 in
+64\,\% of cases (balanced accuracy; 48\,\% of motor and 79\,\% of non-motor seizures), so the hint is useful but is not
+a diagnosis.

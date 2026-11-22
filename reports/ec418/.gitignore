@@ -1,0 +1,16 @@
+# LaTeX build files (the PDFs are kept in out/)
+build.log
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+/main.pdf
+main.lof
+main.lot
+/summary_onepage.pdf

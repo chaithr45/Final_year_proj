@@ -1,0 +1,194 @@
+\chapter{SIGNAL PROCESSING AND CLASSIFICATION METHODOLOGY}\label{ch:method}
+
+\section{Dataset}
+
+SeizeIT2 \cite{bhagubai2025seizeit2} (OpenNeuro ds005873 v1.1.0, CC0) holds wearable recordings of 125 patients with
+focal epilepsy from five European epilepsy units, with seizures annotated on hospital video-EEG. We use the official
+split: \textbf{96 training patients} for all development and \textbf{29 test patients} (sub-097 to sub-125) scored
+once, after the design was frozen. Table~\ref{tab:inventory} and Figures~\ref{fig:classes} and~\ref{fig:hours}
+summarise the dataset; all values were measured by our audit.
+
+\begin{table}[H]
+\centering\small
+\caption{Inventory of SeizeIT2 measured by our audit}\label{tab:inventory}
+\begin{tabular}{|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Quantity}} & \multicolumn{1}{c|}{\textbf{Value}}\\
+\hline
+Patients / recordings / EDF files & 125 / 2,850 / 11,009 (125.9 GB)\\
+\hline
+Hours of EEG & 11,626 h (median 95 h per patient)\\
+\hline
+Seizures & 883 (train 702, test 181)\\
+\hline
+Seizure time & 14.3 h = \textbf{0.123\,\%} of the recording time\\
+\hline
+Seizure duration & 2--962 s (median 33 s)\\
+\hline
+Missing ECG/EMG; missing motion & 3.1\,\%; 3.9\,\% of the time\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{figures/seizure_classes.png}
+\caption{Seizure classes in the training and test patients: 822 of 883 seizures are focal seizures that do not become
+tonic-clonic}\label{fig:classes}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/hours_and_seizures_per_patient.png}
+\caption{Hours recorded (bars; blue: training, orange: test) and seizures per patient (dots)}\label{fig:hours}
+\end{figure}
+
+\section{Audit Findings}
+
+\begin{table}[H]
+\centering\small
+\caption{Where the released files differ from the documentation, and what we did}\label{tab:docdiff}
+\begin{tabularx}{\textwidth}{|P{34mm}|P{25mm}|P{30mm}|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Item}} & \multicolumn{1}{c|}{\textbf{Documentation}} & \multicolumn{1}{c|}{\textbf{Files}} & \multicolumn{1}{c|}{\textbf{Action}}\\
+\hline
+Sampling rate & 250 Hz & 256 Hz & Filters designed for 256 Hz\\
+\hline
+Seizures & 886 & 883 & Report our count\\
+\hline
+Centre and age labels & used for splits & not released & Folds by seizure count\\
+\hline
+Official artefact rule & 13--150\,\textmu V & flags 69\,\% of normal windows & Flags used as input bits\\
+\hline
+Downloads & -- & 9 files cut short & Size checks; re-extracted\\
+\hline
+Evaluation code & -- & two defects & Corrected values reported alongside\\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Development Pipeline}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/system_overview.png}
+\caption{Development pipeline of the detector. Blue: bit-exact integer front end; orange: LUT-native classifier (the
+LUT count is the estimate for the base network)}\label{fig:system}
+\end{figure}
+
+\begin{enumerate}
+\item Every second, the last 2\,s of all signals become \textbf{117 integer features} (Table~\ref{tab:features}).
+\item The most useful features are thermometer-encoded (each feature compared with learned thresholds) and classified
+  by a \textbf{50-LUT network}. In the final, distilled network the 50 LUTs read \textbf{146 threshold bits} from
+  \textbf{38 features}; only these comparators are built in hardware.
+\item The 50 LUT outputs are counted into a score, and an alarm is raised when the score is high in 10 of the last
+  10 seconds.
+\end{enumerate}
+
+\section{Integer Front End and Feature Sets}
+
+\begin{table}[H]
+\centering\small
+\caption{The 117 integer features (per 2-s window; many also as change from a 64-s moving average)}\label{tab:features}
+\begin{tabularx}{\textwidth}{|l|c|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Group}} & \textbf{Count} & \multicolumn{1}{c|}{\textbf{Features}}\\
+\hline
+EEG & 84 & amplitude, line length, mobility, zero crossings, extrema, 5 band amplitudes; artefact flags\\
+\hline
+ECG & 5 & log heart period, log RR variability, quality flag\\
+\hline
+EMG & 8 & amplitude, line length, zero crossings, high/low band ratio\\
+\hline
+Motion & 16 & accelerometer and gyroscope magnitude, jerk, activity, band amplitude\\
+\hline
+Presence & 4 & one bit per sensor (ECG, EMG, accelerometer, gyroscope)\\
+\hline
+\end{tabularx}
+\end{table}
+
+\textbf{Integer arithmetic.} Every filter coefficient is a sum of a few signed powers of two, so filtering needs only
+shifts and additions, and error feedback keeps the rounding noise below one least significant bit. Heart rate is
+represented by $\log_2(\mathrm{RR})$, so there is no division. The same front end exists in Python (the golden model),
+in C (on the Arm and in the demo) and as a microcoded engine in the FPGA fabric (Chapter~\ref{ch:hw}), and all three
+give the same integers for every window. A floating-point twin measures the cost of the integer arithmetic
+(Section~\ref{sec:verif}).
+
+\section{LUT-Native Classifier (DWN)}
+
+A Differentiable Weightless Neural Network \cite{bacellar2024dwn} has no weights: each neuron is a 6-input truth table,
+exactly one FPGA LUT.
+\begin{equation}
+  b_{f,i} = [\,x_f > t_{f,i}\,] \qquad\qquad s = \sum_{j \in S} y_j - \sum_{j \in B} y_j
+\end{equation}
+Each threshold bit $b_{f,i}$ is one comparator; each neuron reads 6 learned bits and outputs one stored bit $y_j$; the
+score $s$ is the popcount of the seizure group $S$ minus that of the background group $B$. The network is trained by
+gradient descent through a differentiable relaxation of the lookup, and in the final version by distillation from a
+LightGBM teacher. The trained truth tables are loaded straight into the FPGA's LUT6 elements.
+
+\section{Models and Extensions}
+
+\begin{table}[H]
+\centering\small
+\caption{Models compared on the same features, splits and metrics}\label{tab:models}
+\begin{tabularx}{\textwidth}{|P{36mm}|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Group}} & \multicolumn{1}{c|}{\textbf{Models}}\\
+\hline
+Published baselines & ChronoNet \cite{roy2019chrononet} (CNN + GRU on raw EEG); SVM \cite{vandecasteele2020bte}\\
+\hline
+Software references & logistic regression, random forest, XGBoost, LightGBM, CatBoost\\
+\hline
+Hardware-oriented & INT8 MLP (multipliers), TreeLUT \cite{khataei2025treelut}, logic-gate network \cite{petersen2022dlgn}, DWN \cite{bacellar2024dwn}\\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Extensions of the DWN tested in this project (adopted only if significantly better)}\label{tab:extensions}
+\begin{tabularx}{\textwidth}{|c|L|}
+\hline
+\textbf{ID} & \multicolumn{1}{c|}{\textbf{Idea}}\\
+\hline
+N1 & Memory across seconds: 16 state bits fed back; stacked past windows\\
+\hline
+N2 & Encoder design: uniform, Gaussian and learned thresholds\\
+\hline
+N3 & Label-free per-patient threshold adaptation\\
+\hline
+N4 & Distillation from LightGBM; teacher-guided hard negatives\\
+\hline
+N5 & Focal, noise-robust (GCE, SCE) and multiple-instance losses; onset weighting\\
+\hline
+N6 & Modality dropout, gated fusion, late fusion\\
+\hline
+N7 & Interpretability: which inputs the LUTs read during alarms\\
+\hline
+N8 & Post-ictal verification: a second LUT network confirms each alarm (secondary analysis)\\
+\hline
+N9 & Fault analysis and self-test of the LUT network\\
+\hline
+N10 & Front end in the FPGA fabric (microcoded shift-add engine)\\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Evaluation Protocol}\label{sec:eval}
+
+\begin{itemize}
+\item \textbf{Patient-wise 5-fold cross-validation} on the 96 training patients for every design choice.
+\item \textbf{Sealed test set}: the 29 test patients scored once, after the freeze, with 5 seeds; every access logged.
+\item \textbf{SzCORE event scoring} \cite{dan2024szcore} (30\,s before, 60\,s after, 90\,s merge), per patient:
+\end{itemize}
+\begin{equation}
+  \mathrm{Sens} = \frac{TP}{TP + FN},\qquad \mathrm{Prec} = \frac{TP}{TP + FP},\qquad
+  F_1 = \frac{2\,\mathrm{Sens}\cdot\mathrm{Prec}}{\mathrm{Sens} + \mathrm{Prec}},\qquad \text{false alarms per 24 h}
+\end{equation}
+\begin{itemize}
+\item \textbf{Operating points} (threshold, $k$, artefact gate) chosen on the training folds: best event-F1, and highest
+  sensitivity with at most one false alarm per hour.
+\item \textbf{Statistics}: paired Wilcoxon test per patient; an extension is adopted only if $p < 0.05$ in its favour.
+\item \textbf{Paper metrics} (the base paper's own code) are reported for the comparison with the base paper.
+\item \textbf{Compute}: a 4-core CPU server and a laptop RTX 3060 GPU.
+\end{itemize}

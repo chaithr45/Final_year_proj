@@ -1,0 +1,74 @@
+\chapter{HARDWARE IMPLEMENTATION OF THE DETECTOR}\label{ch:hw}
+
+\section{Design and Interface}
+
+The detector is one IP core inside the KV260 design (core version 3). It is reached through one AXI4-Lite slave at
+100\,MHz with an 8-KB window: control and result registers, the feature registers, and the feature engine's register
+file at address 0x1000 (Table~\ref{tab:core}).
+
+\begin{table}[H]
+\centering\small
+\caption{Blocks of the SeizeLUT core}\label{tab:core}
+\begin{tabularx}{\textwidth}{|P{34mm}|L|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Block}} & \multicolumn{1}{c|}{\textbf{Function}}\\
+\hline
+Feature engine & Computes the 38 features from raw samples (Section~\ref{sec:fe-engine})\\
+\hline
+Classifier & 146 threshold comparators, 50 LUT6, popcount score, frozen and programmable operating points, 10-of-10
+alarm; latency 3 clock cycles\\
+\hline
+Self-test (BIST) & Vector ROM and response check; 1,024 vectors in 1,028 cycles\\
+\hline
+Fault injection & Registers that flip any truth-table bit or force any comparator or LUT output to 0 or 1\\
+\hline
+Debug read-back & All 146 comparator bits and 50 LUT outputs of the last window\\
+\hline
+Demo I/O & PMOD outputs for the alarm LED, buzzer, score LEDs and a heartbeat; a debounced button input\\
+\hline
+\end{tabularx}
+\end{table}
+
+\section{Feature Engine in the Fabric}\label{sec:fe-engine}
+
+A front end with dozens of filters would need many multipliers if built directly. Instead, a small microcoded
+\emph{feature engine} computes the 38 features the classifier reads, one instruction at a time:
+
+\begin{itemize}
+\item one 40-bit adder and two 5-bit shifters; every filter coefficient is a sum of at most five signed powers of
+  two, so a multiplication becomes a few shifted additions;
+\item a register file of 930 words and a 2,323-instruction program in block RAM, at 3 clock cycles per instruction;
+\item four events: a 256-Hz biopotential sample, a 25-Hz motion sample, the end of a second, and the last window.
+\end{itemize}
+
+After each window the core copies the engine's 38 features into the classifier and classifies them automatically. The
+engine needs under one million cycles per second of signal, so it keeps up with the sensors at 1\,MHz, a hundredth of
+the board's clock.
+
+\section{Operation and Verification}
+
+\begin{enumerate}
+\item The Arm writes the raw samples of one second into the engine's register file and starts the events.
+\item The engine runs its program and writes the 38 features; the core copies them into the classifier registers.
+\item The comparators, the 50 LUTs and the popcount produce the score, the decision and the alarm in 3 cycles.
+\item The Arm reads the result; the LED, buzzer and ESP32 wire follow the alarm bit directly.
+\end{enumerate}
+
+Every stage was verified against the software model before the board build: the engine program in an
+instruction-level simulator, the engine RTL sample by sample and the whole core through the AXI bus in Verilator
+(Section~\ref{sec:verif}).
+
+\section{Built-In Self-Test}\label{sec:bist}
+
+\textbf{Fault model.} Every single fault in the part of the hardware the network adds: each of the $50 \times 64 =
+3{,}200$ truth-table bits flipped (an upset in FPGA configuration memory) and each comparator and LUT output stuck at 0
+or 1 (292 + 100), 3,592 faults in total.
+
+\textbf{Which faults matter.} Each fault was applied to all 31.4 million windows (8,714 hours) of the 96 training
+patients. A fault is \emph{decision-relevant} if it changes at least one decision, and \emph{alarm-relevant} if it
+changes at least one alarm.
+
+\textbf{Test vectors.} 255 test vectors were chosen from training windows for coverage, so that together they
+exercise every decision-relevant fault. The on-chip self-test runs 1,024 vectors in 1,028 clock cycles
+(10.3\,\textmu s), so the device can test itself after every one-second window. The detection results are in
+Section~\ref{sec:res-bist}.

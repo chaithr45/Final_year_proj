@@ -1,0 +1,26 @@
+\chapter{CONCLUSION AND FUTURE SCOPE}\label{ch:concl}
+
+\section{Conclusion}
+
+SeizeLUT demonstrates a complete, multiplier-free seizure detector on FPGA hardware. A 50-LUT weightless network on
+integer features from behind-the-ear EEG, ECG, EMG and motion reaches an event-F1 of 0.248 with 0.8 false alarms per
+day on 29 held-out patients, above TreeLUT, the logic-gate network, the INT8 network and ChronoNet, in 398 LUTs; with
+its microcoded front end in the fabric the whole detector needs 1,202 LUTs and no multiplier. At equal false alarms it
+detects more seizures than ChronoNet (43.2\,\% against 34.8\,\%), and with post-ictal verification it detects more
+than the dataset paper's SVM at its false-alarm rate (73.3\,\% against 71.1\,\%). All 3,592 single faults of the
+classifier were analysed, and 255 selected test vectors detect every fault that changes a decision, in a 10.3\,\textmu s
+on-chip self-test. On the AMD Kria KV260 all nine board tests pass, the board equals the software on every window and
+every injected fault, and a live demonstration drives an alarm LED and a buzzer while an ESP32 tells the doctor what to
+do.
+
+\section{Future Scope}
+
+\begin{itemize}
+\item Test the doctor alert on the ESP32 with a real phone and measure the time from alarm to notification.
+\item Learn each patient from doctor feedback (``real seizure'' or ``false alarm'') and retrain the truth tables, with
+  new self-test vectors for every update.
+\item Detect more focal seizures, the main clinical gap.
+\item Record volunteers wearing the sensors with a battery-powered low-power FPGA, and run the self-test periodically
+  in the field.
+\item Submit the work as a paper (IEEE EMBC 2027, full paper deadline 24 January 2027).
+\end{itemize}
