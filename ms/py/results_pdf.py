@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""PDF of the Phase 1 results obtained so far and a log of the work done (every result number is read from the
-result files in ms/results/phase1, results/tables and, for the run in progress, cache/ms/confirm; none is typed in
-here). Sections 9-12 (work log, problems and fixes, what is left, assessment) are descriptive text.
+"""PDF of the Phase 1 results and a log of the work done (every result number is read from the result files in
+ms/results/phase1, results/tables and, for a run in progress, cache/ms/confirm; none is typed in here). Sections
+10-13 (work log, problems and fixes, what is left, assessment) are descriptive text.
 
-Usage: python3 ms/py/results_pdf.py [--out ms/results/phase1/phase1_results_so_far.pdf]
+Usage: python3 ms/py/results_pdf.py [--out ms/results/phase1/phase1_results.pdf]
 Needs reportlab (the system python3 has it; the repo venv does not).
 """
 from __future__ import annotations
@@ -111,6 +111,14 @@ def git_commit() -> str:
     try:
         return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO, capture_output=True, text=True,
                               check=True).stdout.strip()
+    except Exception:
+        return "unknown"
+
+
+def git_branch() -> str:
+    try:
+        return subprocess.run(["git", "branch", "--show-current"], cwd=REPO, capture_output=True, text=True,
+                              check=True).stdout.strip() or "detached"
     except Exception:
         return "unknown"
 
@@ -294,8 +302,8 @@ def full_data_section(s: list) -> None:
 
     # 8d: the run in progress
     rp = run_in_progress()
-    s.append(p("8d. Run in progress", H3))
     if rp:
+        s.append(p("8d. Run in progress", H3))
         pz = paused_note()
         s.append(p(f"Step-down round {len(sd_files) + 1} tests {', '.join(rp['jobs'])} (plus the clean run). "
                    f"{rp['done']:,} of {rp['total']:,} recordings ({rp['hours_done']:,.0f} h) are finished; clean "
@@ -303,8 +311,6 @@ def full_data_section(s: list) -> None:
                    + (f"<b>Paused by you at {pz}</b>; it resumes from here (finished recordings are kept). "
                       if pz else "") + "No verdict yet: a family's result needs all recordings. "
                    f"Source: cache/ms/confirm/{rp['file']}.", BODY))
-    else:
-        s.append(p("None.", BODY))
 
 
 def work_log_section(s: list) -> None:
@@ -313,9 +319,10 @@ def work_log_section(s: list) -> None:
         rs = [json.loads(x) for x in (P1 / f"sweeps/{g}.jsonl").read_text().splitlines() if x.strip()]
         sw[g] = sum(1 for r in rs if r["name"] != "clean")
     ss = J("subset.json")["summary"]
+    bo, bf = J("combined_backoff.json"), J("combined_backoff_full.json")
     s.append(PageBreak())
-    s.append(p("9. What was done (Phases 0 and 1)", H2))
-    s.append(p("In order. Every item is in the repository on branch FPGA (files named); decisions are in MS_SPEC.md, "
+    s.append(p("10. What was done (Phases 0 and 1)", H2))
+    s.append(p(f"In order. Every item is in the repository on branch {git_branch()} (files named); decisions are in MS_SPEC.md, "
                "problems in LOG.md, interview notes in LEARN.md.", SMALL))
     rows = [["#", "what", "where / evidence", "state"],
             ["0.1", "Inventory of the FCCM repository: frozen detector, data flow, scripts, what reproduces",
@@ -346,18 +353,21 @@ def work_log_section(s: list) -> None:
              "AXI4-Lite; synthesis cost; ms1 kit build script, board driver and self-test vectors",
              "ms/fpga/, section 6", "done in simulation; board run pending (you)"],
             ["1.9", "All limits at once (preview): fails; back-off rule fixed before any back-off run",
-             "section 5, LOG L21, ms/py/combined_backoff.py", "rule ready, not run"],
+             "section 5a, LOG L21, ms/py/combined_backoff.py", "done"],
             ["1.10", "Full-data confirmation on all training hours with a memory-aware scheduler; step-down rule; "
              "one resumable script for the rest of Phase 1", "ms/py/confirm_full.py, full_spec.py, "
-             "run_phase1_confirm.sh, LOG L20, L22", "step 1 and round 1 done; round 2 paused"],
+             "run_phase1_confirm.sh, LOG L20, L22", f"done: step 1 and {len(stepdown_files())} step-down rounds"],
             ["1.11", "Combined back-off (subset, then all hours); final spec table with amplifier (NEF) and ADC "
-             "power", "ms/py/combined_backoff.py, spec_table.py", "not started"],
-            ["1.12", "Phase 1 report", "-", "not started"]]
+             "power", "ms/py/combined_backoff.py, spec_table.py; sections 5b-5c, 9",
+             f"done: {bo['status']} at step {bo['final_step']} (subset), {bf['status']} on all hours"],
+            ["1.12", "Phase 1 report", "ms/results/phase1/PHASE1_REPORT.md, this PDF", "done; your review pending"],
+            ["1.13", "Board run of the emulator (ms1 kit), digital energy, comparison with published front ends",
+             "section 12", "needs your hardware and the papers"]]
     s.append(table(rows, [1.0 * cm, 8.6 * cm, 5.0 * cm, 3.2 * cm]))
 
 
 def problems_section(s: list) -> None:
-    s.append(p("10. Problems met and how they were handled (LOG.md)", H2))
+    s.append(p("11. Problems met and how they were handled (LOG.md)", H2))
     rows = [["LOG", "problem", "what was done"],
             ["L1", "Frozen design not on the starting branch", "Branch FPGA created from the FCCM branch tip"],
             ["L2-L3", "Analog tool image and PDK download do not work in the cloud",
@@ -379,36 +389,44 @@ def problems_section(s: list) -> None:
             ["L19", "Cloud container restarted 7 times during long runs", "Every run resumes; finished work kept; "
              "a watcher plus a scheduled check-in every 1.5-2 h limits the loss"],
             ["L20", "No rule for a limit that fails on all hours", "Step-down rule written before any such result"],
-            ["L21", "Back-off rule for the combined point under-specified", "Pinned before any back-off run"],
+            ["L21", "Back-off rule for the combined point under-specified", "Pinned before any back-off run; it "
+             "converged unchanged (a post hoc change I suggested midway was not needed and is withdrawn)"],
             ["L22", "Out-of-memory kill; later idle cores during long recordings",
-             "Memory-aware scheduler; reserve for short recordings beside a long one (not yet committed)"]]
+             "Memory-aware scheduler; reserve for short recordings beside a long one"]]
     s.append(table(rows, [1.8 * cm, 7.6 * cm, 8.4 * cm]))
 
 
 def left_and_assessment(s: list) -> None:
-    rp = run_in_progress()
-    s.append(p("11. What is left", H2))
+    bo, bf = J("combined_backoff.json"), J("combined_backoff_full.json")
+    vsub, vfull = bo["steps"][-1]["verdicts"], bf["steps"][-1]["verdicts"]
+    sub_d = [x["d_f1"] for x in vsub.values()]
+    full_d = [x["d_f1"] for x in vfull.values()]
+    s.append(p("12. What is left", H2))
     rows = [["step", "who", "estimate (my estimate, not a measurement)"],
-            [f"Finish step-down round {len(stepdown_files()) + 1}" + (f" ({rp['total'] - rp['done']:,} recordings left)"
-                                                                     if rp else ""), "chain, after you say resume",
-             "about 2 h"],
-            ["A further round if a family fails again", "chain", "about 2.5 h each"],
-            ["Combined back-off on the subset (5 seeds per step)", "chain", "about 20-25 min per step; number of "
-             "steps unknown"],
-            ["Combined point on all training hours", "chain", "at least one full pass, about 2-3 h"],
-            ["Spec table with amplifier (NEF) and ADC power; Phase 1 report", "me", "a few hours"],
+            ["Your review of Phase 1 (this PDF, PHASE1_REPORT.md); whether to merge the branch into FPGA", "you",
+             "-"],
             ["Analog container check (ms/setup/check_tools.sh)", "you", "-"],
-            ["PDFs of the NEF papers; board energy measurement; ms1 kit build and board self-test", "you", "-"],
-            ["Decision on the uncommitted scheduler change (keep it / undo it); commit of the full-data results",
-             "you", "-"]]
+            ["ms1 kit build and board self-test of the impairment emulator; board energy of the digital part "
+             "(feature front end and LUT network)", "you (with my wiring and procedure check first)", "-"],
+            ["PDFs of the published amplifier papers: replace the assumed NEF range with read values, and draw "
+             "the electrode-to-alarm power budget against published wearable EEG front ends", "you send, I do",
+             "a few hours after the PDFs"],
+            ["Optional, report only: more impairment seeds for the EMG full-data verdicts closest to the threshold",
+             "chain, if you say yes", "about 3-4 h"],
+            ["Redo the ADC-step vs white-noise check (section 4a) on the full-data limits", "me", "under 1 h"],
+            ["Phase 2 (SKY130 comparator) after FCCM", "both", "Feb-Mar 2027"]]
     s.append(table(rows, [9.2 * cm, 3.6 * cm, 5.0 * cm]))
-    s.append(p("Container restarts add time; none has lost finished work.", SMALL))
+    s.append(p("Container restarts cost only work in progress (LOG L19); no finished result was lost.", SMALL))
 
-    s.append(p("12. Assessment (my judgement, not a measured result)", H2))
+    s.append(p("13. Assessment (my judgement, not a measured result)", H2))
     for t in (
         "<b>Strong:</b> the method. Every rule (thresholds, step-down, back-off, seed counts) was fixed before the "
-        "results it affects; the clean runs reproduce the committed result exactly; the hardware emulator is "
-        "bit-exact against its golden model; every table regenerates from a script. Test patients were not used.",
+        "results it affects, and the back-off converged under the pinned rule without any change; the clean runs "
+        "reproduce the committed result exactly; the hardware emulator is bit-exact against its golden model; "
+        "every table regenerates from a script. Test patients were not used.",
+        "<b>Strong:</b> a result a circuit designer can use. Single-impairment limits overshoot the error budget "
+        "when combined (section 5a); the combined point says how much tighter the front end must be, and where "
+        "(section 9: EEG noise and ADC step above all). That gap is the argument for detector-aware co-design.",
         "<b>Weak point 1, the detector:</b> per patient it finds about a quarter of the seizures, and fewer when "
         "all events are pooled (8a). A reviewer "
         "will ask why a spec derived from it matters, and a weak detector may tolerate impairments because it has "
@@ -417,18 +435,114 @@ def left_and_assessment(s: list) -> None:
         "<b>Weak point 2, resolution of the limits:</b> the tolerance threshold is one seed-to-seed standard "
         "deviation, and most full-data failures are not statistically significant (8c). The limits are reliable "
         "to about one grid step and must be reported that way.",
-        "<b>Weak point 3, no circuit yet:</b> power numbers come from survey figures of merit and the NEF formula, "
-        "not from a design. Phases 2-4 (SKY130 comparator, FPGA delta-sigma ADC, measured chain) supply that.",
+        "<b>Weak point 3, the combined point is sufficient, not minimal:</b> the greedy rule finds one passing "
+        "point; another order of back-off could reach a cheaper one. It was set by the subset test, which was the "
+        f"stricter one here (dF1 {min(sub_d):+.4f} to {max(sub_d):+.4f} on the subset against {min(full_d):+.4f} to "
+        f"{max(full_d):+.4f} on all hours), and two of its steps (the EEG gain errors) did not improve the result. "
+        "Report it as 'a front end meeting this spec is tolerated', not as 'the detector needs exactly this'.",
+        "<b>Weak point 4, no circuit yet:</b> power numbers come from survey figures of merit and the NEF formula "
+        "with an assumed NEF range, not from a design or from read papers. Phases 2-4 (SKY130 comparator, FPGA "
+        "delta-sigma ADC, measured chain) supply that.",
         "<b>Publishing:</b> Phase 1 alone fits a short methods paper at best; with Phases 2-4 a biomedical "
         "circuits conference submission becomes realistic. For the PhD applications, a rigorous spec flow plus a "
-        "designed comparator and a measured ADC is the stronger evidence. FCCM stays the main paper.",
-        "<b>Not final yet:</b> the single-impairment limits in section 8 overshoot the error budget when applied "
-        "together (section 5). The final front-end spec is the backed-off combined point, still to be run."):
+        "designed comparator and a measured ADC is the stronger evidence. FCCM stays the main paper."):
         s.append(p(t))
         s.append(Spacer(1, 3))
 
 
+def amp_power_w(nef: float, vn_rms: float, c: dict) -> float:
+    """Noise-set amplifier power from the NEF definition (same formula and constants as spec_table.py)."""
+    kT4 = 4 * 1.380649e-23 * c["T_K"]
+    return nef ** 2 * 3.141592653589793 * c["U_T_V"] * kT4 * c["BW_Hz"] / (2 * vn_rms ** 2) * c["VDD_V"]
+
+
+def spec_section(s: list) -> None:
+    sj = J("spec.json")
+    c = sj["constants"]
+    tabs = md_tables(P1 / "spec_table.md")
+    s.append(PageBreak())
+    s.append(p("9. The front-end specification (combined point, all training hours) and its power", H2))
+    s.append(p("Input-referred values. <b>One at a time</b> = the limit of each impairment with every other one "
+               "clean, confirmed on all training hours (section 8). <b>All at once</b> = the combined point that "
+               "passes with every impairment present together (section 5): this column is the specification. "
+               "'at least' = every tested level passed (a bound); 'tighter than' = even the mildest level failed. "
+               f"Generated by ms/py/spec_table.py from spec_limits.json and the back-off files "
+               f"(basis: {sj['combined_basis']}).", SMALL))
+    mods = [(k, v) for k, v in tabs.items() if v and v[0][0] == "spec"]
+    for letter, (key, rows_md) in zip("abc", mods):
+        rows = [["spec", "one at a time (all training hours)", "all at once = the spec"]]
+        rows += [[uv(r[0]), uv(r[1]), uv(r[2])] for r in rows_md[1:]]
+        s.append(p(f"9{letter}. {key}", H3T))
+        s.append(table(rows, [6.4 * cm, 5.0 * cm, 6.4 * cm]))
+
+    # motion sensors: not an analog front end, but part of the combined point
+    bf = J("combined_backoff_full.json")
+    lev = bf["steps"][-1]["levels"]
+    sp = J("spec_limits.json")
+    fams = {k: f_ for g in sp["grids"].values() for k, f_ in g["families"].items()}
+    mrows = [["motion family", "one at a time (all training hours)", "all at once"]]
+    for k in sorted(x for x in lev if x.startswith("mov/")):
+        fm = fams[k]
+        mrows.append([uv(fm["label"]) + f" ({k.split('/')[1]})", status_text(fm["status"], fm["limit"], fm),
+                      "off" if lev[k] == "off" else fmt_level(level_of(fm, lev[k]), fm)])
+    s.append(p("9d. Chest motion sensor (digital IMU, 1 LSB = 2<super>-12</super> g)", H3T))
+    s.append(table(mrows, [6.4 * cm, 5.0 * cm, 6.4 * cm]))
+    s.append(p("The motion sensor is a digital part, so it has no amplifier or ADC to design; its levels are part of "
+               "the combined point because they were impaired together with the biopotentials.", SMALL))
+
+    # power budget
+    s.append(p("9e. Power per channel and for the whole front end", H3))
+    nefs = c["NEF"]
+    rows = [["modality (channels)", "input noise, spec (one at a time)", "density"] +
+            [f"amplifier, NEF {n:g}" for n in nefs] +
+            ["ADC bits (ideal SNDR)", "ADC: FOM scaling (best)", "ADC: lowest real low-rate design"]]
+    tot_amp = {n: 0.0 for n in nefs}
+    tot_amp_single = {n: 0.0 for n in nefs}
+    tot_fom, tot_floor = 0.0, 0.0
+    ratio_txt = []
+    for m in ("eeg", "ecg", "emg"):
+        x = sj["modalities"][m]
+        ch = x["channels"]
+        vn = x["combined"]["white"]
+        v1 = x["limits"]["white"]["value"]
+        a = x["adc"]
+        pw = x["amp_power_uW_per_channel"]
+        for n in nefs:
+            tot_amp[n] += ch * pw[f"NEF {n:g}"] * 1e-6
+            tot_amp_single[n] += ch * amp_power_w(n, v1 * 1e-6, c)
+        tot_fom += ch * a["P_walden_best_uW"] * 1e-6
+        tot_floor += ch * a["P_lowrate_floor_uW"] * 1e-6
+        ratio_txt.append(f"{m.upper()} {v1:g} → {vn:g} µV rms (× {(v1 / vn) ** 2:.0f})")
+        rows.append([f"{m.upper()} ({ch})", f"{vn:g} µV rms ({v1:g})", f"{x['noise_density_nV_rtHz']:.0f} nV/√Hz"] +
+                    [watts(pw[f"NEF {n:g}"] * 1e-6) for n in nefs] +
+                    [f"{a['bits']} ({a['sndr_dB']:.1f} dB)",
+                     f"{watts(a['P_schreier_best_uW'] * 1e-6)} - {watts(a['P_walden_best_uW'] * 1e-6)}",
+                     watts(a["P_lowrate_floor_uW"] * 1e-6)])
+    nch = sum(sj["modalities"][m]["channels"] for m in ("eeg", "ecg", "emg"))
+    rows.append([f"all {nch} channels", "", ""] + [watts(tot_amp[n]) for n in nefs] +
+                ["", f"≤ {watts(tot_fom)}", watts(tot_floor)])
+    s.append(table(rows, [2.3 * cm, 2.4 * cm, 1.6 * cm] + [1.6 * cm] * len(nefs) + [2.0 * cm, 2.6 * cm, 2.1 * cm],
+                   step_rows=[len(rows) - 1]))
+    s.append(p(f"Amplifier: noise-set lower bound from the NEF definition, I = NEF² π U<sub>T</sub> 4kT BW / "
+               f"(2 v<sub>n</sub>²), P = I × VDD, with VDD {c['VDD_V']:g} V, T {c['T_K']:g} K, BW {c['BW_Hz']:g} Hz. "
+               "NEF 2, 3 and 5 are an illustrative range, <b>not</b> values read from published amplifiers yet (the "
+               "papers are still to be read, section 12). Per channel; the last row is the sum over channels. ADC: "
+               f"the bits are ceil(log2(2 C / q)) at the spec's clip level C and step q, sampled at "
+               f"{c['fsnyq_Hz']:g} Hz; the FOM columns scale the best survey designs to that rate (optimistic) and the "
+               "last column is the lowest power a real low-rate design reached at its own rate (section 7). Digital "
+               "part (feature front end and LUT network): not measured yet (board, section 12). Source: spec.json.",
+               SMALL))
+    s.append(p("<b>What the combined point costs.</b> The noise spec tightens from one at a time to all at once: "
+               + ", ".join(ratio_txt) + " in amplifier current at the same NEF. Summed over the "
+               f"{nch} channels at NEF {nefs[1]:g}: {watts(tot_amp_single[nefs[1]])} with the one-at-a-time noise "
+               f"limits against {watts(tot_amp[nefs[1]])} at the combined point. That is still a few microwatts: the "
+               f"same order as the lowest real low-rate ADCs ({watts(tot_floor)} for all channels) and far above the "
+               f"FOM-scaled ADC power ({watts(tot_fom)}). So if the FOM scaling held at 256 Hz, the amplifiers would "
+               "set the analog power; with real low-rate ADCs the two are comparable.", BODY))
+
+
 def summary(s: list) -> None:
+    import math
     cl, sp, d = J("confirm_limits.json"), J("spec_limits.json"), J("deltas.json")
     fams = {k: f_ for g in sp["grids"].values() for k, f_ in g["families"].items()}
     clean = cl["clean"]
@@ -439,17 +553,33 @@ def summary(s: list) -> None:
     from collections import Counter
     cf = Counter(x["status"] for x in fams.values())
     stepped = sum(1 for x in fams.values() if x["note"] and "stepped down" in x["note"])
-    rp, pz = run_in_progress(), paused_note()
+    bo, bf, sj = J("combined_backoff.json"), J("combined_backoff_full.json"), J("spec.json")
+    vsub = bo["steps"][-1]["verdicts"]
+    vfull = bf["steps"][-1]["verdicts"]
+    lev = bf["steps"][-1]["levels"]
+    sign = lambda v, sg: next(x for k, x in v.items() if k.endswith(f"gain{sg}"))
+    nefs = sj["constants"]["NEF"]
+    mods = ("eeg", "ecg", "emg")
+    nch = sum(sj["modalities"][m]["channels"] for m in mods)
+    amp = [sum(sj["modalities"][m]["channels"] * sj["modalities"][m]["amp_power_uW_per_channel"][f"NEF {n:g}"]
+               for m in mods) * 1e-6 for n in (nefs[0], nefs[-1])]
+    floor = sum(sj["modalities"][m]["channels"] * sj["modalities"][m]["adc"]["P_lowrate_floor_uW"] for m in mods) * 1e-6
+    bits = ", ".join(f"{m.upper()} {sj['modalities'][m]['adc']['bits']}" for m in mods)
 
     s.append(p("Summary", H2))
-    s.append(p("<b>Where things stand.</b> Phase 0 is done (your analog-tool container check is open). Phase 1 has "
-               "all subset sweeps, cross-checks and the FPGA impairment emulator done, and the full-data confirmation "
-               f"half done: step 1 finished {mtime(P1 / 'confirm_limits.json')}, step-down round 1 finished "
-               f"{mtime(stepdown_files()[-1]) if stepdown_files() else '-'}"
-               + (f", round {len(stepdown_files()) + 1} paused by you at {pz} with {rp['done']:,} of "
-                  f"{rp['total']:,} recordings done" if rp and pz else "")
-               + ". Still to run: that round, the combined back-off, the spec table with power, the Phase 1 report."))
+    s.append(p("<b>Where things stand.</b> Phase 0 is done (your analog-tool container check is open). The Phase 1 "
+               "study is complete on the training patients: every impairment swept one at a time on the subset, "
+               "every limit confirmed on all training hours, and all impairments together backed off by the rule "
+               f"fixed beforehand until the combined point passed: on the subset after {bo['final_step']} steps, then "
+               "on all training hours with no further step. That combined point is the front-end specification "
+               "(section 9). Open, on your side: the board run of the FPGA emulator, the measured energy of the "
+               "digital part, and the published amplifier papers for the NEF comparison (section 12)."))
     s.append(Spacer(1, 4))
+
+    def vtxt(x, full=False):
+        return (f"dF1 {f(x['d_f1'], 4, True)}, dFP {f(x['d_fp24'], 3, True)}/24 h"
+                + (f", p {x['wilcoxon_p']:.2f}" if full else ""))
+
     rows = [["result", "value", "section"],
             ["Detector, clean, all training hours (seed-0 fold models, out-of-fold)",
              f"F1 {f(clean['f1'], 3)}, sensitivity {f(clean['sensitivity'], 3)}, "
@@ -459,43 +589,70 @@ def summary(s: list) -> None:
              f"FP rise ≤ {f(d['subset']['delta_fp24'], 3)}/24 h; all hours: ≤ {f(d['full']['delta_f1'])} and "
              f"≤ {f(d['full']['delta_fp24'], 3)}/24 h, plus Wilcoxon p ≥ 0.05", "1b, 8"],
             ["Impairment families tested", f"{len(fams)} (EEG, ECG, EMG: 12 each; motion: 4)", "3"],
-            ["After the full-data confirmation", ", ".join(f"{v} {k}" for k, v in cf.items())
+            ["One at a time, after the full-data confirmation", ", ".join(f"{v} {k}" for k, v in cf.items())
              + f"; {stepped} limits stepped down one grid level", "8b"],
             ["All subset limits at once (preview)", f"fails: F1 drop {min(ratios):.1f}-{max(ratios):.1f} × the "
-             "allowed; back-off still to run", "5"],
+             "allowed", "5a"],
+            [f"Combined point after {bo['final_step']} back-off steps, subset (5 seeds)",
+             f"{bo['status']}: gain+ {vtxt(sign(vsub, '+'))}; gain− {vtxt(sign(vsub, '-'))}", "5b"],
+            ["Same point, all training hours (seed 0)",
+             f"{bf['status']}: gain+ {vtxt(sign(vfull, '+'), True)}; gain− {vtxt(sign(vfull, '-'), True)}", "5c"],
+            [f"Amplifiers, all {nch} channels (noise-set bound, NEF {nefs[0]:g}-{nefs[-1]:g} assumed)",
+             f"{watts(amp[0])} - {watts(amp[1])}", "9e"],
+            ["ADC bits at the spec; lowest real low-rate ADCs, all channels", f"{bits} bits; {watts(floor)}", "9e"],
             ["FPGA impairment emulator vs Python golden model", f"{rtl} mismatching words", "6"]]
     s.append(table(rows, [6.2 * cm, 9.6 * cm, 2.0 * cm]))
     s.append(Spacer(1, 6))
 
-    s.append(p("<b>Front-end limits confirmed on all training hours so far</b> (one impairment at a time; the final "
-               "spec is the combined point, which will be stricter):", BODY))
+    s.append(p("<b>Main front-end numbers</b>: the limit with one impairment at a time, and the level in the combined "
+               "point, which is the specification:", BODY))
     s.append(Spacer(1, 3))
     pick = ["eeg/white", "eeg/lsb", "eeg/clip", "eeg/hp", "eeg/lp", "eeg/mains50", "eeg/gain+", "eeg/gain-",
             "eeg/offset", "ecg/white", "ecg/lsb", "ecg/lp", "ecg/mains50", "emg/white", "emg/lsb", "emg/mains50",
             "mov/lsb", "mov/white"]
-    rows = [["family", "parameter", "all training hours", "first failing level on all hours"]]
-    pend = []
+    rows = [["family", "parameter", "one at a time (all hours)", "first failing on all hours", "combined point"]]
+    pend, tight = [], []
     for k in pick:
         fm = fams[k]
-        rows.append([k.upper().replace("/", " / "), uv(fm["label"]), status_text(fm["status"], fm["limit"], fm),
-                     full_first_failing(fm)])
+        if k not in lev:
+            comb = "not included (no level tolerated)"
+        elif lev[k] == "off":
+            comb = "off (backed off)"
+        else:
+            comb = fmt_level(level_of(fm, lev[k]), fm)
+        one = status_text(fm["status"], fm["limit"], fm)
+        rows.append([k.upper().replace("/", " / "), uv(fm["label"]), one, full_first_failing(fm), comb])
         if fm["status"] == "pending":
             pend.append(len(rows) - 1)
-    s.append(table(rows, [2.4 * cm, 4.6 * cm, 6.2 * cm, 4.6 * cm], pend_rows=pend,
+        elif k in lev and fm["limit"] is not None and (lev[k] == "off" or
+                                                       abs(level_of(fm, lev[k]) - abs(fm["limit"])) > 1e-9):
+            tight.append(len(rows) - 1)
+    s.append(table(rows, [2.2 * cm, 4.2 * cm, 4.0 * cm, 3.6 * cm, 3.8 * cm], pend_rows=pend, step_rows=tight,
                    bad_rows=[i for i, r in enumerate(rows) if r[2] == "none tolerated"]))
-    s.append(p("Blue: still being tested (round in progress). Full table of all 40 families: section 8b. Source: "
-               "spec_limits.json.", SMALL))
+    s.append(p("Yellow: the combined point is tighter than the one-at-a-time limit; red: no level tolerated even "
+               "alone. Full tables: sections 8b (one at a time) and 9 (combined). Sources: spec_limits.json, "
+               "combined_backoff_full.json.", SMALL))
     m50, lsb, wh, ecglp = fams["eeg/mains50"], fams["eeg/lsb"], fams["eeg/white"], fams["ecg/lp"]
+    clip = abs(fams["eeg/clip"]["limit"])
+    eb1 = math.ceil(math.log2(2 * clip / abs(lsb["limit"])))
+    eb2 = sj["modalities"]["eeg"]["adc"]["bits"]
+    v1, v2 = sj["modalities"]["eeg"]["limits"]["white"]["value"], sj["modalities"]["eeg"]["combined"]["white"]
     s.append(Spacer(1, 4))
-    s.append(p("<b>Three findings to be able to explain.</b> (1) Mains pick-up drives the EEG front end: "
+    s.append(p("<b>Four findings to be able to explain.</b> (1) Mains pick-up drives the EEG front end: "
                f"{fmt_level(m50['limit'], m50)} of 50 Hz passes, {full_first_failing(m50)} fails, so "
                "common-mode rejection or a notch matters more than the noise floor. (2) The EEG path tolerates an "
                f"ADC step of {fmt_level(lsb['limit'], lsb)} but only {fmt_level(wh['limit'], wh)} of added white "
                "noise on all hours. On the subset the two limits agreed with the textbook quantisation-noise model "
-               "(section 4a); on all hours the white-noise limit moved one step down while the step limit held, so "
-               "that check has to be redone on the full-data limits. (3) ECG cannot be low-passed at any tested "
+               "(section 4a); on all hours the white-noise limit moved one step down while the step limit held, and "
+               "that check has not been redone on the full-data limits. (3) ECG cannot be low-passed at any tested "
                f"corner (from {fmt_level(ecglp['first_failing'], ecglp)} down), so the detector probably relies on its "
-               "high-frequency content (not checked yet)."))
+               "high-frequency content (not checked yet). (4) One-at-a-time limits do not add up: with everything "
+               f"present the EEG noise has to go from {v1:g} to {v2:g} µV rms ({(v1 / v2) ** 2:.0f} × the amplifier "
+               f"current at the same NEF) and the EEG ADC from {eb1} to {eb2} bits. A spec made of single-impairment "
+               "limits fails (section 5a). The rule also switched the EEG gain error off (its next step below "
+               f"{fmt_level(level_of(fams['eeg/gain+'], fams['eeg/gain+']['levels'][0]['name']), fams['eeg/gain+'])}), "
+               "but that step did not improve the result (section 5b), so a gain spec below that level is what the "
+               "rule produced, not something the data show is needed."))
 
 
 def build(out: Path) -> None:
@@ -506,15 +663,13 @@ def build(out: Path) -> None:
     s = []
 
     # ---- title -------------------------------------------------------------------------------------------------
-    s.append(p("SeizeLUT-MS: results so far and work log (Phases 0-1)", H1))
-    s.append(p(f"Detector-derived analog front-end specification. Branch FPGA, commit {git_commit()}, generated "
+    s.append(p("SeizeLUT-MS Phase 1: results and work log", H1))
+    s.append(p(f"Detector-derived analog front-end specification. Branch {git_branch()}, commit {git_commit()}, generated "
                f"{datetime.now(timezone.utc):%d %b %Y %H:%M} UTC by <font face='DV'>ms/py/results_pdf.py</font>. "
-               "Every result number below is read from a result file (named under each table); the full-data "
-               "files of section 8 are not committed yet.", SMALL))
+               "Every result number below is read from a result file (named under each table).", SMALL))
     s.append(Spacer(1, 6))
     summary(s)
-    s.append(PageBreak())
-    s.append(Spacer(1, 6))
+    s.append(Spacer(1, 10))
     s.append(p("<b>What was measured.</b> How much of each analog impairment (ADC step, noise, clipping, filter "
                "corners, gain error, offset, drift, mains pick-up) the frozen detector <i>n4_distill_s0</i> tolerates "
                "at its frozen operating point (score ≥ 9, alarm 10 of 10). Impairments are applied to the raw "
@@ -532,9 +687,9 @@ def build(out: Path) -> None:
                "thresholds are the standard deviation of the clean result over 5 training seeds (table 1b), so a "
                "change smaller than retraining the model with another seed counts as tolerated."))
     s.append(Spacer(1, 4))
-    s.append(p("<b>Not in this PDF because it is not finished:</b> the last step-down round on all training hours "
-               "(section 8d), the back-off of the combined point, and the final spec table with amplifier and ADC "
-               "power tied to it (section 11).", SMALL))
+    s.append(p("<b>Not in this PDF because it needs your hardware or papers:</b> the board run of the FPGA emulator, "
+               "the measured energy of the digital part, and the comparison with published front ends "
+               "(section 12).", SMALL))
 
     # ---- 1. baseline -------------------------------------------------------------------------------------------
     s.append(p("1. Baseline: the retrained fold models and their seed spread", H2))
@@ -674,10 +829,39 @@ def build(out: Path) -> None:
                "low on clean data. "
                "Source: ecg_offset_lockup.json.", SMALL))
 
-    # ---- 5. combined preview -----------------------------------------------------------------------------------
+    # ---- 5. combined point --------------------------------------------------------------------------------------
+    combined_section(s)
+
+    # ---- 6. hardware impairment emulator -----------------------------------------------------------------------
+    emulator_and_adc_sections(s)
+
+    full_data_section(s)
+    spec_section(s)
+    work_log_section(s)
+    problems_section(s)
+    left_and_assessment(s)
+
+    doc = SimpleDocTemplate(str(out), pagesize=A4, leftMargin=1.6 * cm, rightMargin=1.6 * cm, topMargin=1.5 * cm,
+                            bottomMargin=1.5 * cm, title="SeizeLUT-MS Phase 1 results and work log",
+                            author="SeizeLUT-MS")
+
+    def footer(canvas, doc_):
+        canvas.saveState()
+        canvas.setFont("DV", 7)
+        canvas.setFillColor(MUTED)
+        canvas.drawString(1.6 * cm, 0.9 * cm, "SeizeLUT-MS Phase 1: results and work log (training patients only)")
+        canvas.drawRightString(A4[0] - 1.6 * cm, 0.9 * cm, f"page {doc_.page}")
+        canvas.restoreState()
+
+    doc.build(s, onFirstPage=footer, onLaterPages=footer)
+
+
+def combined_section(s: list) -> None:
     cv5 = J("combined_verdict.json")
     ratios = [-x["d_f1"] / cv5["deltas"]["delta_f1"] for x in cv5["jobs"].values()]
-    s.append(p("5. All limits at once (preview): fails", H2))
+    s.append(PageBreak())
+    s.append(p("5. All limits at once: the combined spec point", H2))
+    s.append(p("5a. Preview: every subset limit at the same time fails", H3))
     rows = [["job", "seeds", "F1", "FP / 24 h", "dF1", "dFP24", "tolerated"]]
     for n, x in cv5["jobs"].items():
         rows.append([n.replace("combined_preview_", "every subset limit, gain error at "), x["seeds"], f(x["f1"]),
@@ -689,10 +873,85 @@ def build(out: Path) -> None:
                "to its subset limit at the same time, in both signs of gain error. The F1 drop is "
                f"{min(ratios):.1f} to {max(ratios):.1f} times the allowed {f(cv5['deltas']['delta_f1'])}. Each limit "
                "was found with the whole error budget to itself, so together they overshoot it. The back-off rule "
-               "(fixed in LOG L21 before any back-off run) runs after the full-data confirmation. "
-               "Source: combined_verdict.json.", SMALL))
+               "was fixed in LOG L21 before any back-off run. Source: combined_verdict.json.", SMALL))
 
-    # ---- 6. hardware impairment emulator -----------------------------------------------------------------------
+    # 5b: back-off trace on the subset
+    sp, bo = J("spec_limits.json"), J("combined_backoff.json")
+    fams = {k: f_ for g in sp["grids"].values() for k, f_ in g["families"].items()}
+    dsub = J("deltas.json")["subset"]
+
+    def lv(fam_key: str, name: str) -> str:
+        if name == "off":
+            return "off"
+        fm = fams.get(fam_key)
+        return fmt_level(level_of(fm, name), fm) if fm else name
+
+    s.append(p("5b. Back-off on the subset (rule of LOG L21), one family one grid step milder per step", H3))
+    s.append(p("Start: every family at its limit confirmed on all training hours (section 8). Each step runs both "
+               "gain signs with 5 noise seeds. If a job fails, the family that flips the most comparator bits per "
+               "window on its own (single-impairment subset run at its current level) moves one grid step milder, "
+               "or off from its mildest level; the ranking is redone after every step. A gain sign stops being a "
+               "candidate once its job passes.", SMALL))
+    rows = [["step", "gain+: dF1 / dFP24", "gain−: dF1 / dFP24", "then backed off", "from → to",
+             "bit flips / window"]]
+    bad = []
+    for st in bo["steps"]:
+        v = st["verdicts"]
+        cells = []
+        for sign in ("+", "-"):
+            x = next(val for k, val in v.items() if k.endswith(f"gain{sign}"))
+            cells.append(f"{f(x['d_f1'], 4, True)} / {f(x['d_fp24'], 3, True)}" + ("" if x["tolerated"] else " ✗"))
+        b = st.get("back_off")
+        if b:
+            row = [st["step"]] + cells + [b["family"].upper().replace("/", " / "),
+                                          f"{lv(b['family'], b['from'])} → {lv(b['family'], b['to'])}",
+                                          f"{b['flips_per_window']:.2f}"]
+            bad.append(len(rows))
+        else:
+            row = [st["step"]] + cells + ["none: both jobs pass", "-", "-"]
+        rows.append(row)
+    s.append(table(rows, [1.0 * cm, 3.2 * cm, 3.2 * cm, 2.8 * cm, 4.2 * cm, 2.2 * cm], bad_rows=bad))
+    s.append(p(f"✗ = not tolerated. Allowed on the subset: dF1 ≥ -{f(dsub['delta_f1'])} and dFP24 ≤ "
+               f"+{f(dsub['delta_fp24'], 3)}. Result: <b>{bo['status']} at step {bo['final_step']}</b>. Gain errors are relative (50 % = "
+               "0.5). Source: combined_backoff.json.", SMALL))
+
+    # 5c: the passing point on all training hours
+    bf, cc = J("combined_backoff_full.json"), None
+    last = bf["steps"][-1]
+    fname = next(iter(last["verdicts"].values()))["file"]
+    cc = J(fname)
+    dfl = cc["deltas_full"]
+    s.append(p("5c. The passing point on all training hours", H3))
+    rows = [["run", "F1", "sensitivity", "FP / 24 h", "dF1", "dFP24", "Wilcoxon p", "pooled F1",
+             "tolerated"]]
+    cl = cc["clean"]
+    rows.append(["clean", f(cl["f1"]), f(cl["sensitivity"]), f(cl["fp_per_24h"], 3), "-", "-", "-",
+                 f(cl["pooled_f1"]), "-"])
+    for j in cc["jobs"]:
+        rows.append([j["name"].replace("combined_b", "combined point, step ").replace("_gain", ", gain "),
+                     f(j["f1"]), f(j["sensitivity"]), f(j["fp_per_24h"], 3), f(j["d_f1"], 4, True),
+                     f(j["d_fp24"], 3, True), f"{j['wilcoxon_p']:.2f}", f(j["pooled_f1"]),
+                     "yes" if j["tolerated"] else "NO"])
+    s.append(table(rows, [4.0 * cm, 1.4 * cm, 1.9 * cm, 1.6 * cm, 1.5 * cm, 1.4 * cm, 1.8 * cm, 1.6 * cm,
+                          1.6 * cm]))
+    pooled = ", ".join(f"{j['name'].split('_')[-1].replace('gain', 'gain ')} {f(j['pooled_f1'] - cl['pooled_f1'], 4, True)}"
+                       for j in cc["jobs"])
+    sub_d = sorted(x["d_f1"] for x in bo["steps"][-1]["verdicts"].values())
+    full_d = sorted(j["d_f1"] for j in cc["jobs"])
+    s.append(p(f"{cc['recordings']:,} training recordings, seed-0 fold models, impairment seed 0 (LOG L18). Allowed: "
+               f"dF1 ≥ -{f(dfl['delta_f1'])}, dFP24 ≤ +{f(dfl['delta_fp24'], 3)}, p ≥ 0.05. Result: "
+               f"<b>{bf['status']} at step {bf['final_step']}</b>, so no further back-off was needed. Clean run "
+               f"equal to the committed CV run: {'yes' if cc['clean_vs_cv']['equal'] else 'NO'}; recordings whose "
+               f"clean features differ from the cache: {len(cc['clean_feature_mismatches'])}. The D-MS10 test uses "
+               "the mean over patients. Pooled over all events instead (not part of the test; reported because "
+               f"it can move differently): pooled F1 change {pooled}. The subset test was the stricter one here "
+               f"(dF1 {f(sub_d[0], 4, True)} to {f(sub_d[-1], 4, True)} on the subset against {f(full_d[0], 4, True)} "
+               f"to {f(full_d[-1], 4, True)} on all hours); the subset holds every training seizure but only a few "
+               "background hours per patient (D-MS5), so it weighs seizure detection more. Sources: combined_backoff_full.json, "
+               + fname + ".", SMALL))
+
+
+def emulator_and_adc_sections(s: list) -> None:
     s.append(p("6. FPGA impairment emulator: bit-exact against the Python model", H2))
     rows = [["design", "test cases", "samples per case", "mismatches", "negative control (one seed bit flipped)"]]
     for fn, lab in (("impair_rtl_check.json", "ms_impair.v (core)"),
@@ -733,32 +992,13 @@ def build(out: Path) -> None:
     s.append(p(f"{ad['source']}; {ad['designs']} designs. Power at our Nyquist rate of 256 Hz from the figure of "
                "merit of designs of similar resolution (required SNDR to +20 dB). The FOM columns scale "
                "fast designs down to 256 Hz and are optimistic; the last column is the lowest power a real "
-               "low-rate design achieved at its own, higher rate. Which SNDR the detector needs comes from the "
-               "final spec table, which is not finished. Source: adc_survey_power.json.", SMALL))
-
-    full_data_section(s)
-    work_log_section(s)
-    problems_section(s)
-    left_and_assessment(s)
-
-    doc = SimpleDocTemplate(str(out), pagesize=A4, leftMargin=1.6 * cm, rightMargin=1.6 * cm, topMargin=1.5 * cm,
-                            bottomMargin=1.5 * cm, title="SeizeLUT-MS results so far and work log",
-                            author="SeizeLUT-MS")
-
-    def footer(canvas, doc_):
-        canvas.saveState()
-        canvas.setFont("DV", 7)
-        canvas.setFillColor(MUTED)
-        canvas.drawString(1.6 * cm, 0.9 * cm, "SeizeLUT-MS: results so far and work log (training patients only)")
-        canvas.drawRightString(A4[0] - 1.6 * cm, 0.9 * cm, f"page {doc_.page}")
-        canvas.restoreState()
-
-    doc.build(s, onFirstPage=footer, onLaterPages=footer)
+               "low-rate design achieved at its own, higher rate. The SNDR the detector needs, and the power at "
+               "that SNDR, are in section 9. Source: adc_survey_power.json.", SMALL))
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=str(P1 / "phase1_results_so_far.pdf"))
+    ap.add_argument("--out", default=str(P1 / "phase1_results.pdf"))
     a = ap.parse_args()
     build(Path(a.out))
     print(a.out)

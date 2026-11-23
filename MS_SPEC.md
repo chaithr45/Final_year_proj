@@ -12,7 +12,7 @@ Companion files: `PREREG.md` (anything that touches test patients), `LOG.md` (pr
 | Phase | Content | State |
 |---|---|---|
 | 0 | Inventory, planning files, analog tool setup | done on my side (15 Nov); **your container check pending** (`ms/setup/check_tools.sh`) |
-| 1 | Detector-derived analog front-end specification | **started 16 Nov** (decisions D-MS4..D-MS10 settled: your go-ahead "do what you think is best") |
+| 1 | Detector-derived analog front-end specification | **study done 23 Nov, waiting for your review**: the combined spec point passes on all training hours; spec table `ms/results/phase1/spec_table.md`, report `ms/results/phase1/PHASE1_REPORT.md`. Open on your side: ms1 board run, board energy of the digital part, PDFs of the NEF papers (decisions D-MS4..D-MS10: your go-ahead "do what you think is best", 16 Nov) |
 | 2 | Comparator design (SKY130) and offset tolerance on the FPGA | Feb-Mar 2027 |
 | 3 | FPGA delta-sigma ADC, designed and measured | Mar-Apr 2027 |
 | 4 | Measured analog chain into the detector | Apr-May 2027 |
@@ -202,7 +202,7 @@ kit, ARM driver, board build.
    time, most-moving first, until the combined point passes. The spec table reports the combined point.
    Details of the back-off (measure of movement, re-ranking, gain signs) pinned in LOG L21 after the subset
    preview failed (F1 -0.072 / -0.085), before any back-off run: `python ms/py/combined_backoff.py --models <seed-0
-   fold models>` (subset), then `--data full`.
+   fold models>` (subset), then `--data full`. **Result (23 Nov):** passed on the subset after 22 back-off steps and on all training hours with no further step (LOG L21).
 8. In-fabric emulator: Verilog block plus Python golden model, Verilator word-for-word check, then board runs of the
    subset at selected points (D-MS6).
 
