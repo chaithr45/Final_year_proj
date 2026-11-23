@@ -1,0 +1,292 @@
+{
+ "constants": {
+  "T_K": 300.0,
+  "U_T_V": 0.025851999786435535,
+  "BW_Hz": 99.5,
+  "VDD_V": 1.8,
+  "fsnyq_Hz": 256.0,
+  "NEF": [
+   2.0,
+   3.0,
+   5.0
+  ]
+ },
+ "source": "/home/user/Final_year_proj/ms/results/phase1/spec_limits.json",
+ "basis": "full data (D-MS10 + Wilcoxon)",
+ "combined_basis": "combined point, full data (step 22)",
+ "modalities": {
+  "eeg": {
+   "limits": {
+    "white": {
+     "value": 4.0,
+     "kind": "limit"
+    },
+    "lsb": {
+     "value": 32.0,
+     "kind": "limit"
+    },
+    "clip": {
+     "value": 2048.0,
+     "kind": "limit"
+    },
+    "pink": {
+     "value": 30.0,
+     "kind": "at least"
+    },
+    "gain+": {
+     "value": 0.05,
+     "kind": "limit"
+    },
+    "gain-": {
+     "value": 0.05,
+     "kind": "limit"
+    },
+    "offset": {
+     "value": 0.6,
+     "kind": "limit"
+    },
+    "drift": {
+     "value": 10.0,
+     "kind": "limit"
+    },
+    "mains50": {
+     "value": 1.0,
+     "kind": "limit"
+    },
+    "mains250": {
+     "value": 1.0,
+     "kind": "limit"
+    },
+    "hp": {
+     "value": 0.5,
+     "kind": "limit"
+    },
+    "lp": {
+     "value": 100.0,
+     "kind": "limit"
+    }
+   },
+   "channels": 2,
+   "combined": {
+    "white": 1.0,
+    "lsb": 4.0,
+    "clip": 2048.0,
+    "pink": 3.0,
+    "gain+": "off",
+    "gain-": "off",
+    "offset": 0.6,
+    "drift": 10.0,
+    "mains50": 1.0,
+    "mains250": 1.0,
+    "hp": 0.1,
+    "lp": 100.0
+   },
+   "power_basis": "combined point, full data (step 22)",
+   "noise_density_nV_rtHz": 100.2509414234171,
+   "amp_power_uW_per_channel": {
+    "NEF 2": 0.4819856702775577,
+    "NEF 3": 1.0844677581245048,
+    "NEF 5": 3.0124104392347357
+   },
+   "adc": {
+    "bits": 10,
+    "sndr_dB": 61.959999999999994,
+    "P_walden_best_uW": 0.00015890553729440117,
+    "P_schreier_best_uW": 4.175388395615519e-05,
+    "P_lowrate_floor_uW": 0.468,
+    "lowrate_floor_design": {
+     "venue": "ISSCC",
+     "year": 2021,
+     "id": 27.2,
+     "arch": "SAR",
+     "title": "14.1-ENOB 184.9dB-FoM Capacitor-Array-Assisted Cascaded Charge-Injection SAR ADC",
+     "doi": "10.1109/ISSCC42613.2021.9365863",
+     "fsnyq_Hz": 6000.0,
+     "sndr_dB": 86.66
+    }
+   }
+  },
+  "ecg": {
+   "limits": {
+    "white": {
+     "value": 8.0,
+     "kind": "limit"
+    },
+    "lsb": {
+     "value": 32.0,
+     "kind": "limit"
+    },
+    "clip": {
+     "value": 1024.0,
+     "kind": "limit"
+    },
+    "pink": {
+     "value": 30.0,
+     "kind": "at least"
+    },
+    "gain+": {
+     "value": 0.5,
+     "kind": "at least"
+    },
+    "gain-": {
+     "value": 0.5,
+     "kind": "at least"
+    },
+    "offset": {
+     "value": 0.1,
+     "kind": "limit"
+    },
+    "drift": {
+     "value": 100.0,
+     "kind": "limit"
+    },
+    "mains50": {
+     "value": 10.0,
+     "kind": "limit"
+    },
+    "mains250": {
+     "value": 10.0,
+     "kind": "limit"
+    },
+    "hp": {
+     "value": 0.3,
+     "kind": "limit"
+    },
+    "lp": {
+     "value": 100.0,
+     "kind": "tighter than"
+    }
+   },
+   "channels": 1,
+   "combined": {
+    "white": 4.0,
+    "lsb": 16.0,
+    "clip": 1024.0,
+    "pink": 30.0,
+    "gain+": 0.5,
+    "gain-": 0.5,
+    "offset": 0.1,
+    "drift": 100.0,
+    "mains50": 10.0,
+    "mains250": 1.0,
+    "hp": 0.3,
+    "lp": null
+   },
+   "power_basis": "combined point, full data (step 22)",
+   "noise_density_nV_rtHz": 401.0037656936684,
+   "amp_power_uW_per_channel": {
+    "NEF 2": 0.030124104392347355,
+    "NEF 3": 0.06777923488278155,
+    "NEF 5": 0.18827565245217098
+   },
+   "adc": {
+    "bits": 7,
+    "sndr_dB": 43.9,
+    "P_walden_best_uW": 1.1584078056214288e-05,
+    "P_schreier_best_uW": 2.6363940417554803e-06,
+    "P_lowrate_floor_uW": 0.0027,
+    "lowrate_floor_design": {
+     "venue": "ISSCC",
+     "year": 2017,
+     "id": 21.6,
+     "arch": "SAR",
+     "title": "A 12nW Always-On Acoustic Sensing and Object Recognition Microsystem using Frequency-Domain Feature Extraction and SVM Classification",
+     "doi": "10.1109/ISSCC.2017.7870411",
+     "fsnyq_Hz": 1000.0,
+     "sndr_dB": 48.3
+    }
+   }
+  },
+  "emg": {
+   "limits": {
+    "white": {
+     "value": 2.0,
+     "kind": "limit"
+    },
+    "lsb": {
+     "value": 256.0,
+     "kind": "at least"
+    },
+    "clip": {
+     "value": 1024.0,
+     "kind": "limit"
+    },
+    "pink": {
+     "value": 30.0,
+     "kind": "at least"
+    },
+    "gain+": {
+     "value": 0.5,
+     "kind": "at least"
+    },
+    "gain-": {
+     "value": 0.5,
+     "kind": "at least"
+    },
+    "offset": {
+     "value": 0.6,
+     "kind": "limit"
+    },
+    "drift": {
+     "value": 1000.0,
+     "kind": "at least"
+    },
+    "mains50": {
+     "value": 1.0,
+     "kind": "limit"
+    },
+    "mains250": {
+     "value": 10.0,
+     "kind": "limit"
+    },
+    "hp": {
+     "value": 0.5,
+     "kind": "limit"
+    },
+    "lp": {
+     "value": 70.0,
+     "kind": "limit"
+    }
+   },
+   "channels": 1,
+   "combined": {
+    "white": 2.0,
+    "lsb": 16.0,
+    "clip": 1024.0,
+    "pink": 30.0,
+    "gain+": 0.5,
+    "gain-": 0.2,
+    "offset": 0.6,
+    "drift": 100.0,
+    "mains50": 1.0,
+    "mains250": 10.0,
+    "hp": 0.5,
+    "lp": 70.0
+   },
+   "power_basis": "combined point, full data (step 22)",
+   "noise_density_nV_rtHz": 200.5018828468342,
+   "amp_power_uW_per_channel": {
+    "NEF 2": 0.12049641756938942,
+    "NEF 3": 0.2711169395311262,
+    "NEF 5": 0.7531026098086839
+   },
+   "adc": {
+    "bits": 7,
+    "sndr_dB": 43.9,
+    "P_walden_best_uW": 1.1584078056214288e-05,
+    "P_schreier_best_uW": 2.6363940417554803e-06,
+    "P_lowrate_floor_uW": 0.0027,
+    "lowrate_floor_design": {
+     "venue": "ISSCC",
+     "year": 2017,
+     "id": 21.6,
+     "arch": "SAR",
+     "title": "A 12nW Always-On Acoustic Sensing and Object Recognition Microsystem using Frequency-Domain Feature Extraction and SVM Classification",
+     "doi": "10.1109/ISSCC.2017.7870411",
+     "fsnyq_Hz": 1000.0,
+     "sndr_dB": 48.3
+    }
+   }
+  }
+ }
+}
