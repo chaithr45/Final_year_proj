@@ -25,7 +25,7 @@ const HX = { navy: "1F3A5F", ink: "3A4554", grey: "5B6675", orange: "C04E1C", or
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE";
 pres.author = "Akshara Bonam, Sai Chaithr, Sowjanya";
-pres.title = "SeizeLUT: EC418 BISP Project";
+pres.title = "A Self-Testing Multimodal FPGA-Based Seizure Detection System for Tele-monitoring";
 pres.theme = { headFontFace: "Inter", bodyFontFace: "Inter" };
 const C = pres.SchemeColor;
 const NAVY = C.text2, INK = C.accent4, GREY = C.accent3, OR = C.accent1, OR2 = C.accent2, LINE = C.accent5, PANEL = C.background2, PEACH = C.accent6;
@@ -111,7 +111,7 @@ img(s, "nitw_logo.png", X0, 0.45, 0.6, 0.6 * 972 / 828, "NIT Warangal logo", "NI
 txt(s, "NATIONAL INSTITUTE OF TECHNOLOGY WARANGAL", { x: 1.55, y: 0.5, w: 7, h: 0.3, fontSize: 14, bold: true, color: NAVY, objectName: "Institute" });
 txt(s, "Department of Electronics and Communication Engineering", { x: 1.55, y: 0.82, w: 7, h: 0.3, fontSize: 14, color: GREY, objectName: "Department" });
 txt(s, "SeizeLUT", { x: X0, y: 1.55, w: 7.5, h: 0.8, fontSize: 44, bold: true, color: NAVY, valign: "middle", objectName: "Project name" });
-txt(s, "A Self-Testing, Multiplier-Free Seizure Detector on an FPGA with Doctor Alerts", { x: X0, y: 2.45, w: 7.3, h: 0.8, fontSize: 22, bold: true, color: NAVY, objectName: "Project title" });
+txt(s, "A Self-Testing Multimodal FPGA-Based Seizure Detection System for Tele-monitoring", { x: X0, y: 2.45, w: 7.3, h: 0.8, fontSize: 22, bold: true, color: NAVY, objectName: "Project title" });
 txt(s, "EC418 · BISP Course Project   November 2026", { x: X0, y: 3.5, w: 7, h: 0.3, fontSize: 14, color: GREY, objectName: "Course" });
 txt(s, "PRESENTED BY", { x: X0, y: 4.15, w: 4, h: 0.26, fontSize: 12, bold: true, color: OR, charSpacing: 1, objectName: "Presented label" });
 txt(s, [
