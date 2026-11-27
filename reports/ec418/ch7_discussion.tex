@@ -73,6 +73,9 @@ without shaking\\ \hline
   hour, so it suits seizure logging rather than instant alarms.
 \item \textbf{Self-adaptation:} label-free per-patient adaptation (N3) raised the false alarms from 6.8 to 10--40 per
   day on the training patients and was not adopted.
+\item \textbf{Front-end specification:} it is sufficient, not minimal (another back-off order could reach a cheaper
+  point); each limit is known to about one grid step; the amplifier powers use an assumed NEF range, not a designed
+  circuit; and a weak detector may tolerate impairments because it has little to lose.
 \item \textbf{Doctor alert:} tested in emulation only; the pattern hint matches the doctors' label in 64\,\% of
   training seizures and is not a diagnosis.
 \end{itemize}

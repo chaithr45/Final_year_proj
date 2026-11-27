@@ -354,6 +354,83 @@ software. The first board run found one software bug: the driver wrote ``soft re
 same register write, and the hardware gives the reset priority, so the counters were not cleared. The driver now writes
 them separately (no rebuild was needed).
 
+\section{Analog Front-End Specification}\label{sec:res-afe}
+
+\textbf{One impairment at a time.} Of the 40 families, 29 have a limit, 10 are tolerated even at the most severe level
+tested, and one is not tolerated at any level: the ECG low-pass filter fails even at 100\,Hz. Figure~\ref{fig:toleeg}
+shows the EEG curves. The detector is most sensitive to mains interference on the EEG (1\,\textmu V of 50\,Hz is
+tolerated, 10\,\textmu V is not), so common-mode rejection or a notch matters more than the noise floor.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/tolerance_eeg.png}
+\caption{EEG tolerance curves on the training subset: change in event-F1 (blue) and false alarms per day (orange)
+against each impairment level; filled points are tolerated}\label{fig:toleeg}
+\end{figure}
+
+\textbf{All at once.} With every family at its single-impairment limit, the F1 drop was 2.3--2.8 times the allowed
+value, because each limit had used the whole error budget by itself. After 22 back-off steps the combined point passed
+on the subset, and then on all 8,714.7 training hours with no further step (F1 change $-0.0022$ and $-0.0076$ for the
+two signs of gain error; false alarms $+0.105$ and $+0.094$ per day; Wilcoxon $p = 0.48$ and $0.50$).
+
+\begin{table}[H]
+\centering\small
+\caption{Front-end specification: limit with one impairment at a time and the combined point (all training hours)}\label{tab:afe}
+\begin{tabularx}{\textwidth}{|P{20mm}|L|P{36mm}|P{36mm}|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Signal}} & \multicolumn{1}{c|}{\textbf{Parameter}} & \multicolumn{1}{c|}{\textbf{One at a time}} & \multicolumn{1}{c|}{\textbf{Specification}}\\
+\hline
+EEG & input noise (0.5--100 Hz) & 4 \textmu V rms & \textbf{1 \textmu V rms}\\
+\hline
+EEG & ADC step / clip level & 32 \textmu V / 2048 \textmu V & \textbf{4 \textmu V / 2048 \textmu V (10 bits)}\\
+\hline
+EEG & 50 Hz interference & 1 \textmu V & 1 \textmu V\\
+\hline
+EEG & high-pass / low-pass corner & 0.5 Hz / 100 Hz & 0.1 Hz / 100 Hz\\
+\hline
+ECG & input noise & 8 \textmu V rms & \textbf{4 \textmu V rms}\\
+\hline
+ECG & ADC step / clip level & 32 \textmu V / 1024 \textmu V & \textbf{16 \textmu V / 1024 \textmu V (7 bits)}\\
+\hline
+ECG & low-pass corner & none tolerated & not included\\
+\hline
+EMG & input noise & 2 \textmu V rms & \textbf{2 \textmu V rms}\\
+\hline
+EMG & ADC step / clip level & $\ge$ 256 \textmu V / 1024 \textmu V & \textbf{16 \textmu V / 1024 \textmu V (7 bits)}\\
+\hline
+Motion & ADC step / noise & 16 LSB / 2 LSB rms & 8 LSB / 1 LSB rms\\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Power of the analog front end at the specification (noise-set amplifier bound for an assumed NEF of 2, 3 and 5; ADC
+power from the Murmann survey)}\label{tab:afepower}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Channels}} & \textbf{Noise density} & \textbf{NEF 2} & \textbf{NEF 3} & \textbf{NEF 5} & \textbf{ADC bits}\\
+\hline
+EEG (2), per channel & 100 nV/$\sqrt{\mathrm{Hz}}$ & 482 nW & 1.08 \textmu W & 3.01 \textmu W & 10\\
+\hline
+ECG (1) & 401 nV/$\sqrt{\mathrm{Hz}}$ & 30.1 nW & 67.8 nW & 188 nW & 7\\
+\hline
+EMG (1) & 201 nV/$\sqrt{\mathrm{Hz}}$ & 120 nW & 271 nW & 753 nW & 7\\
+\hline
+\textbf{All 4 channels} & & \textbf{1.11 \textmu W} & \textbf{2.51 \textmu W} & \textbf{6.97 \textmu W} & \\
+\hline
+\end{tabular}
+\end{table}
+
+The ADCs of the lowest-power real low-rate designs in the survey add about 941\,nW for all channels. The analog front end
+therefore needs a few microwatts, set mainly by the EEG amplifiers: tightening the EEG noise from 4 to 1\,\textmu V rms
+costs 16 times the amplifier current at the same NEF.
+
+\textbf{FPGA impairment emulator.} The Verilog emulator matched the Python impairment model word for word in 11 test
+cases of 70,000 samples each (0 mismatches; flipping one seed bit changed 65,702 of 70,000 words, which shows the
+comparison works), both on its own and behind AXI4-Lite. It takes 4,713 LUTs (5,117 with AXI) in Yosys. Its run on the
+board is still to be done.
+
 \section{Live Demonstration and Doctor Alert}\label{sec:res-demo}
 
 On the board, recorded test-patient signals stream second by second through the fabric; the alarm fires during the

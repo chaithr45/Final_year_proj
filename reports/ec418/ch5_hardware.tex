@@ -72,3 +72,30 @@ changes at least one alarm.
 exercise every decision-relevant fault. The on-chip self-test runs 1,024 vectors in 1,028 clock cycles
 (10.3\,\textmu s), so the device can test itself after every one-second window. The detection results are in
 Section~\ref{sec:res-bist}.
+
+\section{Analog Front-End Specification}\label{sec:afe}
+
+The detector works on digitised signals, so in a wearable it sits behind amplifiers and analog-to-digital converters
+(ADCs). To learn how good that analog front end must be, every analog impairment was applied to the raw 16-bit inputs
+of the training patients and the frozen detector was scored on the impaired signals:
+
+\begin{itemize}
+\item \textbf{Impairments:} ADC step and clip level, white and 1/f noise, gain error, DC offset, slow drift, high- and
+  low-pass corners, and 50\,Hz and 250\,Hz mains interference: 40 impairment families (EEG, ECG and EMG 12 each, motion 4).
+\item \textbf{Patients:} only the 96 training patients; each patient was scored by a fold model that never saw it
+  (out-of-fold). The test patients were not used.
+\item \textbf{Sweep subset:} 899 segments (667.2 scored hours) holding all 698 training seizures and background from
+  every patient; random impairments used 5 noise seeds.
+\item \textbf{Tolerated:} an impairment level is tolerated if the event-F1 drops by at most 0.0307 and false alarms rise
+  by at most 0.126 per 24\,h on the subset, the standard deviation between 5 training seeds. On all training hours the
+  thresholds are 0.0092 and 0.206 per 24\,h, and the paired Wilcoxon test must not be significant ($p \ge 0.05$). The
+  thresholds were fixed before any sweep.
+\item \textbf{Combined point:} single-impairment limits were then applied all at once. Where that failed, the impairment
+  that flipped the most comparator bits was made one step milder, and the run was repeated until the combined point
+  passed. That combined point is the front-end specification.
+\item \textbf{Power:} the amplifier power follows from the noise specification through the noise efficiency factor (NEF),
+  $I = \mathrm{NEF}^2\,\pi\,U_T\,4kT\,\mathrm{BW}/(2v_n^2)$ and $P = I \cdot V_{DD}$ (1.8\,V, 300\,K, 99.5\,Hz band); the
+  ADC power comes from the Murmann ADC survey at the needed resolution.
+\item \textbf{FPGA impairment emulator:} the same impairments were written in Verilog so that they can later be
+  applied on the board in real time.
+\end{itemize}

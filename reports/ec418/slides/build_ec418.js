@@ -132,7 +132,7 @@ const cols = [
   ["01", "Introduction", [["Problem Statement", "3"], ["Objectives", "4"], ["Literature Survey", "5–7"]]],
   ["02", "System Design", [["How It Works", "8"], ["System Architecture", "9"], ["Hardware Setup", "10"], ["Dataset", "11"]]],
   ["03", "Methodology", [["Signal Chain", "12"], ["Features and LUT Network", "13"], ["Evaluation Protocol", "14"], ["Classifier in Hardware", "15"], ["Self-Test Design", "16"]]],
-  ["04", "Results", [["Verification", "17"], ["Test Patients", "18"], ["Base Paper", "19–20"], ["FPGA on Kria KV260", "21–23"], ["Live Demonstration", "24–25"]]],
+  ["04", "Results", [["Verification", "17"], ["Test Patients", "18"], ["Base Paper", "19–20"], ["FPGA on Kria KV260", "21–23"], ["Analog Front End", "24–25"], ["Live Demonstration", "26–27"]]],
 ];
 cols.forEach((c, i) => {
   const x = X0 + i * 3.07, w = 2.75;
@@ -146,9 +146,9 @@ cols.forEach((c, i) => {
     rule(s, x, y + 0.44, w, LINE, `Index line ${i + 1}.${j + 1}`);
   });
 });
-s.addShape(pres.shapes.RECTANGLE, { x: X0, y: 5.5, w: W, h: 0.8, fill: { color: PANEL }, line: { color: PANEL }, objectName: "Index band" });
-[["05", "Limitations", "26", 1.0], ["06", "Conclusion and Future Work", "27", 4.6], ["", "References", "28–29", 9.4]].forEach((b, i) => {
-  txt(s, [{ text: b[0] ? b[0] + "  " : "", options: { color: HX.orange, bold: true } }, { text: b[1], options: { color: HX.navy, bold: true } }, { text: "   " + b[2], options: { color: HX.grey } }], { x: X0 + b[3] - 0.7, y: 5.5, w: 4.4, h: 0.8, fontSize: 16, valign: "middle", objectName: "Index band item " + (i + 1) });
+s.addShape(pres.shapes.RECTANGLE, { x: X0, y: 5.8, w: W, h: 0.7, fill: { color: PANEL }, line: { color: PANEL }, objectName: "Index band" });
+[["05", "Limitations", "28", 1.0], ["06", "Conclusion and Future Work", "29", 4.6], ["", "References", "30–31", 9.4]].forEach((b, i) => {
+  txt(s, [{ text: b[0] ? b[0] + "  " : "", options: { color: HX.orange, bold: true } }, { text: b[1], options: { color: HX.navy, bold: true } }, { text: "   " + b[2], options: { color: HX.grey } }], { x: X0 + b[3] - 0.7, y: 5.8, w: 4.4, h: 0.7, fontSize: 16, valign: "middle", objectName: "Index band item " + (i + 1) });
 });
 
 // ================================================================ 3 Problem statement
@@ -169,7 +169,7 @@ txt(s, "Can a network built only from FPGA lookup tables detect seizures from we
 callout(s, 5.62, "OUR AIM", "A multiplier-free detector in a few hundred FPGA lookup tables that checks itself and tells the doctor what to do.", 0.9, "Aim");
 
 // ================================================================ 4 Objectives
-s = content("Introduction", "SEIZELUT · MOTIVATION", "Objectives", "What the Project Set Out to Do", "Seven goals that take wearable signals to a self-tested FPGA alarm and a doctor's phone",
+s = content("Introduction", "SEIZELUT · MOTIVATION", "Objectives", "What the Project Set Out to Do", "Eight goals that take wearable signals to a self-tested FPGA alarm and a doctor's phone",
   "Each objective was completed; the ESP32 alert is tested in emulation and the real-phone test is pending.");
 numRows(s, [
   ["Audit and baseline", "Audit the SeizeIT2 dataset and reproduce its published ChronoNet baseline."],
@@ -179,7 +179,8 @@ numRows(s, [
   ["Self-test", "Analyse every single hardware fault and detect every fault that can change a decision."],
   ["Whole detector on the FPGA", "Front end and classifier in the fabric of the AMD Kria KV260, verified on the board."],
   ["Alarm and doctor alert", "Alarm LED and buzzer on a breadboard; push notification through an ESP32."],
-], 1.95, 0.66, "Objective");
+  ["Front-end specification", "Derive the noise, ADC and filter limits the detector tolerates, from training patients only."],
+], 1.95, 0.58, "Objective");
 
 // ================================================================ 5 Literature 1
 s = content("Introduction", "SEIZELUT · LITERATURE SURVEY   ·   1 OF 3", "Literature Survey", "Wearable Seizure Detection", "Behind-the-ear EEG works, extra sensors cut false alarms, but published detectors are large software models",
@@ -455,6 +456,36 @@ table(s, [
   ["9 Whole detector in fabric", "9,214 windows from raw samples, 0 mismatches; 102–124× real time", "PASS"],
 ], { x: X0, y: 1.95, w: W, colW: [2.8, 7.6, 1.49], fontSize: 12, margin: [2, 5, 2, 5] });
 
+// ================================================================ 22b Analog front end 1
+s = content("Results", "SEIZELUT · ANALOG FRONT END", "Analog Front End", "Impairment Tolerance", "Noise, ADC steps, filters and mains hum were added to the raw training signals, one at a time",
+  "Each patient was scored by a fold model that never saw it; the test patients were not used. A level is tolerated if the F1 drop and false-alarm rise stay within one seed-to-seed standard deviation.");
+fit(s, "tolerance_eeg.png", 2400, 1939, X0, 1.95, 6.3, 4.7, "EEG tolerance curves: change in event-F1 and false alarms per day against each impairment level", "EEG tolerance curves");
+stat(s, 7.35, 2.0, 2.5, "40", "impairment families tested (EEG, ECG, EMG 12 each, motion 4)", false, "Stat families");
+stat(s, 10.1, 2.0, 2.51, "29 · 10 · 1", "with a limit · tolerated at every level · never tolerated (ECG low-pass)", false, "Stat outcome");
+stat(s, 7.35, 3.85, 2.5, "1 µV", "of 50 Hz hum on the EEG is tolerated; 10 µV is not", true, "Stat mains");
+stat(s, 10.1, 3.85, 2.51, "22 steps", "of back-off until all impairments together pass", false, "Stat backoff");
+s.addShape(pres.shapes.RECTANGLE, { x: 7.35, y: 5.7, w: 5.26, h: 0.95, fill: { color: PEACH }, line: { color: PEACH }, objectName: "Combined box" });
+s.addText([{ text: "ALL AT ONCE  ", options: { bold: true, color: HX.orange } }, { text: "The single limits together failed by 2.3–2.8×; the backed-off point passed on all 8,714.7 training hours.", options: { color: HX.dark } }], { x: 7.55, y: 5.7, w: 4.9, h: 0.95, fontSize: 13, valign: "middle", margin: 0, isTextBox: true, objectName: "Combined text" });
+
+// ================================================================ 22c Analog front end 2
+s = content("Results", "SEIZELUT · ANALOG FRONT END", "Analog Front End", "Specification and Power", "The combined point is the front-end specification: a few microwatts, set mainly by the EEG amplifiers",
+  "Amplifier power is the noise-set lower bound for an assumed NEF of 2 to 5; ADC power comes from the Murmann ADC survey. Tightening EEG noise from 4 to 1 µV rms costs 16 times the amplifier current.");
+table(s, [
+  ["Signal", "Parameter", "One at a time", "Specification"],
+  ["EEG", "input noise (0.5–100 Hz)", "4 µV rms", "1 µV rms"],
+  ["EEG", "ADC step / clip", "32 / 2048 µV", "4 / 2048 µV (10 bits)"],
+  ["EEG", "50 Hz interference", "1 µV", "1 µV"],
+  ["ECG", "input noise", "8 µV rms", "4 µV rms"],
+  ["ECG", "ADC step / clip", "32 / 1024 µV", "16 / 1024 µV (7 bits)"],
+  ["ECG", "low-pass corner", "none tolerated", "not included"],
+  ["EMG", "input noise", "2 µV rms", "2 µV rms"],
+  ["EMG", "ADC step / clip", "≥ 256 / 1024 µV", "16 / 1024 µV (7 bits)"],
+  ["Motion", "ADC step / noise", "16 / 2 LSB", "8 / 1 LSB"],
+], { x: X0, y: 2.0, w: 7.3, colW: [1.0, 2.3, 1.8, 2.2], fontSize: 13, margin: [4, 5, 4, 5] });
+stat(s, 8.4, 2.05, 4.21, "1.1–7.0 µW", "amplifiers, all 4 channels (NEF 2–5 assumed)", true, "Stat amp");
+stat(s, 8.4, 3.85, 4.21, "≈ 0.94 µW", "ADCs, all channels (lowest-power real low-rate designs)", false, "Stat adc");
+panelNote(s, 5.85, "FPGA EMULATOR", "Verilog impairment emulator: 0 mismatches in 11 × 70,000 samples; 4,713 LUTs. Board run still to do.", 0.6, "Emulator");
+
 // ================================================================ 23 Live demo
 s = content("Results", "SEIZELUT · RESULTS", "Work Done", "Live Demonstration", "Recorded test signals stream through the board; LED and buzzer fire during the seizure",
   "The dashboard checks on every window that the FPGA equals the software.");
@@ -525,6 +556,7 @@ txt(s, [
   "Test the ESP32 alert with a real phone",
   "Learn each patient from doctor feedback, with a new self-test for every update",
   "Wearable prototype on a low-power FPGA; volunteer recordings",
+  "Design the analog front end to the derived specification",
   "Paper submission: IEEE EMBC 2027 (deadline 24 Jan 2027)",
 ].map((t, i, a) => ({ text: t, options: { bullet: { indent: 14 }, breakLine: i < a.length - 1 } })), { x: 6.91, y: 2.95, w: 5.7, h: 2.8, fontSize: 14, paraSpaceAfter: 8, objectName: "Future list" });
 txt(s, "SeizeLUT is a course prototype for research, not a medical device.", { x: X0, y: 6.3, w: W, h: 0.3, fontSize: 12, color: GREY, objectName: "Disclaimer" });

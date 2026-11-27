@@ -10,7 +10,8 @@ detects more seizures than ChronoNet (43.2\,\% against 34.8\,\%), and with post-
 than the dataset paper's SVM at its false-alarm rate (73.3\,\% against 71.1\,\%). All 3,592 single faults of the
 classifier were analysed, and 255 selected test vectors detect every fault that changes a decision, in a 10.3\,\textmu s
 on-chip self-test. On the AMD Kria KV260 all nine board tests pass, the board equals the software on every window and
-every injected fault, and a live demonstration drives an alarm LED and a buzzer while an ESP32 tells the doctor what to
+every injected fault. Driving the detector with impaired signals gave a specification for its analog front end (EEG noise
+1\,\textmu V rms, 10-bit EEG and 7-bit ECG and EMG converters, a few microwatts in total). A live demonstration drives an alarm LED and a buzzer while an ESP32 tells the doctor what to
 do.
 
 \section{Future Scope}
@@ -22,5 +23,7 @@ do.
 \item Detect more focal seizures, the main clinical gap.
 \item Record volunteers wearing the sensors with a battery-powered low-power FPGA, and run the self-test periodically
   in the field.
+\item Design the front end to the derived specification (SKY130 comparator, FPGA delta-sigma ADC) and run the
+  impairment emulator on the board.
 \item Submit the work as a paper (IEEE EMBC 2027, full paper deadline 24 January 2027).
 \end{itemize}
