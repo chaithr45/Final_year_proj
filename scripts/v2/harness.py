@@ -80,7 +80,55 @@ def _thresholds(sc, n=60):
     return np.unique(np.quantile(alls, qs))
 
 
-def paper_curve(sc, meta, k=10, n=60, ths=None):
+def _numba_refr():
+    import numba
+
+    @numba.njit(cache=True)
+    def count(a, y, gap):
+        # walk raw alarm-on runs; an alarm fires at a run start unless it lies within `gap` s of the last fired alarm,
+        # in which case the run joins that alarm event. Returns the number of alarm events with no on-second in y.
+        n = len(a); fp = 0; fired = -10**12; hit = True; started = False; i = 0
+        while i < n:
+            if a[i]:
+                j = i
+                h = False
+                while j < n and a[j]:
+                    if y[j]:
+                        h = True
+                    j += 1
+                if (not started) or i - fired > gap:
+                    if started and not hit:
+                        fp += 1
+                    fired = i; hit = h; started = True
+                else:
+                    hit = hit or h
+                i = j
+            else:
+                i += 1
+        if started and not hit:
+            fp += 1
+        return fp
+    return count
+
+
+_REFR = None
+
+
+def refractory_counts(y: np.ndarray, a: np.ndarray, gap: int):
+    """(tp, fp, fn) with a device refractory period of `gap` s: after an alarm fires, alarm-on runs that start within
+    `gap` s of it raise no new alarm and belong to that alarm event. Conservative and causal: a seizure counts as
+    detected only if a raw alarm-on second overlaps it (no gap is filled), and an alarm event is false unless one of
+    its raw on-seconds lies inside a seizure. gap <= 0 reproduces fast_ovlp."""
+    global _REFR
+    if gap <= 0:
+        return fast_ovlp(y, a)
+    if _REFR is None:
+        _REFR = _numba_refr()
+    tp, _, fn = fast_ovlp(y, a)
+    return tp, int(_REFR(a, y.astype(np.bool_), gap)), fn
+
+
+def paper_curve(sc, meta, k=10, n=60, ths=None, gap=0):
     """Rows (threshold, FA/h, sensitivity, fraction of time in alarm) for the paper metric."""
     ths = _thresholds(sc, n) if ths is None else ths
     fa = np.zeros(len(ths)); se = np.zeros(len(ths)); on = np.zeros(len(ths)); nsz = 0; tot = 0
@@ -90,7 +138,7 @@ def paper_curve(sc, meta, k=10, n=60, ths=None):
         has = bool(y.any()); nsz += has; tot += len(q)
         for i, th in enumerate(ths):
             a = q >= th
-            tp, fp, fn = fast_ovlp(y, a)
+            tp, fp, fn = refractory_counts(y, a, gap)
             fa[i] += fp * 3600 / len(q); on[i] += a.sum()
             if has:
                 se[i] += tp / (tp + fn)
@@ -118,10 +166,10 @@ def window_auc(sc, meta):
     return float(roc_auc_score(y[ok], s[ok]))
 
 
-def evaluate(sc, meta, ks=(1, 4, 10), with_szcore=True) -> dict:
-    rep = {"auroc": window_auc(sc, meta), "paper": {}}
+def evaluate(sc, meta, ks=(1, 4, 10), with_szcore=True, gap=0) -> dict:
+    rep = {"auroc": window_auc(sc, meta), "paper": {}, "gap": gap}
     for k in ks:
-        cur = paper_curve(sc, meta, k=k)
+        cur = paper_curve(sc, meta, k=k, gap=gap)
         rep["paper"][k] = {str(b): sens_at(cur, b) for b in BUDGETS_FAH}
     best_by_budget = {}
     for b in BUDGETS_FAH:

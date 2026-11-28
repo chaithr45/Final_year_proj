@@ -1,0 +1,138 @@
+{
+ "20261106-184317_lgbm_s0": {
+  "10.0": {
+   "k": 10,
+   "th": 0.040397511993509216,
+   "table": {
+    "all": {
+     "n": 698,
+     "detected": 509,
+     "sens": 0.7292263610315186
+    },
+    "class:FA": {
+     "n": 274,
+     "detected": 184,
+     "sens": 0.6715328467153284
+    },
+    "class:FBTC": {
+     "n": 33,
+     "detected": 33,
+     "sens": 1.0
+    },
+    "class:FIA": {
+     "n": 289,
+     "detected": 228,
+     "sens": 0.7889273356401384
+    },
+    "class:focal_unknown_awareness": {
+     "n": 101,
+     "detected": 64,
+     "sens": 0.6336633663366337
+    },
+    "class:unknown_onset": {
+     "n": 1,
+     "detected": 0,
+     "sens": 0.0
+    },
+    "duration:20-60s": {
+     "n": 177,
+     "detected": 149,
+     "sens": 0.8418079096045198
+    },
+    "duration:<20s": {
+     "n": 259,
+     "detected": 112,
+     "sens": 0.43243243243243246
+    },
+    "duration:>=60s": {
+     "n": 262,
+     "detected": 248,
+     "sens": 0.9465648854961832
+    },
+    "vigilance:asleep": {
+     "n": 270,
+     "detected": 161,
+     "sens": 0.5962962962962963
+    },
+    "vigilance:awake": {
+     "n": 344,
+     "detected": 285,
+     "sens": 0.8284883720930233
+    },
+    "vigilance:un": {
+     "n": 84,
+     "detected": 63,
+     "sens": 0.75
+    }
+   }
+  }
+ },
+ "v2_blend_lgbm_rel_gap300": {
+  "5.0": {
+   "k": 4,
+   "th": 0.06758188146342689,
+   "table": {
+    "all": {
+     "n": 698,
+     "detected": 527,
+     "sens": 0.7550143266475645
+    },
+    "class:FA": {
+     "n": 274,
+     "detected": 199,
+     "sens": 0.7262773722627737
+    },
+    "class:FBTC": {
+     "n": 33,
+     "detected": 33,
+     "sens": 1.0
+    },
+    "class:FIA": {
+     "n": 289,
+     "detected": 229,
+     "sens": 0.7923875432525952
+    },
+    "class:focal_unknown_awareness": {
+     "n": 101,
+     "detected": 66,
+     "sens": 0.6534653465346535
+    },
+    "class:unknown_onset": {
+     "n": 1,
+     "detected": 0,
+     "sens": 0.0
+    },
+    "duration:20-60s": {
+     "n": 177,
+     "detected": 146,
+     "sens": 0.8248587570621468
+    },
+    "duration:<20s": {
+     "n": 259,
+     "detected": 133,
+     "sens": 0.5135135135135135
+    },
+    "duration:>=60s": {
+     "n": 262,
+     "detected": 248,
+     "sens": 0.9465648854961832
+    },
+    "vigilance:asleep": {
+     "n": 270,
+     "detected": 177,
+     "sens": 0.6555555555555556
+    },
+    "vigilance:awake": {
+     "n": 344,
+     "detected": 284,
+     "sens": 0.8255813953488372
+    },
+    "vigilance:un": {
+     "n": 84,
+     "detected": 66,
+     "sens": 0.7857142857142857
+    }
+   }
+  }
+ }
+}

@@ -34,7 +34,8 @@ from seizelut.data.featureset import FeatureStore  # noqa: E402
 import seizelut.features.spec as spec               # noqa: E402
 
 BASES = {"lgbm": "20261106-184317_lgbm_s0", "cat": "20261106-200254_catboost_s0",
-         "xgb": "20261106-191103_xgb_s0", "dwn": "20261108-145504_n4_distill_s0"}
+         "xgb": "20261106-191103_xgb_s0", "dwn": "20261108-145504_n4_distill_s0",
+         "rel": "v2_base_rel_s0"}
 RAW = ["ecg_log_rr", "ecg_log_masrd", "emg_mav", "emg_ll", "emg_zc", "mov_acc_mag", "mov_acc_act", "mov_gyr_mag",
        "mov_acc_jerk", "eeg_ll_mean", "eeg_mav_mean", "eeg_delta_mean", "eeg_theta_mean", "eeg_beta_mean",
        "eeg_hf_mean", "eeg_sign_agree", "eeg_zc_mean"]
