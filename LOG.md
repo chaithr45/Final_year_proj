@@ -2,6 +2,12 @@
 
 Newest first. Format: date | problem | cause | fix | evidence.
 
+## 28 Nov 2026 (after Phase 1, cloud session)
+
+| # | Problem | Cause | Fix | Evidence |
+|---|---|---|---|---|
+| L23 | **Registered 28 Nov before running (report only).** Are the full-data EMG failures at white noise 4 uV rms and 50 Hz mains 10 uV a property of the one impairment seed used on all hours (LOG L18)? On all hours the EMG F1 drops barely shrink with level (white 16/8/4 uV rms: -0.0154/-0.0126/-0.0106; mains 1000/100/10 uV: -0.0185/-0.0229/-0.0127), none is significant (Wilcoxon p 0.08-0.43), and the subset tolerated every EMG white and mains level (subset dF1 at white 4 uV rms -0.0015, impairment-seed sd 0.0019; at mains 10 uV -0.0049, sd 0.0044), against a full-data threshold of 0.0092 | One impairment seed per job on all hours (LOG L18), chosen for cost | The user's go-ahead (28 Nov): `confirm_full.py --jobs names --names emg_white_4uVrms@1,2,3,4 emg_mains50_10uV@1,2` on all 2,072 training recordings. Same seed counts as on the subset (`grids.py`: white 5 seeds, mains 3 seeds), so mains gets seeds 1-2 rather than the 1-4 first proposed. Output goes to `ms/results/phase1/report_only/`, which `full_spec.py` does not read. Reported: per seed dF1, dFP/24h, Wilcoxon p and verdict, and the mean and sd over all seeds including seed 0. Reading, fixed now: if the all-seed mean dF1 is within -0.0092 and the mean dFP within +0.206, the seed-0 failure is reported as not robust to the impairment seed; otherwise as robust. **The verdicts, the step-down and the spec stay as they are either way** | Seed-0 values: `spec_limits.json` (from `confirm_limits.json`, `confirm_stepdown_baed9f0e.json`, `confirm_stepdown_fbb8772d.json`); subset values: `tolerance.json` |
+
 ## 16 Nov 2026 (Phase 1 start, cloud session)
 
 | # | Problem | Cause | Fix | Evidence |

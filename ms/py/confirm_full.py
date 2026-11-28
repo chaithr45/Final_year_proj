@@ -15,7 +15,10 @@ Jobs (--jobs): "limits" = from ms/results/phase1/tolerance.json, per parameter t
 failing level (only the limit if every level passed; only the mildest level if none passed), with impairment
 seeds --seeds. "stepdown" = the next milder level of every limit that failed on the full data (rule LOG L20, via
 ms/py/full_spec.py); "combined" = the step 7b spec point from combined_jobs.json. Summaries of these two go to
-confirm_<jobs>_<hash of the job names>.json, so later rounds never overwrite earlier ones.
+confirm_<jobs>_<hash of the job names>.json, so later rounds never overwrite earlier ones. "names" = the levels
+given by --names (name or name@seed,seed; report-only checks such as LOG L23): the summary goes to
+ms/results/phase1/report_only/confirm_names_<hash>.json, which full_spec.py does not read, so it never changes a
+verdict or the spec.
 Noise streams are keyed (seed, 100000 + recording index, channel index): independent of the subset.
 
 Usage: python ms/py/confirm_full.py --models <fold checkpoint dir> [--workers 4] [--seeds 0] [--limit-runs N]
@@ -93,6 +96,20 @@ def stepdown_jobs(seeds: list[int]) -> list[dict]:
     import full_spec
     tol = json.loads((REPO / "ms/results/phase1/tolerance.json").read_text())
     return jobs_by_name(full_spec.pending_names(full_spec.build(tol, full_spec.load_full_results())), seeds)
+
+
+def named_jobs(specs: list[str], seeds: list[int]) -> list[dict]:
+    """--names entries "name" (seeds from --seeds) or "name@1,2" (these impairment seeds); every seed must exist."""
+    jobs = []
+    for sp in specs:
+        n, _, ss = sp.partition("@")
+        sd = [int(x) for x in ss.split(",")] if ss else seeds
+        js = [j for j in jobs_by_name([n], sd) if j["seed"] in sd]
+        missing = sorted(set(sd) - {j["seed"] for j in js})
+        if missing:
+            raise SystemExit(f"{n}: grids.py has no job for impairment seed(s) {missing}")
+        jobs += js
+    return jobs
 
 
 def limit_jobs(seeds: list[int]) -> list[dict]:
@@ -215,7 +232,8 @@ def main() -> int:
     ap.add_argument("--models", required=True)
     ap.add_argument("--jobs", default="limits",
                     help="'limits' (from tolerance.json), 'stepdown' (next milder levels of limits that failed, LOG L20), "
-                         "'combined' (combined_jobs.json, step 7b) or 'clean'")
+                         "'combined' (combined_jobs.json, step 7b), 'names' (--names, report only) or 'clean'")
+    ap.add_argument("--names", nargs="*", default=[], help="for --jobs names: level names, optionally name@seed,seed")
     ap.add_argument("--seeds", type=int, nargs="*", default=[0])
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--limit-runs", type=int, default=None, help="first N recordings only (quick checks)")
@@ -227,14 +245,18 @@ def main() -> int:
     args = ap.parse_args()
     extra = {"limits": lambda: limit_jobs(args.seeds), "clean": list,
              "stepdown": lambda: stepdown_jobs(args.seeds),
-             "combined": lambda: [j for j in grids.get("combined", []) if j["seed"] in args.seeds]}[args.jobs]()
-    if args.jobs in ("stepdown", "combined") and not extra:
+             "combined": lambda: [j for j in grids.get("combined", []) if j["seed"] in args.seeds],
+             "names": lambda: named_jobs(args.names, args.seeds)}[args.jobs]()
+    if args.jobs in ("stepdown", "combined", "names") and not extra:
         print(f"no {args.jobs} jobs to run"); return 0
     jobs = [{"name": "clean", "seed": 0}] + extra
     name = args.jobs
     if args.jobs in ("stepdown", "combined"):   # one summary file per distinct job set (resumable, never overwritten)
         import hashlib
         name += "_" + hashlib.sha1(json.dumps(sorted(j["name"] for j in extra)).encode()).hexdigest()[:8]
+    if args.jobs == "names":
+        import hashlib
+        name += "_" + hashlib.sha1(json.dumps(sorted([j["name"], j["seed"]] for j in extra)).encode()).hexdigest()[:8]
     tag = args.tag or name + (f"_runs{args.limit_runs}" if args.limit_runs else "")
     subjects = sorted(load_folds(REPO / "configs/folds_inner5.json"))
     runs = sorted(r.key for r in discover_runs(RAW, subjects))
@@ -302,7 +324,8 @@ def main() -> int:
                                                                                    c["per_subject"]))}
                                if ref else "no matching seed-0 run in cv_frozen_op.json")
         bad = bad + ([] if isinstance(summ["clean_vs_cv"], dict) and summ["clean_vs_cv"]["equal"] else ["clean_vs_cv"])
-    p = REPO / f"ms/results/phase1/confirm_{tag}.json"
+    p = REPO / ("ms/results/phase1/report_only" if args.jobs == "names" else "ms/results/phase1") / f"confirm_{tag}.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(summ, indent=1) + "\n")
     print(f"clean: F1 {c['f1']:.4f} sens {c['sensitivity']:.4f} FP/24h {c['fp_per_24h']:.3f}; "
           f"problems: {bad or 'none'}; clean vs CV: {summ.get('clean_vs_cv')}")
