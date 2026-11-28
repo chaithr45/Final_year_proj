@@ -57,3 +57,5 @@ k = 10. Source of every line: `results/v2/harness.json`.
 - WP4 breakdown, blend lgbm+rel at its 5 FA/h point (refractory 300 s; pooled over 698 seizures): all 0.755
   (LightGBM at 10 FA/h: 0.729), FBTC 33/33, FIA 0.792, FA 0.726, focal unknown awareness 0.653; >= 60 s 0.947,
   20-60 s 0.825, < 20 s 0.514 (was 0.432); awake 0.826, asleep 0.656 (was 0.596).
+- **Decision (user, 28 Nov):** the pre-registered v2 operating point may keep the alarm on up to 6 % of the time
+  (was 5 %). The 5 % point and the full curve are reported next to it. Work stays on `claude/seizelut-v2`.
